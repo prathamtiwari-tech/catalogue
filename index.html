@@ -153,10 +153,10 @@
             text-decoration: underline;
         }
 
-        .loading {
+        .empty-state {
             text-align: center;
-            padding: 40px;
             color: white;
+            padding: 40px;
             font-size: 18px;
         }
 
@@ -491,19 +491,6 @@
             font-weight: bold;
         }
 
-        .publishing {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .publish-status {
-            text-align: center;
-            padding: 20px;
-            background: #f0f0f0;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
         @media (max-width: 768px) {
             .tiles-container {
                 grid-template-columns: 1fr;
@@ -547,7 +534,7 @@
     <div id="loginModal" class="modal active">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Admin Login</h2>
+                <h2>🔐 Admin Login</h2>
             </div>
             <div id="loginAlert"></div>
             <form id="loginForm">
@@ -571,8 +558,8 @@
                     </small>
                 </div>
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <button type="button" class="btn btn-secondary" onclick="cancelAdminAccess()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">✅ Login</button>
+                    <button type="button" class="btn btn-secondary" onclick="cancelAdminAccess()">❌ Cancel</button>
                 </div>
             </form>
         </div>
@@ -585,10 +572,6 @@
             <a href="?admin" class="admin-link">🔐 Admin Access</a>
         </div>
 
-        <div id="loadingIndicator" class="loading hidden">
-            Loading catalogue data...
-        </div>
-
         <div id="tilesContainer" class="tiles-container"></div>
 
         <div id="contactSection" class="contact-section hidden">
@@ -596,8 +579,8 @@
             <div class="contact-info" id="contactInfo"></div>
         </div>
 
-        <div id="emptyState" style="text-align: center; color: white; padding: 40px;">
-            <p style="font-size: 18px;">No catalogue items published yet. Please check back soon!</p>
+        <div id="emptyState" class="empty-state hidden">
+            <p>📭 No catalogue items published yet. Please check back soon!</p>
         </div>
     </div>
 
@@ -616,9 +599,9 @@
         <div id="adminAlert"></div>
 
         <div class="admin-tabs">
-            <button class="tab-btn active" onclick="switchTab('tiles')">📋 Manage Tiles</button>
-            <button class="tab-btn" onclick="switchTab('contact')">📞 Contact Details</button>
-            <button class="tab-btn" onclick="switchTab('preview')">👁️ Preview & Download</button>
+            <button class="tab-btn active" onclick="switchTab(event, 'tiles')">📋 Manage Tiles</button>
+            <button class="tab-btn" onclick="switchTab(event, 'contact')">📞 Contact Details</button>
+            <button class="tab-btn" onclick="switchTab(event, 'preview')">👁️ Preview & Download</button>
         </div>
 
         <!-- TILES TAB -->
@@ -684,7 +667,7 @@
         <div id="previewTab" class="tab-content">
             <h2>👁️ Preview & Download Catalogue</h2>
             <p>Download the catalogue as a PDF with all current data:</p>
-            <button class="btn btn-success" onclick="downloadPDF()" style="margin-top: 20px;">
+            <button type="button" class="btn btn-success" onclick="downloadPDF()" style="margin-top: 20px;">
                 📥 Download as PDF
             </button>
             <div id="previewContent" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
@@ -728,20 +711,23 @@
             }
 
             // Event listeners
-            document.getElementById('tileForm').addEventListener('submit', addTile);
-            document.getElementById('contactForm').addEventListener('submit', updateContact);
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('tileImage').addEventListener('change', previewImage);
-
-            // Track unsaved changes
-            document.getElementById('tileForm').addEventListener('input', () => { hasUnsavedChanges = true; });
-            document.getElementById('contactForm').addEventListener('input', () => { hasUnsavedChanges = true; });
+            if (document.getElementById('tileForm')) {
+                document.getElementById('tileForm').addEventListener('submit', addTile);
+            }
+            if (document.getElementById('contactForm')) {
+                document.getElementById('contactForm').addEventListener('submit', updateContact);
+            }
+            if (document.getElementById('loginForm')) {
+                document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            }
+            if (document.getElementById('tileImage')) {
+                document.getElementById('tileImage').addEventListener('change', previewImage);
+            }
         });
 
         // ===== DATA MANAGEMENT =====
         async function loadData() {
             try {
-                // Try to load from GitHub first
                 const response = await fetch(GITHUB_RAW_URL);
                 if (response.ok) {
                     const data = await response.json();
@@ -750,14 +736,12 @@
                     return;
                 }
             } catch (error) {
-                console.log('📍 GitHub not accessible, using local storage');
+                console.log('📍 Using local storage');
             }
 
-            // Fallback to local storage
             const saved = localStorage.getItem('catalogueData');
             if (saved) {
                 catalogueData = JSON.parse(saved);
-                console.log('✅ Data loaded from localStorage');
             }
         }
 
@@ -765,9 +749,9 @@
             localStorage.setItem('catalogueData', JSON.stringify(catalogueData));
         }
 
-        async function publishToGitHub() {
+        async function publishChanges() {
             if (!githubToken) {
-                showAlert('GitHub token is required to publish changes', 'error', 'adminAlert');
+                showAlert('❌ GitHub token is required to publish changes. Paste your token in the login screen.', 'error', 'adminAlert');
                 return false;
             }
 
@@ -777,9 +761,8 @@
 
             try {
                 const dataStr = JSON.stringify(catalogueData, null, 2);
-                const content = btoa(dataStr); // Base64 encode
+                const content = btoa(dataStr);
 
-                // Get current file SHA for update
                 let sha = '';
                 try {
                     const shaResponse = await fetch(
@@ -799,7 +782,6 @@
                     console.log('Creating new file...');
                 }
 
-                // Create or update file
                 const commitResponse = await fetch(
                     `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${DATA_FILE}`,
                     {
@@ -824,7 +806,7 @@
 
                 saveDataLocally();
                 hasUnsavedChanges = false;
-                showAlert('✅ Changes published to GitHub successfully!', 'success', 'adminAlert');
+                showAlert('✅ Changes published to GitHub successfully! Users will see updates instantly.', 'success', 'adminAlert');
                 return true;
 
             } catch (error) {
@@ -839,8 +821,10 @@
 
         // ===== USER PANEL FUNCTIONS =====
         function displayUserPanel() {
-            document.getElementById('userPanel').classList.add('active');
-            document.getElementById('adminPanel').classList.remove('active');
+            const userPanel = document.getElementById('userPanel');
+            const adminPanel = document.getElementById('adminPanel');
+            if (userPanel) userPanel.classList.add('active');
+            if (adminPanel) adminPanel.classList.remove('active');
             
             renderTiles();
             renderContactInfo();
@@ -851,22 +835,24 @@
             const emptyState = document.getElementById('emptyState');
             
             if (catalogueData.tiles.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                if (container) container.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
                 return;
             }
 
-            emptyState.classList.add('hidden');
-            container.innerHTML = catalogueData.tiles.map((tile, index) => `
-                <div class="tile">
-                    ${tile.image ? `<img src="${tile.image}" alt="${tile.title}" class="tile-image">` : '<div class="tile-image" style="background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>'}
-                    <div class="tile-content">
-                        <div class="tile-title">${escapeHtml(tile.title)}</div>
-                        <div class="tile-description">${escapeHtml(tile.description)}</div>
-                        <a href="${tile.link}" target="_blank" class="tile-link">Learn More →</a>
+            if (emptyState) emptyState.classList.add('hidden');
+            if (container) {
+                container.innerHTML = catalogueData.tiles.map((tile) => `
+                    <div class="tile">
+                        ${tile.image ? `<img src="${tile.image}" alt="${escapeHtml(tile.title)}" class="tile-image">` : '<div class="tile-image" style="background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>'}
+                        <div class="tile-content">
+                            <div class="tile-title">${escapeHtml(tile.title)}</div>
+                            <div class="tile-description">${escapeHtml(tile.description)}</div>
+                            <a href="${tile.link}" target="_blank" class="tile-link">Learn More →</a>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
         function renderContactInfo() {
@@ -875,34 +861,37 @@
             const contact = catalogueData.contact;
             
             if (!contact || Object.values(contact).every(v => !v)) {
-                section.classList.add('hidden');
+                if (section) section.classList.add('hidden');
                 return;
             }
 
-            section.classList.remove('hidden');
-            container.innerHTML = `
-                <div class="contact-item">
-                    <label>📞 Phone:</label>
-                    <p>${escapeHtml(contact.phone)}</p>
-                </div>
-                <div class="contact-item">
-                    <label>📧 Email:</label>
-                    <p><a href="mailto:${contact.email}">${escapeHtml(contact.email)}</a></p>
-                </div>
-                <div class="contact-item">
-                    <label>📍 Address:</label>
-                    <p>${escapeHtml(contact.address)}</p>
-                </div>
-                <div class="contact-item">
-                    <label>🌐 Website:</label>
-                    <p><a href="${contact.website}" target="_blank">${escapeHtml(contact.website)}</a></p>
-                </div>
-            `;
+            if (section) section.classList.remove('hidden');
+            if (container) {
+                container.innerHTML = `
+                    <div class="contact-item">
+                        <label>📞 Phone:</label>
+                        <p>${escapeHtml(contact.phone)}</p>
+                    </div>
+                    <div class="contact-item">
+                        <label>📧 Email:</label>
+                        <p><a href="mailto:${contact.email}">${escapeHtml(contact.email)}</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <label>📍 Address:</label>
+                        <p>${escapeHtml(contact.address)}</p>
+                    </div>
+                    <div class="contact-item">
+                        <label>🌐 Website:</label>
+                        <p><a href="${contact.website}" target="_blank">${escapeHtml(contact.website)}</a></p>
+                    </div>
+                `;
+            }
         }
 
         // ===== ADMIN PANEL FUNCTIONS =====
         function showAdminPanel() {
-            document.getElementById('loginModal').classList.add('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('active');
         }
 
         function toggleTokenVisibility() {
@@ -937,12 +926,12 @@
                 window.history.replaceState({}, document.title, '?admin');
                 
                 if (token) {
-                    showAlert('✅ Logged in with GitHub token. Changes can be published!', 'info', 'adminAlert');
+                    showAlert('✅ Logged in with GitHub token. You can now publish changes!', 'success', 'adminAlert');
                 } else {
-                    showAlert('⚠️ No GitHub token provided. Changes will only save locally.', 'info', 'adminAlert');
+                    showAlert('⚠️ No GitHub token provided. Changes will only save locally (not published).', 'info', 'adminAlert');
                 }
             } else {
-                showAlert('❌ Invalid credentials! Use admin / admin123', 'error', 'loginAlert');
+                showAlert('❌ Invalid credentials! Use: admin / admin123', 'error', 'loginAlert');
             }
         }
 
@@ -960,7 +949,9 @@
             displayUserPanel();
         }
 
-        function switchTab(tabName) {
+        function switchTab(event, tabName) {
+            event.preventDefault();
+            
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -968,7 +959,8 @@
                 btn.classList.remove('active');
             });
 
-            document.getElementById(tabName + 'Tab').classList.add('active');
+            const tab = document.getElementById(tabName + 'Tab');
+            if (tab) tab.classList.add('active');
             event.target.classList.add('active');
 
             if (tabName === 'preview') {
@@ -983,7 +975,6 @@
             let imageDataURL = null;
 
             if (imageFile) {
-                // Check file size (max 2MB)
                 if (imageFile.size > 2 * 1024 * 1024) {
                     showAlert('❌ Image is too large! Maximum size is 2MB.', 'error', 'adminAlert');
                     return;
@@ -1030,23 +1021,25 @@
         function renderAdminTiles() {
             const container = document.getElementById('tilesList');
             const count = document.getElementById('tileCount');
-            count.textContent = catalogueData.tiles.length;
+            if (count) count.textContent = catalogueData.tiles.length;
 
-            container.innerHTML = catalogueData.tiles.map(tile => `
-                <div class="tile-item">
-                    <div class="tile-item-info">
-                        <h3>${escapeHtml(tile.title)}</h3>
-                        <p>${escapeHtml(tile.description.substring(0, 60))}${tile.description.length > 60 ? '...' : ''}</p>
-                        ${tile.image ? `<img src="${tile.image}" alt="${tile.title}" class="image-preview">` : ''}
+            if (container) {
+                container.innerHTML = catalogueData.tiles.map(tile => `
+                    <div class="tile-item">
+                        <div class="tile-item-info">
+                            <h3>${escapeHtml(tile.title)}</h3>
+                            <p>${escapeHtml(tile.description.substring(0, 60))}${tile.description.length > 60 ? '...' : ''}</p>
+                            ${tile.image ? `<img src="${tile.image}" alt="${escapeHtml(tile.title)}" class="image-preview">` : ''}
+                        </div>
+                        <div class="tile-item-actions">
+                            <button class="btn btn-danger btn-sm" onclick="deleteTile(${tile.id})">🗑️ Delete</button>
+                        </div>
                     </div>
-                    <div class="tile-item-actions">
-                        <button class="btn btn-danger btn-sm" onclick="deleteTile(${tile.id})">🗑️ Delete</button>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
 
-            if (catalogueData.tiles.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No tiles added yet. Add your first tile above!</p>';
+                if (catalogueData.tiles.length === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No tiles added yet. Add your first tile above!</p>';
+                }
             }
         }
 
@@ -1117,14 +1110,14 @@
                         <div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 5px; border-left: 4px solid #667eea;">
                             <strong style="color: #333; font-size: 16px;">${index + 1}. ${escapeHtml(tile.title)}</strong>
                             <p style="margin: 10px 0; color: #666;">${escapeHtml(tile.description)}</p>
-                            ${tile.image ? `<img src="${tile.image}" alt="${tile.title}" style="max-width: 100%; height: auto; border-radius: 5px; margin: 10px 0;">` : ''}
+                            ${tile.image ? `<img src="${tile.image}" alt="${escapeHtml(tile.title)}" style="max-width: 100%; height: auto; border-radius: 5px; margin: 10px 0;">` : ''}
                             <small style="color: #999;"><strong>Link:</strong> <a href="${tile.link}" target="_blank" style="color: #667eea;">${escapeHtml(tile.link)}</a></small>
                         </div>
                     `;
                 });
             }
 
-            previewContent.innerHTML = html;
+            if (previewContent) previewContent.innerHTML = html;
         }
 
         async function downloadPDF() {
@@ -1137,13 +1130,11 @@
                             body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
                             h1 { color: #667eea; text-align: center; margin-bottom: 30px; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
                             h2 { color: #667eea; margin-top: 30px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-                            .section { margin-bottom: 30px; }
                             .contact-item { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid #eee; }
                             .contact-item strong { color: #667eea; min-width: 100px; display: inline-block; }
                             .tile { page-break-inside: avoid; margin-bottom: 25px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
                             .tile-title { font-weight: bold; font-size: 18px; color: #333; margin-bottom: 10px; }
                             .tile-desc { margin: 10px 0; color: #666; line-height: 1.6; }
-                            .tile-link { color: #667eea; text-decoration: none; font-size: 12px; margin-top: 10px; display: block; }
                             img { max-width: 100%; height: auto; margin: 10px 0; border-radius: 5px; }
                             .footer { margin-top: 40px; text-align: center; color: #999; font-size: 11px; border-top: 1px solid #ddd; padding-top: 20px; }
                         </style>
@@ -1151,34 +1142,25 @@
                     <body>
                         <h1>📚 Business Catalogue</h1>
                         
-                        <div class="section">
-                            <h2>📞 Contact Information</h2>
-                            <div class="contact-item"><strong>Phone:</strong> ${escapeHtml(contact.phone)}</div>
-                            <div class="contact-item"><strong>Email:</strong> ${escapeHtml(contact.email)}</div>
-                            <div class="contact-item"><strong>Address:</strong> ${escapeHtml(contact.address)}</div>
-                            <div class="contact-item"><strong>Website:</strong> ${escapeHtml(contact.website)}</div>
-                        </div>
+                        <h2>📞 Contact Information</h2>
+                        <div class="contact-item"><strong>Phone:</strong> ${escapeHtml(contact.phone)}</div>
+                        <div class="contact-item"><strong>Email:</strong> ${escapeHtml(contact.email)}</div>
+                        <div class="contact-item"><strong>Address:</strong> ${escapeHtml(contact.address)}</div>
+                        <div class="contact-item"><strong>Website:</strong> ${escapeHtml(contact.website)}</div>
 
-                        <div class="section">
-                            <h2>📋 Products & Services</h2>
-                            <p><strong>Total Items:</strong> ${catalogueData.tiles.length}</p>
-                            ${catalogueData.tiles.map((tile, index) => `
-                                <div class="tile">
-                                    <div style="display: flex; justify-content: space-between; align-items: start;">
-                                        <div style="flex: 1;">
-                                            <div class="tile-title">${index + 1}. ${escapeHtml(tile.title)}</div>
-                                            <div class="tile-desc">${escapeHtml(tile.description)}</div>
-                                            <a href="${tile.link}" class="tile-link">🔗 ${escapeHtml(tile.link)}</a>
-                                        </div>
-                                    </div>
-                                    ${tile.image ? `<img src="${tile.image}" alt="${tile.title}" style="margin-top: 10px;">` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
+                        <h2>📋 Products & Services</h2>
+                        <p><strong>Total Items:</strong> ${catalogueData.tiles.length}</p>
+                        ${catalogueData.tiles.map((tile, index) => `
+                            <div class="tile">
+                                <div class="tile-title">${index + 1}. ${escapeHtml(tile.title)}</div>
+                                <div class="tile-desc">${escapeHtml(tile.description)}</div>
+                                ${tile.image ? `<img src="${tile.image}" alt="${escapeHtml(tile.title)}">` : ''}
+                                <small><strong>Link:</strong> <a href="${tile.link}">${escapeHtml(tile.link)}</a></small>
+                            </div>
+                        `).join('')}
 
                         <div class="footer">
-                            <p>Generated on ${new Date().toLocaleString()} | Business Catalogue v1.0</p>
-                            <p>For more information, visit the online catalogue</p>
+                            <p>Generated on ${new Date().toLocaleString()} | Business Catalogue</p>
                         </div>
                     </body>
                 </html>
@@ -1198,6 +1180,8 @@
 
         function showAlert(message, type, containerId = 'adminAlert') {
             const container = document.getElementById(containerId);
+            if (!container) return;
+
             const alert = document.createElement('div');
             alert.className = `alert alert-${type}`;
             alert.innerHTML = `

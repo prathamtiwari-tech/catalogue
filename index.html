@@ -420,6 +420,7 @@
             <label>Video Link</label>
             <input type="text" id="editVideo" placeholder="YouTube, Vimeo URL, etc.">
         </div>
+
         <div class="form-group">
             <label>Replace Image (optional, max 2MB)</label>
             <input type="file" id="editImage" accept="image/*" onchange="previewEditImage(this)">
@@ -508,6 +509,7 @@
                 <label>Video Link</label>
                 <input type="text" id="newVideo" placeholder="YouTube, Vimeo URL, etc.">
             </div>
+
             <div class="form-group">
                 <label>Image (max 2MB)</label>
                 <input type="file" id="newImage" accept="image/*" onchange="previewNewImage(this)">
@@ -561,5 +563,54 @@ const GITHUB_REPO = 'catalogue';
 const DATA_FILE = 'catalogue-data.json';
 const GITHUB_RAW_URL = `./${DATA_FILE}`;
 
-// Sample fallback images
-const SUDESHNA_IMAGE = 'data:image/jpeg;base64,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
+// IMPORTANT: Upload your images from the admin panel! I have emptied these so the code does not break.
+const SUDESHNA_IMAGE = ''; 
+const TASTY_IMAGE = '';
+
+let state = {
+    tiles: [],
+    contact: { phone: '', email: '', address: '', website: '' }
+};
+let githubToken = '';
+
+// ===== BOOT =====
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadData();
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('admin')) {
+        showLoginModal();
+    } else {
+        showUserPanel();
+    }
+    setupTabs();
+});
+
+function setupTabs() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(target).classList.add('active');
+            if (target === 'previewTab') renderPreview();
+        });
+    });
+}
+
+// ===== DATA =====
+async function loadData() {
+    try {
+        const res = await fetch(GITHUB_RAW_URL + '?t=' + Date.now());
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.tiles) { state = data; return; }
+        }
+    } catch(e) {}
+    const local = localStorage.getItem('catalogueData');
+    if (local) {
+        try { state = JSON.parse(local); } catch(e) {}
+    }
+    if (!state.tiles || state.tiles.length === 0) {
+        state.tiles = [
+            { id: 1001, title: 'Music With Sudeshna', description: 'Online & Offline Vocals & Keyboard classes. Professional Certification

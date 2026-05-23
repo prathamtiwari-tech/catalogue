@@ -886,6 +886,15 @@ async function publishToGitHub(){
 
 /* ═══════════ INIT ═══════════ */
 buildTabs(); renderAll();
+(async()=>{
+  try{
+    const res=await fetch('./catalogue-data.json?t='+Date.now());
+    if(res.ok){
+      const remote=await res.json();
+      if(Array.isArray(remote)&&remote.length){ DATA=remote; saveData(DATA); renderAll(); }
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

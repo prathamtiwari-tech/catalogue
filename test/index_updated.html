@@ -815,6 +815,7 @@ function generatePDF(){
           didDrawCell(data){
             if(data.column.index===5&&data.section==='body'){
               const it=items[data.row.index];
+              if(!it) return;
               const x=data.cell.x+1.5,y=data.cell.y+3.5,lh=4.5;
               let dy=0;
               if(it.phone){doc.setFontSize(7);doc.setTextColor(26,92,46);doc.setFont('helvetica','bold');doc.text('📞 '+it.phone,x,y+dy);doc.link(x,y+dy-3,42,4,{url:'tel:'+it.phone});dy+=lh;}
@@ -828,6 +829,7 @@ function generatePDF(){
           didParseCell(data){
             if(data.column.index===5&&data.section==='body'){
               const it=items[data.row.index];
+              if(!it) return;
               data.cell.text=[''];
               let h=4;
               if(it.phone)h+=4.5;if(it.whatsapp)h+=4.5;if(it.instagram)h+=4.5;if(it.url)h+=4.5;if(it.video)h+=4.5;

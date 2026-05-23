@@ -755,47 +755,89 @@ function generatePDF(){
         doc.text('PRATEEK LAUREL ENTREPRENEURS | PL Business Directory',pw/2,5.5,{align:'center'});
         doc.setFillColor(...GOLD);doc.rect(0,ph-10,pw,10,'F');
         doc.setFontSize(7);doc.setTextColor(...G);
-        doc.text(`Page ${pg}  |  Connect • Collaborate • Create • Grow`,pw/2,ph-4,{align:'center'});
+        doc.text('Page '+pg+'  |  Edition: '+edition+'  |  Connect - Collaborate - Create - Grow',pw/2,ph-4,{align:'center'});
       }
 
       /* Cover */
+      const now=new Date();
+      const edition=now.toLocaleString('default',{month:'long'})+' '+now.getFullYear();
+
       hdr(1);
-      doc.setFillColor(250,247,242);doc.rect(0,8,pw,ph-18,'F');
-      doc.setFont('helvetica','bold');doc.setFontSize(22);doc.setTextColor(...G);
-      doc.text('PRATEEK LAUREL ENTREPRENEURS',pw/2,38,{align:'center'});
-      doc.setFont('helvetica','italic');doc.setFontSize(13);doc.setTextColor(...GOLD);
-      doc.text('PL Business Directory',pw/2,47,{align:'center'});
-      doc.setDrawColor(...G);doc.setLineWidth(.5);doc.line(20,50,pw-20,50);
-      doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...G);
-      doc.text('Connect  •  Collaborate  •  Create  •  Grow',pw/2,58,{align:'center'});
-      doc.setFillColor(...G);doc.circle(pw/2,100,34,'F');
-      doc.setLineWidth(1);doc.setDrawColor(...GOLD);doc.circle(pw/2,100,34,'S');
-      doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...GOLD);
-      doc.text('PL',pw/2,95,{align:'center'});
-      doc.setFontSize(8);doc.setTextColor(...W);
-      doc.text('PRATEEK LAUREL',pw/2,103,{align:'center'});
-      doc.text('ENTREPRENEURS',pw/2,110,{align:'center'});
-      doc.setFontSize(6);doc.text('CONNECT • COLLABORATE • CREATE • GROW',pw/2,117,{align:'center'});
-      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(70,70,70);
-      doc.text('Welcome to our local business directory — celebrating neighbourhood entrepreneurship\nand making it easier for residents to discover and support one another.',pw/2,145,{align:'center'});
-      const bx=[18,82,146],bw=48,bh=22,by=165;
-      [[DATA.length,'Local Ventures'],['6','Categories'],['✓','PL Directory']].forEach(([n,l],i)=>{
-        doc.setFillColor(...G);doc.roundedRect(bx[i],by,bw,bh,2,2,'F');
-        doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...W);
-        doc.text(String(n),bx[i]+bw/2,by+9,{align:'center'});
-        doc.setFontSize(7);doc.setFont('helvetica','normal');
-        doc.text(l,bx[i]+bw/2,by+17,{align:'center'});
-      });
-      doc.setFillColor(240,250,240);doc.setDrawColor(...G);doc.setLineWidth(.4);
-      doc.roundedRect(14,248,48,10,2,2,'FD');
+      /* Light green background matching website hero */
+      doc.setFillColor(236,245,236);doc.rect(0,8,pw,ph-18,'F');
+
+      /* Gold accent line under header */
+      doc.setFillColor(...GOLD);doc.rect(0,8,pw,1.5,'F');
+
+      /* Society tagline */
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100,130,100);
+      doc.text('PRATEEK LAUREL SOCIETY  |  Sector 120, Noida',pw/2,30,{align:'center'});
+
+      /* Gold separator */
+      doc.setDrawColor(...GOLD);doc.setLineWidth(0.4);doc.line(55,34,pw-55,34);
+
+      /* Main title */
+      doc.setFont('helvetica','bold');doc.setFontSize(30);doc.setTextColor(...G);
+      doc.text('PL Business Directory',pw/2,58,{align:'center'});
+
+      /* Subtitle */
+      doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(60,90,60);
+      doc.text('Discover and support neighbourhood businesses in Prateek Laurel Society.',pw/2,72,{align:'center'});
+      doc.text('Shop local, grow together.',pw/2,80,{align:'center'});
+
+      /* Green separator */
+      doc.setDrawColor(...G);doc.setLineWidth(0.5);doc.line(30,86,pw-30,86);
+
+      /* Tagline */
+      doc.setFont('helvetica','italic');doc.setFontSize(9);doc.setTextColor(...GOLD);
+      doc.text('Connect  |  Collaborate  |  Create  |  Grow',pw/2,94,{align:'center'});
+
+      /* ── Three stat boxes matching website ── */
+      const sbx=[15,75,135],sbw=55,sbh=30,sby=110;
+
+      /* Box 1 – Local Ventures (green) */
+      doc.setFillColor(...G);doc.roundedRect(sbx[0],sby,sbw,sbh,3,3,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...W);
+      doc.text(String(DATA.length),sbx[0]+sbw/2,sby+14,{align:'center'});
+      doc.setFontSize(7);doc.setFont('helvetica','normal');
+      doc.text('LOCAL VENTURES',sbx[0]+sbw/2,sby+24,{align:'center'});
+
+      /* Box 2 – Categories (green) */
+      doc.setFillColor(...G);doc.roundedRect(sbx[1],sby,sbw,sbh,3,3,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...W);
+      doc.text('6',sbx[1]+sbw/2,sby+14,{align:'center'});
+      doc.setFontSize(7);doc.setFont('helvetica','normal');
+      doc.text('CATEGORIES',sbx[1]+sbw/2,sby+24,{align:'center'});
+
+      /* Box 3 – Verified Directory (gold, dark green text) */
+      doc.setFillColor(...GOLD);doc.roundedRect(sbx[2],sby,sbw,sbh,3,3,'F');
+      /* Draw a manual checkmark since Helvetica doesn't support Unicode checkmark */
+      const ckx=sbx[2]+sbw/2, cky=sby+12;
+      doc.setDrawColor(...G);doc.setLineWidth(1.8);
+      doc.lines([[4,5],[9,-10]],ckx-7,cky);
+      doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...G);
+      doc.text('VERIFIED DIRECTORY',sbx[2]+sbw/2,sby+24,{align:'center'});
+
+      /* Description */
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(70,100,70);
+      doc.text('Welcome to our local business directory, celebrating neighbourhood entrepreneurship',pw/2,158,{align:'center'});
+      doc.text('and making it easier for residents to discover and support one another.',pw/2,165,{align:'center'});
+
+      /* Edition pill (dynamic) */
+      doc.setFillColor(220,240,220);doc.setDrawColor(...G);doc.setLineWidth(0.4);
+      doc.roundedRect(pw/2-28,172,56,9,2,2,'FD');
       doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...G);
-      doc.text('Edition: May 2026',38,255,{align:'center'});
+      doc.text('Edition: '+edition,pw/2,178.5,{align:'center'});
 
       /* Category pages */
       let pg=2;
       CATS.forEach(cat=>{
-        const items=DATA.filter(d=>d.cat===cat.name);
+        const items=DATA.filter(d=>d&&d.cat===cat.name);
         if(!items.length) return;
+        /* Build a lookup map keyed by serial number for reliable row->item mapping */
+        const itemBySerial={};
+        items.forEach((it,i)=>{ itemBySerial[i+1]=it; });
+
         doc.addPage(); hdr(pg++);
         doc.setFillColor(250,247,242);doc.rect(0,8,pw,ph-18,'F');
         doc.setFillColor(...G);doc.rect(10,14,pw-20,10,'F');
@@ -803,8 +845,15 @@ function generatePDF(){
         doc.text(' '+cat.name,14,21);
         doc.autoTable({
           startY:28, margin:{left:10,right:10},
-          head:[['#','Venture','Speciality','Contact','Flat','Phone / Links']],
-          body:items.map((it,i)=>[i+1,it.venture,it.speciality+(it.desc?'\n'+it.desc.substring(0,60)+'…':''),it.contact||'',it.flat||'','']),
+          head:[['#','Venture','Speciality / Description','Contact','Flat','Phone / Links']],
+          body:items.map((it,i)=>[
+            i+1,
+            it.venture||'',
+            (it.speciality||'')+(it.desc?'\n'+(it.desc||'').substring(0,60)+'...':''),
+            it.contact||'',
+            it.flat||'',
+            ''
+          ]),
           columnStyles:{
             0:{cellWidth:10,halign:'center'},
             1:{cellWidth:35},2:{cellWidth:52},3:{cellWidth:30},4:{cellWidth:14,halign:'center'},5:{cellWidth:49}
@@ -812,35 +861,104 @@ function generatePDF(){
           headStyles:{fillColor:G,textColor:W,fontSize:8,fontStyle:'bold',halign:'center',cellPadding:3},
           bodyStyles:{fontSize:7.2,cellPadding:{top:3,bottom:3,left:2,right:2},textColor:[30,30,30]},
           alternateRowStyles:{fillColor:[240,250,243]},
-          didDrawCell(data){
-            if(data.column.index===5&&data.section==='body'){
-              const it=items[data.row.index];
-              if(!it) return;
-              const x=data.cell.x+1.5,y=data.cell.y+3.5,lh=4.5;
-              let dy=0;
-              if(it.phone){doc.setFontSize(7);doc.setTextColor(26,92,46);doc.setFont('helvetica','bold');doc.text('📞 '+it.phone,x,y+dy);doc.link(x,y+dy-3,42,4,{url:'tel:'+it.phone});dy+=lh;}
-              if(it.whatsapp){doc.setTextColor(37,211,102);doc.setFont('helvetica','normal');doc.text('💬 WA: '+it.whatsapp,x,y+dy);doc.link(x,y+dy-3,42,4,{url:'https://wa.me/91'+it.whatsapp});dy+=lh;}
-              if(it.instagram){const ig=it.instagram.startsWith('http')?it.instagram:`https://instagram.com/${it.instagram.replace('@','')}`;doc.setTextColor(225,48,108);doc.text('📸 '+it.instagram,x,y+dy);doc.link(x,y+dy-3,42,4,{url:ig});dy+=lh;}
-              if(it.url){doc.setTextColor(21,101,192);doc.text('🌐 '+it.url.replace(/https?:\/\//,'').substring(0,24),x,y+dy);doc.link(x,y+dy-3,42,4,{url:it.url});dy+=lh;}
-              if(it.video){doc.setTextColor(255,23,68);doc.text('▶ Video',x,y+dy);doc.link(x,y+dy-3,14,4,{url:it.video});}
-              doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
-            }
-          },
           didParseCell(data){
-            if(data.column.index===5&&data.section==='body'){
-              const it=items[data.row.index];
-              if(!it) return;
-              data.cell.text=[''];
-              let h=4;
-              if(it.phone)h+=4.5;if(it.whatsapp)h+=4.5;if(it.instagram)h+=4.5;if(it.url)h+=4.5;if(it.video)h+=4.5;
-              data.row.height=Math.max(12,h);
+            if(data.column.index!==5||data.section!=='body') return;
+            const serial=data.row.raw&&data.row.raw[0];
+            const it=itemBySerial[serial];
+            if(!it) return;
+            data.cell.text=[''];
+            let h=6;
+            if(it.phone)h+=4.5;
+            if(it.whatsapp)h+=4.5;
+            if(it.instagram)h+=4.5;
+            if(it.url)h+=4.5;
+            if(it.video)h+=4.5;
+            data.cell.styles.minCellHeight=Math.max(12,h);
+          },
+          didDrawCell(data){
+            if(data.column.index!==5||data.section!=='body') return;
+            const serial=data.row.raw&&data.row.raw[0];
+            const it=itemBySerial[serial];
+            if(!it) return;
+            const x=data.cell.x+1.5,y=data.cell.y+3.5,lh=4.5;
+            let dy=0;
+            doc.setFontSize(7);
+            if(it.phone){
+              doc.setTextColor(26,92,46);doc.setFont('helvetica','bold');
+              doc.text('Ph: '+it.phone,x,y+dy);
+              doc.link(x,y+dy-3,42,4,{url:'tel:'+it.phone});
+              dy+=lh;
             }
+            if(it.whatsapp){
+              doc.setTextColor(37,150,60);doc.setFont('helvetica','normal');
+              doc.text('WA: '+it.whatsapp,x,y+dy);
+              doc.link(x,y+dy-3,42,4,{url:'https://wa.me/91'+it.whatsapp});
+              dy+=lh;
+            }
+            if(it.instagram){
+              const ig=it.instagram.startsWith('http')?it.instagram:'https://instagram.com/'+it.instagram.replace('@','');
+              doc.setTextColor(180,40,100);
+              doc.text('IG: '+it.instagram,x,y+dy);
+              doc.link(x,y+dy-3,42,4,{url:ig});
+              dy+=lh;
+            }
+            if(it.url){
+              doc.setTextColor(21,101,192);
+              doc.text('Web: '+it.url.replace(/https?:\/\//,'').substring(0,22),x,y+dy);
+              doc.link(x,y+dy-3,42,4,{url:it.url});
+              dy+=lh;
+            }
+            if(it.video){
+              doc.setTextColor(200,20,20);
+              doc.text('Video',x,y+dy);
+              doc.link(x,y+dy-3,14,4,{url:it.video});
+            }
+            doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
           }
         });
       });
-      doc.save('PL_Business_Directory_May2026.pdf');
+
+      /* ── Credits page ── */
+      doc.addPage(); hdr(pg++);
+      doc.setFillColor(236,245,236);doc.rect(0,8,pw,ph-18,'F');
+      /* Gold accent line */
+      doc.setFillColor(...GOLD);doc.rect(0,8,pw,1.5,'F');
+      /* Decorative top line */
+      doc.setDrawColor(...GOLD);doc.setLineWidth(0.6);doc.line(30,50,pw-30,50);
+      /* Label */
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(100,130,100);
+      doc.text('CURATED WITH CARE BY',pw/2,62,{align:'center'});
+      /* Names */
+      doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(...G);
+      doc.text('Pratham & Harshit',pw/2,82,{align:'center'});
+      /* Underline accent */
+      doc.setDrawColor(...GOLD);doc.setLineWidth(1);doc.line(50,87,pw-50,87);
+      /* Tagline */
+      doc.setFont('helvetica','italic');doc.setFontSize(10);doc.setTextColor(...GOLD);
+      doc.text('Prateek Laurel Entrepreneurs Initiative',pw/2,100,{align:'center'});
+      /* Description */
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(70,100,70);
+      doc.text('This directory was built to bring the Prateek Laurel community closer together -',pw/2,120,{align:'center'});
+      doc.text('connecting residents with talented entrepreneurs right in their neighbourhood.',pw/2,128,{align:'center'});
+      /* Separator */
+      doc.setDrawColor(...G);doc.setLineWidth(0.3);doc.line(40,140,pw-40,140);
+      /* Contact numbers */
+      doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...G);
+      doc.text('For any query, connect with us:',pw/2,154,{align:'center'});
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(37,150,60);
+      doc.text('Pratham: +91 8373919344',70,163);
+      doc.link(70,159,62,6,{url:'https://wa.me/918373919344'});
+      doc.text('Harshit: +91 8826213763',122,163);
+      doc.link(122,159,62,6,{url:'https://wa.me/918826213763'});
+      /* Footer note */
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,150,120);
+      doc.text('Edition: '+edition,pw/2,178,{align:'center'});
+      /* Bottom decorative line */
+      doc.setDrawColor(...GOLD);doc.setLineWidth(0.6);doc.line(30,185,pw-30,185);
+
+      doc.save('PL_Business_Directory_'+edition.replace(' ','_')+'.pdf');
       showToast('PDF downloaded! ✓');
-    }catch(err){ console.error(err); alert('PDF error: '+err.message); }
+    }catch(err){ console.error('PDF error:',err); alert('PDF error: '+err.message); }
     btn.innerHTML='<i class="fa fa-file-pdf"></i> Download PDF'; btn.disabled=false;
   },120);
 }

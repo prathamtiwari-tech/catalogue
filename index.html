@@ -162,7 +162,47 @@ footer strong{color:var(--gold-light)}
   .form-grid{grid-template-columns:1fr}
   .hero{padding:28px 16px 22px}
   .tiles{grid-template-columns:1fr}
+  .ad-slide-img{width:72px;height:72px}
+  .ad-slide-name{font-size:1.1rem}
 }
+
+/* ── AD CAROUSEL ── */
+.ad-carousel{position:relative;width:100%;background:linear-gradient(135deg,#0f3d1e 0%,#1a5c2e 60%,#0f3d1e 100%);overflow:hidden;cursor:pointer;user-select:none}
+.ad-carousel-inner{display:flex;align-items:center;justify-content:center;height:130px;padding:0 20px;gap:24px;position:relative}
+.ad-slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:24px;padding:0 60px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+.ad-slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.ad-slide.exit{opacity:0;transform:translateX(-60px)}
+.ad-slide-img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);background:#1a5c2e;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ad-slide-img svg{width:54px;height:54px}
+.ad-slide-info{color:#fff;max-width:500px}
+.ad-slide-name{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--gold-light);margin:0 0 4px}
+.ad-slide-spec{font-size:.82rem;opacity:.85;margin:0 0 6px;line-height:1.4}
+.ad-slide-meta{display:flex;gap:14px;font-size:.76rem;opacity:.7}
+.ad-slide-meta span{display:flex;align-items:center;gap:4px}
+.ad-pause-badge{position:absolute;top:10px;right:14px;background:rgba(255,255,255,.15);color:#fff;font-size:.65rem;padding:3px 9px;border-radius:20px;letter-spacing:.08em;backdrop-filter:blur(6px)}
+.ad-dots{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.ad-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .3s,transform .3s}
+.ad-dot.active{background:var(--gold);transform:scale(1.3)}
+.ad-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.ad-nav:hover{background:rgba(255,255,255,.25)}
+.ad-nav.prev{left:10px}
+.ad-nav.next{right:10px}
+
+/* ── AD DETAIL MODAL ── */
+.ad-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+.ad-modal-overlay.open{opacity:1;pointer-events:auto}
+.ad-modal{background:#fff;border-radius:18px;max-width:420px;width:100%;overflow:hidden;transform:scale(.92);transition:transform .25s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.ad-modal-overlay.open .ad-modal{transform:scale(1)}
+.ad-modal-header{background:linear-gradient(135deg,#0f3d1e,#1a5c2e);padding:28px 24px 20px;text-align:center;position:relative}
+.ad-modal-header img,.ad-modal-header .ad-modal-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:#0f3d1e;overflow:hidden}
+.ad-modal-header svg{width:54px;height:54px}
+.ad-modal-title{color:var(--gold-light);font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin:0 0 4px}
+.ad-modal-spec{color:rgba(255,255,255,.8);font-size:.8rem}
+.ad-modal-body{padding:20px 24px}
+.ad-modal-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem;color:var(--text)}
+.ad-modal-row:last-child{border-bottom:none}
+.ad-modal-row i{color:var(--green);width:18px;text-align:center}
+.ad-modal-close{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
@@ -325,6 +365,28 @@ footer strong{color:var(--gold-light)}
   </div>
 </header>
 <div class="tagline-bar">Connect &nbsp;•&nbsp; Collaborate &nbsp;•&nbsp; Create &nbsp;•&nbsp; Grow</div>
+
+<!-- ── AD CAROUSEL ── -->
+<div class="ad-carousel" id="adCarousel">
+  <button class="ad-nav prev" id="adPrev" onclick="adNav(-1)">&#8249;</button>
+  <div class="ad-carousel-inner" id="adInner"></div>
+  <button class="ad-nav next" id="adNext" onclick="adNav(1)">&#8250;</button>
+  <div class="ad-dots" id="adDots"></div>
+  <div class="ad-pause-badge" id="adBadge">▶ Auto</div>
+</div>
+
+<!-- ── AD DETAIL MODAL ── -->
+<div class="ad-modal-overlay" id="adModalOverlay" onclick="closeAdModal(event)">
+  <div class="ad-modal">
+    <div class="ad-modal-header">
+      <button class="ad-modal-close" onclick="closeAdModal()">✕</button>
+      <div class="ad-modal-logo" id="adModalLogo"></div>
+      <div class="ad-modal-title" id="adModalTitle"></div>
+      <div class="ad-modal-spec" id="adModalSpec"></div>
+    </div>
+    <div class="ad-modal-body" id="adModalBody"></div>
+  </div>
+</div>
 
 <!-- ── ADMIN STICKY BANNER ── -->
 <div class="admin-banner" id="adminBanner">
@@ -1043,6 +1105,109 @@ async function publishToGitHub(){
     btn.disabled=false; btn.innerHTML='<i class="fa fa-cloud-arrow-up"></i> Publish to GitHub';
   }
 }
+
+/* ═══════════ AD CAROUSEL ═══════════ */
+(function(){
+  const INTERVAL = 4000;
+  let cur = 0, paused = false, timer = null, slides = [], items = [];
+
+  function pickItems(){
+    const all = DATA.filter(d=>d.venture&&d.phone);
+    const shuffled = all.slice().sort(()=>Math.random()-.5);
+    return shuffled.slice(0, Math.min(20, shuffled.length));
+  }
+
+  function imgHTML(item){
+    const img = IMGS[item.id];
+    if(img) return `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+    return PL_LOGO_SVG;
+  }
+
+  function buildSlides(){
+    items = pickItems();
+    const inner = document.getElementById('adInner');
+    const dots  = document.getElementById('adDots');
+    inner.innerHTML = ''; dots.innerHTML = '';
+    slides = [];
+    items.forEach((item, i)=>{
+      const sl = document.createElement('div');
+      sl.className = 'ad-slide' + (i===0?' active':'');
+      sl.innerHTML = `
+        <div class="ad-slide-img">${imgHTML(item)}</div>
+        <div class="ad-slide-info">
+          <div class="ad-slide-name">${item.venture}</div>
+          <div class="ad-slide-spec">${item.speciality||''}</div>
+          <div class="ad-slide-meta">
+            <span><i class="fa fa-location-dot"></i> Flat ${item.flat}</span>
+            <span><i class="fa fa-phone"></i> ${item.phone}</span>
+          </div>
+        </div>`;
+      sl.addEventListener('click', ()=>{ pauseAd(); openAdModal(item); });
+      inner.appendChild(sl);
+      slides.push(sl);
+
+      const dot = document.createElement('div');
+      dot.className = 'ad-dot'+(i===0?' active':'');
+      dots.appendChild(dot);
+    });
+  }
+
+  function goTo(n){
+    const total = slides.length;
+    if(!total) return;
+    slides[cur].classList.add('exit');
+    slides[cur].classList.remove('active');
+    setTimeout(()=>{ slides[cur] && slides[cur].classList.remove('exit'); }, 550);
+    cur = (n + total) % total;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.ad-dot').forEach((d,i)=> d.classList.toggle('active', i===cur));
+  }
+
+  function startAd(){
+    timer = setInterval(()=>{ if(!paused) goTo(cur+1); }, INTERVAL);
+  }
+
+  function pauseAd(){
+    paused = true;
+    document.getElementById('adBadge').textContent = '⏸ Paused — click to resume';
+    document.getElementById('adCarousel').addEventListener('click', resumeAd, {once:true});
+  }
+
+  function resumeAd(){
+    paused = false;
+    document.getElementById('adBadge').textContent = '▶ Auto';
+  }
+
+  window.adNav = function(dir){
+    pauseAd();
+    goTo(cur + dir);
+  };
+
+  /* ── AD DETAIL MODAL ── */
+  window.openAdModal = function(item){
+    document.getElementById('adModalLogo').innerHTML = imgHTML(item);
+    document.getElementById('adModalTitle').textContent = item.venture;
+    document.getElementById('adModalSpec').textContent  = item.speciality||'';
+    const wa  = item.whatsapp||item.phone;
+    const rows = [
+      item.flat    ? `<div class="ad-modal-row"><i class="fa fa-location-dot"></i> Flat ${item.flat}, Prateek Laurel Society</div>` : '',
+      item.contact ? `<div class="ad-modal-row"><i class="fa fa-user"></i> ${item.contact}</div>` : '',
+      item.phone   ? `<div class="ad-modal-row"><i class="fa fa-phone"></i> <a href="tel:${item.phone}" style="color:var(--green);font-weight:600">${item.phone}</a></div>` : '',
+      wa           ? `<div class="ad-modal-row"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> <a href="https://wa.me/91${wa}" target="_blank" style="color:#25d366;font-weight:600">Chat on WhatsApp</a></div>` : '',
+      item.desc    ? `<div class="ad-modal-row" style="align-items:flex-start"><i class="fa fa-info-circle" style="margin-top:2px"></i> <span style="opacity:.8;font-size:.83rem">${item.desc}</span></div>` : '',
+    ].join('');
+    document.getElementById('adModalBody').innerHTML = rows;
+    document.getElementById('adModalOverlay').classList.add('open');
+  };
+
+  window.closeAdModal = function(e){
+    if(e && e.target !== document.getElementById('adModalOverlay')) return;
+    document.getElementById('adModalOverlay').classList.remove('open');
+  };
+
+  buildSlides();
+  startAd();
+})();
 
 /* ═══════════ INIT ═══════════ */
 (function(){

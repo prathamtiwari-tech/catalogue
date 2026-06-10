@@ -474,7 +474,7 @@ const CATS = [
   {id:'hlth', name:'Health & Professional Services',  icon:'fa-briefcase-medical'},
 ];
 
-/* ═══════════ SEED DATA ═══════════ */
+/* SEED_START */
 const SEED = [
   /* Food */
   {id:'f1', cat:'Food, Bakery & Beverages', venture:'Assam Tea', speciality:'Tea', desc:'Authentic premium Assam tea sourced directly from the gardens of Assam. Available in CTC and loose-leaf variants.', contact:'Pradyuth Dutta', flat:'G-1407', phone:'9643776179', whatsapp:'9643776179', instagram:'', video:'', url:''},
@@ -577,6 +577,7 @@ const SEED = [
   {id:'p14',cat:'Health & Professional Services', venture:'Taxyojna Consultants', speciality:'Income Tax, GST, MCA & Litigation', desc:'Expert chartered accountant services — income tax filing, GST compliance, MCA filings and litigation support by CA Preeti Gupta.', contact:'CA Preeti Gupta', flat:'N-206', phone:'8447033883', whatsapp:'', instagram:'', video:'', url:''},
   {id:'p15',cat:'Health & Professional Services', venture:'Yc Productionz', speciality:'Photography, Videography, Video Editing & Social Media Marketing', desc:'Professional photography, videography, video editing and social media marketing services. Capture your moments and grow your digital presence.', contact:'Yashasvi Chugh', flat:'E-402', phone:'8708287403', whatsapp:'', instagram:'', video:'', url:''},
 ];
+/* SEED_END */
 
 /* ═══════════ STATE ═══════════ */
 const PASS = 'pl2026';
@@ -589,10 +590,7 @@ let isAdmin = false, activeFilter = 'All', editingId = null, pendingImg = null;
 function loadData(){
   try{
     const s=localStorage.getItem('pl_dir_v3');
-    if(s){
-      const cached=JSON.parse(s);
-      if(Array.isArray(cached)&&cached.length>=SEED.length) return cached;
-    }
+    if(s){ const c=JSON.parse(s); if(Array.isArray(c)&&c.length) return c; }
     return JSON.parse(JSON.stringify(SEED));
   }catch(e){ return JSON.parse(JSON.stringify(SEED)); }
 }
@@ -1073,32 +1071,56 @@ function showToast(msg){
 }
 
 /* ═══════════ PUBLISH ═══════════ */
+async function pushFile(path, content, msg){
+  const encoded = btoa(unescape(encodeURIComponent(content)));
+  let sha = '';
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,{
+      headers:{'Authorization':`token ${githubToken}`,'Accept':'application/vnd.github.v3+json'}
+    });
+    if(r.ok){ const d=await r.json(); sha=d.sha||''; }
+  }catch(e){}
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,{
+    method:'PUT',
+    headers:{'Authorization':`token ${githubToken}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+    body:JSON.stringify({message:msg,content:encoded,...(sha?{sha}:{})})
+  });
+  return res;
+}
+
 async function publishToGitHub(){
   if(!githubToken){ showToast('No GitHub token — log in again with a token to publish'); return; }
   const btn=document.getElementById('publishBtn');
   btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Publishing…';
   try{
-    const dataStr=JSON.stringify(DATA,null,2);
-    const content=btoa(unescape(encodeURIComponent(dataStr)));
-    let sha='';
+    /* 1 — push catalogue-data.json */
+    const dataStr = JSON.stringify(DATA,null,2);
+    const r1 = await pushFile(DATA_FILE, dataStr, 'Update catalogue data');
+    if(!r1.ok){ const e=await r1.json(); showToast(`JSON error: ${e.message}`); return; }
+
+    /* 2 — fetch current index.html from GitHub, patch SEED, push back */
     try{
-      const r=await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${DATA_FILE}`,{
-        headers:{'Authorization':`token ${githubToken}`,'Accept':'application/vnd.github.v3+json'}
-      });
-      if(r.ok){ const d=await r.json(); sha=d.sha; }
-    }catch(e){}
-    const body={message:'Update catalogue data',content,...(sha?{sha}:{})};
-    const res=await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${DATA_FILE}`,{
-      method:'PUT',
-      headers:{'Authorization':`token ${githubToken}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
-      body:JSON.stringify(body)
-    });
-    if(res.ok){
-      showToast('Published to GitHub! Changes live within seconds ✓');
-    } else {
-      const err=await res.json();
-      showToast(`GitHub error: ${err.message}`);
-    }
+      const htmlRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/index.html`,
+        {headers:{'Authorization':`token ${githubToken}`,'Accept':'application/vnd.github.v3+json'}}
+      );
+      if(htmlRes.ok){
+        const htmlMeta = await htmlRes.json();
+        /* decode base64 → utf-8 */
+        const raw = decodeURIComponent(escape(atob(htmlMeta.content.replace(/\n/g,''))));
+        /* build compact JS seed block from current DATA */
+        const seedLines = DATA.map(item=>{
+          const f = v => JSON.stringify(v??'');
+          return `  {id:${f(item.id)},cat:${f(item.cat)},venture:${f(item.venture)},speciality:${f(item.speciality)},desc:${f(item.desc)},contact:${f(item.contact)},flat:${f(item.flat)},phone:${f(item.phone)},whatsapp:${f(item.whatsapp)},instagram:${f(item.instagram)},video:${f(item.video)},url:${f(item.url)}}`;
+        }).join(',\n');
+        const newSeed = `/* SEED_START */\nconst SEED = [\n${seedLines},\n];\n/* SEED_END */`;
+        const patched = raw.replace(/\/\* SEED_START \*\/[\s\S]*?\/\* SEED_END \*\//, newSeed);
+        const r2 = await pushFile('index.html', patched, 'Sync SEED data in index.html');
+        if(!r2.ok){ const e=await r2.json(); console.warn('index.html patch failed:',e.message); }
+      }
+    }catch(e){ console.warn('index.html patch skipped:',e.message); }
+
+    showToast('Published! Both JSON & HTML updated on GitHub ✓');
   }catch(e){
     showToast(`Error: ${e.message}`);
   }finally{

@@ -1265,8 +1265,12 @@ async function saveTile(){
   closeModal('tileModal'); renderAll();
   if(isAdmin) renderAdminTab(_adminTab);
   showToast(editingId?'Listing updated ✓':'New listing added ✓');
-  // Save to Firestore in background
-  fsSaveVendor(obj).catch(e=>console.warn('Firestore save failed:',e.message));
+  // Save to Firestore
+  if(db){
+    const uid = window._adminUid || auth?.currentUser?.uid || null;
+    if(!uid){ showToast('⚠️ Not saved to cloud — log into admin with Firebase email+password first'); return; }
+    fsSaveVendor(obj).then(()=>showToast('Saved to Firestore ✓')).catch(e=>showToast('Cloud save failed: '+e.message));
+  }
 }
 async function deleteTile(id){
   if(!confirm('Delete this listing? This cannot be undone.')) return;

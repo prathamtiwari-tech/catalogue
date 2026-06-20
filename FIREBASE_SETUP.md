@@ -61,7 +61,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
     function isSignedIn() {
       return request.auth != null;
     }
@@ -70,43 +69,33 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
-    function isAdmin() {
-      return isSignedIn() && request.auth.token.admin == true;
-    }
-
-    // Vendors: public read, write only by owner or admin
     match /vendors/{vendorId} {
       allow read: if true;
       allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
-      allow update, delete: if isAdmin() || (
-        isSignedIn() && resource.data.ownerUid == request.auth.uid
-      );
+      allow update, delete: if isSignedIn() && resource.data.ownerUid == request.auth.uid;
     }
 
-    // Accounts: only the account owner can read/write their own doc
     match /accounts/{uid} {
-      allow read: if isOwner(uid);
-      allow create, update, delete: if isOwner(uid);
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(uid);
+      allow delete: if isSignedIn();
     }
 
-    // Site config: public read, admin-only writes
     match /config/{doc} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isSignedIn();
     }
 
-    // Stats: public read, restricted writes
     match /stats/{vendorId} {
       allow read: if true;
       allow create, update: if isSignedIn() && request.resource.data.vendorId == vendorId;
-      allow delete: if isAdmin();
+      allow delete: if isSignedIn();
     }
 
-    // Order logs: authenticated users can create/read, admin can manage
     match /order_logs/{logId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn();
-      allow update, delete: if isAdmin();
+      allow update, delete: if isSignedIn();
     }
   }
 }

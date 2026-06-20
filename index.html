@@ -309,6 +309,32 @@ footer strong{color:var(--gold-light)}
   </div>
 </div>
 
+<!-- ── RE-AUTH POPUP (session expired) ── -->
+<div class="modal-overlay" id="reAuthModal" style="z-index:400">
+  <div class="modal" style="max-width:340px;text-align:center">
+    <div style="font-size:2rem;margin-bottom:6px">🔒</div>
+    <div class="modal-title" style="justify-content:center;margin-bottom:4px">Session Expired</div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px">Your Firebase session has expired. Please sign in again to continue.</p>
+    <div style="text-align:left">
+      <div class="form-group" style="margin-bottom:10px">
+        <label>Firebase Email</label>
+        <input type="email" id="reAuthEmail" placeholder="admin@email.com"
+          onkeydown="if(event.key==='Enter')_reAuthSubmit()">
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Firebase Password</label>
+        <input type="password" id="reAuthPw" placeholder="Password"
+          onkeydown="if(event.key==='Enter')_reAuthSubmit()">
+      </div>
+      <p id="reAuthErr" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn btn-primary" onclick="_reAuthSubmit()"><i class="fa fa-right-to-bracket"></i> Sign In</button>
+        <button class="btn btn-ghost" onclick="_reAuthCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── ADD/EDIT TILE MODAL ── -->
 <div class="modal-overlay" id="tileModal">
   <div class="modal">
@@ -792,6 +818,8 @@ async function fsLoadVendors(){
 
 async function fsSaveVendor(data){
   if(!db) return;
+  const ok = await ensureAdminAuth();
+  if(!ok) throw new Error('Not authenticated');
   const uid = window._adminUid || auth?.currentUser?.uid || null;
   const toWrite = uid ? {...data, ownerUid: data.ownerUid || uid} : data;
   await db.collection('vendors').doc(toWrite.id).set(toWrite);
@@ -816,12 +844,53 @@ async function fsLoadConfig(){
   }catch(e){}
 }
 
+/* ── Re-auth on session expiry ── */
+let _reAuthResolve = null, _reAuthReject = null;
+
+function ensureAdminAuth(){
+  if(!auth) return Promise.resolve(false);
+  if(auth.currentUser) return Promise.resolve(true);
+  // Pre-fill email from admin login form if available
+  const savedEmail = document.getElementById('adminFbEmail')?.value || '';
+  if(savedEmail) document.getElementById('reAuthEmail').value = savedEmail;
+  document.getElementById('reAuthErr').style.display = 'none';
+  document.getElementById('reAuthModal').classList.add('open');
+  setTimeout(()=>{ const el=document.getElementById(savedEmail?'reAuthPw':'reAuthEmail'); if(el) el.focus(); }, 120);
+  return new Promise((resolve, reject)=>{ _reAuthResolve=resolve; _reAuthReject=reject; });
+}
+
+async function _reAuthSubmit(){
+  const email = document.getElementById('reAuthEmail').value.trim();
+  const pw    = document.getElementById('reAuthPw').value;
+  const errEl = document.getElementById('reAuthErr');
+  if(!email||!pw){ errEl.textContent='Enter email and password'; errEl.style.display='block'; return; }
+  try{
+    const cred = await auth.signInWithEmailAndPassword(email, pw);
+    window._adminUid = cred.user.uid;
+    sessionStorage.setItem('hb_adminUid', cred.user.uid);
+    document.getElementById('reAuthModal').classList.remove('open');
+    document.getElementById('reAuthPw').value='';
+    errEl.style.display='none';
+    if(_reAuthResolve){ _reAuthResolve(true); _reAuthResolve=null; }
+  }catch(e){
+    errEl.textContent = e.code==='auth/wrong-password'||e.code==='auth/user-not-found' ? 'Incorrect email or password' : e.message;
+    errEl.style.display='block';
+  }
+}
+
+function _reAuthCancel(){
+  document.getElementById('reAuthModal').classList.remove('open');
+  if(_reAuthReject){ _reAuthReject(new Error('cancelled')); _reAuthReject=null; }
+}
+
 async function fsSaveConfig(patch){
   SITE_CONFIG = {...SITE_CONFIG, ...patch};
   try{ localStorage.setItem('pl_site_config', JSON.stringify(SITE_CONFIG)); }catch(e){}
   if(db){
-    db.collection('config').doc('site').set(SITE_CONFIG,{merge:true})
-      .catch(e=>console.warn('Config Firestore save failed:',e.message));
+    try{
+      const ok = await ensureAdminAuth();
+      if(ok) await db.collection('config').doc('site').set(SITE_CONFIG,{merge:true});
+    }catch(e){}
   }
 }
 
@@ -1156,26 +1225,44 @@ async function checkPassword(){
   // does NOT sign the user back out.
   isAdmin = true;
 
-  const fbEmail = (document.getElementById('adminFbEmail').value||'').trim();
-  const fbPw    = document.getElementById('adminFbPw').value;
-  if(auth && fbEmail && fbPw){
-    try{
-      const cred = await auth.signInWithEmailAndPassword(fbEmail, fbPw);
-      window._adminUid = cred.user.uid;
-      sessionStorage.setItem('hb_adminUid', cred.user.uid);
-    }catch(e){
-      isAdmin = false; // revert if Firebase login fails
-      document.getElementById('loginErr').textContent = 'Firebase login failed: '+e.message;
-      document.getElementById('loginErr').style.display = 'block';
-      return;
+  if(auth){
+    // Wait for Firebase Auth to finish restoring any persisted session
+    let currentUser = auth.currentUser;
+    if(!currentUser){
+      currentUser = await new Promise(resolve=>{
+        const unsub = auth.onAuthStateChanged(u=>{ unsub(); resolve(u); });
+      });
+    }
+
+    if(currentUser){
+      // Firebase session already active (persisted from previous login) — reuse it
+      window._adminUid = currentUser.uid;
+      sessionStorage.setItem('hb_adminUid', currentUser.uid);
+    } else {
+      // No active session — sign in with credentials
+      const fbEmail = (document.getElementById('adminFbEmail').value||'').trim();
+      const fbPw    = document.getElementById('adminFbPw').value;
+      if(fbEmail && fbPw){
+        try{
+          const cred = await auth.signInWithEmailAndPassword(fbEmail, fbPw);
+          window._adminUid = cred.user.uid;
+          sessionStorage.setItem('hb_adminUid', cred.user.uid);
+        }catch(e){
+          isAdmin = false;
+          document.getElementById('loginErr').textContent = 'Firebase login failed: '+e.message;
+          document.getElementById('loginErr').style.display = 'block';
+          return;
+        }
+      }
     }
   }
+
   closeModal('loginModal');
   document.getElementById('adminBanner').style.display = 'block';
   switchPanel('admin');
   updatePanelTabs();
   renderAll();
-  showToast(fbEmail ? 'Admin mode activated — Firebase connected ✓' : 'Admin mode activated ✓');
+  showToast(window._adminUid ? 'Admin mode activated — Firebase connected ✓' : 'Admin mode activated ✓');
 }
 async function exitAdmin(){
   if(auth && auth.currentUser && !currentSeller){
@@ -2184,8 +2271,8 @@ async function migrateFromSeed(){
   document.getElementById('editionHeader').textContent = ed;
   document.getElementById('editionFooter').textContent = ed;
 
-  // Load site config from Firestore (non-blocking)
-  fsLoadConfig().catch(()=>{});
+  // Load site config from Firestore, then rebuild carousel with fresh featured list
+  fsLoadConfig().then(()=>{ if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
 
   // Set up seller auth listener
   setupSellerAuth();

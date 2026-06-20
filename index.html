@@ -773,7 +773,10 @@ if(FB_READY){
 /* ═══════════ STATE ═══════════ */
 const PASS = 'pl2026';
 let githubToken = '';
-let isAdmin = false, currentSeller = null; // currentSeller = {uid, email, vendorId, displayName}
+// Restore admin session from sessionStorage (survives page refresh, cleared on logout/tab close)
+const _restoredAdminUid = sessionStorage.getItem('hb_adminUid');
+let isAdmin = !!_restoredAdminUid, currentSeller = null;
+if(_restoredAdminUid) window._adminUid = _restoredAdminUid;
 let activeFilter = 'All', editingId = null, pendingImg = null;
 let SITE_CONFIG = {};
 
@@ -889,8 +892,8 @@ function setupSellerAuth(){
           updatePanelTabs();
           switchPanel('seller');
         } else {
-          // No account doc found — not a registered seller, sign out
-          await auth.signOut();
+          // No account doc — could be admin. Never sign out silently.
+          // Admin session is protected by isAdmin flag restored from sessionStorage.
         }
       }catch(e){ console.warn('Auth state error:',e); }
     } else {
@@ -995,7 +998,7 @@ function makeTile(item, sno, cat){
   /* Links */
   let links = '';
   if(item.phone)     links += `<a class="tile-link tl-phone" href="tel:${item.phone}"><i class="fa fa-phone"></i>${item.phone}</a>`;
-  if(item.whatsapp)  links += `<a class="tile-link tl-wa" href="https://wa.me/91${item.whatsapp}" target="_blank"><i class="fab fa-whatsapp"></i>${item.whatsapp}</a>`;
+  if(item.whatsapp)  links += `<a class="tile-link tl-wa" href="https://wa.me/91${item.whatsapp}" target="_blank" onclick="fsRecordStat('${item.id}','whatsappClicks')"><i class="fab fa-whatsapp"></i>${item.whatsapp}</a>`;
   if(item.instagram){
     const ig = item.instagram.startsWith('http')?item.instagram:`https://instagram.com/${item.instagram.replace('@','')}`;
     links += `<a class="tile-link tl-ig" href="${ig}" target="_blank"><i class="fab fa-instagram"></i>${item.instagram}</a>`;
@@ -1053,7 +1056,7 @@ function openMenuModal(vendorId){
     list.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--text-muted)">
       <i class="fa fa-utensils" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
       <p style="margin-bottom:14px">No menu added yet — contact seller directly.</p>
-      ${wa?`<a class="btn btn-green" href="https://wa.me/91${wa}" target="_blank" style="text-decoration:none">
+      ${wa?`<a class="btn btn-green" href="https://wa.me/91${wa}" target="_blank" style="text-decoration:none" onclick="fsRecordStat('${vendorId}','whatsappClicks')">
         <i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>`:''}
     </div>`;
     document.getElementById('menuOrderBtn').style.display = 'none';
@@ -1115,6 +1118,7 @@ function placeOrder(){
   window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`, '_blank');
   // Record stats
   fsRecordStat(_menuVendor.id,'orderClicks');
+  fsRecordStat(_menuVendor.id,'whatsappClicks');
   fsLogOrder(_menuVendor.id,_menuVendor.venture,
     chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]})),
     total, flat);
@@ -1157,8 +1161,8 @@ async function checkPassword(){
   if(auth && fbEmail && fbPw){
     try{
       const cred = await auth.signInWithEmailAndPassword(fbEmail, fbPw);
-      // Cache UID directly from credential — don't rely on auth.currentUser timing
       window._adminUid = cred.user.uid;
+      sessionStorage.setItem('hb_adminUid', cred.user.uid);
     }catch(e){
       isAdmin = false; // revert if Firebase login fails
       document.getElementById('loginErr').textContent = 'Firebase login failed: '+e.message;
@@ -1179,6 +1183,7 @@ async function exitAdmin(){
   }
   isAdmin = false;
   window._adminUid = null;
+  sessionStorage.removeItem('hb_adminUid');
   document.getElementById('adminBanner').style.display = 'none';
   switchPanel('customer');
   updatePanelTabs();

@@ -200,17 +200,101 @@ footer strong{color:var(--gold-light)}
 .order-btn:hover{opacity:.88}
 
 @media(max-width:640px){
-  .header-inner,.controls,.grid-container,.admin-banner{padding-left:16px;padding-right:16px}
-  .admin-banner{top:78px}
-  .brand-text h1{font-size:1rem}
+  /* Prevent any element from causing horizontal scroll */
+  body{overflow-x:hidden}
+
+  /* ── HEADER ── */
+  .header-inner{
+    padding:8px 14px;
+    flex-wrap:wrap;
+    gap:6px;
+    row-gap:8px;
+  }
+  /* Brand shrinks but stays visible */
+  .brand{flex:1;min-width:0;gap:8px}
+  .logo-wrap{width:44px;height:44px;flex-shrink:0}
+  .logo-wrap svg{width:36px;height:36px}
+  .brand-text h1{font-size:.9rem}
+  .brand-text p{font-size:.58rem;display:none} /* hide long subtitle on tiny screens */
+  /* hdrRight (login/logout button) stays on same row as brand */
+  #hdrRight{flex-shrink:0}
+  #hdrRight .btn{padding:6px 10px;font-size:.72rem}
+  /* Panel tabs go full-width on second row */
+  #panelTabs{order:3;width:100%;justify-content:center;background:rgba(255,255,255,.08);border-radius:8px;padding:3px}
+  .panel-tab-btn{flex:1;justify-content:center;padding:6px 4px;font-size:.72rem;gap:4px}
+
+  /* ── ADMIN BANNER ── */
+  .admin-banner{position:sticky;top:0} /* reset sticky — header wraps so fixed top offset breaks */
+  .admin-banner-inner{flex-direction:column;align-items:flex-start;gap:8px;padding:8px 0}
+  .admin-tools{flex-wrap:wrap;gap:6px;width:100%}
+  .admin-tools .btn{font-size:.71rem;padding:5px 9px;flex:1;justify-content:center;min-width:calc(50% - 6px)}
+
+  /* ── HERO ── */
+  .hero{padding:20px 14px 16px}
+  .hero h2{font-size:1.4rem}
+  .stats-row{gap:10px}
+  .stat-box{min-width:80px;padding:8px 14px}
+  .stat-box .num{font-size:1.4rem}
+
+  /* ── CONTROLS ── */
+  .controls{padding:0 14px;gap:10px}
+  .search-wrap{min-width:100%;max-width:100%;flex:none}
+  .cat-tabs{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+  .cat-tab{white-space:nowrap;flex-shrink:0}
+
+  /* ── GRID ── */
+  .grid-container{padding:0 12px;margin-bottom:40px}
+  .tiles{grid-template-columns:1fr;gap:14px}
+
+  /* ── MODALS ── */
+  .modal-overlay{padding:0;align-items:flex-end} /* slide up from bottom on mobile */
+  .modal{
+    padding:18px 16px;
+    border-radius:18px 18px 0 0;
+    max-height:90vh;
+    width:100%;
+    max-width:100%;
+  }
   .form-grid{grid-template-columns:1fr}
-  .hero{padding:28px 16px 22px}
-  .tiles{grid-template-columns:1fr}
-  .ad-slide-img{width:72px;height:72px}
-  .ad-slide-name{font-size:1.1rem}
-  .panel-tabs{gap:2px}
-  .panel-tab-btn{padding:5px 9px;font-size:.72rem}
-  #panel-seller,#panel-admin{padding-left:14px;padding-right:14px}
+  .modal-actions{flex-wrap:wrap;gap:8px}
+  .modal-actions .btn{flex:1;justify-content:center;min-width:calc(50% - 8px)}
+
+  /* ── SELLER / ADMIN PANELS ── */
+  #panel-seller{padding:0 12px 40px;margin:16px auto}
+  #panel-admin{padding:0 12px 40px;margin:0 auto}
+  .s-card{padding:16px;overflow-x:auto}
+  .s-card-title{font-size:.95rem;flex-wrap:wrap;gap:6px}
+  .admin-tab-nav{overflow-x:auto;gap:0}
+  .admin-tab-btn{padding:9px 12px;font-size:.76rem}
+
+  /* ── TABLES ── */
+  .menu-table{font-size:.75rem;min-width:480px} /* allow horizontal scroll inside s-card */
+  .menu-table th,.menu-table td{padding:7px 6px}
+
+  /* ── AD CAROUSEL ── */
+  .ad-carousel-inner{height:110px}
+  .ad-slide{padding:0 36px}
+  .ad-slide-img{width:64px;height:64px}
+  .ad-slide-name{font-size:.95rem}
+  .ad-slide-meta{gap:8px;font-size:.68rem}
+
+  /* ── TOAST ── */
+  .toast{left:12px;right:12px;bottom:12px;font-size:.8rem}
+
+  /* ── STAT CARDS ── */
+  .stat-cards-row{grid-template-columns:1fr 1fr}
+
+  /* ── MENU MODAL (order) ── */
+  .menu-item-row{flex-wrap:wrap;gap:8px}
+  .qty-ctrl{margin-left:auto}
+
+  /* ── AD DETAIL MODAL ── */
+  .ad-modal-overlay{padding:0;align-items:flex-end}
+  .ad-modal{border-radius:18px 18px 0 0;max-width:100%;width:100%}
+
+  /* ── FORM GRID inside s-card ── */
+  .s-card .form-grid{grid-template-columns:1fr}
+  .s-card .form-group.full{grid-column:1}
 }
 
 /* ── AD CAROUSEL ── */

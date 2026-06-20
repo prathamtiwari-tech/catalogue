@@ -1829,19 +1829,9 @@ async function publishToGitHub(){
 
   /* ── AD DETAIL MODAL ── */
   window.openAdModal = function(item){
-    document.getElementById('adModalLogo').innerHTML = imgHTML(item);
-    document.getElementById('adModalTitle').textContent = item.venture;
-    document.getElementById('adModalSpec').textContent  = item.speciality||'';
-    const wa  = item.whatsapp||item.phone;
-    const rows = [
-      item.flat    ? `<div class="ad-modal-row"><i class="fa fa-location-dot"></i> Flat ${item.flat}, Prateek Laurel Society</div>` : '',
-      item.contact ? `<div class="ad-modal-row"><i class="fa fa-user"></i> ${item.contact}</div>` : '',
-      item.phone   ? `<div class="ad-modal-row"><i class="fa fa-phone"></i> <a href="tel:${item.phone}" style="color:var(--green);font-weight:600">${item.phone}</a></div>` : '',
-      wa           ? `<div class="ad-modal-row"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> <a href="https://wa.me/91${wa}" target="_blank" style="color:#25d366;font-weight:600">Chat on WhatsApp</a></div>` : '',
-      item.desc    ? `<div class="ad-modal-row" style="align-items:flex-start"><i class="fa fa-info-circle" style="margin-top:2px"></i> <span style="opacity:.8;font-size:.83rem">${item.desc}</span></div>` : '',
-    ].join('');
-    document.getElementById('adModalBody').innerHTML = rows;
-    document.getElementById('adModalOverlay').classList.add('open');
+    // Just open the full menu modal — same experience as clicking the vendor tile
+    closeAdModal();
+    openMenuModal(item.id);
   };
 
   window.closeAdModal = function(e){

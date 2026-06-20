@@ -2049,21 +2049,37 @@ async function renderAdminStats(c){
 
 /* ── Migration ── */
 async function migrateFromSeed(){
-  if(!db){showToast('Firebase not configured');return;}
-  if(!confirm(`Migrate all ${SEED.length} SEED vendors to Firestore? Existing docs with same ID will be overwritten.`)) return;
+  if(!db){ showToast('Firebase not configured'); return; }
+
+  // Firestore create rule requires ownerUid == auth.uid — admin must be signed in
+  const adminUid = auth?.currentUser?.uid;
+  if(!adminUid){
+    showToast('Sign in with your Firebase admin account first (enter email + password in the Admin login form)');
+    return;
+  }
+
+  if(!confirm(`Migrate all ${SEED.length} vendors to Firestore?\nYour Firebase UID will be set as ownerUid on each vendor.`)) return;
   showToast('Migrating…');
   try{
-    const batch=db.batch();
-    SEED.forEach(item=>{
-      const ref=db.collection('vendors').doc(item.id);
-      batch.set(ref,{...item,menu:[],ownerId:null},{merge:true});
-    });
-    await batch.commit();
-    const vendors=await fsLoadVendors();
-    if(vendors){DATA=vendors;saveData(DATA);renderAll();}
+    // Firestore batch limit is 500 — split into chunks of 400 to be safe
+    const chunks = [];
+    for(let i=0; i<SEED.length; i+=400) chunks.push(SEED.slice(i,i+400));
+
+    for(const chunk of chunks){
+      const batch = db.batch();
+      chunk.forEach(item=>{
+        const ref = db.collection('vendors').doc(item.id);
+        // ownerUid must equal auth.currentUser.uid to satisfy Firestore create rule
+        batch.set(ref, {...item, menu:[], ownerUid: adminUid}, {merge:true});
+      });
+      await batch.commit();
+    }
+
+    const vendors = await fsLoadVendors();
+    if(vendors){ DATA=vendors; saveData(DATA); renderAll(); }
     showToast(`Migrated ${SEED.length} vendors to Firestore ✓`);
     renderAdminOverview(document.getElementById('adminTabContent'));
-  }catch(e){showToast('Migration failed: '+e.message);}
+  }catch(e){ showToast('Migration failed: '+e.message); console.error(e); }
 }
 
 /* ═══════════ INIT ═══════════ */

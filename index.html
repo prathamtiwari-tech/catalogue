@@ -548,7 +548,7 @@ footer strong{color:var(--gold-light)}
     </a>
     <!-- Panel tabs (seller/admin tabs appear after login) -->
     <div class="panel-tabs" id="panelTabs">
-      <button class="panel-tab-btn active" data-panel="customer" onclick="switchPanel('customer')">
+      <button class="panel-tab-btn active" id="browseTab" data-panel="customer" onclick="switchPanel('customer')">
         <i class="fa fa-store"></i> Browse
       </button>
       <button class="panel-tab-btn" data-panel="seller" id="sellerPanelTab" style="display:none" onclick="switchPanel('seller')">
@@ -1080,6 +1080,12 @@ function updatePanelTabs(){
   const hdrRight  = document.getElementById('hdrRight');
   if(sellerTab) sellerTab.style.display = currentSeller ? 'inline-flex' : 'none';
   if(adminTab)  adminTab.style.display  = isAdmin       ? 'inline-flex' : 'none';
+  // Show Browse tab and the whole tab bar only when other tabs are visible
+  const hasOtherTabs = currentSeller || isAdmin;
+  const browseTab = document.getElementById('browseTab');
+  const panelTabs = document.getElementById('panelTabs');
+  if(browseTab) browseTab.style.display = hasOtherTabs ? 'inline-flex' : 'none';
+  if(panelTabs) panelTabs.style.display = hasOtherTabs ? 'flex' : 'none';
   if(hdrRight){
     if(currentSeller){
       hdrRight.innerHTML = `<span style="font-size:.78rem;color:rgba(255,255,255,.8);margin-right:6px">${currentSeller.displayName}</span>

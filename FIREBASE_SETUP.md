@@ -1,0 +1,131 @@
+# Firebase Setup Guide — Homebiz
+
+## Step 1 — Create a Firebase project (5 min)
+
+1. Go to https://console.firebase.google.com
+2. Click **Add project** → name it `homebiz` → Continue
+3. Disable Google Analytics (not needed) → Create project
+
+## Step 2 — Enable Firestore
+
+1. In the left sidebar: **Build → Firestore Database**
+2. Click **Create database**
+3. Choose **Start in production mode** → Next
+4. Pick region `asia-south1` (Mumbai) → Enable
+
+## Step 3 — Enable Authentication
+
+1. In the left sidebar: **Build → Authentication**
+2. Click **Get started**
+3. Under **Sign-in providers**, enable **Email/Password** → Save
+
+## Step 4 — Get your config
+
+1. In the left sidebar: Click the **gear icon ⚙** → **Project settings**
+2. Scroll to **Your apps** → Click **Web** (`</>` icon) → Register app (name: `homebiz-web`)
+3. On the next screen, choose **Use a `<script>` tag** (this project uses Firebase from the CDN, so this is the correct option)
+4. Click **Continue to console** (or **Next** if shown)
+5. Copy the `firebaseConfig` object shown — it looks like:
+
+```javascript
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "homebiz-xxxxx.firebaseapp.com",
+  projectId: "homebiz-xxxxx",
+  storageBucket: "homebiz-xxxxx.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
+};
+```
+
+## Step 5 — Paste config into index.html
+
+Open `index.html` and find this block (around line 590):
+
+```javascript
+const FIREBASE_CONFIG = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+  ...
+};
+```
+
+Replace the placeholder values with your actual values from Step 4.
+
+## Step 6 — Set Firestore security rules
+
+In Firebase Console → **Firestore Database → Rules**, paste:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // Vendors: public read, write only by owner or admin
+    match /vendors/{vendorId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if isAdmin() || (
+        isSignedIn() && resource.data.ownerUid == request.auth.uid
+      );
+    }
+
+    // Accounts: only the account owner can read/write their own doc
+    match /accounts/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update, delete: if isOwner(uid);
+    }
+
+    // Site config: public read, admin-only writes
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Stats: public read, restricted writes
+    match /stats/{vendorId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && request.resource.data.vendorId == vendorId;
+      allow delete: if isAdmin();
+    }
+
+    // Order logs: authenticated users can create/read, admin can manage
+    match /order_logs/{logId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
+```
+
+Click **Publish**.
+
+## Step 7 — Migrate data
+
+1. Open the website
+2. Click **Admin** → enter password `pl2026`
+3. In Admin panel → **Overview** tab → click **Migrate SEED → Firestore**
+4. All 94 vendors are now in Firestore
+
+## Step 8 — Create your first seller account
+
+1. In Admin panel → **Accounts** tab
+2. Fill in Name, Email, Password, and assign a Vendor
+3. Click **Create Account**
+4. Share the email/password with the seller
+
+That's it! The seller can now log in via **Seller Login** and manage their own business.

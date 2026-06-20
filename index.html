@@ -2009,8 +2009,13 @@ async function createSellerAccount(){
     });
     await secondaryAuth.signOut();
     showToast(`Account created for ${name} ✓`);
-    // Wait for auth state to settle after secondaryAuth.signOut() before re-reading accounts
-    setTimeout(()=>renderAdminAccounts(document.getElementById('adminTabContent')), 1500);
+    // Clear form
+    ['na_name','na_email','na_pw'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    // Wait for primary auth state to settle, then re-render
+    await new Promise(resolve=>{
+      const unsub = auth.onAuthStateChanged(u=>{ unsub(); resolve(u); });
+    });
+    renderAdminAccounts(document.getElementById('adminTabContent'));
   }catch(e){ showToast(`Error: ${e.message}`); }
 }
 

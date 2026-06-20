@@ -789,8 +789,7 @@ async function fsLoadVendors(){
 
 async function fsSaveVendor(data){
   if(!db) return;
-  // Attach ownerUid of whoever is currently signed in so Firestore rules allow future updates
-  const uid = auth?.currentUser?.uid || null;
+  const uid = window._adminUid || auth?.currentUser?.uid || null;
   const toWrite = uid ? {...data, ownerUid: data.ownerUid || uid} : data;
   await db.collection('vendors').doc(toWrite.id).set(toWrite);
 }
@@ -1130,19 +1129,25 @@ async function checkPassword(){
     document.getElementById('adminPwInput').select();
     return;
   }
-  // Optionally sign into Firebase Auth so Firestore rules (isSignedIn) pass
+  // Set isAdmin=true BEFORE Firebase sign-in so that when onAuthStateChanged
+  // fires (synchronously after signIn resolves), it sees isAdmin=true and
+  // does NOT sign the user back out.
+  isAdmin = true;
+
   const fbEmail = (document.getElementById('adminFbEmail').value||'').trim();
   const fbPw    = document.getElementById('adminFbPw').value;
   if(auth && fbEmail && fbPw){
     try{
-      await auth.signInWithEmailAndPassword(fbEmail, fbPw);
+      const cred = await auth.signInWithEmailAndPassword(fbEmail, fbPw);
+      // Cache UID directly from credential — don't rely on auth.currentUser timing
+      window._adminUid = cred.user.uid;
     }catch(e){
+      isAdmin = false; // revert if Firebase login fails
       document.getElementById('loginErr').textContent = 'Firebase login failed: '+e.message;
       document.getElementById('loginErr').style.display = 'block';
       return;
     }
   }
-  isAdmin = true;
   closeModal('loginModal');
   document.getElementById('adminBanner').style.display = 'block';
   switchPanel('admin');
@@ -1151,11 +1156,11 @@ async function checkPassword(){
   showToast(fbEmail ? 'Admin mode activated — Firebase connected ✓' : 'Admin mode activated ✓');
 }
 async function exitAdmin(){
-  // Sign out of Firebase if admin was signed in
   if(auth && auth.currentUser && !currentSeller){
     await auth.signOut().catch(()=>{});
   }
   isAdmin = false;
+  window._adminUid = null;
   document.getElementById('adminBanner').style.display = 'none';
   switchPanel('customer');
   updatePanelTabs();
@@ -2056,10 +2061,11 @@ async function renderAdminStats(c){
 async function migrateFromSeed(){
   if(!db){ showToast('Firebase not configured'); return; }
 
-  // Firestore create rule requires ownerUid == auth.uid — admin must be signed in
-  const adminUid = auth?.currentUser?.uid;
+  // Use cached UID (set at login) — more reliable than auth.currentUser which
+  // can be null due to async timing between signIn and onAuthStateChanged
+  const adminUid = window._adminUid || auth?.currentUser?.uid;
   if(!adminUid){
-    showToast('Sign in with your Firebase admin account first (enter email + password in the Admin login form)');
+    showToast('Firebase UID not found — log out of admin, then log back in with your Firebase email + password');
     return;
   }
 

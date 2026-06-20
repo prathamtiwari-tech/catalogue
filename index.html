@@ -1955,15 +1955,19 @@ async function renderAdminAccounts(c){
     const fresh = await fsLoadVendors();
     if(fresh && fresh.length){ DATA = fresh; saveData(DATA); }
   }catch(e){}
-  // Load accounts from Firestore
+  // Load accounts from Firestore — requires Firebase login
   let accounts=[], accountsErr='';
-  try{
-    const snap=await db.collection('accounts').get();
-    accounts=snap.docs.map(d=>({uid:d.id,...d.data()}));
-  }catch(e){
-    accountsErr = e.code==='permission-denied'
-      ? 'Permission denied — update Firestore rule: <code>allow read: if request.auth != null;</code> for the accounts collection'
-      : e.message;
+  if(!auth || !auth.currentUser){
+    accountsErr = 'Not signed into Firebase — enter your Firebase Email + Password in the Admin login form and log in again.';
+  } else {
+    try{
+      const snap=await db.collection('accounts').get();
+      accounts=snap.docs.map(d=>({uid:d.id,...d.data()}));
+    }catch(e){
+      accountsErr = e.code==='permission-denied'
+        ? 'Firebase permission denied — go to Firebase Console → Firestore → Rules and publish the updated rules from FIREBASE_SETUP.md'
+        : e.message;
+    }
   }
   c.innerHTML=`<div class="s-card">
     <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Create Seller Account</div>

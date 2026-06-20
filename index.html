@@ -801,22 +801,32 @@ async function fsDeleteVendor(id){
 }
 
 async function fsLoadConfig(){
+  // Load from localStorage first as fallback
+  try{
+    const cached = localStorage.getItem('pl_site_config');
+    if(cached){ const p=JSON.parse(cached); if(p&&typeof p==='object') SITE_CONFIG={...SITE_CONFIG,...p}; }
+  }catch(e){}
   if(!db) return;
   try{
     const d = await db.collection('config').doc('site').get();
-    if(d.exists) SITE_CONFIG = d.data();
+    if(d.exists){ SITE_CONFIG = d.data(); localStorage.setItem('pl_site_config',JSON.stringify(SITE_CONFIG)); }
   }catch(e){}
 }
 
 async function fsSaveConfig(patch){
   SITE_CONFIG = {...SITE_CONFIG, ...patch};
-  if(db) await db.collection('config').doc('site').set(SITE_CONFIG,{merge:true});
+  try{ localStorage.setItem('pl_site_config', JSON.stringify(SITE_CONFIG)); }catch(e){}
+  if(db){
+    db.collection('config').doc('site').set(SITE_CONFIG,{merge:true})
+      .catch(e=>console.warn('Config Firestore save failed:',e.message));
+  }
 }
 
 async function fsRecordStat(vendorId, field){
   if(!db) return;
   try{
-    // Rule: request.resource.data.vendorId == vendorId — so vendorId must be in the payload
+    // Sign in anonymously if no user — customers aren't authenticated
+    if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
     await db.collection('stats').doc(vendorId).set(
       {vendorId,
        [field]: firebase.firestore.FieldValue.increment(1),
@@ -2008,14 +2018,22 @@ async function createSellerAccount(){
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     await secondaryAuth.signOut();
-    showToast(`Account created for ${name} ✓`);
     // Clear form
     ['na_name','na_email','na_pw'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-    // Wait for primary auth state to settle, then re-render
-    await new Promise(resolve=>{
-      const unsub = auth.onAuthStateChanged(u=>{ unsub(); resolve(u); });
-    });
-    renderAdminAccounts(document.getElementById('adminTabContent'));
+    document.getElementById('na_vendor').value='';
+    showToast(`Account created for ${name} ✓`);
+    // Inject new row into existing table instead of re-querying Firestore
+    // (re-querying right after secondaryAuth.signOut can briefly lose primary auth)
+    const tbody = document.querySelector('#adminTabContent .menu-table tbody');
+    if(tbody){
+      const v = DATA.find(d=>d.id===vendorId);
+      const tr = document.createElement('tr');
+      tr.innerHTML=`<td><strong>${name}</strong></td><td style="font-size:.78rem">${email}</td><td style="font-size:.78rem">${v?v.venture:'(unassigned)'}</td><td><button class="btn btn-sm btn-danger" onclick="deleteSellerAccount('${cred.user.uid}','${email}')"><i class="fa fa-trash"></i> Remove</button></td>`;
+      tbody.appendChild(tr);
+    } else {
+      // No table yet (was empty) — re-render after a safe delay
+      setTimeout(()=>renderAdminAccounts(document.getElementById('adminTabContent')), 3000);
+    }
   }catch(e){ showToast(`Error: ${e.message}`); }
 }
 

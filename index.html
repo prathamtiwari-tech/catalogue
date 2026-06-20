@@ -1582,14 +1582,8 @@ async function publishToGitHub(){
 
   function pickItems(){
     const featured = SITE_CONFIG.featuredVendorIds||[];
-    let pool;
-    if(featured.length){
-      pool = DATA.filter(d=>featured.includes(d.id)&&d.venture&&d.phone);
-    }
-    if(!pool||!pool.length){
-      pool = DATA.filter(d=>d.venture&&d.phone).slice().sort(()=>Math.random()-.5).slice(0,20);
-    }
-    return pool;
+    if(!featured.length) return []; // No featured vendors = no ads shown
+    return DATA.filter(d=>featured.includes(d.id)&&d.venture&&d.phone);
   }
 
   function imgHTML(item){
@@ -1600,10 +1594,14 @@ async function publishToGitHub(){
 
   function buildSlides(){
     items = pickItems();
+    const carousel = document.getElementById('adCarousel');
     const inner = document.getElementById('adInner');
     const dots  = document.getElementById('adDots');
     inner.innerHTML = ''; dots.innerHTML = '';
     slides = [];
+    // Hide carousel completely when no featured vendors are configured
+    if(!items.length){ if(carousel) carousel.style.display='none'; return; }
+    if(carousel) carousel.style.display='';
     items.forEach((item, i)=>{
       const sl = document.createElement('div');
       sl.className = 'ad-slide' + (i===0?' active':'');
@@ -1680,6 +1678,7 @@ async function publishToGitHub(){
     document.getElementById('adModalOverlay').classList.remove('open');
   };
 
+  window.initAd = function(){ if(timer) clearInterval(timer); buildSlides(); if(items.length) startAd(); };
   buildSlides();
   startAd();
 })();
@@ -2096,7 +2095,7 @@ function renderAdminAds(c){
   const featured = SITE_CONFIG.featuredVendorIds||[];
   c.innerHTML=`<div class="s-card">
     <div class="s-card-title"><i class="fa fa-rectangle-ad" style="color:var(--green)"></i> Ad Carousel — Select vendors to feature</div>
-    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">Checked vendors will appear in the top carousel. Leave all unchecked for random rotation.</p>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">Check vendors to feature in the top carousel. Unchecked vendors will not appear. If none are checked, the carousel is hidden.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;max-height:55vh;overflow-y:auto;padding:4px">
       ${DATA.map(v=>`<label style="display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:8px;padding:9px 12px;cursor:pointer;border:1.5px solid ${featured.includes(v.id)?'var(--green)':'var(--border)'}">
         <input type="checkbox" ${featured.includes(v.id)?'checked':''} onchange="toggleAdVendor('${v.id}',this)" style="accent-color:var(--green)">
@@ -2116,8 +2115,12 @@ function toggleAdVendor(id,cb){
   cb.closest('label').style.border=cb.checked?'1.5px solid var(--green)':'1.5px solid var(--border)';
 }
 async function saveAdSettings(){
-  await fsSaveConfig({featuredVendorIds:SITE_CONFIG.featuredVendorIds||[]});
-  showToast('Ad settings saved ✓  Reload to see new carousel');
+  // Replace featured list entirely (not accumulated)
+  const ids = SITE_CONFIG.featuredVendorIds||[];
+  await fsSaveConfig({featuredVendorIds: ids});
+  // Rebuild carousel immediately without needing a reload
+  if(typeof initAd === 'function') initAd();
+  showToast(ids.length ? `Ad carousel updated — ${ids.length} vendor(s) featured ✓` : 'Ad carousel cleared — no ads will show');
 }
 
 async function renderAdminStats(c){

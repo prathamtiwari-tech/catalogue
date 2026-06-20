@@ -1240,7 +1240,7 @@ function openEditModal(id){
   setPreview(existing);
   document.getElementById('tileModal').classList.add('open');
 }
-function saveTile(){
+async function saveTile(){
   const venture = document.getElementById('f_venture').value.trim();
   if(!venture){ alert('Please enter venture name.'); return; }
   const prevItem = editingId ? DATA.find(d=>d.id===editingId) : null;
@@ -1263,14 +1263,21 @@ function saveTile(){
   else DATA.push(obj);
   saveData(DATA);
   closeModal('tileModal'); renderAll();
+  if(isAdmin) renderAdminTab(_adminTab);
   showToast(editingId?'Listing updated ✓':'New listing added ✓');
+  // Save to Firestore in background
+  fsSaveVendor(obj).catch(e=>console.warn('Firestore save failed:',e.message));
 }
-function deleteTile(id){
+async function deleteTile(id){
   if(!confirm('Delete this listing? This cannot be undone.')) return;
   DATA=DATA.filter(d=>d.id!==id);
   delete IMGS[id];
   saveData(DATA);
-  renderAll(); showToast('Listing deleted');
+  renderAll();
+  if(isAdmin) renderAdminTab(_adminTab);
+  showToast('Listing deleted');
+  // Delete from Firestore in background
+  if(db){ db.collection('vendors').doc(id).delete().catch(e=>console.warn('Firestore delete failed:',e.message)); }
 }
 
 /* ═══════════ PDF ═══════════ */
@@ -1883,18 +1890,23 @@ function renderAdminOverview(c){
   </div>`;
 }
 
-function renderAdminVendors(c){
+function renderAdminVendors(c, searchVal){
+  const q = (searchVal||document.getElementById('adminVendorSearch')?.value||'').toLowerCase().trim();
+  const list = q ? DATA.filter(v=>(v.venture||'').toLowerCase().includes(q)||(v.speciality||'').toLowerCase().includes(q)||(v.cat||'').toLowerCase().includes(q)||(v.contact||'').toLowerCase().includes(q)) : DATA;
   c.innerHTML=`<div class="s-card">
-    <div class="s-card-title"><i class="fa fa-store" style="color:var(--green)"></i> All Vendors
+    <div class="s-card-title"><i class="fa fa-store" style="color:var(--green)"></i> All Vendors (${DATA.length})
       <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openAddModal()"><i class="fa fa-plus"></i> Add</button>
     </div>
-    <div style="max-height:65vh;overflow-y:auto">
+    <div style="margin-bottom:10px">
+      <input id="adminVendorSearch" type="text" placeholder="Search vendors…" value="${q}" oninput="renderAdminVendors(document.getElementById('adminTabContent'))" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;background:var(--bg-card);color:var(--text)">
+    </div>
+    <div style="max-height:60vh;overflow-y:auto">
     <table class="menu-table" style="font-size:.82rem">
-      <thead><tr><th>#</th><th>Business</th><th>Category</th><th>Contact</th><th>Menu Items</th><th>Actions</th></tr></thead>
-      <tbody>${DATA.map((v,i)=>`<tr>
+      <thead><tr><th>#</th><th>Business</th><th>Category</th><th>Contact</th><th>Menu</th><th>Actions</th></tr></thead>
+      <tbody>${list.length ? list.map((v,i)=>`<tr>
         <td style="color:var(--text-muted)">${i+1}</td>
         <td><strong>${v.venture}</strong><br><span style="font-size:.72rem;color:var(--gold)">${v.speciality||''}</span></td>
-        <td style="font-size:.76rem">${v.cat.split(',')[0]}</td>
+        <td style="font-size:.76rem">${(v.cat||'').split(',')[0]}</td>
         <td style="font-size:.76rem">${v.contact||''}<br>${v.flat||''}</td>
         <td style="text-align:center">${(v.menu||[]).length}</td>
         <td style="white-space:nowrap">
@@ -1902,7 +1914,7 @@ function renderAdminVendors(c){
           <button class="btn btn-sm btn-ghost" onclick="openMenuItemModal('${v.id}',null)"><i class="fa fa-utensils"></i></button>
           <button class="btn btn-sm btn-danger" onclick="deleteTile('${v.id}')"><i class="fa fa-trash"></i></button>
         </td>
-      </tr>`).join('')}</tbody>
+      </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px">No vendors match "${q}"</td></tr>`}</tbody>
     </table>
     </div>
   </div>`;
@@ -1913,6 +1925,11 @@ async function renderAdminAccounts(c){
     c.innerHTML=`<div class="s-card"><p style="color:var(--text-muted)">Firebase not configured. Seller accounts require Firebase Auth.</p></div>`;
     return;
   }
+  // Reload vendors from Firestore so newly-created vendors show correctly
+  try{
+    const fresh = await fsLoadVendors();
+    if(fresh && fresh.length){ DATA = fresh; saveData(DATA); }
+  }catch(e){}
   // Load accounts from Firestore
   let accounts=[], accountsErr='';
   try{

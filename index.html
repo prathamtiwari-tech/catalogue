@@ -863,13 +863,18 @@ function setupSellerAuth(){
   if(!auth) return;
   auth.onAuthStateChanged(async user=>{
     if(user){
+      // Admin signs into Firebase Auth too — don't treat them as a seller
+      if(isAdmin) return;
       try{
         const doc = await db.collection('accounts').doc(user.uid).get();
         if(doc.exists){
           currentSeller = {uid:user.uid, ...doc.data()};
           showToast(`Welcome, ${currentSeller.displayName}!`);
           updatePanelTabs();
-        } else { await auth.signOut(); }
+        } else {
+          // No account doc found — not a registered seller, sign out
+          await auth.signOut();
+        }
       }catch(e){ console.warn('Auth state error:',e); }
     } else {
       if(currentSeller){ currentSeller = null; updatePanelTabs(); }

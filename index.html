@@ -2043,14 +2043,20 @@ async function createSellerAccount(){
       // No table yet (was empty) — re-render after a safe delay
       setTimeout(()=>renderAdminAccounts(document.getElementById('adminTabContent')), 3000);
     }
-  }catch(e){ showToast(`Error: ${e.message}`); }
+  }catch(e){
+    if(e.code==='auth/email-already-in-use'){
+      showToast('Email already exists in Firebase Auth — go to Firebase Console → Authentication → Users, delete that user, then try again');
+    } else {
+      showToast(`Error: ${e.message}`);
+    }
+  }
 }
 
 async function deleteSellerAccount(uid,email){
-  if(!confirm(`Remove seller account for ${email}? They will lose login access.`)) return;
+  if(!confirm(`Remove seller account for ${email}?\n\nNOTE: You must also delete this user from:\nFirebase Console → Authentication → Users\nOtherwise the email cannot be reused.`)) return;
   try{
     await db.collection('accounts').doc(uid).delete();
-    showToast('Account removed ✓');
+    showToast('Firestore account removed ✓ — remember to delete from Firebase Console → Authentication → Users');
     renderAdminAccounts(document.getElementById('adminTabContent'));
   }catch(e){ showToast(`Error: ${e.message}`); }
 }

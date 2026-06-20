@@ -868,8 +868,16 @@ function setupSellerAuth(){
         const doc = await db.collection('accounts').doc(user.uid).get();
         if(doc.exists){
           currentSeller = {uid:user.uid, ...doc.data()};
+          // Reload vendors so seller panel has fresh DATA before rendering
+          if(FB_READY && db){
+            try{
+              const vendors = await fsLoadVendors();
+              if(vendors && vendors.length){ DATA = vendors; saveData(DATA); }
+            }catch(e){}
+          }
           showToast(`Welcome, ${currentSeller.displayName}!`);
           updatePanelTabs();
+          switchPanel('seller');
         } else {
           // No account doc found — not a registered seller, sign out
           await auth.signOut();
@@ -1906,8 +1914,15 @@ async function renderAdminAccounts(c){
     return;
   }
   // Load accounts from Firestore
-  let accounts=[];
-  try{ const snap=await db.collection('accounts').get(); accounts=snap.docs.map(d=>({uid:d.id,...d.data()})); }catch(e){}
+  let accounts=[], accountsErr='';
+  try{
+    const snap=await db.collection('accounts').get();
+    accounts=snap.docs.map(d=>({uid:d.id,...d.data()}));
+  }catch(e){
+    accountsErr = e.code==='permission-denied'
+      ? 'Permission denied — update Firestore rule: <code>allow read: if request.auth != null;</code> for the accounts collection'
+      : e.message;
+  }
   c.innerHTML=`<div class="s-card">
     <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Create Seller Account</div>
     <div class="form-grid">
@@ -1927,6 +1942,7 @@ async function renderAdminAccounts(c){
   </div>
   <div class="s-card">
     <div class="s-card-title"><i class="fa fa-users" style="color:var(--green)"></i> Seller Accounts (${accounts.length})</div>
+    ${accountsErr?`<div style="color:var(--danger);font-size:.82rem;padding:8px 0"><i class="fa fa-exclamation-triangle"></i> ${accountsErr}</div>`:''}
     ${accounts.length?`<table class="menu-table">
       <thead><tr><th>Name</th><th>Email</th><th>Vendor</th><th>Actions</th></tr></thead>
       <tbody>${accounts.map(a=>{
@@ -2061,8 +2077,6 @@ async function renderAdminStats(c){
 async function migrateFromSeed(){
   if(!db){ showToast('Firebase not configured'); return; }
 
-  // Use cached UID (set at login) — more reliable than auth.currentUser which
-  // can be null due to async timing between signIn and onAuthStateChanged
   const adminUid = window._adminUid || auth?.currentUser?.uid;
   if(!adminUid){
     showToast('Firebase UID not found — log out of admin, then log back in with your Firebase email + password');
@@ -2072,20 +2086,16 @@ async function migrateFromSeed(){
   if(!confirm(`Migrate all ${SEED.length} vendors to Firestore?\nYour Firebase UID will be set as ownerUid on each vendor.`)) return;
   showToast('Migrating…');
   try{
-    // Firestore batch limit is 500 — split into chunks of 400 to be safe
     const chunks = [];
     for(let i=0; i<SEED.length; i+=400) chunks.push(SEED.slice(i,i+400));
-
     for(const chunk of chunks){
       const batch = db.batch();
       chunk.forEach(item=>{
         const ref = db.collection('vendors').doc(item.id);
-        // ownerUid must equal auth.currentUser.uid to satisfy Firestore create rule
         batch.set(ref, {...item, menu:[], ownerUid: adminUid}, {merge:true});
       });
       await batch.commit();
     }
-
     const vendors = await fsLoadVendors();
     if(vendors){ DATA=vendors; saveData(DATA); renderAll(); }
     showToast(`Migrated ${SEED.length} vendors to Firestore ✓`);

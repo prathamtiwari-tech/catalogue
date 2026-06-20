@@ -2009,7 +2009,8 @@ async function createSellerAccount(){
     });
     await secondaryAuth.signOut();
     showToast(`Account created for ${name} ✓`);
-    renderAdminAccounts(document.getElementById('adminTabContent'));
+    // Wait for auth state to settle after secondaryAuth.signOut() before re-reading accounts
+    setTimeout(()=>renderAdminAccounts(document.getElementById('adminTabContent')), 1500);
   }catch(e){ showToast(`Error: ${e.message}`); }
 }
 

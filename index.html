@@ -704,8 +704,27 @@ footer strong{color:var(--gold-light)}
 
 <!-- ── FOOTER ── -->
 <footer>
-  <p>Website maintained by <strong>Pratham Tiwari, N-1001</strong> &nbsp;|&nbsp; Prateek Laurel Society, Sector 120, Noida &nbsp;|&nbsp; <strong>Edition: <span id="editionFooter"></span></strong> &nbsp;|&nbsp; <a href="https://wa.me/918373919344" target="_blank">8373919344</a></p>
+  <div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px">
+    <a id="footerFbLink" href="#" target="_blank" onclick="return footerSocialClick('fb',event)" style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Facebook"><i class="fab fa-facebook"></i></a>
+    <a id="footerIgLink" href="#" target="_blank" onclick="return footerSocialClick('ig',event)" style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Instagram"><i class="fab fa-instagram"></i></a>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:.75rem">
+    <span style="opacity:.5">© Homebiz <span id="editionFooter"></span></span>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('terms');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Terms &amp; Conditions</a>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('privacy');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Privacy Policy</a>
+  </div>
 </footer>
+
+<!-- ── POLICY MODAL ── -->
+<div class="modal-overlay" id="policyModal" onclick="if(event.target===this)closeModal('policyModal')">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title" id="policyModalTitle"></div>
+    <div id="policyModalBody" style="font-size:.88rem;line-height:1.7;color:var(--text);white-space:pre-wrap;max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('policyModal')">Close</button></div>
+  </div>
+</div>
 
 <div class="toast" id="toast"><i class="fa fa-circle-check"></i><span id="toastMsg"></span></div>
 
@@ -1372,6 +1391,27 @@ function goUser(){ if(isAdmin) exitAdmin(); }
 /* ═══════════ MODAL ═══════════ */
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+function openPolicyModal(type){
+  const isTerms = type==='terms';
+  const title = isTerms ? 'Terms & Conditions' : 'Privacy Policy';
+  const content = isTerms ? (SITE_CONFIG.terms||'') : (SITE_CONFIG.privacy||'');
+  document.getElementById('policyModalTitle').textContent = title;
+  document.getElementById('policyModalBody').textContent = content || 'Content not set yet. Admin can add this in Site Config.';
+  document.getElementById('policyModal').classList.add('open');
+}
+
+function applyFooterLinks(){
+  const fb = document.getElementById('footerFbLink');
+  const ig = document.getElementById('footerIgLink');
+  if(fb){ fb.href = SITE_CONFIG.fbUrl||'#'; fb.style.display = SITE_CONFIG.fbUrl ? '' : 'none'; }
+  if(ig){ ig.href = SITE_CONFIG.igUrl||'#'; ig.style.display = SITE_CONFIG.igUrl ? '' : 'none'; }
+}
+function footerSocialClick(type, e){
+  const url = type==='fb' ? SITE_CONFIG.fbUrl : SITE_CONFIG.igUrl;
+  if(!url){ e.preventDefault(); return false; }
+  return true;
+}
 
 function resetForm(){
   ['venture','speciality','desc','contact','flat','phone','whatsapp','instagram','video','url'].forEach(f=>{
@@ -2228,17 +2268,22 @@ async function deleteSellerAccount(uid,email){
 }
 
 function renderAdminConfig(c){
+  const esc = s=>(s||'').replace(/"/g,'&quot;');
   c.innerHTML=`<div class="s-card">
     <div class="s-card-title"><i class="fa fa-sliders" style="color:var(--green)"></i> Site Configuration</div>
     <div class="form-grid">
       <div class="form-group full"><label>Tagline Bar Text</label>
-        <input id="cfg_tagline" value="${SITE_CONFIG.tagline||'Connect • Collaborate • Create • Grow'}"></div>
+        <input id="cfg_tagline" value="${esc(SITE_CONFIG.tagline)||'Connect • Collaborate • Create • Grow'}"></div>
       <div class="form-group full"><label>Hero Subtitle</label>
-        <input id="cfg_heroSub" value="${SITE_CONFIG.heroSub||'For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.'}"></div>
-      <div class="form-group"><label>Footer Maintainer</label>
-        <input id="cfg_footerName" value="${SITE_CONFIG.footerName||'Pratham Tiwari, N-1001'}"></div>
-      <div class="form-group"><label>Footer WhatsApp Number</label>
-        <input id="cfg_footerWa" value="${SITE_CONFIG.footerWa||'8373919344'}"></div>
+        <input id="cfg_heroSub" value="${esc(SITE_CONFIG.heroSub)||'For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.'}"></div>
+      <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook URL</label>
+        <input id="cfg_fbUrl" placeholder="https://facebook.com/yourpage" value="${esc(SITE_CONFIG.fbUrl)}"></div>
+      <div class="form-group"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram URL</label>
+        <input id="cfg_igUrl" placeholder="https://instagram.com/yourhandle" value="${esc(SITE_CONFIG.igUrl)}"></div>
+      <div class="form-group full"><label>Terms &amp; Conditions</label>
+        <textarea id="cfg_terms" rows="6" placeholder="Enter your Terms and Conditions text here…" style="font-size:.83rem">${(SITE_CONFIG.terms||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>Privacy Policy</label>
+        <textarea id="cfg_privacy" rows="6" placeholder="Enter your Privacy Policy text here…" style="font-size:.83rem">${(SITE_CONFIG.privacy||'').replace(/</g,'&lt;')}</textarea></div>
     </div>
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdminConfig()"><i class="fa fa-save"></i> Save Config</button>
@@ -2247,14 +2292,16 @@ function renderAdminConfig(c){
 }
 async function saveAdminConfig(){
   await fsSaveConfig({
-    tagline:    document.getElementById('cfg_tagline').value.trim(),
-    heroSub:    document.getElementById('cfg_heroSub').value.trim(),
-    footerName: document.getElementById('cfg_footerName').value.trim(),
-    footerWa:   document.getElementById('cfg_footerWa').value.trim(),
+    tagline: document.getElementById('cfg_tagline').value.trim(),
+    heroSub: document.getElementById('cfg_heroSub').value.trim(),
+    fbUrl:   document.getElementById('cfg_fbUrl').value.trim(),
+    igUrl:   document.getElementById('cfg_igUrl').value.trim(),
+    terms:   document.getElementById('cfg_terms').value.trim(),
+    privacy: document.getElementById('cfg_privacy').value.trim(),
   });
-  // Live-update DOM
   const tb=document.querySelector('.tagline-bar');
   if(tb) tb.textContent=SITE_CONFIG.tagline||'';
+  applyFooterLinks();
   showToast('Config saved ✓');
 }
 
@@ -2352,7 +2399,7 @@ async function migrateFromSeed(){
   document.getElementById('editionFooter').textContent = ed;
 
   // Load site config from Firestore, then rebuild carousel with fresh featured list
-  fsLoadConfig().then(()=>{ if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
+  fsLoadConfig().then(()=>{ applyFooterLinks(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
 
   // Set up seller auth listener
   setupSellerAuth();

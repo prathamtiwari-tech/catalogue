@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -705,8 +706,10 @@ footer strong{color:var(--gold-light)}
 <!-- ── FOOTER ── -->
 <footer>
   <div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px">
-    <a id="footerFbLink" href="#" target="_blank" onclick="return footerSocialClick('fb',event)" style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Facebook"><i class="fab fa-facebook"></i></a>
-    <a id="footerIgLink" href="#" target="_blank" onclick="return footerSocialClick('ig',event)" style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a id="footerFbLink"  href="#" target="_blank" onclick="return footerSocialClick('fb',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Facebook"><i class="fab fa-facebook"></i></a>
+    <a id="footerIgLink"  href="#" target="_blank" onclick="return footerSocialClick('ig',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a id="footerYtLink"  href="#" target="_blank" onclick="return footerSocialClick('yt',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a id="footerWaLink"  href="#" target="_blank" onclick="return footerSocialClick('wa',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
   </div>
   <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:.75rem">
     <span style="opacity:.5">© Homebiz <span id="editionFooter"></span></span>
@@ -714,6 +717,8 @@ footer strong{color:var(--gold-light)}
     <a href="#" onclick="openPolicyModal('terms');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Terms &amp; Conditions</a>
     <span style="opacity:.3">|</span>
     <a href="#" onclick="openPolicyModal('privacy');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Privacy Policy</a>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openContactModal();return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Contact Us</a>
   </div>
 </footer>
 
@@ -723,6 +728,38 @@ footer strong{color:var(--gold-light)}
     <div class="modal-title" id="policyModalTitle"></div>
     <div id="policyModalBody" style="font-size:.88rem;line-height:1.7;color:var(--text);white-space:pre-wrap;max-height:60vh;overflow-y:auto"></div>
     <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('policyModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- ── CONTACT US MODAL ── -->
+<div class="modal-overlay" id="contactModal" onclick="if(event.target===this)closeModal('contactModal')">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title"><i class="fa fa-envelope" style="color:var(--green)"></i> Contact Us</div>
+    <div class="form-group">
+      <label>Your Name *</label>
+      <input id="ct_name" placeholder="Full name" maxlength="80">
+    </div>
+    <div class="form-group">
+      <label>Email Address *</label>
+      <input id="ct_email" type="email" placeholder="you@example.com" maxlength="120">
+    </div>
+    <div class="form-group">
+      <label>Mobile Number</label>
+      <input id="ct_mobile" type="tel" placeholder="10-digit mobile number" maxlength="15">
+    </div>
+    <div class="form-group">
+      <label>Subject *</label>
+      <input id="ct_subject" placeholder="Brief subject" maxlength="150">
+    </div>
+    <div class="form-group">
+      <label>Message *</label>
+      <textarea id="ct_message" rows="5" placeholder="Describe your query or feedback..." maxlength="2000" style="resize:vertical"></textarea>
+    </div>
+    <div id="ct_status" style="font-size:.82rem;margin-bottom:8px;display:none"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('contactModal')">Cancel</button>
+      <button class="btn btn-primary" id="ct_submitBtn" onclick="submitContactForm()"><i class="fa fa-paper-plane"></i> Send Message</button>
+    </div>
   </div>
 </div>
 
@@ -1401,14 +1438,91 @@ function openPolicyModal(type){
   document.getElementById('policyModal').classList.add('open');
 }
 
+function openContactModal(){
+  ['ct_name','ct_email','ct_mobile','ct_subject','ct_message'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const s=document.getElementById('ct_status');
+  if(s){ s.style.display='none'; s.textContent=''; }
+  const btn=document.getElementById('ct_submitBtn');
+  if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Send Message'; }
+  document.getElementById('contactModal').classList.add('open');
+}
+
+async function submitContactForm(){
+  const name    = (document.getElementById('ct_name').value||'').trim();
+  const email   = (document.getElementById('ct_email').value||'').trim();
+  const mobile  = (document.getElementById('ct_mobile').value||'').trim();
+  const subject = (document.getElementById('ct_subject').value||'').trim();
+  const message = (document.getElementById('ct_message').value||'').trim();
+  const status  = document.getElementById('ct_status');
+  const btn     = document.getElementById('ct_submitBtn');
+
+  if(!name||!email||!subject||!message){
+    status.textContent='Please fill in Name, Email, Subject and Message.';
+    status.style.color='var(--danger)'; status.style.display='block'; return;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    status.textContent='Please enter a valid email address.';
+    status.style.color='var(--danger)'; status.style.display='block'; return;
+  }
+
+  btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Sending…';
+  status.style.display='none';
+
+  const ejsPubKey   = SITE_CONFIG.ejsPublicKey||'';
+  const ejsService  = SITE_CONFIG.ejsServiceId||'';
+  const ejsTemplate = SITE_CONFIG.ejsTemplateId||'';
+
+  if(ejsPubKey && ejsService && ejsTemplate){
+    try{
+      await emailjs.init({publicKey: ejsPubKey});
+      await emailjs.send(ejsService, ejsTemplate, {
+        from_name: name, from_email: email, mobile: mobile||'Not provided',
+        subject: subject, message: message,
+        to_email: 'contact@homebiz.co.in'
+      });
+      status.textContent='Message sent successfully! We will get back to you soon.';
+      status.style.color='var(--green)'; status.style.display='block';
+      btn.innerHTML='<i class="fa fa-check"></i> Sent';
+      setTimeout(()=>closeModal('contactModal'), 3000);
+    }catch(e){
+      status.textContent='Failed to send: '+e.text;
+      status.style.color='var(--danger)'; status.style.display='block';
+      btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Send Message';
+    }
+  } else {
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nMobile: ${mobile||'Not provided'}\n\n${message}`);
+    window.open(`mailto:contact@homebiz.co.in?subject=${encodeURIComponent(subject)}&body=${body}`,'_blank');
+    status.textContent='Your mail client has opened. Please send the email from there.';
+    status.style.color='#b8860b'; status.style.display='block';
+    btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Send Message';
+  }
+}
+
 function applyFooterLinks(){
   const fb = document.getElementById('footerFbLink');
   const ig = document.getElementById('footerIgLink');
+  const yt = document.getElementById('footerYtLink');
+  const wa = document.getElementById('footerWaLink');
   if(fb){ fb.href = SITE_CONFIG.fbUrl||'#'; fb.style.display = SITE_CONFIG.fbUrl ? '' : 'none'; }
   if(ig){ ig.href = SITE_CONFIG.igUrl||'#'; ig.style.display = SITE_CONFIG.igUrl ? '' : 'none'; }
+  if(yt){ yt.href = SITE_CONFIG.ytUrl||'#'; yt.style.display = SITE_CONFIG.ytUrl ? '' : 'none'; }
+  if(wa){
+    const waNum = SITE_CONFIG.waNum||'';
+    wa.href = waNum ? `https://wa.me/${waNum.replace(/\D/g,'')}` : '#';
+    wa.style.display = waNum ? '' : 'none';
+  }
 }
 function footerSocialClick(type, e){
-  const url = type==='fb' ? SITE_CONFIG.fbUrl : SITE_CONFIG.igUrl;
+  let url = '';
+  if(type==='fb') url = SITE_CONFIG.fbUrl||'';
+  else if(type==='ig') url = SITE_CONFIG.igUrl||'';
+  else if(type==='yt') url = SITE_CONFIG.ytUrl||'';
+  else if(type==='wa'){
+    const waNum = SITE_CONFIG.waNum||'';
+    url = waNum ? `https://wa.me/${waNum.replace(/\D/g,'')}` : '';
+  }
   if(!url){ e.preventDefault(); return false; }
   return true;
 }
@@ -2280,10 +2394,26 @@ function renderAdminConfig(c){
         <input id="cfg_fbUrl" placeholder="https://facebook.com/yourpage" value="${esc(SITE_CONFIG.fbUrl)}"></div>
       <div class="form-group"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram URL</label>
         <input id="cfg_igUrl" placeholder="https://instagram.com/yourhandle" value="${esc(SITE_CONFIG.igUrl)}"></div>
+      <div class="form-group"><label><i class="fab fa-youtube" style="color:#ff0000"></i> YouTube URL</label>
+        <input id="cfg_ytUrl" placeholder="https://youtube.com/@yourchannel" value="${esc(SITE_CONFIG.ytUrl)}"></div>
+      <div class="form-group"><label><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp Number</label>
+        <input id="cfg_waNum" placeholder="919999999999 (with country code, no +)" value="${esc(SITE_CONFIG.waNum)}"></div>
       <div class="form-group full"><label>Terms &amp; Conditions</label>
         <textarea id="cfg_terms" rows="6" placeholder="Enter your Terms and Conditions text here…" style="font-size:.83rem">${(SITE_CONFIG.terms||'').replace(/</g,'&lt;')}</textarea></div>
       <div class="form-group full"><label>Privacy Policy</label>
         <textarea id="cfg_privacy" rows="6" placeholder="Enter your Privacy Policy text here…" style="font-size:.83rem">${(SITE_CONFIG.privacy||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-envelope" style="color:var(--green)"></i> Contact Form — EmailJS Setup</div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Create a free account at <strong>emailjs.com</strong>, add an Email Service and a Template (include template variables: from_name, from_email, mobile, subject, message). Paste the keys below. Without these, Contact Us falls back to opening the user's mail app.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div class="form-group" style="margin:0"><label style="font-size:.75rem">Public Key</label>
+            <input id="cfg_ejsPublicKey" placeholder="user_xxxxxxxxxxxx" value="${esc(SITE_CONFIG.ejsPublicKey)}"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:.75rem">Service ID</label>
+            <input id="cfg_ejsServiceId" placeholder="service_xxxxxxx" value="${esc(SITE_CONFIG.ejsServiceId)}"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:.75rem">Template ID</label>
+            <input id="cfg_ejsTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsTemplateId)}"></div>
+        </div>
+      </div>
     </div>
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdminConfig()"><i class="fa fa-save"></i> Save Config</button>
@@ -2296,8 +2426,13 @@ async function saveAdminConfig(){
     heroSub: document.getElementById('cfg_heroSub').value.trim(),
     fbUrl:   document.getElementById('cfg_fbUrl').value.trim(),
     igUrl:   document.getElementById('cfg_igUrl').value.trim(),
-    terms:   document.getElementById('cfg_terms').value.trim(),
-    privacy: document.getElementById('cfg_privacy').value.trim(),
+    ytUrl:          document.getElementById('cfg_ytUrl').value.trim(),
+    waNum:          document.getElementById('cfg_waNum').value.trim(),
+    terms:          document.getElementById('cfg_terms').value.trim(),
+    privacy:        document.getElementById('cfg_privacy').value.trim(),
+    ejsPublicKey:   document.getElementById('cfg_ejsPublicKey').value.trim(),
+    ejsServiceId:   document.getElementById('cfg_ejsServiceId').value.trim(),
+    ejsTemplateId:  document.getElementById('cfg_ejsTemplateId').value.trim(),
   });
   const tb=document.querySelector('.tagline-bar');
   if(tb) tb.textContent=SITE_CONFIG.tagline||'';

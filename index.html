@@ -658,6 +658,7 @@ footer strong{color:var(--gold-light)}
       <button class="admin-tab-btn"        data-tab="config"    onclick="switchAdminTab('config')"><i class="fa fa-sliders"></i> Site Config</button>
       <button class="admin-tab-btn"        data-tab="ads"       onclick="switchAdminTab('ads')"><i class="fa fa-rectangle-ad"></i> Ads Carousel</button>
       <button class="admin-tab-btn"        data-tab="stats"     onclick="switchAdminTab('stats')"><i class="fa fa-chart-bar"></i> Stats</button>
+      <button class="admin-tab-btn"        data-tab="reviews"   onclick="switchAdminTab('reviews')" id="reviewsTabBtn"><i class="fa fa-star"></i> Reviews <span id="pendingReviewsBadge" style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:2px"></span></button>
     </div>
     <div id="adminTabContent"></div>
   </div>
@@ -694,13 +695,51 @@ footer strong{color:var(--gold-light)}
       </div>
       <button class="btn btn-sm btn-ghost" onclick="closeModal('menuModal')">✕</button>
     </div>
-    <div id="menuItemsList" style="margin-top:14px;max-height:55vh;overflow-y:auto"></div>
+    <div id="menuRatingBar" style="display:none;margin:6px 0 2px;font-size:.88rem"></div>
+    <div id="menuItemsList" style="margin-top:14px;max-height:40vh;overflow-y:auto"></div>
     <div id="menuFlatRow" style="margin-top:14px">
       <input type="text" id="menuCustomerFlat" placeholder="Your flat number (e.g. A-1204)" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;font-family:inherit;outline:none">
     </div>
     <button class="order-btn" id="menuOrderBtn" onclick="placeOrder()">
       <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
     </button>
+    <!-- Reviews section -->
+    <div id="menuReviewsSection" style="margin-top:18px;border-top:1.5px solid var(--border);padding-top:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-weight:700;font-size:.88rem;color:var(--green-dark)"><i class="fa fa-star" style="color:var(--gold)"></i> Customer Reviews</div>
+        <button class="btn btn-sm btn-outline" onclick="openReviewModal()"><i class="fa fa-pen"></i> Write a Review</button>
+      </div>
+      <div id="menuReviewsList" style="max-height:28vh;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REVIEW SUBMISSION MODAL ── -->
+<div class="modal-overlay" id="reviewModal" onclick="if(event.target===this)closeModal('reviewModal')">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title"><i class="fa fa-star" style="color:var(--gold)"></i> Write a Review</div>
+    <div style="font-size:.84rem;color:var(--gold);font-weight:600;margin-bottom:14px" id="reviewVendorName"></div>
+    <div style="margin-bottom:16px;text-align:center">
+      <div style="font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Your Rating</div>
+      <div id="starPicker" style="font-size:2.2rem;letter-spacing:4px;cursor:pointer;color:var(--gold);user-select:none">
+        <span data-v="1" onmouseover="hoverStar(1)" onmouseout="hoverStar(0)" onclick="setReviewStar(1)">★</span>
+        <span data-v="2" onmouseover="hoverStar(2)" onmouseout="hoverStar(0)" onclick="setReviewStar(2)">★</span>
+        <span data-v="3" onmouseover="hoverStar(3)" onmouseout="hoverStar(0)" onclick="setReviewStar(3)">★</span>
+        <span data-v="4" onmouseover="hoverStar(4)" onmouseout="hoverStar(0)" onclick="setReviewStar(4)">★</span>
+        <span data-v="5" onmouseover="hoverStar(5)" onmouseout="hoverStar(0)" onclick="setReviewStar(5)">★</span>
+      </div>
+      <div id="starLabel" style="font-size:.82rem;color:var(--gold);font-weight:600;margin-top:4px">Excellent</div>
+    </div>
+    <div class="form-group"><label>Your Name *</label><input id="rv_name" placeholder="Your name" maxlength="60"></div>
+    <div class="form-group"><label>Flat Number</label><input id="rv_flat" placeholder="e.g. A-1204" maxlength="20"></div>
+    <div class="form-group"><label>Your Feedback *</label>
+      <textarea id="rv_feedback" rows="4" placeholder="Share your experience with this vendor…" maxlength="500" style="resize:vertical"></textarea>
+    </div>
+    <div id="rv_status" style="font-size:.82rem;display:none;margin-bottom:8px;padding:8px 12px;border-radius:8px"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('reviewModal')">Cancel</button>
+      <button class="btn btn-primary" id="rv_submitBtn" onclick="submitReview()"><i class="fa fa-paper-plane"></i> Submit Review</button>
+    </div>
   </div>
 </div>
 
@@ -1083,6 +1122,200 @@ async function fsLogOrder(vendorId, vendorName, items, total, flat){
   }catch(e){}
 }
 
+/* ═══════════ REVIEWS ═══════════ */
+let REVIEWS = {}; // { vendorId: [{id,rating,feedback,customerName,customerFlat,createdAt},...] }
+
+function renderStarsHtml(rating){
+  let s=''; for(let i=1;i<=5;i++) s+=`<span style="color:${i<=Math.round(rating)?'var(--gold)':'#ddd'}">★</span>`; return s;
+}
+function getVendorRating(vendorId){
+  const list = REVIEWS[vendorId]||[];
+  if(!list.length) return null;
+  const avg = list.reduce((s,r)=>s+r.rating,0)/list.length;
+  return {avg: Math.round(avg*10)/10, count: list.length};
+}
+
+async function fsLoadApprovedReviews(){
+  if(!db) return;
+  try{
+    const snap = await db.collection('reviews').where('status','==','approved').get();
+    REVIEWS = {};
+    snap.docs.forEach(d=>{
+      const r={...d.data(),id:d.id};
+      if(!REVIEWS[r.vendorId]) REVIEWS[r.vendorId]=[];
+      REVIEWS[r.vendorId].push(r);
+    });
+  }catch(e){}
+}
+
+async function fsSubmitReview(vendorId, vendorName, rating, feedback, customerName, customerFlat){
+  if(!db) throw new Error('No database');
+  if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
+  const id = 'rev_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  await db.collection('reviews').doc(id).set({
+    id, vendorId, vendorName, rating, feedback: feedback||'',
+    customerName: customerName||'Anonymous', customerFlat: customerFlat||'',
+    status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+async function fsModerateReview(reviewId, status){
+  if(!db) return;
+  await db.collection('reviews').doc(reviewId).update({
+    status, moderatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+async function fsLoadAllReviews(){
+  if(!db) return [];
+  try{
+    const snap = await db.collection('reviews').get();
+    return snap.docs.map(d=>({...d.data(),id:d.id}))
+      .sort((a,b)=>{ const ta=a.createdAt?.seconds||0,tb=b.createdAt?.seconds||0; return tb-ta; });
+  }catch(e){ return []; }
+}
+
+/* ── Review UI ── */
+let _reviewVendorId = null, _reviewStar = 5;
+const STAR_LABELS = {1:'Poor',2:'Fair',3:'Good',4:'Very Good',5:'Excellent'};
+
+function hoverStar(v){
+  const stars = document.querySelectorAll('#starPicker span');
+  stars.forEach((s,i)=>{ s.style.color = (v>0 ? i<v : i<_reviewStar) ? 'var(--gold)' : '#ddd'; });
+}
+function setReviewStar(v){
+  _reviewStar = v;
+  hoverStar(0);
+  document.getElementById('starLabel').textContent = STAR_LABELS[v]||'';
+}
+
+function openReviewModal(){
+  if(!_menuVendor) return;
+  _reviewVendorId = _menuVendor.id;
+  _reviewStar = 5;
+  document.getElementById('reviewVendorName').textContent = _menuVendor.venture;
+  ['rv_name','rv_flat','rv_feedback'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const st=document.getElementById('rv_status'); if(st){st.style.display='none';st.textContent='';}
+  const btn=document.getElementById('rv_submitBtn'); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa fa-paper-plane"></i> Submit Review';}
+  hoverStar(0); setReviewStar(5);
+  document.getElementById('reviewModal').classList.add('open');
+}
+
+async function submitReview(){
+  const name     = (document.getElementById('rv_name').value||'').trim();
+  const flat     = (document.getElementById('rv_flat').value||'').trim();
+  const feedback = (document.getElementById('rv_feedback').value||'').trim();
+  const st  = document.getElementById('rv_status');
+  const btn = document.getElementById('rv_submitBtn');
+  if(!name){ st.textContent='Please enter your name.'; st.style.background='#ffeaea'; st.style.color='var(--danger)'; st.style.display='block'; return; }
+  if(!feedback){ st.textContent='Please enter your feedback.'; st.style.background='#ffeaea'; st.style.color='var(--danger)'; st.style.display='block'; return; }
+  btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Submitting…';
+  st.style.display='none';
+  try{
+    const vendor = DATA.find(d=>d.id===_reviewVendorId);
+    await fsSubmitReview(_reviewVendorId, vendor?.venture||'', _reviewStar, feedback, name, flat);
+    st.textContent='Thank you! Your review has been submitted and is awaiting admin approval.';
+    st.style.background='#eaffea'; st.style.color='var(--green-dark)'; st.style.display='block';
+    btn.innerHTML='<i class="fa fa-check"></i> Submitted';
+    setTimeout(()=>closeModal('reviewModal'),3000);
+  }catch(e){
+    st.textContent='Failed to submit: '+e.message; st.style.background='#ffeaea'; st.style.color='var(--danger)'; st.style.display='block';
+    btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Submit Review';
+  }
+}
+
+function _renderMenuReviews(vendorId){
+  const list = REVIEWS[vendorId]||[];
+  const ratingBar = document.getElementById('menuRatingBar');
+  const reviewsList = document.getElementById('menuReviewsList');
+  if(!reviewsList) return;
+  // Rating bar
+  if(ratingBar){
+    const info = getVendorRating(vendorId);
+    ratingBar.style.display = info ? 'flex' : 'none';
+    if(info) ratingBar.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px">${renderStarsHtml(info.avg)} <strong style="color:var(--green-dark)">${info.avg}</strong> <span style="color:var(--text-muted);font-size:.78rem">(${info.count} review${info.count>1?'s':''})</span></span>`;
+  }
+  if(!list.length){
+    reviewsList.innerHTML=`<div style="text-align:center;padding:16px 0;color:var(--text-muted);font-size:.83rem">No reviews yet. Be the first to review!</div>`;
+    return;
+  }
+  reviewsList.innerHTML = list.map(r=>{
+    const date = r.createdAt?.seconds ? new Date(r.createdAt.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return `<div style="border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-bottom:8px;background:var(--cream)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:.82rem;font-weight:700;color:var(--green-dark)">${r.customerName}${r.customerFlat?` · Flat ${r.customerFlat}`:''}</span>
+        <span style="font-size:.72rem;color:var(--text-muted)">${date}</span>
+      </div>
+      <div style="margin-bottom:5px;font-size:.95rem">${renderStarsHtml(r.rating)} <span style="font-size:.76rem;color:var(--gold);font-weight:600">${STAR_LABELS[r.rating]||''}</span></div>
+      <div style="font-size:.82rem;color:var(--text);line-height:1.5">${r.feedback}</div>
+    </div>`;
+  }).join('');
+}
+
+async function renderAdminReviews(c){
+  c.innerHTML=`<div class="s-card"><div class="s-card-title"><i class="fa fa-star" style="color:var(--gold)"></i> Customer Reviews — Moderation</div><div style="text-align:center;padding:30px;color:var(--text-muted)"><i class="fa fa-spinner fa-spin" style="font-size:1.5rem"></i><p>Loading reviews…</p></div></div>`;
+  const all = await fsLoadAllReviews();
+  let _filter = 'pending';
+  function _renderTable(){
+    const filtered = _filter==='all' ? all : all.filter(r=>r.status===_filter);
+    const tbody = document.getElementById('reviewsTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = filtered.length ? filtered.map(r=>{
+      const vendor = DATA.find(d=>d.id===r.vendorId);
+      const date = r.createdAt?.seconds ? new Date(r.createdAt.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
+      const statusBadge = r.status==='approved'?`<span style="color:var(--green);font-weight:700">✓ Approved</span>`:r.status==='rejected'?`<span style="color:var(--danger);font-weight:700">✕ Rejected</span>`:`<span style="color:#b8860b;font-weight:700">⏳ Pending</span>`;
+      const actions = r.status==='pending'
+        ? `<button class="btn btn-sm btn-primary" onclick="moderateReview('${r.id}','approved')"><i class="fa fa-check"></i> Approve</button> <button class="btn btn-sm btn-danger" onclick="moderateReview('${r.id}','rejected')"><i class="fa fa-times"></i> Reject</button>`
+        : `<button class="btn btn-sm btn-ghost" style="font-size:.72rem" onclick="moderateReview('${r.id}','${r.status==='approved'?'rejected':'approved'}')">${r.status==='approved'?'Revoke':'Re-approve'}</button>`;
+      return `<tr>
+        <td><strong style="font-size:.82rem">${vendor?.venture||r.vendorName||'—'}</strong><br><span style="font-size:.72rem;color:var(--text-muted)">${vendor?.cat||''}</span></td>
+        <td style="white-space:nowrap">${renderStarsHtml(r.rating)} <span style="font-size:.78rem;color:var(--gold)">${r.rating}/5</span></td>
+        <td style="font-size:.78rem">${r.customerName}<br>${r.customerFlat?'Flat '+r.customerFlat:''}</td>
+        <td style="font-size:.78rem;max-width:200px">${r.feedback}</td>
+        <td style="font-size:.72rem">${date}</td>
+        <td>${statusBadge}</td>
+        <td style="white-space:nowrap">${actions}</td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px">No ${_filter} reviews</td></tr>`;
+    // Update badge
+    const pending = all.filter(r=>r.status==='pending').length;
+    const badge = document.getElementById('pendingReviewsBadge');
+    if(badge){ badge.textContent=pending||''; badge.style.display=pending?'':'none'; }
+  }
+  const pending = all.filter(r=>r.status==='pending').length;
+  const approved = all.filter(r=>r.status==='approved').length;
+  const rejected = all.filter(r=>r.status==='rejected').length;
+  c.innerHTML=`<div class="s-card">
+    <div class="s-card-title"><i class="fa fa-star" style="color:var(--gold)"></i> Customer Reviews — Moderation</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-primary" onclick="document.querySelectorAll('.rv-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active');_rvFilter('pending')"><i class="fa fa-clock"></i> Pending (${pending})</button>
+      <button class="btn btn-sm btn-ghost rv-filter" onclick="document.querySelectorAll('.rv-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active');_rvFilter('approved')"><i class="fa fa-check"></i> Approved (${approved})</button>
+      <button class="btn btn-sm btn-ghost rv-filter" onclick="document.querySelectorAll('.rv-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active');_rvFilter('rejected')"><i class="fa fa-times"></i> Rejected (${rejected})</button>
+      <button class="btn btn-sm btn-ghost rv-filter" onclick="document.querySelectorAll('.rv-filter').forEach(b=>b.classList.remove('active'));this.classList.add('active');_rvFilter('all')"><i class="fa fa-list"></i> All (${all.length})</button>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="menu-table" style="font-size:.82rem">
+      <thead><tr><th>Vendor</th><th>Rating</th><th>Customer</th><th>Feedback</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="reviewsTableBody"></tbody>
+    </table>
+    </div>
+  </div>`;
+  window._rvFilter = function(f){ _filter=f; _renderTable(); };
+  window.moderateReview = async function(id, status){
+    try{
+      await fsModerateReview(id, status);
+      const r = all.find(x=>x.id===id);
+      if(r){ r.status=status; }
+      if(status==='approved'){
+        await fsLoadApprovedReviews();
+      }
+      _renderTable();
+      showToast(status==='approved'?'Review approved ✓':'Review rejected');
+    }catch(e){ showToast('Error: '+e.message); }
+  };
+  _renderTable();
+}
+
 /* ═══════════ DATA (localStorage + Firestore) ═══════════ */
 function loadData(){
   try{
@@ -1261,6 +1494,7 @@ function makeTile(item, sno, cat){
     <div class="tile-body">
       <div class="tile-name">${item.venture}</div>
       <div class="tile-spec">${item.speciality}</div>
+      ${(()=>{ const ri=getVendorRating(item.id); return ri?`<div style="font-size:.8rem;margin-bottom:5px">${renderStarsHtml(ri.avg)} <span style="color:var(--gold);font-weight:600">${ri.avg}</span> <span style="color:var(--text-muted);font-size:.72rem">(${ri.count})</span></div>`:''; })()}
       ${item.desc ? `<div class="tile-desc">${item.desc}</div>` : ''}
       <div class="tile-divider"></div>
       <div class="tile-info">
@@ -1353,6 +1587,7 @@ function openMenuModal(vendorId){
     document.getElementById('menuFlatRow').style.display  = _catCfg.showFlat ? 'block' : 'none';
   }
   _updMenuTotal();
+  _renderMenuReviews(vendorId);
   document.getElementById('menuModal').classList.add('open');
   fsRecordStat(vendorId,'profileViews');
 }
@@ -2164,6 +2399,7 @@ function renderAdminTab(tab){
     case 'config':    renderAdminConfig(c);    break;
     case 'ads':       renderAdminAds(c);       break;
     case 'stats':     renderAdminStats(c);     break;
+    case 'reviews':   renderAdminReviews(c);   break;
   }
 }
 
@@ -2683,6 +2919,8 @@ async function migrateFromSeed(){
 (async function init(){
   // Load site config from Firestore, then rebuild carousel with fresh featured list
   fsLoadConfig().then(()=>{ applyFooterLinks(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
+  // Load approved reviews so tiles show ratings
+  fsLoadApprovedReviews().then(()=>renderAll()).catch(()=>{});
 
   // Set up seller auth listener
   setupSellerAuth();

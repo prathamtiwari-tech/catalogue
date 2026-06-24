@@ -609,7 +609,10 @@ footer strong{color:var(--gold-light)}
 <!-- ── HERO ── -->
 <div class="hero">
   <h2>Homebiz</h2>
-  <p>For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.</p>
+  <p id="heroSubText">For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.</p>
+  <div style="margin-bottom:14px">
+    <a href="#" onclick="openAboutModal();return false" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;padding:7px 20px;border-radius:50px;font-size:.82rem;font-weight:600;letter-spacing:.04em;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"><i class="fa fa-circle-info"></i> About Us</a>
+  </div>
   <div class="stats-row">
     <div class="stat-box"><div class="num" id="statTotal">0</div><div class="lbl">Local Ventures</div></div>
     <div class="stat-box"><div class="num">6</div><div class="lbl">Categories</div></div>
@@ -714,7 +717,11 @@ footer strong{color:var(--gold-light)}
   <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:.75rem">
     <span style="opacity:.5">© Homebiz <span id="editionFooter"></span></span>
     <span style="opacity:.3">|</span>
-    <a href="#" onclick="openPolicyModal('terms');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Terms &amp; Conditions</a>
+    <a href="#" onclick="openPolicyModal('terms');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Terms of Use</a>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('return');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Return Policy</a>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('delivery');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Delivery Policy</a>
     <span style="opacity:.3">|</span>
     <a href="#" onclick="openPolicyModal('privacy');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Privacy Policy</a>
     <span style="opacity:.3">|</span>
@@ -760,6 +767,15 @@ footer strong{color:var(--gold-light)}
       <button class="btn" onclick="closeModal('contactModal')">Cancel</button>
       <button class="btn btn-primary" id="ct_submitBtn" onclick="submitContactForm()"><i class="fa fa-paper-plane"></i> Send Message</button>
     </div>
+  </div>
+</div>
+
+<!-- ── ABOUT US MODAL ── -->
+<div class="modal-overlay" id="aboutModal" onclick="if(event.target===this)closeModal('aboutModal')">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-title"><i class="fa fa-circle-info" style="color:var(--green)"></i> About Us</div>
+    <div id="aboutModalBody" style="font-size:.9rem;line-height:1.8;color:var(--text);white-space:pre-wrap;max-height:65vh;overflow-y:auto"></div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('aboutModal')">Close</button></div>
   </div>
 </div>
 
@@ -1430,12 +1446,41 @@ function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
 function openPolicyModal(type){
-  const isTerms = type==='terms';
-  const title = isTerms ? 'Terms & Conditions' : 'Privacy Policy';
-  const content = isTerms ? (SITE_CONFIG.terms||'') : (SITE_CONFIG.privacy||'');
-  document.getElementById('policyModalTitle').textContent = title;
-  document.getElementById('policyModalBody').textContent = content || 'Content not set yet. Admin can add this in Site Config.';
+  const map = {
+    terms:    {title:'Terms of Use',      key:'terms'},
+    return:   {title:'Return Policy',     key:'returnPolicy'},
+    delivery: {title:'Delivery Policy',   key:'deliveryPolicy'},
+    privacy:  {title:'Privacy Policy',    key:'privacy'},
+  };
+  const cfg = map[type] || map.terms;
+  document.getElementById('policyModalTitle').textContent = cfg.title;
+  document.getElementById('policyModalBody').textContent = SITE_CONFIG[cfg.key] || 'Content not set yet. Admin can add this in Site Config.';
   document.getElementById('policyModal').classList.add('open');
+}
+
+const DEFAULT_ABOUT_US = `Welcome to Homebiz — Where Neighbours Meet Business
+
+Homebiz is a community-first marketplace built for the residents of Prateek Laurel Society. We believe that every household holds a story, a skill, and a passion worth sharing — and we've created a space where those passions turn into thriving home-grown businesses.
+
+🏡 Our Mission
+To connect talented home entrepreneurs with their neighbours, making it easier to discover, support, and celebrate local talent — right within the gates of our community.
+
+🌟 What We Offer
+• A curated directory of home-based businesses across food, beauty, education, wellness, and more
+• Direct WhatsApp ordering — no middlemen, no extra fees
+• A trusted, verified platform exclusive to our society residents
+
+🤝 Why Choose Homebiz?
+When you order from a Homebiz vendor, your money stays in the community. You support a neighbour's dream, get freshly made products with love, and build the kind of trust that only comes from knowing who made your food or taught your child.
+
+📍 Exclusively for Prateek Laurel Society, Sector 120, Noida
+
+Together, we grow stronger — one order at a time.`;
+
+function openAboutModal(){
+  const body = document.getElementById('aboutModalBody');
+  if(body) body.textContent = SITE_CONFIG.aboutUs || DEFAULT_ABOUT_US;
+  document.getElementById('aboutModal').classList.add('open');
 }
 
 function openContactModal(){
@@ -2248,7 +2293,7 @@ function renderAdminVendors(c, searchVal){
       <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openAddModal()"><i class="fa fa-plus"></i> Add</button>
     </div>
     <div style="margin-bottom:10px">
-      <input id="adminVendorSearch" type="text" placeholder="Search vendors…" value="${q}" oninput="renderAdminVendors(document.getElementById('adminTabContent'))" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;background:var(--bg-card);color:var(--text)">
+      <input id="adminVendorSearch" type="text" placeholder="Search vendors…" value="${q}" oninput="filterAdminVendors(this.value)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;background:var(--bg-card);color:var(--text)">
     </div>
     <div style="max-height:60vh;overflow-y:auto">
     <table class="menu-table" style="font-size:.82rem">
@@ -2268,6 +2313,25 @@ function renderAdminVendors(c, searchVal){
     </table>
     </div>
   </div>`;
+}
+
+function filterAdminVendors(q){
+  q = (q||'').toLowerCase().trim();
+  const list = q ? DATA.filter(v=>(v.venture||'').toLowerCase().includes(q)||(v.speciality||'').toLowerCase().includes(q)||(v.cat||'').toLowerCase().includes(q)||(v.contact||'').toLowerCase().includes(q)) : DATA;
+  const tbody = document.querySelector('#adminTabContent .menu-table tbody');
+  if(!tbody) return;
+  tbody.innerHTML = list.length ? list.map((v,i)=>`<tr>
+    <td style="color:var(--text-muted)">${i+1}</td>
+    <td><strong>${v.venture}</strong><br><span style="font-size:.72rem;color:var(--gold)">${v.speciality||''}</span></td>
+    <td style="font-size:.76rem">${(v.cat||'').split(',')[0]}</td>
+    <td style="font-size:.76rem">${v.contact||''}<br>${v.flat||''}</td>
+    <td style="text-align:center">${(v.menu||[]).length}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-sm btn-ghost" onclick="openEditModal('${v.id}')"><i class="fa fa-pen"></i></button>
+      <button class="btn btn-sm btn-ghost" onclick="openMenuItemModal('${v.id}',null)"><i class="fa fa-utensils"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteTile('${v.id}')"><i class="fa fa-trash"></i></button>
+    </td>
+  </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px">No vendors match "${q}"</td></tr>`;
 }
 
 async function renderAdminAccounts(c){
@@ -2398,10 +2462,16 @@ function renderAdminConfig(c){
         <input id="cfg_ytUrl" placeholder="https://youtube.com/@yourchannel" value="${esc(SITE_CONFIG.ytUrl)}"></div>
       <div class="form-group"><label><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp Number</label>
         <input id="cfg_waNum" placeholder="919999999999 (with country code, no +)" value="${esc(SITE_CONFIG.waNum)}"></div>
-      <div class="form-group full"><label>Terms &amp; Conditions</label>
-        <textarea id="cfg_terms" rows="6" placeholder="Enter your Terms and Conditions text here…" style="font-size:.83rem">${(SITE_CONFIG.terms||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>Terms of Use</label>
+        <textarea id="cfg_terms" rows="5" placeholder="Enter your Terms of Use text here…" style="font-size:.83rem">${(SITE_CONFIG.terms||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>Return Policy</label>
+        <textarea id="cfg_returnPolicy" rows="5" placeholder="Enter your Return Policy text here…" style="font-size:.83rem">${(SITE_CONFIG.returnPolicy||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>Delivery Policy</label>
+        <textarea id="cfg_deliveryPolicy" rows="5" placeholder="Enter your Delivery Policy text here…" style="font-size:.83rem">${(SITE_CONFIG.deliveryPolicy||'').replace(/</g,'&lt;')}</textarea></div>
       <div class="form-group full"><label>Privacy Policy</label>
-        <textarea id="cfg_privacy" rows="6" placeholder="Enter your Privacy Policy text here…" style="font-size:.83rem">${(SITE_CONFIG.privacy||'').replace(/</g,'&lt;')}</textarea></div>
+        <textarea id="cfg_privacy" rows="5" placeholder="Enter your Privacy Policy text here…" style="font-size:.83rem">${(SITE_CONFIG.privacy||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>About Us</label>
+        <textarea id="cfg_aboutUs" rows="6" placeholder="Enter your About Us content here…" style="font-size:.83rem">${(SITE_CONFIG.aboutUs||'').replace(/</g,'&lt;')}</textarea></div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
         <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-envelope" style="color:var(--green)"></i> Contact Form — EmailJS Setup</div>
         <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Create a free account at <strong>emailjs.com</strong>, add an Email Service and a Template (include template variables: from_name, from_email, mobile, subject, message). Paste the keys below. Without these, Contact Us falls back to opening the user's mail app.</p>
@@ -2429,7 +2499,10 @@ async function saveAdminConfig(){
     ytUrl:          document.getElementById('cfg_ytUrl').value.trim(),
     waNum:          document.getElementById('cfg_waNum').value.trim(),
     terms:          document.getElementById('cfg_terms').value.trim(),
+    returnPolicy:   document.getElementById('cfg_returnPolicy').value.trim(),
+    deliveryPolicy: document.getElementById('cfg_deliveryPolicy').value.trim(),
     privacy:        document.getElementById('cfg_privacy').value.trim(),
+    aboutUs:        document.getElementById('cfg_aboutUs').value.trim(),
     ejsPublicKey:   document.getElementById('cfg_ejsPublicKey').value.trim(),
     ejsServiceId:   document.getElementById('cfg_ejsServiceId').value.trim(),
     ejsTemplateId:  document.getElementById('cfg_ejsTemplateId').value.trim(),

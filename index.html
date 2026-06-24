@@ -217,9 +217,10 @@ footer strong{color:var(--gold-light)}
   .logo-wrap svg{width:36px;height:36px}
   .brand-text h1{font-size:.9rem}
   .brand-text p{font-size:.58rem;display:none} /* hide long subtitle on tiny screens */
-  /* hdrRight (login/logout button) stays on same row as brand */
-  #hdrRight{flex-shrink:0}
-  #hdrRight .btn{padding:6px 10px;font-size:.72rem}
+  /* hdrRight — stays on same row but compresses to icon-only on small screens */
+  #hdrRight{flex-shrink:0;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+  #hdrRight .btn{padding:6px 8px;font-size:.72rem}
+  .hdr-label{display:none} /* hide button text labels, show icon only */
   /* Panel tabs go full-width on second row */
   #panelTabs{order:3;width:100%;justify-content:center;background:rgba(255,255,255,.08);border-radius:8px;padding:3px}
   .panel-tab-btn{flex:1;justify-content:center;padding:6px 4px;font-size:.72rem;gap:4px}
@@ -631,14 +632,15 @@ footer strong{color:var(--gold-light)}
 
 <!-- ── VENDOR DETAIL VIEW (inline, replaces modal) ── -->
 <div id="vendorDetailView" style="display:none;padding-bottom:60px">
-  <div style="max-width:700px;margin:0 auto;padding:0 16px">
+  <!-- Sticky back bar — spans full width below the site header -->
+  <div style="position:sticky;top:60px;z-index:50;background:var(--green-dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(0,0,0,.25)">
+    <button onclick="closeVendorDetail()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:8px;padding:7px 18px;font-size:.9rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0">
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
+    <span id="vdBackTitle" style="font-weight:600;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0"></span>
+  </div>
 
-    <!-- Back bar -->
-    <div style="padding:16px 0 12px">
-      <button onclick="closeVendorDetail()" class="btn btn-sm btn-outline">
-        <i class="fa fa-arrow-left"></i> Back to all vendors
-      </button>
-    </div>
+  <div style="max-width:700px;margin:0 auto;padding:16px 16px 0">
 
     <!-- Hero image -->
     <div id="vdHeroImg" style="border-radius:16px;overflow:hidden;margin-bottom:16px;background:var(--cream);min-height:60px"></div>
@@ -669,8 +671,8 @@ footer strong{color:var(--gold-light)}
     <div id="menuContactSection" style="display:none;border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px">
       <div style="font-size:.75rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Contact Vendor Directly</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="menuCallBtn" class="btn btn-sm btn-outline" style="flex:1;min-width:120px;justify-content:center" onclick="showVendorContact('call')"><i class="fa fa-phone"></i> Call Vendor</button>
-        <button id="menuWaBtn" class="btn btn-sm btn-outline" style="flex:1;min-width:120px;justify-content:center;color:#25d366;border-color:#25d366" onclick="showVendorContact('wa')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+        <button id="menuCallBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:120px;justify-content:center" onclick="showVendorContact('call')"><i class="fa fa-phone"></i> Call Vendor</button>
+        <button id="menuWaBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:120px;justify-content:center;color:#1a8c3f;border-color:#25d366" onclick="showVendorContact('wa')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
       </div>
       <div id="menuVendorNumber" style="display:none;margin-top:10px;text-align:center;font-weight:700;font-size:1.1rem;color:var(--green-dark);background:var(--green-pale);padding:10px 14px;border-radius:8px"></div>
     </div>
@@ -679,10 +681,13 @@ footer strong{color:var(--gold-light)}
     <div id="menuReviewsSection" style="border-top:2px solid var(--border);padding-top:18px">
       <div style="font-weight:700;font-size:1rem;color:var(--green-dark);margin-bottom:12px"><i class="fa fa-star" style="color:var(--gold)"></i> Customer Reviews</div>
       <div id="menuReviewsList" style="margin-bottom:14px"></div>
-      <button class="btn btn-outline" style="width:100%;justify-content:center;padding:11px" onclick="openReviewModal()">
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;padding:11px;color:var(--green-dark);border-color:var(--green)" onclick="openReviewModal()">
         <i class="fa fa-pen" style="color:var(--gold)"></i> Write a Review
       </button>
     </div>
+
+    <!-- Similar vendors in same category -->
+    <div id="vdSimilar" style="display:none;border-top:2px solid var(--border);padding-top:20px;margin-top:28px;padding-bottom:8px"></div>
 
   </div>
 </div>
@@ -1424,17 +1429,17 @@ function updatePanelTabs(){
   const panelTabs = document.getElementById('panelTabs');
   if(browseTab) browseTab.style.display = hasOtherTabs ? 'inline-flex' : 'none';
   if(panelTabs) panelTabs.style.display = hasOtherTabs ? 'flex' : 'none';
-  const aboutBtn = `<button class="btn btn-outline btn-sm" onclick="openAboutModal()"><i class="fa fa-circle-info"></i> About Us</button>`;
+  const aboutBtn = `<button class="btn btn-outline btn-sm" onclick="openAboutModal()"><i class="fa fa-circle-info"></i><span class="hdr-label"> About Us</span></button>`;
   if(hdrRight){
     if(currentSeller){
-      hdrRight.innerHTML = `${aboutBtn}<span style="font-size:.78rem;color:rgba(255,255,255,.8);margin-right:6px">${currentSeller.displayName}</span>
-        <button class="btn btn-sm btn-outline" onclick="sellerLogout()"><i class="fa fa-sign-out-alt"></i> Logout</button>`;
+      hdrRight.innerHTML = `${aboutBtn}<span class="hdr-label" style="font-size:.78rem;color:rgba(255,255,255,.8)">${currentSeller.displayName}</span>
+        <button class="btn btn-sm btn-outline" onclick="sellerLogout()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Logout</span></button>`;
     } else if(isAdmin){
-      hdrRight.innerHTML = `${aboutBtn}<span class="admin-badge" style="margin-right:8px">Admin</span>
-        <button class="btn btn-sm btn-outline" onclick="exitAdmin()"><i class="fa fa-sign-out-alt"></i> Exit Admin</button>`;
+      hdrRight.innerHTML = `${aboutBtn}<span class="admin-badge hdr-label">Admin</span>
+        <button class="btn btn-sm btn-outline" onclick="exitAdmin()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Exit Admin</span></button>`;
     } else {
-      hdrRight.innerHTML = `${aboutBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i> Seller Login</button>
-        <button class="btn btn-outline btn-sm" onclick="openLoginModal('admin')" style="margin-left:6px">Admin</button>`;
+      hdrRight.innerHTML = `${aboutBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i><span class="hdr-label"> Seller Login</span></button>
+        <button class="btn btn-outline btn-sm" onclick="openLoginModal('admin')"><i class="fa fa-lock"></i><span class="hdr-label"> Admin</span></button>`;
     }
   }
 }
@@ -1643,6 +1648,13 @@ function openMenuModal(vendorId){
   _updMenuTotal();
   _renderMenuReviews(vendorId);
 
+  // Back bar title
+  const vdBackTitle = document.getElementById('vdBackTitle');
+  if(vdBackTitle) vdBackTitle.textContent = _menuVendor.venture;
+
+  // Similar vendors
+  _renderSimilarVendors(vendorId);
+
   // Show inline detail view, hide grid
   document.getElementById('mainGrid').style.display = 'none';
   const controls = document.querySelector('#panel-customer .controls');
@@ -1660,6 +1672,38 @@ function closeVendorDetail(){
   if(controls) controls.style.display = '';
   window.scrollTo({top: document.getElementById('mainGrid').offsetTop - 80, behavior:'smooth'});
   _menuVendor = null; _catCfg = null; _menuQtys = {};
+}
+
+function _renderSimilarVendors(currentId){
+  const el = document.getElementById('vdSimilar');
+  if(!el || !_menuVendor) return;
+  const similar = DATA.filter(d => d.cat === _menuVendor.cat && d.id !== currentId && d.visible !== false);
+  if(!similar.length){ el.style.display = 'none'; return; }
+  const catObj = CATS.find(c => c.name === _menuVendor.cat);
+  const catIcon = catObj ? catObj.icon : 'fa-store';
+  const catLabel = (_menuVendor.cat || '').split(',')[0];
+  el.style.display = 'block';
+  el.innerHTML = '<div style="font-weight:700;font-size:1rem;color:var(--green-dark);margin-bottom:14px">'
+    + '<i class="fa ' + catIcon + '" style="color:var(--green);margin-right:6px"></i>More in ' + catLabel
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px">'
+    + similar.slice(0, 6).map(function(v){
+        var imgSrc = v.image || (IMGS && IMGS[v.id]) || '';
+        var rating = getVendorRating(v.id);
+        var imgHtml = imgSrc
+          ? '<img src="' + imgSrc + '" alt="' + v.venture + '" style="width:100%;height:88px;object-fit:cover;display:block">'
+          : '<div style="width:100%;height:88px;background:linear-gradient(145deg,var(--green-dark),var(--green));display:flex;align-items:center;justify-content:center"><i class="fa fa-store" style="color:#fff;font-size:1.4rem;opacity:.8"></i></div>';
+        var ratingHtml = rating
+          ? '<div style="font-size:.72rem;color:var(--gold);font-weight:600">★ ' + rating.avg + '<span style="color:var(--text-muted);font-weight:400"> (' + rating.count + ')</span></div>'
+          : '<div style="font-size:.72rem;color:var(--text-muted)">Tap to view</div>';
+        return '<div onclick="openMenuModal(\'' + v.id + '\')" style="cursor:pointer;background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,border-color .2s,transform .2s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 24px rgba(26,92,46,.15)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+          + imgHtml
+          + '<div style="padding:8px 10px">'
+          + '<div style="font-size:.82rem;font-weight:700;color:var(--green-dark);line-height:1.3;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + v.venture + '</div>'
+          + ratingHtml
+          + '</div></div>';
+      }).join('')
+    + '</div>';
 }
 
 function chQty(id, price, delta){

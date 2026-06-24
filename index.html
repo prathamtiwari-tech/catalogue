@@ -697,19 +697,29 @@ footer strong{color:var(--gold-light)}
     </div>
     <div id="menuRatingBar" style="display:none;margin:6px 0 2px;font-size:.88rem"></div>
     <div id="menuItemsList" style="margin-top:14px;max-height:40vh;overflow-y:auto"></div>
-    <div id="menuFlatRow" style="margin-top:14px">
-      <input type="text" id="menuCustomerFlat" placeholder="Your flat number (e.g. A-1204)" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;font-family:inherit;outline:none">
+    <div id="menuFlatRow" style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+      <input type="tel" id="menuCustomerMobile" placeholder="Your mobile number *" maxlength="15"
+        style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;font-family:inherit;outline:none;box-sizing:border-box">
+      <input type="text" id="menuCustomerAddress" placeholder="Complete delivery address (flat, tower, society…) *" maxlength="200"
+        style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;font-family:inherit;outline:none;box-sizing:border-box">
     </div>
     <button class="order-btn" id="menuOrderBtn" onclick="placeOrder()">
       <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
     </button>
-    <!-- Reviews section -->
-    <div id="menuReviewsSection" style="margin-top:18px;border-top:1.5px solid var(--border);padding-top:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="font-weight:700;font-size:.88rem;color:var(--green-dark)"><i class="fa fa-star" style="color:var(--gold)"></i> Customer Reviews</div>
-        <button class="btn btn-sm btn-outline" onclick="openReviewModal()"><i class="fa fa-pen"></i> Write a Review</button>
+    <!-- Contact vendor section -->
+    <div id="menuContactSection" style="display:none;margin-top:10px;border-top:1.5px solid var(--border);padding-top:12px">
+      <div style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Contact Vendor Directly</div>
+      <div style="display:flex;gap:8px">
+        <button id="menuCallBtn" class="btn btn-sm btn-outline" style="flex:1;justify-content:center" onclick="showVendorContact('call')"><i class="fa fa-phone"></i> Call Vendor</button>
+        <button id="menuWaBtn" class="btn btn-sm btn-outline" style="flex:1;justify-content:center;color:#25d366;border-color:#25d366" onclick="showVendorContact('wa')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
       </div>
-      <div id="menuReviewsList" style="max-height:28vh;overflow-y:auto"></div>
+      <div id="menuVendorNumber" style="display:none;margin-top:8px;text-align:center;font-weight:700;font-size:1rem;color:var(--green-dark);background:var(--green-pale);padding:8px 12px;border-radius:8px"></div>
+    </div>
+    <!-- Reviews section -->
+    <div id="menuReviewsSection" style="margin-top:14px;border-top:1.5px solid var(--border);padding-top:14px">
+      <div style="font-weight:700;font-size:.88rem;color:var(--green-dark);margin-bottom:10px"><i class="fa fa-star" style="color:var(--gold)"></i> Customer Reviews</div>
+      <div id="menuReviewsList" style="max-height:22vh;overflow-y:auto;margin-bottom:10px"></div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="openReviewModal()"><i class="fa fa-pen" style="color:var(--gold)"></i> Write a Review</button>
     </div>
   </div>
 </div>
@@ -1466,10 +1476,8 @@ function makeTile(item, sno, cat){
     </div>`;
   }
 
-  /* Links */
+  /* Links — phone & WhatsApp are hidden on tile; accessible via modal */
   let links = '';
-  if(item.phone)     links += `<a class="tile-link tl-phone" href="tel:${item.phone}"><i class="fa fa-phone"></i>${item.phone}</a>`;
-  if(item.whatsapp)  links += `<a class="tile-link tl-wa" href="https://wa.me/91${item.whatsapp}" target="_blank" onclick="fsRecordStat('${item.id}','whatsappClicks')"><i class="fab fa-whatsapp"></i>${item.whatsapp}</a>`;
   if(item.instagram){
     const ig = item.instagram.startsWith('http')?item.instagram:`https://instagram.com/${item.instagram.replace('@','')}`;
     links += `<a class="tile-link tl-ig" href="${ig}" target="_blank"><i class="fab fa-instagram"></i>${item.instagram}</a>`;
@@ -1514,18 +1522,18 @@ function makeTile(item, sno, cat){
 function getCatConfig(cat){
   const c = (cat||'').toLowerCase();
   if(c.includes('food')||c.includes('baker')||c.includes('beverage'))
-    return {tileBtnIcon:'fa-utensils',   tileBtnText:'View Menu & Order',      modalTerm:'Menu',                 showFlat:true,  useQty:true,  flatLabel:'Your flat number for delivery (e.g. A-1204)', actionText:'Order via WhatsApp',          emptyIcon:'fa-utensils',        emptyText:'No menu added yet — contact seller directly.', waIntro:"Hi! I'd like to place an order 🛒",         waTotal:(t,f)=>`\n\n💰 *Total: ₹${t}*${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm. Thank you!`};
+    return {tileBtnIcon:'fa-utensils',        tileBtnText:'View Menu & Order',       modalTerm:'Menu',                  useQty:true,  actionText:'Order via WhatsApp',         emptyIcon:'fa-utensils',         emptyText:'No menu added yet — contact seller directly.',          waIntro:"Hi! I'd like to place an order 🛒",          waTotal:(t,a)=>`\n\n💰 *Total: ₹${t}*${a?'\n🏠 Address: '+a:''}\n\nPlease confirm. Thank you!`};
   if(c.includes('fashion')||c.includes('gift')||c.includes('lifestyle'))
-    return {tileBtnIcon:'fa-bag-shopping',tileBtnText:'Browse & Order',         modalTerm:'Products',             showFlat:true,  useQty:true,  flatLabel:'Your flat number for delivery (e.g. A-1204)', actionText:'Order via WhatsApp',          emptyIcon:'fa-bag-shopping',    emptyText:'No products listed yet — contact seller directly.', waIntro:"Hi! I'd like to order 🛍️",                waTotal:(t,f)=>`\n\n💰 *Total: ₹${t}*${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm. Thank you!`};
+    return {tileBtnIcon:'fa-bag-shopping',    tileBtnText:'Browse & Order',          modalTerm:'Products',              useQty:true,  actionText:'Order via WhatsApp',         emptyIcon:'fa-bag-shopping',     emptyText:'No products listed yet — contact seller directly.',     waIntro:"Hi! I'd like to order 🛍️",                 waTotal:(t,a)=>`\n\n💰 *Total: ₹${t}*${a?'\n🏠 Address: '+a:''}\n\nPlease confirm. Thank you!`};
   if(c.includes('education')||c.includes('coaching'))
-    return {tileBtnIcon:'fa-graduation-cap',tileBtnText:'View Details',         modalTerm:'Courses & Sessions',   showFlat:false, useQty:false, flatLabel:'',                                           actionText:"I'm Interested — WhatsApp",   emptyIcon:'fa-graduation-cap',  emptyText:'Contact the educator directly for course details.', waIntro:"Hi! I'm interested in enrolling 🎓",        waTotal:(t,f)=>`${t>0?'\n💰 *Reference Fees: ₹'+t+' (subject to confirmation)*':''}\n\nCould you please share schedule and batch details? Thank you!`};
+    return {tileBtnIcon:'fa-graduation-cap',  tileBtnText:'View Details',            modalTerm:'Courses & Sessions',    useQty:false, actionText:"I'm Interested — WhatsApp",  emptyIcon:'fa-graduation-cap',   emptyText:'Contact the educator directly for course details.',     waIntro:"Hi! I'm interested in enrolling 🎓",         waTotal:(t,a)=>`${t>0?'\n💰 *Reference Fees: ₹'+t+' (subject to confirmation)*':''}\n\nCould you please share schedule and batch details? Thank you!`};
   if(c.includes('camp')||c.includes('music')||c.includes('kids'))
-    return {tileBtnIcon:'fa-music',        tileBtnText:'View Details',          modalTerm:'Activities & Sessions',showFlat:false, useQty:false, flatLabel:'',                                           actionText:"I'm Interested — WhatsApp",   emptyIcon:'fa-music',           emptyText:'Contact the organiser directly for activity details.', waIntro:"Hi! I'm interested in joining 🎵",        waTotal:(t,f)=>`${t>0?'\n💰 *Reference Fees: ₹'+t+' (subject to confirmation)*':''}\n\nCould you please share schedules and batch details? Thank you!`};
+    return {tileBtnIcon:'fa-music',           tileBtnText:'View Details',            modalTerm:'Activities & Sessions', useQty:false, actionText:"I'm Interested — WhatsApp",  emptyIcon:'fa-music',            emptyText:'Contact the organiser directly for activity details.',  waIntro:"Hi! I'm interested in joining 🎵",           waTotal:(t,a)=>`${t>0?'\n💰 *Reference Fees: ₹'+t+' (subject to confirmation)*':''}\n\nCould you please share schedules and batch details? Thank you!`};
   if(c.includes('health')||c.includes('professional'))
-    return {tileBtnIcon:'fa-briefcase-medical',tileBtnText:'View Details & Consult', modalTerm:'Services',        showFlat:false, useQty:false, flatLabel:'',                                           actionText:'Consult Now — WhatsApp',       emptyIcon:'fa-briefcase-medical',emptyText:'Contact the professional directly to book a session.', waIntro:"Hi! I'd like to book a consultation 🏥", waTotal:(t,f)=>`${t>0?'\n💰 *Service Fees: ₹'+t+' (subject to consultation)*':''}\n\nPlease share your availability. Thank you!`};
+    return {tileBtnIcon:'fa-briefcase-medical',tileBtnText:'View Details & Consult', modalTerm:'Services',              useQty:false, actionText:'Consult Now — WhatsApp',     emptyIcon:'fa-briefcase-medical',emptyText:'Contact the professional directly to book a session.',  waIntro:"Hi! I'd like to book a consultation 🏥",    waTotal:(t,a)=>`${t>0?'\n💰 *Service Fees: ₹'+t+' (subject to consultation)*':''}\n\nPlease share your availability. Thank you!`};
   if(c.includes('home')||c.includes('print')||c.includes('tech'))
-    return {tileBtnIcon:'fa-print',        tileBtnText:'View Details & Book',   modalTerm:'Services & Products',  showFlat:true,  useQty:false, flatLabel:'Your flat number (e.g. A-1204)',              actionText:'Book Now — WhatsApp',          emptyIcon:'fa-print',           emptyText:'Contact the service provider directly.',            waIntro:"Hi! I'd like to enquire about your services 🛠️",waTotal:(t,f)=>`${t>0?'\n💰 *Estimated Cost: ₹'+t+' (subject to discussion)*':''}${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm availability. Thank you!`};
-  return   {tileBtnIcon:'fa-store',        tileBtnText:'View Details & Order',  modalTerm:'Menu',                 showFlat:true,  useQty:true,  flatLabel:'Your flat number (e.g. A-1204)',              actionText:'Order via WhatsApp',          emptyIcon:'fa-store',           emptyText:'No items listed yet — contact seller directly.',    waIntro:"Hi! I'd like to place an order",             waTotal:(t,f)=>`\n\n💰 *Total: ₹${t}*${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm. Thank you!`};
+    return {tileBtnIcon:'fa-print',           tileBtnText:'View Details & Book',     modalTerm:'Services & Products',   useQty:false, actionText:'Book Now — WhatsApp',        emptyIcon:'fa-print',            emptyText:'Contact the service provider directly.',               waIntro:"Hi! I'd like to enquire about your services 🛠️",waTotal:(t,a)=>`${t>0?'\n💰 *Estimated Cost: ₹'+t+' (subject to discussion)*':''}${a?'\n🏠 Address: '+a:''}\n\nPlease confirm availability. Thank you!`};
+  return     {tileBtnIcon:'fa-store',          tileBtnText:'View Details & Order',    modalTerm:'Menu',                  useQty:true,  actionText:'Order via WhatsApp',         emptyIcon:'fa-store',            emptyText:'No items listed yet — contact seller directly.',        waIntro:"Hi! I'd like to place an order",             waTotal:(t,a)=>`\n\n💰 *Total: ₹${t}*${a?'\n🏠 Address: '+a:''}\n\nPlease confirm. Thank you!`};
 }
 
 /* ═══════════ MENU MODAL + ORDERING ═══════════ */
@@ -1539,19 +1547,24 @@ function openMenuModal(vendorId){
   document.getElementById('menuModalTitle').textContent = _menuVendor.venture;
   document.getElementById('menuModalSpec').textContent  = _menuVendor.speciality||'';
   document.getElementById('menuModalTerm').textContent  = _catCfg.modalTerm;
-  document.getElementById('menuCustomerFlat').value = '';
-  document.getElementById('menuCustomerFlat').placeholder = _catCfg.flatLabel || 'Your flat number (e.g. A-1204)';
+  document.getElementById('menuCustomerMobile').value = '';
+  document.getElementById('menuCustomerAddress').value = '';
+  document.getElementById('menuCustomerMobile').style.borderColor = 'var(--border)';
+  document.getElementById('menuCustomerAddress').style.borderColor = 'var(--border)';
 
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
   const list = document.getElementById('menuItemsList');
   const wa = _menuVendor.whatsapp||_menuVendor.phone;
 
+  const contactSection = document.getElementById('menuContactSection');
+  const vendorNumEl    = document.getElementById('menuVendorNumber');
+  if(contactSection){ contactSection.style.display = wa ? 'block' : 'none'; }
+  if(vendorNumEl)   { vendorNumEl.style.display = 'none'; }
+
   if(!menu.length){
     list.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--text-muted)">
       <i class="fa ${_catCfg.emptyIcon}" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
       <p style="margin-bottom:14px">${_catCfg.emptyText}</p>
-      ${wa?`<a class="btn btn-green" href="https://wa.me/91${wa}" target="_blank" style="text-decoration:none" onclick="fsRecordStat('${vendorId}','whatsappClicks')">
-        <i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>`:''}
     </div>`;
     document.getElementById('menuOrderBtn').style.display = 'none';
     document.getElementById('menuFlatRow').style.display  = 'none';
@@ -1586,7 +1599,7 @@ function openMenuModal(vendorId){
         </div>`).join('');
     }
     document.getElementById('menuOrderBtn').style.display = 'flex';
-    document.getElementById('menuFlatRow').style.display  = _catCfg.showFlat ? 'block' : 'none';
+    document.getElementById('menuFlatRow').style.display  = 'flex';
   }
   _updMenuTotal();
   _renderMenuReviews(vendorId);
@@ -1623,10 +1636,10 @@ function _updMenuTotal(){
 function placeOrder(){
   if(!_menuVendor||!_catCfg) return;
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
-  const flat = _catCfg.showFlat ? (document.getElementById('menuCustomerFlat').value||'').trim() : '';
   const wa = _menuVendor.whatsapp||_menuVendor.phone;
-  let chosen, lines, total=0;
 
+  // Validate selections first
+  let chosen, lines, total=0;
   if(_catCfg.useQty){
     chosen = menu.filter(it=>(_menuQtys[it.id]||0)>0);
     if(!chosen.length){ showToast('Select at least one item'); return; }
@@ -1643,14 +1656,37 @@ function placeOrder(){
     });
   }
 
-  const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, flat)}`;
+  // Validate customer details (always required regardless of category)
+  const mobileEl  = document.getElementById('menuCustomerMobile');
+  const addressEl = document.getElementById('menuCustomerAddress');
+  const mobile  = (mobileEl.value||'').trim();
+  const address = (addressEl.value||'').trim();
+
+  let valid = true;
+  if(!mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g,''))){
+    mobileEl.style.borderColor = 'var(--danger)';
+    mobileEl.focus();
+    showToast('Please enter a valid mobile number');
+    valid = false;
+  } else { mobileEl.style.borderColor = 'var(--green)'; }
+
+  if(!address){
+    addressEl.style.borderColor = 'var(--danger)';
+    if(valid) addressEl.focus();
+    showToast('Please enter your complete delivery address');
+    valid = false;
+  } else { addressEl.style.borderColor = 'var(--green)'; }
+
+  if(!valid) return;
+
+  const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, address)}\n📱 Mobile: ${mobile}`;
   window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`, '_blank');
   fsRecordStat(_menuVendor.id,'orderClicks');
   fsRecordStat(_menuVendor.id,'whatsappClicks');
   if(_catCfg.useQty){
     fsLogOrder(_menuVendor.id,_menuVendor.venture,
       chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]})),
-      total, flat);
+      total, `${address} | 📱 ${mobile}`);
   }
   closeModal('menuModal');
   _menuQtys={};
@@ -1661,6 +1697,42 @@ function placeOrder(){
     'Connect Now — WhatsApp':'Message sent via WhatsApp!'
   };
   showToast(toastMap[_catCfg.actionText]||'Sent via WhatsApp!');
+}
+
+function showVendorContact(type){
+  if(!_menuVendor) return;
+  const mobileEl  = document.getElementById('menuCustomerMobile');
+  const addressEl = document.getElementById('menuCustomerAddress');
+  const mobile  = (mobileEl?.value||'').trim();
+  const address = (addressEl?.value||'').trim();
+
+  let valid = true;
+  if(!mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g,''))){
+    if(mobileEl) mobileEl.style.borderColor='var(--danger)';
+    showToast('Please enter your mobile number first');
+    valid = false;
+  } else if(mobileEl) mobileEl.style.borderColor='var(--green)';
+
+  if(!address){
+    if(addressEl) addressEl.style.borderColor='var(--danger)';
+    if(valid) showToast('Please enter your address first');
+    valid = false;
+  } else if(addressEl) addressEl.style.borderColor='var(--green)';
+
+  if(!valid){ if(mobileEl) mobileEl.focus(); return; }
+
+  const wa    = _menuVendor.whatsapp||_menuVendor.phone;
+  const phone = _menuVendor.phone||_menuVendor.whatsapp;
+  const numEl = document.getElementById('menuVendorNumber');
+
+  if(type==='call'){
+    if(numEl){ numEl.style.display='block'; numEl.innerHTML=`<i class="fa fa-phone" style="color:var(--green)"></i> <a href="tel:${phone}" style="color:var(--green-dark);text-decoration:none;font-size:1.1rem">${phone}</a>`; }
+  } else {
+    if(numEl){ numEl.style.display='none'; }
+    const msg = `Hi! I'm ${mobile} from ${address}. I'd like to connect with ${_menuVendor.venture}.`;
+    window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`,'_blank');
+    fsRecordStat(_menuVendor.id,'whatsappClicks');
+  }
 }
 
 /* ═══════════ CATEGORY TABS ═══════════ */

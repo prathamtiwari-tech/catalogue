@@ -544,7 +544,7 @@ footer strong{color:var(--gold-light)}
       </div>
       <div class="brand-text">
         <h1>Homebiz</h1>
-        <p>For the Residents, By the Residents &nbsp;·&nbsp; <span id="editionHeader"></span></p>
+        <p>For the Residents, By the Residents</p>
       </div>
     </a>
     <!-- Panel tabs (seller/admin tabs appear after login) -->
@@ -690,6 +690,7 @@ footer strong{color:var(--gold-light)}
       <div>
         <div class="modal-title" style="margin-bottom:2px" id="menuModalTitle">Menu</div>
         <div style="font-size:.76rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.06em" id="menuModalSpec"></div>
+        <div id="menuModalTerm" style="font-size:.7rem;background:var(--green-pale);color:var(--green-dark);font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;margin-top:4px"></div>
       </div>
       <button class="btn btn-sm btn-ghost" onclick="closeModal('menuModal')">✕</button>
     </div>
@@ -712,7 +713,13 @@ footer strong{color:var(--gold-light)}
     <a id="footerWaLink"  href="#" target="_blank" onclick="return footerSocialClick('wa',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
   </div>
   <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:.75rem">
-    <span style="opacity:.5">© Homebiz <span id="editionFooter"></span></span>
+    <span style="opacity:.5">© Homebiz</span>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('mission');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Mission</a>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('vision');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Vision</a>
+    <span style="opacity:.3">|</span>
+    <a href="#" onclick="openPolicyModal('whocanjoin');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Who Can Join</a>
     <span style="opacity:.3">|</span>
     <a href="#" onclick="openPolicyModal('terms');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Terms of Use</a>
     <span style="opacity:.3">|</span>
@@ -1243,9 +1250,10 @@ function makeTile(item, sno, cat){
 
   /* Order button */
   const hasWa = item.whatsapp || item.phone;
+  const _cc = getCatConfig(item.cat);
   const orderBtn = hasWa
     ? `<button class="btn btn-green" style="width:100%;justify-content:center;margin-top:10px" onclick="openMenuModal('${item.id}')">
-        <i class="fa fa-utensils"></i> View Menu &amp; Order
+        <i class="fa ${_cc.tileBtnIcon}"></i> ${_cc.tileBtnText}
        </button>`
     : '';
 
@@ -1266,52 +1274,86 @@ function makeTile(item, sno, cat){
   return div;
 }
 
+/* ═══════════ CATEGORY CONFIG ═══════════ */
+function getCatConfig(cat){
+  const c = (cat||'').toLowerCase();
+  if(c.includes('food')||c.includes('baker')||c.includes('beverage'))
+    return {tileBtnIcon:'fa-utensils',   tileBtnText:'View Menu & Order',      modalTerm:'Menu',                 showFlat:true,  useQty:true,  flatLabel:'Your flat number for delivery (e.g. A-1204)', actionText:'Order via WhatsApp',          emptyIcon:'fa-utensils',        emptyText:'No menu added yet — contact seller directly.', waIntro:"Hi! I'd like to place an order 🛒",         waTotal:(t,f)=>`\n\n💰 *Total: ₹${t}*${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm. Thank you!`};
+  if(c.includes('fashion')||c.includes('gift')||c.includes('lifestyle'))
+    return {tileBtnIcon:'fa-bag-shopping',tileBtnText:'Browse & Order',         modalTerm:'Products',             showFlat:true,  useQty:true,  flatLabel:'Your flat number for delivery (e.g. A-1204)', actionText:'Order via WhatsApp',          emptyIcon:'fa-bag-shopping',    emptyText:'No products listed yet — contact seller directly.', waIntro:"Hi! I'd like to order 🛍️",                waTotal:(t,f)=>`\n\n💰 *Total: ₹${t}*${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm. Thank you!`};
+  if(c.includes('education')||c.includes('coaching'))
+    return {tileBtnIcon:'fa-graduation-cap',tileBtnText:'View Details',         modalTerm:'Courses & Sessions',   showFlat:false, useQty:false, flatLabel:'',                                           actionText:"I'm Interested — WhatsApp",   emptyIcon:'fa-graduation-cap',  emptyText:'Contact the educator directly for course details.', waIntro:"Hi! I'm interested in enrolling 🎓",        waTotal:(t,f)=>`${t>0?'\n💰 *Reference Fees: ₹'+t+' (subject to confirmation)*':''}\n\nCould you please share schedule and batch details? Thank you!`};
+  if(c.includes('camp')||c.includes('music')||c.includes('kids'))
+    return {tileBtnIcon:'fa-music',        tileBtnText:'View Details',          modalTerm:'Activities & Sessions',showFlat:false, useQty:false, flatLabel:'',                                           actionText:"I'm Interested — WhatsApp",   emptyIcon:'fa-music',           emptyText:'Contact the organiser directly for activity details.', waIntro:"Hi! I'm interested in joining 🎵",        waTotal:(t,f)=>`${t>0?'\n💰 *Reference Fees: ₹'+t+' (subject to confirmation)*':''}\n\nCould you please share schedules and batch details? Thank you!`};
+  if(c.includes('health')||c.includes('professional'))
+    return {tileBtnIcon:'fa-briefcase-medical',tileBtnText:'View Details & Consult', modalTerm:'Services',        showFlat:false, useQty:false, flatLabel:'',                                           actionText:'Consult Now — WhatsApp',       emptyIcon:'fa-briefcase-medical',emptyText:'Contact the professional directly to book a session.', waIntro:"Hi! I'd like to book a consultation 🏥", waTotal:(t,f)=>`${t>0?'\n💰 *Service Fees: ₹'+t+' (subject to consultation)*':''}\n\nPlease share your availability. Thank you!`};
+  if(c.includes('home')||c.includes('print')||c.includes('tech'))
+    return {tileBtnIcon:'fa-print',        tileBtnText:'View Details & Book',   modalTerm:'Services & Products',  showFlat:true,  useQty:false, flatLabel:'Your flat number (e.g. A-1204)',              actionText:'Book Now — WhatsApp',          emptyIcon:'fa-print',           emptyText:'Contact the service provider directly.',            waIntro:"Hi! I'd like to enquire about your services 🛠️",waTotal:(t,f)=>`${t>0?'\n💰 *Estimated Cost: ₹'+t+' (subject to discussion)*':''}${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm availability. Thank you!`};
+  return   {tileBtnIcon:'fa-store',        tileBtnText:'View Details & Order',  modalTerm:'Menu',                 showFlat:true,  useQty:true,  flatLabel:'Your flat number (e.g. A-1204)',              actionText:'Order via WhatsApp',          emptyIcon:'fa-store',           emptyText:'No items listed yet — contact seller directly.',    waIntro:"Hi! I'd like to place an order",             waTotal:(t,f)=>`\n\n💰 *Total: ₹${t}*${f?'\n🏠 My Flat: '+f:''}\n\nPlease confirm. Thank you!`};
+}
+
 /* ═══════════ MENU MODAL + ORDERING ═══════════ */
-let _menuVendor = null, _menuQtys = {};
+let _menuVendor = null, _menuQtys = {}, _catCfg = null;
 
 function openMenuModal(vendorId){
   _menuVendor = DATA.find(d=>d.id===vendorId);
   if(!_menuVendor) return;
+  _catCfg = getCatConfig(_menuVendor.cat);
   _menuQtys = {};
   document.getElementById('menuModalTitle').textContent = _menuVendor.venture;
   document.getElementById('menuModalSpec').textContent  = _menuVendor.speciality||'';
+  document.getElementById('menuModalTerm').textContent  = _catCfg.modalTerm;
   document.getElementById('menuCustomerFlat').value = '';
+  document.getElementById('menuCustomerFlat').placeholder = _catCfg.flatLabel || 'Your flat number (e.g. A-1204)';
 
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
   const list = document.getElementById('menuItemsList');
+  const wa = _menuVendor.whatsapp||_menuVendor.phone;
 
   if(!menu.length){
-    const wa = _menuVendor.whatsapp||_menuVendor.phone;
     list.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--text-muted)">
-      <i class="fa fa-utensils" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
-      <p style="margin-bottom:14px">No menu added yet — contact seller directly.</p>
+      <i class="fa ${_catCfg.emptyIcon}" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
+      <p style="margin-bottom:14px">${_catCfg.emptyText}</p>
       ${wa?`<a class="btn btn-green" href="https://wa.me/91${wa}" target="_blank" style="text-decoration:none" onclick="fsRecordStat('${vendorId}','whatsappClicks')">
         <i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>`:''}
     </div>`;
     document.getElementById('menuOrderBtn').style.display = 'none';
     document.getElementById('menuFlatRow').style.display  = 'none';
   } else {
-    list.innerHTML = menu.map(it=>`
-      <div class="menu-item-row">
-        <div style="flex:1;min-width:0">
-          <div class="menu-item-name">${it.name}</div>
-          ${it.desc?`<div class="menu-item-desc">${it.desc}</div>`:''}
-        </div>
-        <div style="display:flex;align-items:center;flex-shrink:0;gap:4px">
-          <div class="menu-item-price">₹${it.price}</div>
-          <div class="qty-ctrl">
-            <button class="qty-btn" onclick="chQty('${it.id}',${it.price},-1)">−</button>
-            <span class="qty-num" id="qn_${it.id}">0</span>
-            <button class="qty-btn" onclick="chQty('${it.id}',${it.price},1)">+</button>
+    if(_catCfg.useQty){
+      list.innerHTML = menu.map(it=>`
+        <div class="menu-item-row">
+          <div style="flex:1;min-width:0">
+            <div class="menu-item-name">${it.name}</div>
+            ${it.desc?`<div class="menu-item-desc">${it.desc}</div>`:''}
           </div>
-        </div>
-      </div>`).join('');
+          <div style="display:flex;align-items:center;flex-shrink:0;gap:4px">
+            ${it.price>0?`<div class="menu-item-price">₹${it.price}</div>`:'<div class="menu-item-price" style="font-size:.72rem;color:var(--text-muted)">Enquiry</div>'}
+            <div class="qty-ctrl">
+              <button class="qty-btn" onclick="chQty('${it.id}',${it.price},-1)">−</button>
+              <span class="qty-num" id="qn_${it.id}">0</span>
+              <button class="qty-btn" onclick="chQty('${it.id}',${it.price},1)">+</button>
+            </div>
+          </div>
+        </div>`).join('');
+    } else {
+      list.innerHTML = menu.map(it=>`
+        <div class="menu-item-row" style="cursor:pointer" onclick="document.getElementById('chk_${it.id}').click()">
+          <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:pointer" onclick="event.stopPropagation()">
+            <input type="checkbox" id="chk_${it.id}" onchange="_updMenuTotal()" style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px">
+            <div style="flex:1">
+              <div class="menu-item-name">${it.name}</div>
+              ${it.desc?`<div class="menu-item-desc">${it.desc}</div>`:''}
+            </div>
+          </label>
+          ${it.price>0?`<div class="menu-item-price" style="flex-shrink:0;margin-left:10px">₹${it.price}</div>`:`<div class="menu-item-price" style="flex-shrink:0;margin-left:10px;font-size:.72rem;color:var(--text-muted)">Enquiry</div>`}
+        </div>`).join('');
+    }
     document.getElementById('menuOrderBtn').style.display = 'flex';
-    document.getElementById('menuFlatRow').style.display  = 'block';
+    document.getElementById('menuFlatRow').style.display  = _catCfg.showFlat ? 'block' : 'none';
   }
   _updMenuTotal();
   document.getElementById('menuModal').classList.add('open');
-  // Track profile view
   fsRecordStat(vendorId,'profileViews');
 }
 
@@ -1322,38 +1364,66 @@ function chQty(id, price, delta){
 }
 
 function _updMenuTotal(){
-  if(!_menuVendor||!_menuVendor.menu) return;
-  let total=0;
-  _menuVendor.menu.forEach(it=>{ total+=((_menuQtys[it.id]||0)*it.price); });
-  const btn=document.getElementById('menuOrderBtn');
-  if(btn) btn.innerHTML = total>0
-    ? `<i class="fab fa-whatsapp"></i> Order via WhatsApp — ₹${total}`
-    : `<i class="fab fa-whatsapp"></i> Place Order via WhatsApp`;
+  if(!_menuVendor||!_menuVendor.menu||!_catCfg) return;
+  const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
+  const btn = document.getElementById('menuOrderBtn');
+  if(!btn) return;
+  if(_catCfg.useQty){
+    let total=0;
+    menu.forEach(it=>{ total+=((_menuQtys[it.id]||0)*it.price); });
+    btn.innerHTML = total>0
+      ? `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText} — ₹${total}`
+      : `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText}`;
+  } else {
+    const anyChecked = menu.some(it=>document.getElementById('chk_'+it.id)?.checked);
+    const total = menu.filter(it=>document.getElementById('chk_'+it.id)?.checked).reduce((s,it)=>s+(it.price||0),0);
+    btn.innerHTML = anyChecked && total>0
+      ? `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText} — ₹${total}`
+      : `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText}`;
+  }
 }
 
 function placeOrder(){
-  if(!_menuVendor) return;
-  const menu = _menuVendor.menu||[];
-  const chosen = menu.filter(it=>(_menuQtys[it.id]||0)>0);
-  if(!chosen.length){ showToast('Select at least one item'); return; }
-  const flat = (document.getElementById('menuCustomerFlat').value||'').trim();
-  let total=0;
-  const lines = chosen.map(it=>{
-    const sub=(_menuQtys[it.id]||0)*it.price; total+=sub;
-    return `• ${it.name} x${_menuQtys[it.id]} — ₹${sub}`;
-  });
-  const msg = `Hi! I'd like to place an order 🛒\n\n*${_menuVendor.venture}*\n${lines.join('\n')}\n\n💰 *Total: ₹${total}*${flat?`\n🏠 My Flat: ${flat}`:''}\n\nPlease confirm. Thank you!`;
+  if(!_menuVendor||!_catCfg) return;
+  const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
+  const flat = _catCfg.showFlat ? (document.getElementById('menuCustomerFlat').value||'').trim() : '';
   const wa = _menuVendor.whatsapp||_menuVendor.phone;
+  let chosen, lines, total=0;
+
+  if(_catCfg.useQty){
+    chosen = menu.filter(it=>(_menuQtys[it.id]||0)>0);
+    if(!chosen.length){ showToast('Select at least one item'); return; }
+    lines = chosen.map(it=>{
+      const sub=(_menuQtys[it.id]||0)*(it.price||0); total+=sub;
+      return it.price>0 ? `• ${it.name} x${_menuQtys[it.id]} — ₹${sub}` : `• ${it.name} x${_menuQtys[it.id]}`;
+    });
+  } else {
+    chosen = menu.filter(it=>document.getElementById('chk_'+it.id)?.checked);
+    if(!chosen.length){ showToast('Please select at least one option'); return; }
+    lines = chosen.map(it=>{
+      total += (it.price||0);
+      return it.price>0 ? `• ${it.name} — ₹${it.price}` : `• ${it.name}`;
+    });
+  }
+
+  const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, flat)}`;
   window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`, '_blank');
-  // Record stats
   fsRecordStat(_menuVendor.id,'orderClicks');
   fsRecordStat(_menuVendor.id,'whatsappClicks');
-  fsLogOrder(_menuVendor.id,_menuVendor.venture,
-    chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]})),
-    total, flat);
+  if(_catCfg.useQty){
+    fsLogOrder(_menuVendor.id,_menuVendor.venture,
+      chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]})),
+      total, flat);
+  }
   closeModal('menuModal');
   _menuQtys={};
-  showToast('Order sent via WhatsApp!');
+  const toastMap = {
+    "I'm Interested — WhatsApp":'Interest sent via WhatsApp!',
+    'Consult Now — WhatsApp':'Consultation request sent!',
+    'Book Now — WhatsApp':'Booking request sent!',
+    'Connect Now — WhatsApp':'Message sent via WhatsApp!'
+  };
+  showToast(toastMap[_catCfg.actionText]||'Sent via WhatsApp!');
 }
 
 /* ═══════════ CATEGORY TABS ═══════════ */
@@ -1445,10 +1515,13 @@ document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click
 
 function openPolicyModal(type){
   const map = {
-    terms:    {title:'Terms of Use',      key:'terms'},
-    return:   {title:'Return Policy',     key:'returnPolicy'},
-    delivery: {title:'Delivery Policy',   key:'deliveryPolicy'},
-    privacy:  {title:'Privacy Policy',    key:'privacy'},
+    mission:    {title:'Our Mission',           key:'mission'},
+    vision:     {title:'Our Vision',            key:'vision'},
+    whocanjoin: {title:'Who Can Join Homebiz',  key:'whoCanJoin'},
+    terms:      {title:'Terms of Use',          key:'terms'},
+    return:     {title:'Return Policy',         key:'returnPolicy'},
+    delivery:   {title:'Delivery Policy',       key:'deliveryPolicy'},
+    privacy:    {title:'Privacy Policy',        key:'privacy'},
   };
   const cfg = map[type] || map.terms;
   document.getElementById('policyModalTitle').textContent = cfg.title;
@@ -2460,6 +2533,12 @@ function renderAdminConfig(c){
         <input id="cfg_ytUrl" placeholder="https://youtube.com/@yourchannel" value="${esc(SITE_CONFIG.ytUrl)}"></div>
       <div class="form-group"><label><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp Number</label>
         <input id="cfg_waNum" placeholder="919999999999 (with country code, no +)" value="${esc(SITE_CONFIG.waNum)}"></div>
+      <div class="form-group full"><label>Mission</label>
+        <textarea id="cfg_mission" rows="4" placeholder="Enter your Mission statement here…" style="font-size:.83rem">${(SITE_CONFIG.mission||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>Vision</label>
+        <textarea id="cfg_vision" rows="4" placeholder="Enter your Vision statement here…" style="font-size:.83rem">${(SITE_CONFIG.vision||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="form-group full"><label>Who Can Join Homebiz</label>
+        <textarea id="cfg_whoCanJoin" rows="5" placeholder="Describe who is eligible to join Homebiz…" style="font-size:.83rem">${(SITE_CONFIG.whoCanJoin||'').replace(/</g,'&lt;')}</textarea></div>
       <div class="form-group full"><label>Terms of Use</label>
         <textarea id="cfg_terms" rows="5" placeholder="Enter your Terms of Use text here…" style="font-size:.83rem">${(SITE_CONFIG.terms||'').replace(/</g,'&lt;')}</textarea></div>
       <div class="form-group full"><label>Return Policy</label>
@@ -2496,6 +2575,9 @@ async function saveAdminConfig(){
     igUrl:   document.getElementById('cfg_igUrl').value.trim(),
     ytUrl:          document.getElementById('cfg_ytUrl').value.trim(),
     waNum:          document.getElementById('cfg_waNum').value.trim(),
+    mission:        document.getElementById('cfg_mission').value.trim(),
+    vision:         document.getElementById('cfg_vision').value.trim(),
+    whoCanJoin:     document.getElementById('cfg_whoCanJoin').value.trim(),
     terms:          document.getElementById('cfg_terms').value.trim(),
     returnPolicy:   document.getElementById('cfg_returnPolicy').value.trim(),
     deliveryPolicy: document.getElementById('cfg_deliveryPolicy').value.trim(),
@@ -2599,11 +2681,6 @@ async function migrateFromSeed(){
 
 /* ═══════════ INIT ═══════════ */
 (async function init(){
-  // Edition date
-  const ed = new Date().toLocaleString('en-IN',{month:'long',year:'numeric'});
-  document.getElementById('editionHeader').textContent = ed;
-  document.getElementById('editionFooter').textContent = ed;
-
   // Load site config from Firestore, then rebuild carousel with fresh featured list
   fsLoadConfig().then(()=>{ applyFooterLinks(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
 

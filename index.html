@@ -559,7 +559,6 @@ footer strong{color:var(--gold-light)}
         <i class="fa fa-gear"></i> Admin
       </button>
     </div>
-    <a href="#" onclick="openAboutModal();return false" style="color:rgba(255,255,255,.8);text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;padding:4px 2px;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.8)'"><i class="fa fa-circle-info" style="margin-right:4px"></i>About Us</a>
     <div id="hdrRight" style="display:flex;align-items:center;gap:8px"></div>
   </div>
 </header>
@@ -1156,15 +1155,16 @@ function updatePanelTabs(){
   const panelTabs = document.getElementById('panelTabs');
   if(browseTab) browseTab.style.display = hasOtherTabs ? 'inline-flex' : 'none';
   if(panelTabs) panelTabs.style.display = hasOtherTabs ? 'flex' : 'none';
+  const aboutBtn = `<button class="btn btn-outline btn-sm" onclick="openAboutModal()"><i class="fa fa-circle-info"></i> About Us</button>`;
   if(hdrRight){
     if(currentSeller){
-      hdrRight.innerHTML = `<span style="font-size:.78rem;color:rgba(255,255,255,.8);margin-right:6px">${currentSeller.displayName}</span>
+      hdrRight.innerHTML = `${aboutBtn}<span style="font-size:.78rem;color:rgba(255,255,255,.8);margin-right:6px">${currentSeller.displayName}</span>
         <button class="btn btn-sm btn-outline" onclick="sellerLogout()"><i class="fa fa-sign-out-alt"></i> Logout</button>`;
     } else if(isAdmin){
-      hdrRight.innerHTML = `<span class="admin-badge" style="margin-right:8px">Admin</span>
+      hdrRight.innerHTML = `${aboutBtn}<span class="admin-badge" style="margin-right:8px">Admin</span>
         <button class="btn btn-sm btn-outline" onclick="exitAdmin()"><i class="fa fa-sign-out-alt"></i> Exit Admin</button>`;
     } else {
-      hdrRight.innerHTML = `<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i> Seller Login</button>
+      hdrRight.innerHTML = `${aboutBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i> Seller Login</button>
         <button class="btn btn-outline btn-sm" onclick="openLoginModal('admin')" style="margin-left:6px">Admin</button>`;
     }
   }

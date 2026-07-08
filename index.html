@@ -3096,6 +3096,7 @@ async function migrateFromSeed(){
       const vendors = await fsLoadVendors();
       if(vendors && vendors.length){
         DATA = vendors; saveData(DATA); renderAll();
+        if(typeof initAd === 'function') initAd(); // rebuild carousel with fresh images
         return; // Firestore loaded — skip JSON fetch
       }
     }catch(e){}

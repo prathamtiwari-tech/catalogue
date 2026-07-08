@@ -59,6 +59,11 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 
 /* TAGLINE */
 .tagline-bar{background:var(--gold);color:var(--green-dark);text-align:center;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:5px}
+/* SOCIETY BAR */
+.society-bar{background:var(--white);border-bottom:2px solid var(--green-pale);padding:8px 28px}
+.society-bar-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.society-select{border:1.5px solid var(--green);border-radius:8px;padding:5px 32px 5px 10px;font-size:.84rem;font-family:inherit;background:var(--white);color:var(--green-dark);cursor:pointer;outline:none;font-weight:600;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a5c2e' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:box-shadow .2s}
+.society-select:focus{box-shadow:0 0 0 2px rgba(26,92,46,.2)}
 
 /* ADMIN BANNER */
 .admin-banner{display:none;background:var(--green-dark);color:var(--white);padding:10px 28px;position:sticky;top:84px;z-index:90;box-shadow:0 4px 16px rgba(0,0,0,.2)}
@@ -479,6 +484,12 @@ footer strong{color:var(--gold-light)}
         </select>
       </div>
       <div class="form-group">
+        <label><i class="fa fa-building" style="color:var(--green)"></i> Society</label>
+        <select id="f_society">
+          <option value="Prateek Laurel">Prateek Laurel</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Contact Person</label>
         <input type="text" id="f_contact" placeholder="Full name">
       </div>
@@ -585,6 +596,16 @@ footer strong{color:var(--gold-light)}
 <!--  CUSTOMER PANEL                          -->
 <!-- ══════════════════════════════════════════ -->
 <div id="panel-customer">
+
+<!-- ── SOCIETY SELECTOR ── -->
+<div class="society-bar" id="societyBar">
+  <div class="society-bar-inner">
+    <i class="fa fa-location-dot" style="color:var(--green);font-size:1rem"></i>
+    <span style="font-size:.8rem;color:var(--green-dark);font-weight:700;white-space:nowrap">Browsing Society:</span>
+    <select class="society-select" id="societySelect" onchange="onSocietyChange()"></select>
+    <span id="geoStatusText" style="font-size:.74rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:5px"></span>
+  </div>
+</div>
 
 <span id="statTotal" style="display:none"></span>
 
@@ -1002,6 +1023,10 @@ let isAdmin = !!_restoredAdminUid, currentSeller = null;
 if(_restoredAdminUid) window._adminUid = _restoredAdminUid;
 let activeFilter = 'All', editingId = null, pendingImg = null;
 let SITE_CONFIG = {};
+const DEFAULT_SOCIETIES = [
+  { name:'Prateek Laurel', address:'Sector 120, Noida, UP', lat:28.5900, lng:77.3610 }
+];
+let selectedSociety = 'Prateek Laurel';
 
 /* ═══════════ FIRESTORE HELPERS ═══════════ */
 async function fsLoadVendors(){
@@ -1425,7 +1450,7 @@ function renderAll(){
   grid.innerHTML = '';
   let total = 0;
   CATS.forEach(cat => {
-    let items = DATA.filter(d => d.cat === cat.name);
+    let items = DATA.filter(d => d.cat === cat.name && (d.society||'Prateek Laurel')===selectedSociety);
     if(activeFilter !== 'All' && activeFilter !== cat.name) return;
     if(q) items = items.filter(d =>
       (d.venture||'').toLowerCase().includes(q) ||
@@ -1941,6 +1966,44 @@ function closeAboutDropdown(){
 }
 document.addEventListener('click', closeAboutDropdown);
 
+/* ═══════════ SOCIETY ═══════════ */
+function _societyList(){ return SITE_CONFIG.societies||DEFAULT_SOCIETIES; }
+function _haversineDist(lat1,lon1,lat2,lon2){
+  const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function _nearestSociety(lat,lng){
+  let best=null,minD=Infinity;
+  _societyList().forEach(s=>{ if(!s.lat||!s.lng) return; const d=_haversineDist(lat,lng,+s.lat,+s.lng); if(d<minD){minD=d;best=s;} });
+  return (best&&minD<800) ? best.name : null;
+}
+function buildSocietySelector(){
+  const list=_societyList();
+  ['societySelect','f_society'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const cur=el.value||selectedSociety;
+    el.innerHTML=list.map(s=>`<option value="${s.name}"${s.name===cur?' selected':''}>${s.name}</option>`).join('');
+  });
+}
+function onSocietyChange(){
+  const sel=document.getElementById('societySelect');
+  if(sel) selectedSociety=sel.value;
+  renderAll();
+}
+function detectSociety(){
+  buildSocietySelector();
+  if(!navigator.geolocation) return;
+  const st=document.getElementById('geoStatusText');
+  if(st) st.innerHTML='<i class="fa fa-spinner fa-spin" style="color:var(--green)"></i> Detecting…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const m=_nearestSociety(pos.coords.latitude,pos.coords.longitude);
+    if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(); renderAll(); }
+    if(st){ st.innerHTML='<i class="fa fa-check" style="color:var(--green)"></i> Auto-detected'; setTimeout(()=>{if(st)st.innerHTML='';},3000); }
+  },()=>{ if(st) st.innerHTML=''; },{timeout:8000,maximumAge:300000});
+}
+
 function openAboutModal(){
   const body = document.getElementById('aboutModalBody');
   if(body) body.textContent = SITE_CONFIG.aboutUs || DEFAULT_ABOUT_US;
@@ -2072,6 +2135,8 @@ function openAddModal(){
   editingId=null;
   document.getElementById('modalTitle').textContent='Add New Listing';
   resetForm();
+  buildSocietySelector();
+  const fSoc=document.getElementById('f_society'); if(fSoc) fSoc.value=selectedSociety||'Prateek Laurel';
   document.getElementById('tileModal').classList.add('open');
   setTimeout(()=>document.getElementById('f_venture').focus(),120);
 }
@@ -2091,6 +2156,8 @@ function openEditModal(id){
   document.getElementById('f_video').value     = item.video||'';
   document.getElementById('f_url').value       = item.url||'';
   pendingImg=null;
+  buildSocietySelector();
+  const fSoc=document.getElementById('f_society'); if(fSoc) fSoc.value=item.society||'Prateek Laurel';
   const existing = item.image || IMGS[id] || null;
   setPreview(existing);
   document.getElementById('tileModal').classList.add('open');
@@ -2113,6 +2180,7 @@ async function saveTile(){
     video:document.getElementById('f_video').value.trim(),
     url:document.getElementById('f_url').value.trim(),
     image: pendingImg==='__remove__' ? '' : (pendingImg || prevImage),
+    society: (document.getElementById('f_society')||{}).value || 'Prateek Laurel',
   };
   if(editingId){ const i=DATA.findIndex(d=>d.id===editingId); if(i!==-1) DATA[i]=obj; }
   else DATA.push(obj);
@@ -2571,7 +2639,7 @@ function renderSellerPanel(){
     document.getElementById('sellerContent').innerHTML=`<div class="empty-state"><i class="fa fa-store"></i><p>No vendor assigned. Contact admin.</p></div>`;
     return;
   }
-  document.getElementById('sellerContent').innerHTML = _sellerBusinessHTML(vendor) + _sellerMenuHTML(vendor);
+  document.getElementById('sellerContent').innerHTML = _sellerBusinessHTML(vendor) + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
 }
 
 function _sellerBusinessHTML(v){
@@ -2653,6 +2721,84 @@ function sfRemoveImg(){
   const rb=document.getElementById('sf_removeBtn');
   if(rb) rb.style.display='none';
 }
+function _sellerChangePasswordHTML(){
+  return `<div class="s-card" style="margin-top:18px">
+    <div class="s-card-title"><i class="fa fa-lock" style="color:var(--green)"></i> Change Password</div>
+    <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:16px">Enter your current password to verify, then set a new one.</p>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Current Password</label>
+        <div class="token-wrap">
+          <input type="password" id="cp_current" placeholder="Your current password" autocomplete="current-password">
+          <button class="token-toggle" type="button" onclick="togglePwVis('cp_current',this)">Show</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <div class="token-wrap">
+          <input type="password" id="cp_new" placeholder="At least 6 characters" autocomplete="new-password">
+          <button class="token-toggle" type="button" onclick="togglePwVis('cp_new',this)">Show</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <div class="token-wrap">
+          <input type="password" id="cp_confirm" placeholder="Repeat new password" autocomplete="new-password">
+          <button class="token-toggle" type="button" onclick="togglePwVis('cp_confirm',this)">Show</button>
+        </div>
+      </div>
+    </div>
+    <div id="cp_status" style="display:none;margin-bottom:10px;font-size:.84rem;padding:10px 14px;border-radius:8px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="changeSellerPassword()"><i class="fa fa-key"></i> Update Password</button>
+    </div>
+  </div>`;
+}
+
+function togglePwVis(inputId, btn){
+  const el = document.getElementById(inputId);
+  if(!el) return;
+  if(el.type === 'password'){ el.type = 'text'; btn.textContent = 'Hide'; }
+  else { el.type = 'password'; btn.textContent = 'Show'; }
+}
+
+async function changeSellerPassword(){
+  const curEl  = document.getElementById('cp_current');
+  const newEl  = document.getElementById('cp_new');
+  const confEl = document.getElementById('cp_confirm');
+  const statusEl = document.getElementById('cp_status');
+  const setStatus = (msg, ok) => {
+    statusEl.textContent = msg;
+    statusEl.style.display = 'block';
+    statusEl.style.background = ok ? 'var(--green-pale)' : '#fdecea';
+    statusEl.style.color = ok ? 'var(--green-dark)' : '#c0392b';
+  };
+  const curPw  = (curEl.value  || '').trim();
+  const newPw  = (newEl.value  || '').trim();
+  const confPw = (confEl.value || '').trim();
+  if(!curPw){ setStatus('Please enter your current password.', false); curEl.focus(); return; }
+  if(newPw.length < 6){ setStatus('New password must be at least 6 characters.', false); newEl.focus(); return; }
+  if(newPw !== confPw){ setStatus('New passwords do not match.', false); confEl.focus(); return; }
+  if(!auth || !auth.currentUser){ setStatus('Not logged in. Please refresh and try again.', false); return; }
+  try{
+    // Re-authenticate to satisfy Firebase's recent-login requirement
+    const credential = firebase.auth.EmailAuthProvider.credential(currentSeller.email, curPw);
+    await auth.currentUser.reauthenticateWithCredential(credential);
+    // Now update the password
+    await auth.currentUser.updatePassword(newPw);
+    setStatus('Password updated successfully!', true);
+    curEl.value = ''; newEl.value = ''; confEl.value = '';
+  } catch(e){
+    if(e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential'){
+      setStatus('Current password is incorrect.', false);
+    } else if(e.code === 'auth/weak-password'){
+      setStatus('New password is too weak. Use at least 6 characters.', false);
+    } else {
+      setStatus('Error: ' + e.message, false);
+    }
+  }
+}
+
 async function saveSellerBusiness(){
   if(!currentSeller) return;
   const vendor=DATA.find(d=>d.id===currentSeller.vendorId);
@@ -2960,8 +3106,62 @@ function renderAdminConfig(c){
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdminConfig()"><i class="fa fa-save"></i> Save Config</button>
     </div>
+  </div>
+
+  <!-- Societies management card -->
+  <div class="s-card" style="margin-top:18px">
+    <div class="s-card-title"><i class="fa fa-building" style="color:var(--green)"></i> Societies</div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">Each business is linked to a society. The website auto-detects the visitor's society via GPS. Add coordinates so detection works precisely.</p>
+    <table class="menu-table" style="margin-bottom:16px">
+      <thead><tr><th>Society Name</th><th>Address</th><th>Latitude</th><th>Longitude</th><th></th></tr></thead>
+      <tbody>
+        ${(_societyList()).map(s=>`<tr>
+          <td style="font-weight:700">${s.name}</td>
+          <td style="font-size:.8rem;color:var(--text-muted)">${s.address||'—'}</td>
+          <td style="font-size:.8rem">${s.lat||'—'}</td>
+          <td style="font-size:.8rem">${s.lng||'—'}</td>
+          <td><button class="btn btn-sm btn-danger" onclick="adminRemoveSociety('${s.name.replace(/'/g,"\\'")}')"><i class="fa fa-trash"></i></button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <input id="new_soc_name" placeholder="Society Name *" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.84rem">
+      <input id="new_soc_addr" placeholder="Address (e.g. Sector 120, Noida)" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.84rem">
+      <input id="new_soc_lat" type="number" step="0.0001" placeholder="Latitude (e.g. 28.5900)" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.84rem">
+      <input id="new_soc_lng" type="number" step="0.0001" placeholder="Longitude (e.g. 77.3610)" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.84rem">
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="adminAddSociety()"><i class="fa fa-plus"></i> Add Society</button>
   </div>`;
 }
+function adminAddSociety(){
+  const name=(document.getElementById('new_soc_name').value||'').trim();
+  if(!name){showToast('Society name is required');return;}
+  const list=_societyList().slice();
+  if(list.find(s=>s.name===name)){showToast('Society already exists');return;}
+  list.push({
+    name,
+    address:(document.getElementById('new_soc_addr').value||'').trim(),
+    lat:+document.getElementById('new_soc_lat').value||0,
+    lng:+document.getElementById('new_soc_lng').value||0,
+  });
+  SITE_CONFIG.societies=list;
+  fsSaveConfig({societies:list}).then(()=>{
+    buildSocietySelector();
+    renderAdminConfig(document.getElementById('adminTabContent'));
+    showToast('Society added ✓');
+  });
+}
+function adminRemoveSociety(name){
+  if(!confirm(`Remove "${name}"?\nBusinesses linked to this society will be hidden until reassigned.`)) return;
+  SITE_CONFIG.societies=(_societyList()).filter(s=>s.name!==name);
+  fsSaveConfig({societies:SITE_CONFIG.societies}).then(()=>{
+    if(selectedSociety===name){selectedSociety=(_societyList()[0]||{}).name||'Prateek Laurel';}
+    buildSocietySelector();renderAll();
+    renderAdminConfig(document.getElementById('adminTabContent'));
+    showToast('Society removed ✓');
+  });
+}
+
 async function saveAdminConfig(){
   await fsSaveConfig({
     tagline: document.getElementById('cfg_tagline').value.trim(),
@@ -3076,8 +3276,8 @@ async function migrateFromSeed(){
 
 /* ═══════════ INIT ═══════════ */
 (async function init(){
-  // Load site config from Firestore, then rebuild carousel with fresh featured list
-  fsLoadConfig().then(()=>{ applyFooterLinks(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
+  // Load site config from Firestore, then rebuild carousel + society selector with fresh data
+  fsLoadConfig().then(()=>{ applyFooterLinks(); buildSocietySelector(); renderAll(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
   // Load approved reviews so tiles show ratings
   fsLoadApprovedReviews().then(()=>renderAll()).catch(()=>{});
 
@@ -3089,6 +3289,9 @@ async function migrateFromSeed(){
 
   // Update header buttons
   updatePanelTabs();
+
+  // Start society detection (geo + dropdown)
+  detectSociety();
 
   // Try Firestore first, then JSON fallback
   if(FB_READY && db){

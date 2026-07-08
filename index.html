@@ -80,18 +80,25 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 .stat-box .num{font-size:1.8rem;font-weight:700;font-family:'Playfair Display',serif}
 .stat-box .lbl{font-size:.7rem;opacity:.82;letter-spacing:.08em;text-transform:uppercase}
 
-/* CONTROLS */
-.controls{max-width:1400px;margin:0 auto;padding:18px 28px 4px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.search-wrap{position:relative;flex:1;min-width:220px;max-width:400px}
-.search-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.88rem}
-.search-wrap input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;font-family:inherit;background:var(--white);outline:none;transition:border var(--tr)}
-.search-wrap input:focus{border-color:var(--green)}
-.cat-tabs{display:flex;flex-wrap:wrap;gap:7px}
-.cat-tab{padding:7px 14px;border-radius:20px;font-size:.76rem;font-weight:500;border:1.5px solid var(--border);background:var(--white);color:var(--text-muted);cursor:pointer;transition:all var(--tr);font-family:inherit}
-.cat-tab.active,.cat-tab:hover{background:var(--green);color:var(--white);border-color:var(--green)}
-
+/* BIG SEARCH */
+.search-section{padding:16px 28px;background:var(--green-pale);border-bottom:1px solid var(--border)}
+.search-big-wrap{position:relative;max-width:700px;margin:0 auto}
+.search-big-wrap i.srch-ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1.05rem;pointer-events:none}
+.search-big-wrap input{width:100%;padding:14px 18px 14px 52px;border:2px solid var(--border);border-radius:14px;font-size:.98rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box}
+.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(26,92,46,.1)}
+/* BROWSE LAYOUT */
+.browse-layout{max-width:1400px;margin:0 auto;padding:20px 24px 60px;display:flex;gap:20px;align-items:flex-start}
+.browse-content{flex:1;min-width:0}
+/* CATEGORY SIDEBAR */
+.cat-sidebar{width:214px;flex-shrink:0;position:sticky;top:72px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.cat-sidebar-hdr{font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;padding:12px 14px 8px;border-bottom:1px solid var(--border)}
+.cat-tab{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:none;background:transparent;color:var(--text);cursor:pointer;font-size:.84rem;font-family:inherit;font-weight:500;transition:background .15s,color .15s;text-align:left;border-radius:0}
+.cat-tab:hover{background:var(--green-pale);color:var(--green-dark)}
+.cat-tab.active{background:var(--green);color:#fff;font-weight:700}
+.cat-tab-icon{width:28px;height:28px;border-radius:7px;background:rgba(26,92,46,.1);display:flex;align-items:center;justify-content:center;font-size:.76rem;flex-shrink:0;transition:background .15s}
+.cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22)}
 /* GRID */
-.grid-container{max-width:1400px;margin:20px auto 60px;padding:0 28px}
+.grid-container{margin-bottom:40px}
 .category-section{margin-bottom:40px}
 .cat-heading{display:flex;align-items:center;gap:12px;font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green-dark);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--green-pale)}
 .cat-icon{width:34px;height:34px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
@@ -248,14 +255,22 @@ footer strong{color:var(--gold-light)}
   .stat-box{min-width:80px;padding:8px 14px}
   .stat-box .num{font-size:1.4rem}
 
-  /* ── CONTROLS ── */
-  .controls{padding:14px 14px 4px;gap:10px}
-  .search-wrap{min-width:100%;max-width:100%;flex:none}
-  .cat-tabs{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
-  .cat-tab{white-space:nowrap;flex-shrink:0}
-
-  /* ── GRID ── */
-  .grid-container{padding:0 12px;margin-bottom:40px}
+  /* ── SEARCH ── */
+  .search-section{padding:10px 14px}
+  .search-big-wrap input{padding:12px 14px 12px 44px;font-size:.9rem;border-radius:10px}
+  .search-big-wrap i.srch-ico{left:14px;font-size:.9rem}
+  /* ── BROWSE LAYOUT: stack vertically on mobile ── */
+  .browse-layout{flex-direction:column;padding:0 0 40px;gap:0}
+  /* Sidebar becomes horizontal scrollable strip */
+  .cat-sidebar{width:100%;border-radius:0;border:none;border-bottom:2px solid var(--green-pale);position:relative;top:0;overflow-x:auto;display:flex;flex-direction:row;align-items:center;padding:8px 12px;gap:6px;scrollbar-width:none}
+  .cat-sidebar::-webkit-scrollbar{display:none}
+  .cat-sidebar-hdr{display:none}
+  .cat-tab{flex-shrink:0;width:auto;border-radius:20px;border:1.5px solid var(--border);padding:6px 12px;font-size:.74rem;white-space:nowrap;background:var(--white);color:var(--text-muted)}
+  .cat-tab.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .cat-tab-icon{display:none}
+  /* Grid inside browse-content */
+  .browse-content{padding:12px 14px 0;width:100%;box-sizing:border-box}
+  .grid-container{margin-bottom:24px}
   .tiles{grid-template-columns:1fr;gap:14px}
 
   /* ── MODALS ── */
@@ -609,17 +624,21 @@ footer strong{color:var(--gold-light)}
 
 <span id="statTotal" style="display:none"></span>
 
-<!-- ── SEARCH + FILTER ── -->
-<div class="controls">
-  <div class="search-wrap">
-    <i class="fa fa-search"></i>
-    <input type="text" id="searchInput" placeholder="Search ventures, services, names…" oninput="renderAll()">
+<!-- ── BIG SEARCH ── -->
+<div class="search-section" id="searchSection">
+  <div class="search-big-wrap">
+    <i class="fa fa-magnifying-glass srch-ico"></i>
+    <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" oninput="renderAll()">
   </div>
-  <div class="cat-tabs" id="catTabs"></div>
 </div>
 
-<!-- ── MAIN GRID ── -->
-<div class="grid-container" id="mainGrid"></div>
+<!-- ── BROWSE: sidebar + grid ── -->
+<div class="browse-layout" id="browseLayout">
+  <nav class="cat-sidebar" id="catTabs"></nav>
+  <div class="browse-content">
+    <div class="grid-container" id="mainGrid"></div>
+  </div>
+</div>
 
 <!-- ── VENDOR DETAIL VIEW (inline, replaces modal) ── -->
 <div id="vendorDetailView" style="display:none;padding-bottom:60px">
@@ -1654,10 +1673,11 @@ function openMenuModal(vendorId){
   // Similar vendors
   _renderSimilarVendors(vendorId);
 
-  // Show inline detail view, hide grid
-  document.getElementById('mainGrid').style.display = 'none';
-  const controls = document.querySelector('#panel-customer .controls');
-  if(controls) controls.style.display = 'none';
+  // Show inline detail view, hide search + browse layout
+  const browseLayout = document.getElementById('browseLayout');
+  if(browseLayout) browseLayout.style.display = 'none';
+  const searchSection = document.getElementById('searchSection');
+  if(searchSection) searchSection.style.display = 'none';
   document.getElementById('vendorDetailView').style.display = 'block';
   window.scrollTo({top: document.getElementById('vendorDetailView').offsetTop - 70, behavior:'smooth'});
 
@@ -1666,10 +1686,11 @@ function openMenuModal(vendorId){
 
 function closeVendorDetail(){
   document.getElementById('vendorDetailView').style.display = 'none';
-  document.getElementById('mainGrid').style.display = '';
-  const controls = document.querySelector('#panel-customer .controls');
-  if(controls) controls.style.display = '';
-  window.scrollTo({top: document.getElementById('mainGrid').offsetTop - 80, behavior:'smooth'});
+  const browseLayout = document.getElementById('browseLayout');
+  if(browseLayout) browseLayout.style.display = '';
+  const searchSection = document.getElementById('searchSection');
+  if(searchSection) searchSection.style.display = '';
+  window.scrollTo({top: (searchSection||document.getElementById('browseLayout')).offsetTop - 80, behavior:'smooth'});
   _menuVendor = null; _catCfg = null; _menuQtys = {};
 }
 
@@ -1836,16 +1857,17 @@ function showVendorContact(type){
 /* ═══════════ CATEGORY TABS ═══════════ */
 function buildTabs(){
   const el = document.getElementById('catTabs');
-  el.innerHTML = '';
-  const mk = (label, val) => {
+  if(!el) return;
+  el.innerHTML = '<div class="cat-sidebar-hdr"><i class="fa fa-filter" style="margin-right:6px;opacity:.6"></i>Categories</div>';
+  const mk = (label, val, icon) => {
     const b = document.createElement('button');
     b.className = 'cat-tab' + (activeFilter===val?' active':'');
-    b.textContent = label;
+    b.innerHTML = `<span class="cat-tab-icon"><i class="fa ${icon}"></i></span><span class="cat-tab-label">${label}</span>`;
     b.onclick = () => { activeFilter = val; buildTabs(); renderAll(); };
     el.appendChild(b);
   };
-  mk('All','All');
-  CATS.forEach(c => mk(c.name.split(',')[0], c.name));
+  mk('All', 'All', 'fa-grip');
+  CATS.forEach(c => mk(c.name.split(',')[0], c.name, c.icon));
 }
 
 /* ═══════════ ADMIN AUTH ═══════════ */

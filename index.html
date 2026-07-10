@@ -351,24 +351,25 @@ footer strong{color:var(--gold-light)}
 }
 
 /* ── AD CAROUSEL ── */
-.ad-carousel{position:relative;width:100%;background:var(--green);overflow:hidden;cursor:pointer;user-select:none;border-bottom:3px solid var(--green-dark)}
+.ad-carousel{position:relative;width:100%;background:var(--cream);overflow:hidden;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
 .ad-carousel-inner{display:flex;align-items:center;justify-content:center;height:200px;padding:0 20px;gap:24px;position:relative}
 .ad-slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:28px;padding:0 70px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
 .ad-slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
 .ad-slide.exit{opacity:0;transform:translateX(-60px)}
-.ad-slide-img{width:148px;height:162px;border-radius:14px;object-fit:contain;border:2.5px solid rgba(255,255,255,.9);background:rgba(255,255,255,.95);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.ad-slide-img{width:148px;height:162px;border-radius:14px;object-fit:contain;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:var(--shadow)}
 .ad-slide-img svg{width:80px;height:80px}
-.ad-slide-info{color:#fff;max-width:520px}
-.ad-slide-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#fff;margin:0 0 6px;line-height:1.2}
-.ad-slide-spec{font-size:.88rem;opacity:.88;margin:0 0 10px;line-height:1.5}
-.ad-slide-meta{display:flex;flex-direction:column;gap:6px;font-size:.8rem;opacity:.9}
+.ad-slide-info{color:var(--text);max-width:520px}
+.ad-slide-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--green-dark);margin:0 0 6px;line-height:1.2}
+.ad-slide-spec{font-size:.88rem;color:var(--gold);font-weight:600;margin:0 0 10px;line-height:1.5}
+.ad-slide-meta{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--text-muted)}
 .ad-slide-meta span{display:flex;align-items:center;gap:6px}
-.ad-pause-badge{position:absolute;top:10px;right:14px;background:rgba(255,255,255,.15);color:#fff;font-size:.65rem;padding:3px 9px;border-radius:20px;letter-spacing:.08em;backdrop-filter:blur(6px)}
+.ad-slide-meta i{color:var(--green)}
+.ad-pause-badge{position:absolute;top:10px;right:14px;background:var(--white);color:var(--text-muted);font-size:.65rem;padding:3px 9px;border-radius:20px;letter-spacing:.08em;box-shadow:var(--shadow)}
 .ad-dots{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
-.ad-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .3s,transform .3s}
-.ad-dot.active{background:#fff;transform:scale(1.3)}
-.ad-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.ad-nav:hover{background:rgba(255,255,255,.25)}
+.ad-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background .3s,transform .3s}
+.ad-dot.active{background:var(--green);transform:scale(1.3)}
+.ad-nav{position:absolute;top:50%;transform:translateY(-50%);background:var(--white);border:1px solid var(--border);color:var(--green-dark);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s;box-shadow:var(--shadow)}
+.ad-nav:hover{background:var(--green-pale)}
 .ad-nav.prev{left:10px}
 .ad-nav.next{right:10px}
 
@@ -2963,7 +2964,7 @@ async function publishToGitHub(){
             ${item.flat ? `<span><i class="fa fa-location-dot" style="color:#fff"></i> Flat ${item.flat}</span>` : ''}
             ${item.phone ? `<span><i class="fa fa-phone" style="color:#fff"></i> ${item.phone}</span>` : ''}
           </div>
-          <div style="margin-top:12px;font-size:.72rem;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase">Tap for details →</div>
+          <div style="margin-top:12px;font-size:.72rem;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase">Tap for details →</div>
         </div>`;
       sl.addEventListener('click', ()=>{ pauseAd(); openAdModal(item); });
       inner.appendChild(sl);

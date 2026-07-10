@@ -461,10 +461,11 @@ footer strong{color:var(--gold-light)}
 <!-- ── CUSTOMER LOGIN / SIGNUP (Email OTP) ── -->
 <div class="modal-overlay" id="customerAuthModal" style="z-index:300">
   <div class="modal" style="max-width:400px">
-    <div class="modal-title"><i class="fa fa-user" style="color:var(--green)"></i> Customer Login</div>
+    <div class="modal-title"><i class="fa fa-user" style="color:var(--green)"></i> Login / Sign Up</div>
 
     <!-- Step 1: Email -->
     <div id="caStep1" style="text-align:left">
+      <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">New here or returning — just enter your email. We'll send a verification code, and set up your account automatically if you don't have one yet.</p>
       <div class="form-group" style="margin-bottom:14px">
         <label>Email Address *</label>
         <input type="email" id="ca_email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')caSendOtp()">
@@ -1797,7 +1798,7 @@ function updatePanelTabs(){
   </div>`;
   const customerBtn = currentCustomer
     ? `<button class="btn btn-outline btn-sm" onclick="openCustomerAccountModal()"><i class="fa fa-circle-user"></i><span class="hdr-label"> ${(currentCustomer.name||'My Account').split(' ')[0]}</span></button>`
-    : `<button class="btn btn-outline btn-sm" onclick="openCustomerAuthModal()"><i class="fa fa-user"></i><span class="hdr-label"> Customer Login</span></button>`;
+    : `<button class="btn btn-outline btn-sm" onclick="openCustomerAuthModal()"><i class="fa fa-user"></i><span class="hdr-label"> Login / Sign Up</span></button>`;
   if(hdrRight){
     if(currentSeller){
       hdrRight.innerHTML = `${customerBtn}${aboutBtn}<span class="hdr-label" style="font-size:.78rem;color:rgba(255,255,255,.8)">${currentSeller.displayName}</span>

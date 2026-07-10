@@ -103,8 +103,17 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 /* BIG SEARCH */
 .search-big-wrap{position:relative;max-width:700px;margin:0 auto;width:100%}
 .search-big-wrap i.srch-ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1.05rem;pointer-events:none}
-.search-big-wrap input{width:100%;padding:14px 18px 14px 52px;border:2px solid var(--border);border-radius:14px;font-size:.98rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box}
+.search-big-wrap input{width:100%;padding:14px 42px 14px 52px;border:2px solid var(--border);border-radius:14px;font-size:.98rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box}
 .search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(232,121,42,.1)}
+.search-suggest{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:var(--shadow);max-height:360px;overflow-y:auto;z-index:60;display:none;text-align:left;padding:6px 0}
+.search-suggest.open{display:block}
+.search-suggest-group{padding:10px 16px 4px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+.search-suggest-item{display:flex;align-items:flex-start;gap:10px;padding:9px 16px;cursor:pointer;font-size:.86rem;color:var(--text);line-height:1.35}
+.search-suggest-item:hover,.search-suggest-item.active{background:var(--green-pale)}
+.search-suggest-item i{color:var(--green);width:16px;flex-shrink:0;margin-top:2px}
+.search-suggest-item b{color:var(--green-dark)}
+.search-suggest-sub{font-size:.72rem;color:var(--text-muted)}
+.search-suggest-empty{padding:16px;text-align:center;font-size:.82rem;color:var(--text-muted)}
 /* BROWSE LAYOUT */
 .browse-layout{max-width:1400px;margin:0 auto;padding:20px 24px 60px;display:flex;gap:20px;align-items:flex-start}
 .browse-content{flex:1;min-width:0}
@@ -280,8 +289,10 @@ footer strong{color:var(--gold-light)}
   .browse-toolbar{padding:0 12px;margin-top:-28px}
   .browse-toolbar-inner{padding:14px 16px;border-radius:14px}
   .society-row{font-size:.74rem;gap:6px}
-  .search-big-wrap input{padding:12px 14px 12px 44px;font-size:.9rem;border-radius:10px}
+  .search-big-wrap input{padding:12px 36px 12px 44px;font-size:.9rem;border-radius:10px}
   .search-big-wrap i.srch-ico{left:14px;font-size:.9rem}
+  .search-suggest{border-radius:10px;max-height:280px}
+  .search-suggest-item{padding:8px 12px;font-size:.82rem}
   /* ── BROWSE LAYOUT: stack vertically on mobile ── */
   .browse-layout{flex-direction:column;padding:0 0 40px;gap:0}
   /* Sidebar becomes horizontal scrollable strip */
@@ -718,7 +729,10 @@ footer strong{color:var(--gold-light)}
     </div>
     <div class="search-big-wrap">
       <i class="fa fa-magnifying-glass srch-ico"></i>
-      <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" oninput="renderAll()">
+      <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" autocomplete="off"
+        oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchInput()">
+      <button type="button" id="searchClearBtn" onclick="clearSearch()" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.95rem;padding:4px"><i class="fa fa-circle-xmark"></i></button>
+      <div class="search-suggest" id="searchSuggest"></div>
     </div>
   </div>
 </div>
@@ -1798,22 +1812,31 @@ function updatePanelTabs(){
   }
 }
 
+/* ═══════════ SEARCH ═══════════ */
+function _searchHaystack(item){
+  return [item.venture, item.speciality, item.desc, item.contact, item.flat, item.cat]
+    .filter(Boolean).join(' ').toLowerCase();
+}
+function _queryWords(q){
+  return (q||'').toLowerCase().trim().split(/\s+/).filter(Boolean);
+}
+function itemMatchesQuery(item, q){
+  const words = _queryWords(q);
+  if(!words.length) return true;
+  const hay = _searchHaystack(item);
+  return words.every(w => hay.includes(w));
+}
+
 /* ═══════════ RENDER ═══════════ */
 function renderAll(){
-  const q = (document.getElementById('searchInput').value||'').toLowerCase().trim();
+  const q = (document.getElementById('searchInput').value||'').trim();
   const grid = document.getElementById('mainGrid');
   grid.innerHTML = '';
   let total = 0;
   CATS.forEach(cat => {
     let items = DATA.filter(d => d.cat === cat.name && (d.society||'Prateek Laurel')===selectedSociety);
     if(activeFilter !== 'All' && activeFilter !== cat.name) return;
-    if(q) items = items.filter(d =>
-      (d.venture||'').toLowerCase().includes(q) ||
-      (d.speciality||'').toLowerCase().includes(q) ||
-      (d.desc||'').toLowerCase().includes(q) ||
-      (d.contact||'').toLowerCase().includes(q) ||
-      (d.flat||'').toLowerCase().includes(q)
-    );
+    if(q) items = items.filter(d => itemMatchesQuery(d, q));
     if(!items.length) return;
     total += items.length;
     const sec = document.createElement('div');
@@ -1827,9 +1850,155 @@ function renderAll(){
     const tg = sec.querySelector(`#tg_${cat.id}`);
     items.forEach((item,i) => tg.appendChild(makeTile(item, i+1, cat)));
   });
-  if(!total) grid.innerHTML = `<div class="empty-state"><i class="fa fa-magnifying-glass"></i><p>No results found for "<strong>${q}</strong>"</p></div>`;
+  if(!total) grid.innerHTML = `<div class="empty-state"><i class="fa fa-magnifying-glass"></i><p>No results found for "<strong>${esc(q)}</strong>"</p></div>`;
   document.getElementById('statTotal').textContent = DATA.length;
 }
+
+/* ═══════════ SEARCH SUGGESTIONS ═══════════ */
+let _searchSuggestItems = [], _searchSuggestIdx = -1, _searchDebounce = null;
+
+function onSearchInput(){
+  document.getElementById('searchClearBtn').style.display = document.getElementById('searchInput').value ? 'block' : 'none';
+  clearTimeout(_searchDebounce);
+  renderAll();
+  _searchDebounce = setTimeout(renderSearchSuggestions, 100);
+}
+
+function clearSearch(){
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  input.focus();
+  document.getElementById('searchClearBtn').style.display = 'none';
+  closeSearchSuggestions();
+  renderAll();
+}
+
+function closeSearchSuggestions(){
+  const box = document.getElementById('searchSuggest');
+  box.classList.remove('open');
+  box.innerHTML = '';
+  _searchSuggestItems = []; _searchSuggestIdx = -1;
+}
+
+function buildSearchSuggestions(q){
+  const words = _queryWords(q);
+  const pool = DATA.filter(d => (d.society||'Prateek Laurel')===selectedSociety);
+
+  const businesses = pool
+    .filter(d => words.every(w => (d.venture||'').toLowerCase().includes(w)))
+    .slice(0,5)
+    .map(d => ({type:'business', id:d.id, label:d.venture, sub:d.speciality||d.cat}));
+
+  const categories = CATS
+    .filter(c => words.every(w => c.name.toLowerCase().includes(w)))
+    .slice(0,3)
+    .map(c => ({type:'category', label:c.name}));
+
+  const seen = new Set(businesses.map(b=>b.id));
+  const seenSpec = new Set();
+  const keywords = [];
+  pool.forEach(d => {
+    if(!d.speciality || seen.has(d.id)) return;
+    const specLower = d.speciality.toLowerCase();
+    if(seenSpec.has(specLower)) return;
+    if(words.every(w => specLower.includes(w))){
+      seenSpec.add(specLower);
+      keywords.push({type:'keyword', label:d.speciality, sub:d.venture});
+    }
+  });
+
+  return {businesses, categories, keywords: keywords.slice(0,4)};
+}
+
+function _highlightMatch(text, q){
+  const words = _queryWords(q).map(w => w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).filter(Boolean);
+  const safe = esc(text);
+  if(!words.length) return safe;
+  return safe.replace(new RegExp('('+words.join('|')+')','ig'), '<b>$1</b>');
+}
+
+function renderSearchSuggestions(){
+  const box = document.getElementById('searchSuggest');
+  const q = document.getElementById('searchInput').value.trim();
+  _searchSuggestIdx = -1;
+  if(!q){ closeSearchSuggestions(); return; }
+
+  const {businesses, categories, keywords} = buildSearchSuggestions(q);
+  _searchSuggestItems = [...businesses, ...categories, ...keywords];
+
+  if(!_searchSuggestItems.length){
+    box.innerHTML = `<div class="search-suggest-empty"><i class="fa fa-magnifying-glass" style="opacity:.4"></i> No matches — try a different keyword</div>`;
+    box.classList.add('open');
+    return;
+  }
+
+  let html = '', idx = 0;
+  const row = (m, icon) => {
+    const i = idx++;
+    return `<div class="search-suggest-item" data-idx="${i}" onmousedown="event.preventDefault();selectSearchSuggestion(${i})">
+      <i class="fa ${icon}"></i><span>${_highlightMatch(m.label,q)}${m.sub?`<div class="search-suggest-sub">${esc(m.sub)}</div>`:''}</span>
+    </div>`;
+  };
+  if(businesses.length){ html += `<div class="search-suggest-group">Businesses</div>` + businesses.map(m=>row(m,'fa-store')).join(''); }
+  if(categories.length){ html += `<div class="search-suggest-group">Categories</div>` + categories.map(m=>row(m,'fa-layer-group')).join(''); }
+  if(keywords.length){ html += `<div class="search-suggest-group">You might be looking for</div>` + keywords.map(m=>row(m,'fa-magnifying-glass')).join(''); }
+
+  box.innerHTML = html;
+  box.classList.add('open');
+}
+
+function selectSearchSuggestion(idx){
+  const item = _searchSuggestItems[idx];
+  if(!item) return;
+  const input = document.getElementById('searchInput');
+  if(item.type==='business'){
+    input.value = item.label;
+    closeSearchSuggestions();
+    openMenuModal(item.id);
+  } else if(item.type==='category'){
+    input.value = '';
+    activeFilter = item.label;
+    closeSearchSuggestions();
+    buildTabs();
+    renderAll();
+    document.getElementById('browseLayout')?.scrollIntoView({behavior:'smooth',block:'start'});
+  } else {
+    input.value = item.label;
+    closeSearchSuggestions();
+    renderAll();
+  }
+  document.getElementById('searchClearBtn').style.display = input.value ? 'block' : 'none';
+}
+
+function onSearchKeydown(e){
+  const box = document.getElementById('searchSuggest');
+  if(!box.classList.contains('open') || !_searchSuggestItems.length){
+    if(e.key==='Escape'){ closeSearchSuggestions(); }
+    return;
+  }
+  const items = box.querySelectorAll('.search-suggest-item');
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    _searchSuggestIdx = Math.min(_searchSuggestIdx+1, items.length-1);
+    items.forEach((el,i)=>el.classList.toggle('active', i===_searchSuggestIdx));
+    items[_searchSuggestIdx]?.scrollIntoView({block:'nearest'});
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    _searchSuggestIdx = Math.max(_searchSuggestIdx-1, 0);
+    items.forEach((el,i)=>el.classList.toggle('active', i===_searchSuggestIdx));
+    items[_searchSuggestIdx]?.scrollIntoView({block:'nearest'});
+  } else if(e.key==='Enter'){
+    if(_searchSuggestIdx>=0){ e.preventDefault(); selectSearchSuggestion(_searchSuggestIdx); }
+    else { closeSearchSuggestions(); }
+  } else if(e.key==='Escape'){
+    closeSearchSuggestions();
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.search-big-wrap');
+  if(wrap && !wrap.contains(e.target)) closeSearchSuggestions();
+});
 
 function makeTile(item, sno, cat){
   const div = document.createElement('div');

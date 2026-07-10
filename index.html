@@ -1872,7 +1872,7 @@ function makeTile(item, sno, cat){
   const hasWa = item.whatsapp || item.phone;
   const _cc = getCatConfig(item.cat);
   const orderBtn = hasWa
-    ? `<button class="btn btn-green" style="width:100%;justify-content:center;margin-top:10px" onclick="event.stopPropagation();openMenuModal('${item.id}')">
+    ? `<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px" onclick="event.stopPropagation();openMenuModal('${item.id}')">
         <i class="fa ${_cc.tileBtnIcon}"></i> ${_cc.tileBtnText}
        </button>`
     : '';

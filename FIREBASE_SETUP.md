@@ -103,11 +103,26 @@ service cloud.firestore {
       allow create: if true;
       allow update, delete: if isSignedIn();
     }
+
+    match /customers/{email} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
   }
 }
 ```
 
 Click **Publish**.
+
+## Step 9 — Customer login (email OTP) setup
+
+Customers verify their email with a one-time code before their first order (and can then stay logged in on that device). This reuses the EmailJS setup from the Contact Us form:
+
+1. In Admin panel → **Site Config** → **Contact Form – EmailJS Setup**, make sure Public Key, Service ID and Template ID are filled in.
+2. Optionally create a second EmailJS template dedicated to OTP emails (with a `message` or `otp_code` variable) and paste its ID into **OTP Template ID** in the same section. If left blank, OTP emails reuse the main contact template.
+3. Customer profiles (name, email, mobile, address) are stored in the `customers` collection, keyed by email. Admin panel → **Customers** tab shows all registered customers with order counts and spend.
+4. Mobile numbers are collected but not SMS-verified yet — that's a possible future upgrade (e.g. Firebase Phone Auth, which requires the Blaze billing plan).
 
 ## Step 7 — Migrate data
 

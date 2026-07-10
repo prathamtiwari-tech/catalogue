@@ -15,26 +15,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
+  /* Homebiz brand palette — orange + slate, matching the logo (ACTIVE THEME) */
+  --green:#E8792A;--green-dark:#3E4750;--green-light:#F4A83A;--green-pale:#FFF2E0;
+  --gold:#F4A83A;--gold-light:#FFC266;--cream:#F7F7F9;--white:#ffffff;
+  --text:#2B2F33;--text-muted:#6B7480;--border:#EAEAEC;--danger:#c0392b;
+  --shadow:0 4px 20px rgba(20,20,30,.08);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
+}
+/* ── ORIGINAL GREEN/GOLD THEME (kept for easy revert) ──
+   To switch back: delete the :root block above and uncomment this one.
+:root{
   --green:#1a5c2e;--green-dark:#0f3d1e;--green-light:#2e7d4f;--green-pale:#e8f5ec;
   --gold:#b8962e;--gold-light:#d4af55;--cream:#faf7f2;--white:#ffffff;
-  --text:#1e2a1f;--text-muted:#5a6b5c;--border:#d5e8d9;
+  --text:#1e2a1f;--text-muted:#5a6b5c;--border:#d5e8d9;--danger:#c0392b;
   --shadow:0 4px 24px rgba(26,92,46,.10);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
 }
+── END ORIGINAL THEME ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
 
 /* HEADER */
-header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,var(--green-light) 100%);color:var(--white);position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25)}
 .header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 28px;gap:16px}
 .brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit}
 .logo-wrap{width:58px;height:58px;flex-shrink:0;background:var(--white);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:2px}
 .brand-text h1{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;letter-spacing:.03em;line-height:1.2}
-.brand-text p{font-size:.7rem;opacity:.82;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-top:2px}
+.brand-text p{font-size:.7rem;opacity:.9;letter-spacing:.12em;text-transform:uppercase;color:#fff;margin-top:2px}
 .header-actions{display:flex;align-items:center;gap:10px}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:.84rem;font-weight:500;border:none;cursor:pointer;transition:all var(--tr);text-decoration:none;font-family:inherit;white-space:nowrap}
 .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--green-dark);font-weight:700}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(184,150,46,.45)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(244,168,58,.45)}
 .btn-outline{background:rgba(255,255,255,.12);color:var(--white);border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
 .btn-outline:hover{background:rgba(255,255,255,.22)}
 /* About Us dropdown in header */
@@ -59,11 +69,21 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 
 /* TAGLINE */
 .tagline-bar{background:var(--gold);color:var(--green-dark);text-align:center;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:5px}
-/* SOCIETY BAR */
-.society-bar{background:var(--white);border-bottom:2px solid var(--green-pale);padding:8px 28px}
-.society-bar-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.society-select{border:1.5px solid var(--green);border-radius:8px;padding:5px 32px 5px 10px;font-size:.84rem;font-family:inherit;background:var(--white);color:var(--green-dark);cursor:pointer;outline:none;font-weight:600;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a5c2e' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:box-shadow .2s}
-.society-select:focus{box-shadow:0 0 0 2px rgba(26,92,46,.2)}
+/* SOCIETY SELECT (shared by toolbar + add/edit forms) */
+.society-select{border:1.5px solid var(--green);border-radius:8px;padding:5px 32px 5px 10px;font-size:.84rem;font-family:inherit;background:var(--white);color:var(--green-dark);cursor:pointer;outline:none;font-weight:600;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233E4750' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:box-shadow .2s}
+.society-select:focus{box-shadow:0 0 0 2px rgba(232,121,42,.2)}
+
+/* HERO BAND (customer browse view) */
+.hero-band{background:var(--green);padding:46px 28px 66px;text-align:center}
+.hero-band-inner{max-width:640px;margin:0 auto}
+.hero-band h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.3rem);color:#fff;margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,.18)}
+.hero-band p{color:rgba(255,255,255,.92);font-size:.95rem;max-width:480px;margin:0 auto}
+
+/* BROWSE TOOLBAR — society + search, overlapping the hero's bottom edge */
+.browse-toolbar{padding:0 20px;margin-top:-40px}
+.browse-toolbar-inner{max-width:760px;margin:0 auto;background:var(--white);border-radius:18px;box-shadow:0 16px 40px rgba(62,71,80,.2);padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.society-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--green-dark);font-weight:700}
+.society-row i{color:var(--green)}
 
 /* ADMIN BANNER */
 .admin-banner{display:none;background:var(--green-dark);color:var(--white);padding:10px 28px;position:sticky;top:84px;z-index:90;box-shadow:0 4px 16px rgba(0,0,0,.2)}
@@ -81,11 +101,10 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 .stat-box .lbl{font-size:.7rem;opacity:.82;letter-spacing:.08em;text-transform:uppercase}
 
 /* BIG SEARCH */
-.search-section{padding:16px 28px;background:var(--green-pale);border-bottom:1px solid var(--border)}
-.search-big-wrap{position:relative;max-width:700px;margin:0 auto}
+.search-big-wrap{position:relative;max-width:700px;margin:0 auto;width:100%}
 .search-big-wrap i.srch-ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1.05rem;pointer-events:none}
 .search-big-wrap input{width:100%;padding:14px 18px 14px 52px;border:2px solid var(--border);border-radius:14px;font-size:.98rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box}
-.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(26,92,46,.1)}
+.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(232,121,42,.1)}
 /* BROWSE LAYOUT */
 .browse-layout{max-width:1400px;margin:0 auto;padding:20px 24px 60px;display:flex;gap:20px;align-items:flex-start}
 .browse-content{flex:1;min-width:0}
@@ -95,7 +114,7 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 .cat-tab{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:none;background:transparent;color:var(--text);cursor:pointer;font-size:.84rem;font-family:inherit;font-weight:500;transition:background .15s,color .15s;text-align:left;border-radius:0}
 .cat-tab:hover{background:var(--green-pale);color:var(--green-dark)}
 .cat-tab.active{background:var(--green);color:#fff;font-weight:700}
-.cat-tab-icon{width:28px;height:28px;border-radius:7px;background:rgba(26,92,46,.1);display:flex;align-items:center;justify-content:center;font-size:.76rem;flex-shrink:0;transition:background .15s}
+.cat-tab-icon{width:28px;height:28px;border-radius:7px;background:rgba(232,121,42,.1);display:flex;align-items:center;justify-content:center;font-size:.76rem;flex-shrink:0;transition:background .15s}
 .cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22)}
 /* GRID */
 .grid-container{margin-bottom:40px}
@@ -106,16 +125,16 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 
 /* ── TILE CARD ── */
 .tile{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border);box-shadow:var(--shadow);transition:all var(--tr);position:relative;overflow:hidden;display:flex;flex-direction:column}
-.tile:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(26,92,46,.16);border-color:var(--green)}
+.tile:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(232,121,42,.16);border-color:var(--green)}
 
 /* Image area */
 .tile-img-wrap{position:relative;width:100%;height:178px;overflow:hidden;flex-shrink:0;background:var(--cream)}
 .tile-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .4s ease}
 .tile:hover .tile-img-wrap img{transform:scale(1.04)}
-.tile-img-wrap .default-logo{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--green-dark),var(--green));gap:6px}
+.tile-img-wrap .default-logo{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--green);gap:6px}
 .tile-img-wrap .default-logo svg{width:70px;height:70px;opacity:.95}
 .tile-img-wrap .default-logo span{color:rgba(255,255,255,.6);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-.tile-cat-badge{position:absolute;top:10px;left:10px;background:rgba(15,61,30,.82);color:var(--gold-light);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(6px)}
+.tile-cat-badge{position:absolute;top:10px;left:10px;background:rgba(62,71,80,.82);color:var(--gold-light);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(6px)}
 .tile-sno{position:absolute;top:10px;right:10px;background:var(--gold);color:var(--green-dark);font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:20px}
 
 /* Body */
@@ -129,7 +148,7 @@ header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,v
 .tile-info-row i{color:var(--green);width:13px;font-size:.78rem;flex-shrink:0}
 .tile-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;padding-top:10px;border-top:1px solid var(--border)}
 .tile-link{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:7px;font-size:.72rem;font-weight:600;text-decoration:none;transition:all var(--tr)}
-.tl-phone{background:#e8f5ec;color:var(--green)}
+.tl-phone{background:var(--green-pale);color:var(--green)}
 .tl-phone:hover{background:var(--green);color:#fff}
 .tl-wa{background:#e7f8e9;color:#25d366}
 .tl-wa:hover{background:#25d366;color:#fff}
@@ -255,8 +274,12 @@ footer strong{color:var(--gold-light)}
   .stat-box{min-width:80px;padding:8px 14px}
   .stat-box .num{font-size:1.4rem}
 
-  /* ── SEARCH ── */
-  .search-section{padding:10px 14px}
+  /* ── HERO BAND + TOOLBAR ── */
+  .hero-band{padding:30px 18px 46px}
+  .hero-band p{font-size:.84rem}
+  .browse-toolbar{padding:0 12px;margin-top:-28px}
+  .browse-toolbar-inner{padding:14px 16px;border-radius:14px}
+  .society-row{font-size:.74rem;gap:6px}
   .search-big-wrap input{padding:12px 14px 12px 44px;font-size:.9rem;border-radius:10px}
   .search-big-wrap i.srch-ico{left:14px;font-size:.9rem}
   /* ── BROWSE LAYOUT: stack vertically on mobile ── */
@@ -328,22 +351,22 @@ footer strong{color:var(--gold-light)}
 }
 
 /* ── AD CAROUSEL ── */
-.ad-carousel{position:relative;width:100%;background:linear-gradient(135deg,#0f3d1e 0%,#1a5c2e 60%,#0f3d1e 100%);overflow:hidden;cursor:pointer;user-select:none}
+.ad-carousel{position:relative;width:100%;background:var(--green);overflow:hidden;cursor:pointer;user-select:none}
 .ad-carousel-inner{display:flex;align-items:center;justify-content:center;height:200px;padding:0 20px;gap:24px;position:relative}
 .ad-slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:28px;padding:0 70px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
 .ad-slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
 .ad-slide.exit{opacity:0;transform:translateX(-60px)}
-.ad-slide-img{width:148px;height:162px;border-radius:14px;object-fit:contain;border:2.5px solid var(--gold);background:rgba(255,255,255,.95);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.ad-slide-img{width:148px;height:162px;border-radius:14px;object-fit:contain;border:2.5px solid rgba(255,255,255,.9);background:rgba(255,255,255,.95);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.3)}
 .ad-slide-img svg{width:80px;height:80px}
 .ad-slide-info{color:#fff;max-width:520px}
-.ad-slide-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold-light);margin:0 0 6px;line-height:1.2}
+.ad-slide-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#fff;margin:0 0 6px;line-height:1.2}
 .ad-slide-spec{font-size:.88rem;opacity:.88;margin:0 0 10px;line-height:1.5}
-.ad-slide-meta{display:flex;flex-direction:column;gap:6px;font-size:.8rem;opacity:.8}
+.ad-slide-meta{display:flex;flex-direction:column;gap:6px;font-size:.8rem;opacity:.9}
 .ad-slide-meta span{display:flex;align-items:center;gap:6px}
 .ad-pause-badge{position:absolute;top:10px;right:14px;background:rgba(255,255,255,.15);color:#fff;font-size:.65rem;padding:3px 9px;border-radius:20px;letter-spacing:.08em;backdrop-filter:blur(6px)}
 .ad-dots{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
 .ad-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .3s,transform .3s}
-.ad-dot.active{background:var(--gold);transform:scale(1.3)}
+.ad-dot.active{background:#fff;transform:scale(1.3)}
 .ad-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
 .ad-nav:hover{background:rgba(255,255,255,.25)}
 .ad-nav.prev{left:10px}
@@ -354,10 +377,10 @@ footer strong{color:var(--gold-light)}
 .ad-modal-overlay.open{opacity:1;pointer-events:auto}
 .ad-modal{background:#fff;border-radius:18px;max-width:420px;width:100%;overflow:hidden;transform:scale(.92);transition:transform .25s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .ad-modal-overlay.open .ad-modal{transform:scale(1)}
-.ad-modal-header{background:linear-gradient(135deg,#0f3d1e,#1a5c2e);padding:28px 24px 20px;text-align:center;position:relative}
-.ad-modal-header img,.ad-modal-header .ad-modal-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:#0f3d1e;overflow:hidden}
+.ad-modal-header{background:var(--green);padding:28px 24px 20px;text-align:center;position:relative}
+.ad-modal-header img,.ad-modal-header .ad-modal-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.9);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--green-dark);overflow:hidden}
 .ad-modal-header svg{width:54px;height:54px}
-.ad-modal-title{color:var(--gold-light);font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin:0 0 4px}
+.ad-modal-title{color:#fff;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin:0 0 4px}
 .ad-modal-spec{color:rgba(255,255,255,.8);font-size:.8rem}
 .ad-modal-body{padding:20px 24px}
 .ad-modal-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem;color:var(--text)}
@@ -420,6 +443,67 @@ footer strong{color:var(--gold-light)}
     </div>
 
     <p id="loginErr" style="color:#c0392b;font-size:.8rem;margin-top:10px;display:none"></p>
+  </div>
+</div>
+
+<!-- ── CUSTOMER LOGIN / SIGNUP (Email OTP) ── -->
+<div class="modal-overlay" id="customerAuthModal" style="z-index:300">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title"><i class="fa fa-user" style="color:var(--green)"></i> Customer Login</div>
+
+    <!-- Step 1: Email -->
+    <div id="caStep1" style="text-align:left">
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Email Address *</label>
+        <input type="email" id="ca_email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')caSendOtp()">
+      </div>
+      <p id="caStep1Err" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeModal('customerAuthModal')">Cancel</button>
+        <button class="btn btn-primary" id="caSendOtpBtn" onclick="caSendOtp()"><i class="fa fa-paper-plane"></i> Send OTP</button>
+      </div>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div id="caStep2" style="display:none;text-align:left">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Enter the 6-digit code sent to <strong id="caEmailShown"></strong></p>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Verification Code *</label>
+        <input type="text" id="ca_otp" maxlength="6" placeholder="123456" style="letter-spacing:.3em;font-size:1.1rem;text-align:center" onkeydown="if(event.key==='Enter')caVerifyOtp()">
+      </div>
+      <p id="caStep2Err" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="caSendOtp(true)"><i class="fa fa-rotate"></i> Resend Code</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="closeModal('customerAuthModal')">Cancel</button>
+          <button class="btn btn-primary" id="caVerifyBtn" onclick="caVerifyOtp()"><i class="fa fa-check"></i> Verify</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Profile details (first-time signup) -->
+    <div id="caStep3" style="display:none;text-align:left">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px"><i class="fa fa-circle-check" style="color:var(--green)"></i> Email verified! Complete your profile:</p>
+      <div class="form-group" style="margin-bottom:12px"><label>Full Name *</label><input type="text" id="ca_name" placeholder="Your name"></div>
+      <div class="form-group" style="margin-bottom:12px"><label>Mobile Number *</label><input type="tel" id="ca_mobile" maxlength="15" placeholder="10-digit mobile number"></div>
+      <div class="form-group" style="margin-bottom:14px"><label>Address</label><input type="text" id="ca_address" placeholder="Flat, tower, society…"></div>
+      <p id="caStep3Err" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-primary" onclick="caSaveProfile()"><i class="fa fa-floppy-disk"></i> Save &amp; Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CUSTOMER ACCOUNT (logged in) ── -->
+<div class="modal-overlay" id="customerAccountModal" style="z-index:300">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title"><i class="fa fa-circle-user" style="color:var(--green)"></i> My Account</div>
+    <div id="caAccountBody" style="text-align:left"></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>
+      <button class="btn btn-ghost" onclick="closeModal('customerAccountModal')">Close</button>
+    </div>
   </div>
 </div>
 
@@ -612,23 +696,29 @@ footer strong{color:var(--gold-light)}
 <!-- ══════════════════════════════════════════ -->
 <div id="panel-customer">
 
-<!-- ── SOCIETY SELECTOR ── -->
-<div class="society-bar" id="societyBar">
-  <div class="society-bar-inner">
-    <i class="fa fa-location-dot" style="color:var(--green);font-size:1rem"></i>
-    <span style="font-size:.8rem;color:var(--green-dark);font-weight:700;white-space:nowrap">Browsing Society:</span>
-    <select class="society-select" id="societySelect" onchange="onSocietyChange()"></select>
-    <span id="geoStatusText" style="font-size:.74rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:5px"></span>
+<!-- ── HERO BAND ── -->
+<div class="hero-band">
+  <div class="hero-band-inner">
+    <h2 id="heroHeadline">Discover &amp; Support Local Businesses</h2>
+    <p id="heroSubText">For the residents, by the residents.</p>
   </div>
 </div>
 
 <span id="statTotal" style="display:none"></span>
 
-<!-- ── BIG SEARCH ── -->
-<div class="search-section" id="searchSection">
-  <div class="search-big-wrap">
-    <i class="fa fa-magnifying-glass srch-ico"></i>
-    <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" oninput="renderAll()">
+<!-- ── SOCIETY SELECTOR + BIG SEARCH (overlaps hero) ── -->
+<div class="browse-toolbar" id="searchSection">
+  <div class="browse-toolbar-inner">
+    <div class="society-row" id="societyBar">
+      <i class="fa fa-location-dot"></i>
+      <span style="white-space:nowrap">Browsing Society:</span>
+      <select class="society-select" id="societySelect" onchange="onSocietyChange()"></select>
+      <span id="geoStatusText" style="font-size:.74rem;color:var(--text-muted);font-weight:400;display:inline-flex;align-items:center;gap:5px"></span>
+    </div>
+    <div class="search-big-wrap">
+      <i class="fa fa-magnifying-glass srch-ico"></i>
+      <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" oninput="renderAll()">
+    </div>
   </div>
 </div>
 
@@ -668,10 +758,20 @@ footer strong{color:var(--gold-light)}
 
     <!-- Customer details + action -->
     <div id="menuFlatRow" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+      <input type="text" id="menuCustomerName" placeholder="Your name *" maxlength="80"
+        style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
+      <input type="email" id="menuCustomerEmail" placeholder="Your email (for verification) *" maxlength="120"
+        style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
       <input type="tel" id="menuCustomerMobile" placeholder="Your mobile number *" maxlength="15"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
       <input type="text" id="menuCustomerAddress" placeholder="Complete delivery address (flat, tower, society…) *" maxlength="200"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
+      <div id="menuOtpRow" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="menuOtpInput" maxlength="6" placeholder="Enter 6-digit code"
+          style="flex:1;min-width:140px;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.95rem;letter-spacing:.25em;text-align:center;font-family:inherit;outline:none;box-sizing:border-box">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="resendMenuOtp()"><i class="fa fa-rotate"></i> Resend</button>
+      </div>
+      <p id="menuOtpHint" style="display:none;font-size:.76rem;color:var(--text-muted)"></p>
     </div>
     <button class="order-btn" id="menuOrderBtn" onclick="placeOrder()" style="margin-bottom:14px">
       <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
@@ -728,6 +828,7 @@ footer strong{color:var(--gold-light)}
       <button class="admin-tab-btn active" data-tab="overview"  onclick="switchAdminTab('overview')"><i class="fa fa-chart-line"></i> Overview</button>
       <button class="admin-tab-btn"        data-tab="vendors"   onclick="switchAdminTab('vendors')"><i class="fa fa-store"></i> Vendors</button>
       <button class="admin-tab-btn"        data-tab="accounts"  onclick="switchAdminTab('accounts')"><i class="fa fa-users"></i> Accounts</button>
+      <button class="admin-tab-btn"        data-tab="customers" onclick="switchAdminTab('customers')"><i class="fa fa-address-book"></i> Customers</button>
       <button class="admin-tab-btn"        data-tab="config"    onclick="switchAdminTab('config')"><i class="fa fa-sliders"></i> Site Config</button>
       <button class="admin-tab-btn"        data-tab="ads"       onclick="switchAdminTab('ads')"><i class="fa fa-rectangle-ad"></i> Ads Carousel</button>
       <button class="admin-tab-btn"        data-tab="stats"     onclick="switchAdminTab('stats')"><i class="fa fa-chart-bar"></i> Stats</button>
@@ -865,32 +966,32 @@ footer strong{color:var(--gold-light)}
 <script>
 /* ═══════════ DEFAULT PL LOGO SVG (fallback for tiles without image) ═══════════ */
 const PL_LOGO_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="70" height="70">
-  <circle cx="50" cy="50" r="48" fill="#1a5c2e" stroke="#b8962e" stroke-width="3"/>
-  <g fill="#b8962e" opacity=".9">
+  <circle cx="50" cy="50" r="48" fill="#3E4750" stroke="#F4A83A" stroke-width="3"/>
+  <g fill="#F4A83A" opacity=".9">
     <ellipse cx="18" cy="38" rx="4" ry="2" transform="rotate(-50,18,38)"/>
     <ellipse cx="14" cy="46" rx="4" ry="2" transform="rotate(-40,14,46)"/>
     <ellipse cx="13" cy="55" rx="4" ry="2" transform="rotate(-30,13,55)"/>
     <ellipse cx="16" cy="63" rx="4" ry="2" transform="rotate(-20,16,63)"/>
     <ellipse cx="21" cy="70" rx="4" ry="2" transform="rotate(-10,21,70)"/>
   </g>
-  <g fill="#b8962e" opacity=".9">
+  <g fill="#F4A83A" opacity=".9">
     <ellipse cx="82" cy="38" rx="4" ry="2" transform="rotate(50,82,38)"/>
     <ellipse cx="86" cy="46" rx="4" ry="2" transform="rotate(40,86,46)"/>
     <ellipse cx="87" cy="55" rx="4" ry="2" transform="rotate(30,87,55)"/>
     <ellipse cx="84" cy="63" rx="4" ry="2" transform="rotate(20,84,63)"/>
     <ellipse cx="79" cy="70" rx="4" ry="2" transform="rotate(10,79,70)"/>
   </g>
-  <rect x="38" y="38" width="8" height="22" fill="#b8962e" opacity=".7"/>
-  <rect x="47" y="32" width="6" height="28" fill="#d4af55" opacity=".8"/>
-  <rect x="54" y="40" width="8" height="20" fill="#b8962e" opacity=".7"/>
+  <rect x="38" y="38" width="8" height="22" fill="#F4A83A" opacity=".7"/>
+  <rect x="47" y="32" width="6" height="28" fill="#FFC266" opacity=".8"/>
+  <rect x="54" y="40" width="8" height="20" fill="#F4A83A" opacity=".7"/>
   <ellipse cx="33" cy="64" rx="4" ry="4" fill="#fff" opacity=".9"/>
   <rect x="31" y="68" width="5" height="8" rx="2" fill="#fff" opacity=".9"/>
   <ellipse cx="50" cy="62" rx="4" ry="4" fill="#fff" opacity=".9"/>
   <rect x="48" y="66" width="5" height="9" rx="2" fill="#fff" opacity=".9"/>
   <ellipse cx="67" cy="64" rx="4" ry="4" fill="#fff" opacity=".9"/>
   <rect x="65" y="68" width="5" height="8" rx="2" fill="#fff" opacity=".9"/>
-  <text x="50" y="28" text-anchor="middle" fill="#d4af55" font-size="10" font-weight="bold" font-family="serif">PL</text>
-  <text x="50" y="87" text-anchor="middle" fill="#d4af55" font-size="5.5" font-weight="bold" font-family="sans-serif" letter-spacing="1">ENTREPRENEURS</text>
+  <text x="50" y="28" text-anchor="middle" fill="#FFC266" font-size="10" font-weight="bold" font-family="serif">PL</text>
+  <text x="50" y="87" text-anchor="middle" fill="#FFC266" font-size="5.5" font-weight="bold" font-family="sans-serif" letter-spacing="1">ENTREPRENEURS</text>
 </svg>`;
 
 /* ═══════════ CATEGORIES ═══════════ */
@@ -1047,6 +1148,13 @@ const DEFAULT_SOCIETIES = [
 ];
 let selectedSociety = 'Prateek Laurel';
 
+/* ═══════════ CUSTOMER ACCOUNT STATE ═══════════ */
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let currentCustomer = null; // {name,email,mobile,address}
+let _custOtp = { email:null, code:null, expiresAt:0, verifiedEmail:null };
+let _pendingOrderCtx = null;
+const _restoredCustomerEmail = localStorage.getItem('hb_customerEmail');
+
 /* ═══════════ FIRESTORE HELPERS ═══════════ */
 async function fsLoadVendors(){
   if(!db) return null;
@@ -1149,7 +1257,7 @@ async function fsRecordStat(vendorId, field){
   }catch(e){}
 }
 
-async function fsLogOrder(vendorId, vendorName, items, total, flat){
+async function fsLogOrder(vendorId, vendorName, items, total, flat, customerEmail, customerName){
   if(!db) return;
   // Rule requires isSignedIn() — customers are anonymous, so use Firebase Anonymous Auth
   try{
@@ -1159,9 +1267,233 @@ async function fsLogOrder(vendorId, vendorName, items, total, flat){
     if(!auth || !auth.currentUser) return; // still no auth, skip log
     await db.collection('order_logs').add({
       vendorId, vendorName, items, total, flat,
+      customerEmail: customerEmail||null, customerName: customerName||'',
       ts: firebase.firestore.FieldValue.serverTimestamp()
     });
   }catch(e){}
+}
+
+/* ═══════════ CUSTOMER ACCOUNT (Email OTP) ═══════════ */
+function genOtpCode(){ return String(Math.floor(100000 + Math.random()*900000)); }
+
+async function sendCustomerOtp(email, onSent){
+  const code = genOtpCode();
+  const expiresAt = Date.now()+15*60*1000;
+  _custOtp = { email, code, expiresAt, verifiedEmail:null };
+  const ejsPubKey   = SITE_CONFIG.ejsPublicKey||'';
+  const ejsService  = SITE_CONFIG.ejsServiceId||'';
+  const ejsTemplate = SITE_CONFIG.ejsOtpTemplateId || SITE_CONFIG.ejsTemplateId || '';
+  if(!(ejsPubKey && ejsService && ejsTemplate)){
+    showToast('Email service not configured — ask admin to set up EmailJS in Site Config.');
+    return false;
+  }
+  const expiryTime = new Date(expiresAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  try{
+    await emailjs.init({publicKey: ejsPubKey});
+    await emailjs.send(ejsService, ejsTemplate, {
+      from_name: 'Homebiz', from_email: 'noreply@homebiz.co.in',
+      mobile: '', subject: 'Your Homebiz Verification Code',
+      message: `Your verification code is ${code}. It expires in 15 minutes.`,
+      passcode: code, time: expiryTime, otp_code: code, to_email: email
+    });
+    showToast(`Verification code sent to ${email}`);
+    if(onSent) onSent();
+    return true;
+  }catch(e){
+    showToast('Could not send verification email: '+(e.text||e.message||'unknown error'));
+    return false;
+  }
+}
+
+function verifyCustomerOtpCode(inputCode){
+  if(!_custOtp.code) return false;
+  if(Date.now() > _custOtp.expiresAt) return false;
+  if(String(inputCode||'').trim() !== _custOtp.code) return false;
+  _custOtp.verifiedEmail = _custOtp.email;
+  return true;
+}
+
+async function fsSaveCustomerProfile(profile){
+  const data = { name:profile.name||'', email:profile.email, mobile:profile.mobile||'', address:profile.address||'' };
+  if(!db) return data;
+  try{
+    if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
+    const ref = db.collection('customers').doc(profile.email);
+    const snap = await ref.get();
+    const toWrite = {...data, updatedAt: firebase.firestore.FieldValue.serverTimestamp()};
+    if(!snap.exists) toWrite.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    await ref.set(toWrite, {merge:true});
+  }catch(e){}
+  return data;
+}
+
+async function fsLoadCustomerProfile(email){
+  if(!db || !email) return null;
+  try{
+    if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
+    const snap = await db.collection('customers').doc(email).get();
+    return snap.exists ? {...snap.data(), email} : null;
+  }catch(e){ return null; }
+}
+
+async function fsLoadCustomerOrders(email){
+  if(!db || !email) return [];
+  try{
+    if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
+    const snap = await db.collection('order_logs').where('customerEmail','==',email).get();
+    const docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    docs.sort((a,b)=>((b.ts&&b.ts.seconds)||0)-((a.ts&&a.ts.seconds)||0));
+    return docs;
+  }catch(e){ return []; }
+}
+
+function customerLogin(profile){
+  currentCustomer = profile;
+  localStorage.setItem('hb_customerEmail', profile.email);
+  updatePanelTabs();
+}
+
+async function customerLogout(){
+  currentCustomer = null;
+  localStorage.removeItem('hb_customerEmail');
+  closeModal('customerAccountModal');
+  updatePanelTabs();
+  showToast('Logged out');
+}
+
+function openCustomerAuthModal(){
+  document.getElementById('ca_email').value='';
+  document.getElementById('ca_otp').value='';
+  document.getElementById('ca_name').value='';
+  document.getElementById('ca_mobile').value='';
+  document.getElementById('ca_address').value='';
+  document.getElementById('caStep1Err').style.display='none';
+  document.getElementById('caStep2Err').style.display='none';
+  document.getElementById('caStep3Err').style.display='none';
+  document.getElementById('caStep1').style.display='block';
+  document.getElementById('caStep2').style.display='none';
+  document.getElementById('caStep3').style.display='none';
+  document.getElementById('customerAuthModal').classList.add('open');
+  setTimeout(()=>document.getElementById('ca_email').focus(),120);
+}
+
+async function caSendOtp(){
+  const emailEl = document.getElementById('ca_email');
+  const email = (emailEl.value||'').trim().toLowerCase();
+  const errEl = document.getElementById('caStep1Err');
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    errEl.textContent='Please enter a valid email address.'; errEl.style.display='block'; return;
+  }
+  errEl.style.display='none';
+  const btn = document.getElementById('caSendOtpBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Sending…'; }
+  await sendCustomerOtp(email, ()=>{
+    document.getElementById('caEmailShown').textContent = email;
+    document.getElementById('caStep1').style.display='none';
+    document.getElementById('caStep2').style.display='block';
+    document.getElementById('ca_otp').value='';
+    setTimeout(()=>document.getElementById('ca_otp').focus(),120);
+  });
+  if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Send OTP'; }
+}
+
+async function caVerifyOtp(){
+  const code = (document.getElementById('ca_otp').value||'').trim();
+  const errEl = document.getElementById('caStep2Err');
+  if(!verifyCustomerOtpCode(code)){
+    errEl.textContent='Invalid or expired code. Please try again.'; errEl.style.display='block'; return;
+  }
+  errEl.style.display='none';
+  const email = _custOtp.email;
+  const existing = await fsLoadCustomerProfile(email);
+  if(existing){
+    customerLogin(existing);
+    closeModal('customerAuthModal');
+    showToast(`Welcome back, ${existing.name||email}!`);
+    return;
+  }
+  document.getElementById('caStep2').style.display='none';
+  document.getElementById('caStep3').style.display='block';
+  document.getElementById('ca_name').focus();
+}
+
+async function caSaveProfile(){
+  const name    = (document.getElementById('ca_name').value||'').trim();
+  const mobile  = (document.getElementById('ca_mobile').value||'').trim();
+  const address = (document.getElementById('ca_address').value||'').trim();
+  const errEl   = document.getElementById('caStep3Err');
+  if(!name || !mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g,''))){
+    errEl.textContent='Please enter your name and a valid mobile number.'; errEl.style.display='block'; return;
+  }
+  errEl.style.display='none';
+  const profile = { name, email:_custOtp.email, mobile, address };
+  await fsSaveCustomerProfile(profile);
+  customerLogin(profile);
+  closeModal('customerAuthModal');
+  showToast(`Welcome, ${name}!`);
+}
+
+let _caEditMode = false;
+async function openCustomerAccountModal(){
+  if(!currentCustomer){ openCustomerAuthModal(); return; }
+  _caEditMode = false;
+  document.getElementById('customerAccountModal').classList.add('open');
+  await renderCustomerAccountBody();
+}
+
+async function renderCustomerAccountBody(){
+  const body = document.getElementById('caAccountBody');
+  if(!body || !currentCustomer) return;
+  body.innerHTML = `<p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading…</p>`;
+  const orders = await fsLoadCustomerOrders(currentCustomer.email);
+  if(_caEditMode){
+    body.innerHTML = `
+      <div class="form-group" style="margin-bottom:10px"><label>Full Name</label><input id="caEdit_name" value="${esc(currentCustomer.name)}"></div>
+      <div class="form-group" style="margin-bottom:10px"><label>Mobile Number</label><input id="caEdit_mobile" value="${esc(currentCustomer.mobile)}"></div>
+      <div class="form-group" style="margin-bottom:14px"><label>Address</label><input id="caEdit_address" value="${esc(currentCustomer.address)}"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="_caEditMode=false;renderCustomerAccountBody()">Cancel</button>
+        <button class="btn btn-primary" onclick="caSaveEditedProfile()"><i class="fa fa-floppy-disk"></i> Save</button>
+      </div>`;
+    return;
+  }
+  body.innerHTML = `
+    <div style="background:var(--green-pale);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <div style="font-weight:700;color:var(--green-dark);margin-bottom:4px">${esc(currentCustomer.name)}</div>
+          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-envelope" style="width:14px"></i> ${esc(currentCustomer.email)}</div>
+          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-phone" style="width:14px"></i> ${esc(currentCustomer.mobile)||'—'}</div>
+          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-location-dot" style="width:14px"></i> ${esc(currentCustomer.address)||'—'}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="_caEditMode=true;renderCustomerAccountBody()"><i class="fa fa-pen"></i></button>
+      </div>
+    </div>
+    <div style="font-weight:700;color:var(--green-dark);margin-bottom:10px"><i class="fa fa-receipt"></i> My Orders (${orders.length})</div>
+    <div style="max-height:280px;overflow-y:auto">
+    ${orders.length ? orders.map(o=>`
+      <div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;color:var(--green-dark);gap:8px">
+          <span>${esc(o.vendorName)}</span><span style="white-space:nowrap">₹${o.total||0}</span>
+        </div>
+        <div style="font-size:.74rem;color:var(--text-muted);margin-top:2px">${(o.items||[]).map(it=>`${esc(it.name)} x${it.qty}`).join(', ')}</div>
+        <div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">${o.ts && o.ts.seconds ? new Date(o.ts.seconds*1000).toLocaleString() : ''}</div>
+      </div>`).join('') : '<p style="color:var(--text-muted);font-size:.85rem">No orders yet.</p>'}
+    </div>
+  `;
+}
+
+async function caSaveEditedProfile(){
+  const name    = (document.getElementById('caEdit_name').value||'').trim();
+  const mobile  = (document.getElementById('caEdit_mobile').value||'').trim();
+  const address = (document.getElementById('caEdit_address').value||'').trim();
+  if(!name || !mobile){ showToast('Name and mobile are required'); return; }
+  const profile = { ...currentCustomer, name, mobile, address };
+  await fsSaveCustomerProfile(profile);
+  customerLogin(profile);
+  _caEditMode = false;
+  renderCustomerAccountBody();
+  showToast('Profile updated');
 }
 
 /* ═══════════ REVIEWS ═══════════ */
@@ -1448,15 +1780,18 @@ function updatePanelTabs(){
       <a onclick="openPolicyModal('whocanjoin');closeAboutDropdown()"><i class="fa fa-users" style="margin-right:8px;opacity:.7"></i>Who Can Join</a>
     </div>
   </div>`;
+  const customerBtn = currentCustomer
+    ? `<button class="btn btn-outline btn-sm" onclick="openCustomerAccountModal()"><i class="fa fa-circle-user"></i><span class="hdr-label"> ${(currentCustomer.name||'My Account').split(' ')[0]}</span></button>`
+    : `<button class="btn btn-outline btn-sm" onclick="openCustomerAuthModal()"><i class="fa fa-user"></i><span class="hdr-label"> Customer Login</span></button>`;
   if(hdrRight){
     if(currentSeller){
-      hdrRight.innerHTML = `${aboutBtn}<span class="hdr-label" style="font-size:.78rem;color:rgba(255,255,255,.8)">${currentSeller.displayName}</span>
+      hdrRight.innerHTML = `${customerBtn}${aboutBtn}<span class="hdr-label" style="font-size:.78rem;color:rgba(255,255,255,.8)">${currentSeller.displayName}</span>
         <button class="btn btn-sm btn-outline" onclick="sellerLogout()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Logout</span></button>`;
     } else if(isAdmin){
-      hdrRight.innerHTML = `${aboutBtn}<span class="admin-badge hdr-label">Admin</span>
+      hdrRight.innerHTML = `${customerBtn}${aboutBtn}<span class="admin-badge hdr-label">Admin</span>
         <button class="btn btn-sm btn-outline" onclick="exitAdmin()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Exit Admin</span></button>`;
     } else {
-      hdrRight.innerHTML = `${aboutBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i><span class="hdr-label"> Seller Login</span></button>
+      hdrRight.innerHTML = `${customerBtn}${aboutBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i><span class="hdr-label"> Seller Login</span></button>
         <button class="btn btn-outline btn-sm" onclick="openLoginModal('admin')"><i class="fa fa-lock"></i><span class="hdr-label"> Admin</span></button>`;
     }
   }
@@ -1589,10 +1924,14 @@ function openMenuModal(vendorId){
   document.getElementById('menuModalTitle').textContent = _menuVendor.venture;
   document.getElementById('menuModalSpec').textContent  = _menuVendor.speciality||'';
   document.getElementById('menuModalTerm').textContent  = _catCfg.modalTerm;
-  document.getElementById('menuCustomerMobile').value = '';
-  document.getElementById('menuCustomerAddress').value = '';
-  document.getElementById('menuCustomerMobile').style.borderColor = 'var(--border)';
-  document.getElementById('menuCustomerAddress').style.borderColor = 'var(--border)';
+  document.getElementById('menuCustomerName').value = currentCustomer ? (currentCustomer.name||'') : '';
+  document.getElementById('menuCustomerEmail').value = currentCustomer ? (currentCustomer.email||'') : '';
+  document.getElementById('menuCustomerMobile').value = currentCustomer ? (currentCustomer.mobile||'') : '';
+  document.getElementById('menuCustomerAddress').value = currentCustomer ? (currentCustomer.address||'') : '';
+  ['menuCustomerName','menuCustomerEmail','menuCustomerMobile','menuCustomerAddress'].forEach(id=>{
+    document.getElementById(id).style.borderColor = 'var(--border)';
+  });
+  resetMenuOtpUI();
 
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
   const list = document.getElementById('menuItemsList');
@@ -1712,11 +2051,11 @@ function _renderSimilarVendors(currentId){
         var rating = getVendorRating(v.id);
         var imgHtml = imgSrc
           ? '<img src="' + imgSrc + '" alt="' + v.venture + '" style="width:100%;height:88px;object-fit:contain;display:block;background:var(--cream)">'
-          : '<div style="width:100%;height:88px;background:linear-gradient(145deg,var(--green-dark),var(--green));display:flex;align-items:center;justify-content:center"><i class="fa fa-store" style="color:#fff;font-size:1.4rem;opacity:.8"></i></div>';
+          : '<div style="width:100%;height:88px;background:var(--green);display:flex;align-items:center;justify-content:center"><i class="fa fa-store" style="color:#fff;font-size:1.4rem;opacity:.8"></i></div>';
         var ratingHtml = rating
           ? '<div style="font-size:.72rem;color:var(--gold);font-weight:600">★ ' + rating.avg + '<span style="color:var(--text-muted);font-weight:400"> (' + rating.count + ')</span></div>'
           : '<div style="font-size:.72rem;color:var(--text-muted)">Tap to view</div>';
-        return '<div onclick="openMenuModal(\'' + v.id + '\')" style="cursor:pointer;background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,border-color .2s,transform .2s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 24px rgba(26,92,46,.15)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+        return '<div onclick="openMenuModal(\'' + v.id + '\')" style="cursor:pointer;background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,border-color .2s,transform .2s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 24px rgba(232,121,42,.15)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
           + imgHtml
           + '<div style="padding:8px 10px">'
           + '<div style="font-size:.82rem;font-weight:700;color:var(--green-dark);line-height:1.3;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + v.venture + '</div>'
@@ -1776,39 +2115,115 @@ function placeOrder(){
   }
 
   // Validate customer details (always required regardless of category)
+  const nameEl    = document.getElementById('menuCustomerName');
+  const emailEl   = document.getElementById('menuCustomerEmail');
   const mobileEl  = document.getElementById('menuCustomerMobile');
   const addressEl = document.getElementById('menuCustomerAddress');
+  const name    = (nameEl.value||'').trim();
+  const email   = (emailEl.value||'').trim().toLowerCase();
   const mobile  = (mobileEl.value||'').trim();
   const address = (addressEl.value||'').trim();
 
   let valid = true;
+  if(!name){
+    nameEl.style.borderColor = 'var(--danger)';
+    showToast('Please enter your name');
+    valid = false;
+  } else { nameEl.style.borderColor = 'var(--green)'; }
+
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    emailEl.style.borderColor = 'var(--danger)';
+    if(valid) showToast('Please enter a valid email address');
+    valid = false;
+  } else { emailEl.style.borderColor = 'var(--green)'; }
+
   if(!mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g,''))){
     mobileEl.style.borderColor = 'var(--danger)';
-    mobileEl.focus();
-    showToast('Please enter a valid mobile number');
+    if(valid) showToast('Please enter a valid mobile number');
     valid = false;
   } else { mobileEl.style.borderColor = 'var(--green)'; }
 
   if(!address){
     addressEl.style.borderColor = 'var(--danger)';
-    if(valid) addressEl.focus();
-    showToast('Please enter your complete delivery address');
+    if(valid) showToast('Please enter your complete delivery address');
     valid = false;
   } else { addressEl.style.borderColor = 'var(--green)'; }
 
   if(!valid) return;
 
-  const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, address)}\n📱 Mobile: ${mobile}`;
+  const ctx = {chosen,lines,total,name,email,mobile,address,wa};
+
+  // Already logged in as this exact customer, or already verified this email in this modal session
+  if((currentCustomer && currentCustomer.email===email) || _custOtp.verifiedEmail===email){
+    _finalizePlaceOrder(ctx);
+    return;
+  }
+
+  // First time this session for this email — send OTP and pause for verification
+  _pendingOrderCtx = ctx;
+  const btn = document.getElementById('menuOrderBtn');
+  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending code…'; }
+  sendCustomerOtp(email, ()=>{
+    document.getElementById('menuOtpRow').style.display = 'flex';
+    const hint = document.getElementById('menuOtpHint');
+    hint.style.display = 'block';
+    hint.textContent = `Enter the code we emailed to ${email} to confirm your order.`;
+    if(btn){
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa fa-check"></i> Verify & Place Order';
+      btn.onclick = verifyMenuOtpAndOrder;
+    }
+    document.getElementById('menuOtpInput').focus();
+  }).then(sent=>{
+    if(!sent && btn){ btn.disabled = false; btn.innerHTML = '<i class="fab fa-whatsapp"></i> Place Order via WhatsApp'; }
+  });
+}
+
+async function verifyMenuOtpAndOrder(){
+  const code = (document.getElementById('menuOtpInput').value||'').trim();
+  if(!verifyCustomerOtpCode(code)){ showToast('Invalid or expired code'); return; }
+  const ctx = _pendingOrderCtx;
+  if(!ctx) return;
+  await fsSaveCustomerProfile({name:ctx.name,email:ctx.email,mobile:ctx.mobile,address:ctx.address});
+  customerLogin({name:ctx.name,email:ctx.email,mobile:ctx.mobile,address:ctx.address});
+  _finalizePlaceOrder(ctx);
+}
+
+function resendMenuOtp(){
+  if(!_pendingOrderCtx) return;
+  sendCustomerOtp(_pendingOrderCtx.email);
+}
+
+function resetMenuOtpUI(){
+  _pendingOrderCtx = null;
+  const row = document.getElementById('menuOtpRow');
+  const hint = document.getElementById('menuOtpHint');
+  const otpInput = document.getElementById('menuOtpInput');
+  if(row) row.style.display = 'none';
+  if(hint) hint.style.display = 'none';
+  if(otpInput) otpInput.value = '';
+  const btn = document.getElementById('menuOrderBtn');
+  if(btn){
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fab fa-whatsapp"></i> Place Order via WhatsApp';
+    btn.onclick = placeOrder;
+  }
+}
+
+function _finalizePlaceOrder(ctx){
+  const {chosen,lines,total,name,email,mobile,address,wa} = ctx;
+  const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, address)}\n👤 ${name}\n📱 Mobile: ${mobile}`;
   window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`, '_blank');
   fsRecordStat(_menuVendor.id,'orderClicks');
   fsRecordStat(_menuVendor.id,'whatsappClicks');
   if(_catCfg.useQty){
     fsLogOrder(_menuVendor.id,_menuVendor.venture,
       chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]})),
-      total, `${address} | 📱 ${mobile}`);
+      total, `${address} | 📱 ${mobile}`, email, name);
   }
   closeVendorDetail();
   _menuQtys={};
+  resetMenuOtpUI();
   const toastMap = {
     "I'm Interested — WhatsApp":'Interest sent via WhatsApp!',
     'Consult Now — WhatsApp':'Consultation request sent!',
@@ -2107,6 +2522,10 @@ function applyFooterLinks(){
     wa.href = waNum ? `https://wa.me/${waNum.replace(/\D/g,'')}` : '#';
     wa.style.display = waNum ? '' : 'none';
   }
+  const tb = document.querySelector('.tagline-bar');
+  if(tb) tb.textContent = SITE_CONFIG.tagline||'Connect • Collaborate • Create • Grow';
+  const heroSub = document.getElementById('heroSubText');
+  if(heroSub) heroSub.textContent = SITE_CONFIG.heroSub||'For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.';
 }
 function footerSocialClick(type, e){
   let url = '';
@@ -2541,8 +2960,8 @@ async function publishToGitHub(){
           <div class="ad-slide-name">${item.venture}</div>
           <div class="ad-slide-spec">${item.speciality||''}</div>
           <div class="ad-slide-meta">
-            ${item.flat ? `<span><i class="fa fa-location-dot" style="color:var(--gold-light)"></i> Flat ${item.flat}</span>` : ''}
-            ${item.phone ? `<span><i class="fa fa-phone" style="color:var(--gold-light)"></i> ${item.phone}</span>` : ''}
+            ${item.flat ? `<span><i class="fa fa-location-dot" style="color:#fff"></i> Flat ${item.flat}</span>` : ''}
+            ${item.phone ? `<span><i class="fa fa-phone" style="color:#fff"></i> ${item.phone}</span>` : ''}
           </div>
           <div style="margin-top:12px;font-size:.72rem;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase">Tap for details →</div>
         </div>`;
@@ -2645,6 +3064,7 @@ function renderAdminTab(tab){
     case 'overview':  renderAdminOverview(c);  break;
     case 'vendors':   renderAdminVendors(c);   break;
     case 'accounts':  renderAdminAccounts(c);  break;
+    case 'customers': renderAdminCustomers(c); break;
     case 'config':    renderAdminConfig(c);    break;
     case 'ads':       renderAdminAds(c);       break;
     case 'stats':     renderAdminStats(c);     break;
@@ -3123,6 +3543,9 @@ function renderAdminConfig(c){
           <div class="form-group" style="margin:0"><label style="font-size:.75rem">Template ID</label>
             <input id="cfg_ejsTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsTemplateId)}"></div>
         </div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin:14px 0 8px">Optional: a separate template for customer OTP emails (include variable: <code>message</code> or <code>otp_code</code>). Leave blank to reuse the Template ID above.</p>
+        <div class="form-group" style="margin:0;max-width:260px"><label style="font-size:.75rem">OTP Template ID</label>
+          <input id="cfg_ejsOtpTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsOtpTemplateId)}"></div>
       </div>
     </div>
     <div class="modal-actions" style="margin-top:14px">
@@ -3203,9 +3626,8 @@ async function saveAdminConfig(){
     ejsPublicKey:   document.getElementById('cfg_ejsPublicKey').value.trim(),
     ejsServiceId:   document.getElementById('cfg_ejsServiceId').value.trim(),
     ejsTemplateId:  document.getElementById('cfg_ejsTemplateId').value.trim(),
+    ejsOtpTemplateId: document.getElementById('cfg_ejsOtpTemplateId').value.trim(),
   });
-  const tb=document.querySelector('.tagline-bar');
-  if(tb) tb.textContent=SITE_CONFIG.tagline||'';
   applyFooterLinks();
   showToast('Config saved ✓');
 }
@@ -3266,6 +3688,44 @@ async function renderAdminStats(c){
   </div>`;
 }
 
+async function renderAdminCustomers(c){
+  c.innerHTML=`<div class="s-card"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading customers…</p></div>`;
+  if(!FB_READY||!db){ c.innerHTML=`<div class="s-card"><p style="color:var(--text-muted)">Firebase not configured.</p></div>`; return; }
+  let customers=[], orderLogs=[];
+  try{
+    const [custSnap, orderSnap] = await Promise.all([
+      db.collection('customers').get(),
+      db.collection('order_logs').get()
+    ]);
+    customers = custSnap.docs.map(d=>({...d.data(), email:d.id}));
+    orderLogs = orderSnap.docs.map(d=>d.data());
+  }catch(e){
+    c.innerHTML=`<div class="s-card"><p style="color:var(--danger)">Failed to load customers: ${e.message}</p></div>`;
+    return;
+  }
+  const orderCountByEmail = {}, spendByEmail = {};
+  orderLogs.forEach(o=>{
+    if(!o.customerEmail) return;
+    orderCountByEmail[o.customerEmail] = (orderCountByEmail[o.customerEmail]||0)+1;
+    spendByEmail[o.customerEmail] = (spendByEmail[o.customerEmail]||0)+(o.total||0);
+  });
+  customers.sort((a,b)=>(orderCountByEmail[b.email]||0)-(orderCountByEmail[a.email]||0));
+  c.innerHTML = `<div class="s-card">
+    <div class="s-card-title"><i class="fa fa-address-book" style="color:var(--green)"></i> Registered Customers (${customers.length})</div>
+    <table class="menu-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Address</th><th>Orders</th><th>Total Spend</th></tr></thead>
+      <tbody>${customers.length ? customers.map(cu=>`<tr>
+        <td style="font-weight:600">${esc(cu.name)}</td>
+        <td>${esc(cu.email)}</td>
+        <td>${esc(cu.mobile)}</td>
+        <td style="font-size:.78rem">${esc(cu.address)||'—'}</td>
+        <td style="text-align:center;font-weight:700;color:${(orderCountByEmail[cu.email]||0)>0?'var(--green)':'var(--text-muted)'}">${orderCountByEmail[cu.email]||0}</td>
+        <td style="text-align:center">₹${spendByEmail[cu.email]||0}</td>
+      </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No customers yet.</td></tr>`}</tbody>
+    </table>
+  </div>`;
+}
+
 /* ── Migration ── */
 async function migrateFromSeed(){
   if(!db){ showToast('Firebase not configured'); return; }
@@ -3311,6 +3771,14 @@ async function migrateFromSeed(){
 
   // Update header buttons
   updatePanelTabs();
+
+  // Restore persisted customer login (email OTP session)
+  if(_restoredCustomerEmail){
+    fsLoadCustomerProfile(_restoredCustomerEmail).then(profile=>{
+      if(profile){ currentCustomer = profile; updatePanelTabs(); }
+      else localStorage.removeItem('hb_customerEmail');
+    });
+  }
 
   // Start society detection (geo + dropdown)
   detectSociety();

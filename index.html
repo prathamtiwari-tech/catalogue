@@ -15,21 +15,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Homebiz brand palette — orange + slate, matching the logo (ACTIVE THEME) */
+  /* Homebiz brand palette — Trust & Security Blue + gold accent (ACTIVE THEME) */
+  --green:#0B5FA8;--green-dark:#073A6B;--green-light:#3D8BD4;--green-pale:#EAF3FC;
+  --gold:#F5A623;--gold-light:#FFC65C;--cream:#F6F9FC;--white:#ffffff;
+  --text:#1C2733;--text-muted:#5B6B7A;--border:#E1E8F0;--danger:#c0392b;
+  --shadow:0 4px 20px rgba(11,95,168,.12);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
+}
+/* ── PREVIOUS ORANGE/SLATE THEME (kept for easy revert) ──
+   To switch back: delete the :root block above and uncomment this one.
+:root{
   --green:#E8792A;--green-dark:#3E4750;--green-light:#F4A83A;--green-pale:#FFF2E0;
   --gold:#F4A83A;--gold-light:#FFC266;--cream:#F7F7F9;--white:#ffffff;
   --text:#2B2F33;--text-muted:#6B7480;--border:#EAEAEC;--danger:#c0392b;
   --shadow:0 4px 20px rgba(20,20,30,.08);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
 }
-/* ── ORIGINAL GREEN/GOLD THEME (kept for easy revert) ──
-   To switch back: delete the :root block above and uncomment this one.
-:root{
-  --green:#1a5c2e;--green-dark:#0f3d1e;--green-light:#2e7d4f;--green-pale:#e8f5ec;
-  --gold:#b8962e;--gold-light:#d4af55;--cream:#faf7f2;--white:#ffffff;
-  --text:#1e2a1f;--text-muted:#5a6b5c;--border:#d5e8d9;--danger:#c0392b;
-  --shadow:0 4px 24px rgba(26,92,46,.10);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
-}
-── END ORIGINAL THEME ── */
+── END PREVIOUS THEME ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
@@ -982,32 +982,32 @@ footer strong{color:var(--gold-light)}
 <script>
 /* ═══════════ DEFAULT PL LOGO SVG (fallback for tiles without image) ═══════════ */
 const PL_LOGO_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="70" height="70">
-  <circle cx="50" cy="50" r="48" fill="#3E4750" stroke="#F4A83A" stroke-width="3"/>
-  <g fill="#F4A83A" opacity=".9">
+  <circle cx="50" cy="50" r="48" fill="#073A6B" stroke="#F5A623" stroke-width="3"/>
+  <g fill="#F5A623" opacity=".9">
     <ellipse cx="18" cy="38" rx="4" ry="2" transform="rotate(-50,18,38)"/>
     <ellipse cx="14" cy="46" rx="4" ry="2" transform="rotate(-40,14,46)"/>
     <ellipse cx="13" cy="55" rx="4" ry="2" transform="rotate(-30,13,55)"/>
     <ellipse cx="16" cy="63" rx="4" ry="2" transform="rotate(-20,16,63)"/>
     <ellipse cx="21" cy="70" rx="4" ry="2" transform="rotate(-10,21,70)"/>
   </g>
-  <g fill="#F4A83A" opacity=".9">
+  <g fill="#F5A623" opacity=".9">
     <ellipse cx="82" cy="38" rx="4" ry="2" transform="rotate(50,82,38)"/>
     <ellipse cx="86" cy="46" rx="4" ry="2" transform="rotate(40,86,46)"/>
     <ellipse cx="87" cy="55" rx="4" ry="2" transform="rotate(30,87,55)"/>
     <ellipse cx="84" cy="63" rx="4" ry="2" transform="rotate(20,84,63)"/>
     <ellipse cx="79" cy="70" rx="4" ry="2" transform="rotate(10,79,70)"/>
   </g>
-  <rect x="38" y="38" width="8" height="22" fill="#F4A83A" opacity=".7"/>
-  <rect x="47" y="32" width="6" height="28" fill="#FFC266" opacity=".8"/>
-  <rect x="54" y="40" width="8" height="20" fill="#F4A83A" opacity=".7"/>
+  <rect x="38" y="38" width="8" height="22" fill="#F5A623" opacity=".7"/>
+  <rect x="47" y="32" width="6" height="28" fill="#FFC65C" opacity=".8"/>
+  <rect x="54" y="40" width="8" height="20" fill="#F5A623" opacity=".7"/>
   <ellipse cx="33" cy="64" rx="4" ry="4" fill="#fff" opacity=".9"/>
   <rect x="31" y="68" width="5" height="8" rx="2" fill="#fff" opacity=".9"/>
   <ellipse cx="50" cy="62" rx="4" ry="4" fill="#fff" opacity=".9"/>
   <rect x="48" y="66" width="5" height="9" rx="2" fill="#fff" opacity=".9"/>
   <ellipse cx="67" cy="64" rx="4" ry="4" fill="#fff" opacity=".9"/>
   <rect x="65" y="68" width="5" height="8" rx="2" fill="#fff" opacity=".9"/>
-  <text x="50" y="28" text-anchor="middle" fill="#FFC266" font-size="10" font-weight="bold" font-family="serif">PL</text>
-  <text x="50" y="87" text-anchor="middle" fill="#FFC266" font-size="5.5" font-weight="bold" font-family="sans-serif" letter-spacing="1">ENTREPRENEURS</text>
+  <text x="50" y="28" text-anchor="middle" fill="#FFC65C" font-size="10" font-weight="bold" font-family="serif">PL</text>
+  <text x="50" y="87" text-anchor="middle" fill="#FFC65C" font-size="5.5" font-weight="bold" font-family="sans-serif" letter-spacing="1">ENTREPRENEURS</text>
 </svg>`;
 
 /* ═══════════ CATEGORIES ═══════════ */

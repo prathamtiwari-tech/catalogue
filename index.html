@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -425,6 +426,7 @@ footer strong{color:var(--gold-light)}
         <button class="btn btn-primary" onclick="sellerLogin(document.getElementById('sellerEmailInput').value,document.getElementById('sellerPwInput').value)"><i class="fa fa-right-to-bracket"></i> Login</button>
         <button class="btn btn-ghost" onclick="closeModal('loginModal')">Cancel</button>
       </div>
+      <p style="font-size:.8rem;margin-top:14px;color:var(--text-muted)">New seller? <a href="#" onclick="event.preventDefault();openSellerRegModal()" style="color:var(--green);font-weight:700">Register here</a></p>
     </div>
 
     <!-- Admin fields -->
@@ -640,6 +642,190 @@ footer strong{color:var(--gold-light)}
   </div>
 </div>
 
+<!-- ── SELLER SELF-REGISTRATION MODAL ── -->
+<div class="modal-overlay" id="sellerRegModal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-title"><i class="fa fa-store" style="color:var(--green)"></i> Become a Seller on Homebiz</div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:16px">Fill in your details below. Your application will be reviewed by an admin — you'll get an email once it's approved.</p>
+    <div class="form-grid">
+
+      <div class="form-section-label"><i class="fa fa-envelope"></i> Step 1 — Verify Your Email</div>
+      <div class="form-group full">
+        <label>Email Address *</label>
+        <div style="display:flex;gap:8px">
+          <input type="email" id="sr_email" placeholder="you@email.com" style="flex:1">
+          <button class="btn btn-sm btn-primary" id="sr_emailSendBtn" onclick="srSendEmailOtp()" style="white-space:nowrap">Send Code</button>
+        </div>
+      </div>
+      <div class="form-group full" id="sr_emailCodeRow" style="display:none">
+        <label>Enter 6-digit code sent to your email</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="sr_emailCode" placeholder="123456" maxlength="6" style="flex:1">
+          <button class="btn btn-sm btn-primary" onclick="srVerifyEmailOtp()">Verify</button>
+        </div>
+      </div>
+      <div class="form-group full" id="sr_emailVerifiedBadge" style="display:none;color:var(--green);font-weight:700;font-size:.85rem"><i class="fa fa-circle-check"></i> Email verified</div>
+
+      <div class="form-section-label"><i class="fa fa-mobile-screen"></i> Step 2 — Verify Your Mobile Number</div>
+      <div class="form-group full">
+        <label>Mobile Number *</label>
+        <div style="display:flex;gap:8px">
+          <input type="tel" id="sr_mobile" placeholder="9999999999" style="flex:1">
+          <button class="btn btn-sm btn-primary" id="sr_mobileSendBtn" onclick="srSendMobileOtpClick()" style="white-space:nowrap">Send OTP</button>
+        </div>
+      </div>
+      <div class="form-group full" id="sr_mobileCodeRow" style="display:none">
+        <label>Enter OTP sent to your mobile</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="sr_mobileCode" placeholder="123456" maxlength="6" style="flex:1">
+          <button class="btn btn-sm btn-primary" onclick="srVerifyMobileOtpClick()">Verify</button>
+        </div>
+      </div>
+      <div class="form-group full" id="sr_mobileVerifiedBadge" style="display:none;color:var(--green);font-weight:700;font-size:.85rem"><i class="fa fa-circle-check"></i> Mobile verified</div>
+
+      <div class="form-section-label"><i class="fa fa-lock"></i> Step 3 — Create Your Password</div>
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" id="sr_password" placeholder="At least 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password *</label>
+        <input type="password" id="sr_password2" placeholder="Re-enter password">
+      </div>
+
+      <div class="form-section-label"><i class="fa fa-image"></i> Business Photo</div>
+      <div class="form-group full">
+        <div class="img-upload-zone" onclick="document.getElementById('sr_imgFile').click()">
+          <div class="img-preview" id="sr_imgPreviewBox"><i class="fa fa-image img-ph"></i></div>
+          <div class="img-upload-info">
+            <p><strong>Click to upload photo</strong><br>JPG, PNG, WEBP · Max 4 MB</p>
+            <div class="img-upload-btns" onclick="event.stopPropagation()">
+              <button class="btn btn-sm btn-primary" onclick="document.getElementById('sr_imgFile').click()"><i class="fa fa-upload"></i> Choose Image</button>
+            </div>
+          </div>
+        </div>
+        <input type="file" id="sr_imgFile" accept="image/*" style="display:none" onchange="srHandleImageUpload(this)">
+      </div>
+
+      <div class="form-section-label"><i class="fa fa-store"></i> Business Details</div>
+      <div class="form-group full">
+        <label>Venture / Business Name *</label>
+        <input type="text" id="sr_venture" placeholder="e.g. Assam Tea">
+      </div>
+      <div class="form-group full">
+        <label>Speciality / Tagline *</label>
+        <input type="text" id="sr_speciality" placeholder="e.g. Premium Assam Tea &amp; Beverages">
+      </div>
+      <div class="form-group full">
+        <label>Business Description</label>
+        <textarea id="sr_desc" placeholder="Describe your business — what you offer, your story, why customers love it..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="sr_category">
+          <option value="Food, Bakery &amp; Beverages">🍰 Food, Bakery &amp; Beverages</option>
+          <option value="Education &amp; Coaching">📚 Education &amp; Coaching</option>
+          <option value="Camps, Music &amp; Kids Activities">🎵 Camps, Music &amp; Kids Activities</option>
+          <option value="Fashion, Gifts &amp; Lifestyle">👗 Fashion, Gifts &amp; Lifestyle</option>
+          <option value="Home, Print &amp; Technology Services">🖨️ Home, Print &amp; Technology</option>
+          <option value="Health &amp; Professional Services">💼 Health &amp; Professional Services</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><i class="fa fa-building" style="color:var(--green)"></i> Society *</label>
+        <select id="sr_society"><option value="">— Select your society —</option></select>
+      </div>
+      <div class="form-group">
+        <label>Contact Person *</label>
+        <input type="text" id="sr_contact" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Flat No.</label>
+        <input type="text" id="sr_flat" placeholder="e.g. A-101">
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" id="sr_phone" placeholder="e.g. 9999999999">
+      </div>
+      <div class="form-group">
+        <label><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp Number</label>
+        <input type="tel" id="sr_whatsapp" placeholder="e.g. 9999999999">
+      </div>
+      <div class="form-group">
+        <label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram ID</label>
+        <input type="text" id="sr_instagram" placeholder="@username">
+      </div>
+      <div class="form-group">
+        <label><i class="fab fa-youtube" style="color:#ff1744"></i> Video Link</label>
+        <input type="url" id="sr_video" placeholder="https://youtube.com/...">
+      </div>
+      <div class="form-group">
+        <label><i class="fa fa-globe" style="color:#1565c0"></i> Website URL</label>
+        <input type="url" id="sr_url" placeholder="https://mysite.com">
+      </div>
+      <div class="form-group full">
+        <label>Will you be able to deliver within the society? *</label>
+        <select id="sr_canDeliver">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <div class="form-section-label"><i class="fa fa-address-card"></i> Address &amp; KYC Verification</div>
+      <div class="form-group full">
+        <label>Permanent Address *</label>
+        <textarea id="sr_permAddress" placeholder="Full permanent address"></textarea>
+      </div>
+      <div class="form-group full">
+        <label>Current Address *</label>
+        <textarea id="sr_currAddress" placeholder="Full current/local address"></textarea>
+      </div>
+      <div class="form-group">
+        <label>PAN Card (photo/scan) *</label>
+        <input type="file" id="sr_panFile" accept="image/*,.pdf" onchange="srHandleDocFile(this,'pan')">
+        <div id="sr_panFileName" style="font-size:.74rem;color:var(--text-muted);margin-top:4px"></div>
+      </div>
+      <div class="form-group">
+        <label>Aadhaar Card (photo/scan) *</label>
+        <input type="file" id="sr_aadhaarFile" accept="image/*,.pdf" onchange="srHandleDocFile(this,'aadhaar')">
+        <div id="sr_aadhaarFileName" style="font-size:.74rem;color:var(--text-muted);margin-top:4px"></div>
+      </div>
+      <div class="form-group">
+        <label>GST Number</label>
+        <input type="text" id="sr_gstNumber" placeholder="e.g. 09ABCDE1234F1Z5">
+      </div>
+      <div class="form-group">
+        <label>FSSAI Certificate <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <input type="file" id="sr_fssaiFile" accept="image/*,.pdf" onchange="srHandleDocFile(this,'fssai')">
+        <div id="sr_fssaiFileName" style="font-size:.74rem;color:var(--text-muted);margin-top:4px"></div>
+      </div>
+
+      <div class="form-section-label"><i class="fa fa-list"></i> Menu / Items <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.9em">(optional — you can also add these later)</span></div>
+      <div class="form-group full">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="sr_addItemsNow" onchange="srToggleMenuSection(this.checked)" style="accent-color:var(--green);width:auto">
+          Add items/products now
+        </label>
+      </div>
+      <div class="form-group full" id="sr_menuSection" style="display:none">
+        <div id="sr_menuList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:8px;align-items:center">
+          <input type="text" id="sr_mi_name" placeholder="Item name">
+          <input type="number" id="sr_mi_price" placeholder="Price ₹">
+          <input type="text" id="sr_mi_desc" placeholder="Description (optional)">
+          <button class="btn btn-sm btn-primary" onclick="srAddMenuItem()"><i class="fa fa-plus"></i> Add</button>
+        </div>
+      </div>
+
+    </div>
+    <p id="sr_err" style="color:var(--danger);font-size:.82rem;margin-top:12px;display:none"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('sellerRegModal')">Cancel</button>
+      <button class="btn btn-primary" id="sr_submitBtn" onclick="srSubmit()"><i class="fa fa-paper-plane"></i> Submit Application</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── HEADER ── -->
 <header>
   <div class="header-inner">
@@ -843,6 +1029,7 @@ footer strong{color:var(--gold-light)}
     <div class="admin-tab-nav">
       <button class="admin-tab-btn active" data-tab="overview"  onclick="switchAdminTab('overview')"><i class="fa fa-chart-line"></i> Overview</button>
       <button class="admin-tab-btn"        data-tab="vendors"   onclick="switchAdminTab('vendors')"><i class="fa fa-store"></i> Vendors</button>
+      <button class="admin-tab-btn"        data-tab="sellerreq" onclick="switchAdminTab('sellerreq')" id="sellerReqTabBtn"><i class="fa fa-user-plus"></i> Seller Requests <span id="pendingSellerReqBadge" style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:2px"></span></button>
       <button class="admin-tab-btn"        data-tab="accounts"  onclick="switchAdminTab('accounts')"><i class="fa fa-users"></i> Accounts</button>
       <button class="admin-tab-btn"        data-tab="customers" onclick="switchAdminTab('customers')"><i class="fa fa-address-book"></i> Customers</button>
       <button class="admin-tab-btn"        data-tab="config"    onclick="switchAdminTab('config')"><i class="fa fa-sliders"></i> Site Config</button>
@@ -1132,7 +1319,7 @@ const FIREBASE_CONFIG = {
 };
 
 /* ═══════════ FIREBASE INIT ═══════════ */
-let db = null, auth = null, secondaryAuth = null, secondaryDb = null;
+let db = null, auth = null, storage = null, secondaryAuth = null, secondaryDb = null, secondaryStorage = null;
 const FB_READY = !FIREBASE_CONFIG.apiKey.includes('YOUR_');
 
 if(FB_READY){
@@ -1140,6 +1327,7 @@ if(FB_READY){
     const app = firebase.initializeApp(FIREBASE_CONFIG);
     db   = firebase.firestore(app);
     auth = firebase.auth(app);
+    storage = firebase.storage(app);
     db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
     // Secondary app instance so admin can create seller accounts without
     // signing themselves out of their own Firebase session.
@@ -1147,6 +1335,7 @@ if(FB_READY){
     try{ secApp = firebase.app('sec'); }catch(e){ secApp = firebase.initializeApp(FIREBASE_CONFIG,'sec'); }
     secondaryAuth = firebase.auth(secApp);
     secondaryDb   = firebase.firestore(secApp); // write account doc as the new user
+    secondaryStorage = firebase.storage(secApp); // upload seller registration documents
   }catch(e){ console.warn('Firebase init failed:',e.message); }
 }
 
@@ -1194,6 +1383,32 @@ async function fsDeleteVendor(id){
   if(!db) return;
   await db.collection('vendors').doc(id).delete();
   await db.collection('stats').doc(id).delete().catch(()=>{});
+}
+
+async function fsLoadSellerRequests(){
+  if(!db) return [];
+  try{
+    const snap = await db.collection('seller_requests').get();
+    return snap.docs.map(d=>({...d.data(), requestId:d.id}));
+  }catch(e){ console.warn('Could not load seller requests:',e.message); return []; }
+}
+
+async function _sendSellerStatusEmail(email, venture, status, reason){
+  const ejsPubKey   = SITE_CONFIG.ejsPublicKey||'';
+  const ejsService  = SITE_CONFIG.ejsServiceId||'';
+  const ejsTemplate = SITE_CONFIG.ejsTemplateId||'';
+  if(!(ejsPubKey && ejsService && ejsTemplate)) return; // EmailJS not configured — skip silently
+  const subject = status==='approved' ? 'Your Homebiz Seller Account Has Been Approved!' : 'Update on Your Homebiz Seller Application';
+  const message = status==='approved'
+    ? `Congratulations! Your seller application for "${venture}" has been approved. You can now log in at Homebiz using your registered email and password to manage your listing.`
+    : `Your seller application for "${venture}" was not approved.${reason?' Reason: '+reason:''} Feel free to reach out if you have questions.`;
+  try{
+    await emailjs.init({publicKey: ejsPubKey});
+    await emailjs.send(ejsService, ejsTemplate, {
+      from_name:'Homebiz', from_email:'noreply@homebiz.co.in', mobile:'',
+      subject, message, to_email: email
+    });
+  }catch(e){ console.warn('Approval/rejection email failed:', e.message); }
 }
 
 async function fsLoadConfig(){
@@ -1327,6 +1542,56 @@ function verifyCustomerOtpCode(inputCode){
   if(String(inputCode||'').trim() !== _custOtp.code) return false;
   _custOtp.verifiedEmail = _custOtp.email;
   return true;
+}
+
+/* ═══════════ VERIFYNOW (Message Central) MOBILE OTP ═══════════ */
+let _vnToken = null, _vnTokenExpiresAt = 0;
+async function _vnGetToken(){
+  if(_vnToken && Date.now() < _vnTokenExpiresAt) return _vnToken;
+  const vnCustomerId = SITE_CONFIG.vnCustomerId||'';
+  const vnEmail      = SITE_CONFIG.vnEmail||'';
+  const vnPassword   = SITE_CONFIG.vnPassword||'';
+  if(!(vnCustomerId && vnEmail && vnPassword)) throw new Error('Mobile OTP service not configured — ask admin to set up VerifyNow in Site Config.');
+  const key = btoa(vnPassword);
+  const url = `https://cpaas.messagecentral.com/auth/v1/authentication/token?country=IN&customerId=${encodeURIComponent(vnCustomerId)}&email=${encodeURIComponent(vnEmail)}&key=${encodeURIComponent(key)}&scope=NEW`;
+  const res = await fetch(url, { headers:{accept:'*/*'} });
+  const data = await res.json();
+  if(!data.token) throw new Error('Could not authenticate with VerifyNow');
+  _vnToken = data.token;
+  _vnTokenExpiresAt = Date.now() + 23*60*60*1000; // token is valid 24h — cache for 23h
+  return _vnToken;
+}
+
+let _vnVerificationId = null, _vnMobile = null, _vnMobileVerified = null;
+async function sendMobileOtp(mobile){
+  try{
+    const token = await _vnGetToken();
+    const url = `https://cpaas.messagecentral.com/verification/v2/verification/send?countryCode=91&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&flowType=SMS&mobileNumber=${encodeURIComponent(mobile)}`;
+    const res = await fetch(url, { method:'POST', headers:{accept:'*/*', authToken: token} });
+    const data = await res.json();
+    if(data?.data?.verificationId){
+      _vnVerificationId = data.data.verificationId;
+      _vnMobile = mobile;
+      showToast(`OTP sent to ${mobile}`);
+      return true;
+    }
+    throw new Error(data?.message || 'Failed to send OTP');
+  }catch(e){ showToast('Could not send mobile OTP: '+e.message); return false; }
+}
+
+async function verifyMobileOtp(code){
+  try{
+    if(!_vnVerificationId) return false;
+    const token = await _vnGetToken();
+    const url = `https://cpaas.messagecentral.com/verification/v2/verification/validateOtp?countryCode=91&mobileNumber=${encodeURIComponent(_vnMobile)}&verificationId=${encodeURIComponent(_vnVerificationId)}&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&code=${encodeURIComponent(code)}`;
+    const res = await fetch(url, { headers:{accept:'*/*', authToken: token} });
+    const data = await res.json();
+    if(data?.data?.verificationStatus === 'VERIFICATION_COMPLETED'){
+      _vnMobileVerified = _vnMobile;
+      return true;
+    }
+    return false;
+  }catch(e){ showToast('Mobile verification failed: '+e.message); return false; }
 }
 
 async function fsSaveCustomerProfile(profile){
@@ -1704,6 +1969,142 @@ async function renderAdminReviews(c){
     }catch(e){ showToast('Error: '+e.message); }
   };
   _renderTable();
+}
+
+/* ═══════════ ADMIN: SELLER REGISTRATION REQUESTS ═══════════ */
+let _srqAll = [];
+async function renderAdminSellerRequests(c){
+  c.innerHTML=`<div class="s-card"><div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Requests</div><div style="text-align:center;padding:30px;color:var(--text-muted)"><i class="fa fa-spinner fa-spin" style="font-size:1.5rem"></i><p>Loading requests…</p></div></div>`;
+  _srqAll = await fsLoadSellerRequests();
+  let _filter = 'pending';
+
+  function _fmtDate(ts){ return ts?.seconds ? new Date(ts.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'; }
+
+  function _docLinks(r){
+    const links=[];
+    if(r.panDocUrl) links.push(`<a href="${r.panDocUrl}" target="_blank" class="btn btn-sm btn-ghost"><i class="fa fa-id-card"></i> PAN</a>`);
+    if(r.aadhaarDocUrl) links.push(`<a href="${r.aadhaarDocUrl}" target="_blank" class="btn btn-sm btn-ghost"><i class="fa fa-id-badge"></i> Aadhaar</a>`);
+    if(r.fssaiDocUrl) links.push(`<a href="${r.fssaiDocUrl}" target="_blank" class="btn btn-sm btn-ghost"><i class="fa fa-certificate"></i> FSSAI</a>`);
+    return links.join(' ')||'—';
+  }
+
+  function _renderTable(){
+    const filtered = _filter==='all' ? _srqAll : _srqAll.filter(r=>r.status===_filter);
+    const tbody = document.getElementById('srqTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = filtered.length ? filtered.map(r=>{
+      const statusBadge = r.status==='approved'?`<span style="color:var(--green);font-weight:700">✓ Approved</span>`
+        : r.status==='rejected'?`<span style="color:var(--danger);font-weight:700">✕ Rejected</span>`
+        : `<span style="color:#b8860b;font-weight:700">⏳ Pending</span>`;
+      const actions = r.status==='pending'
+        ? `<button class="btn btn-sm btn-primary" onclick="approveSellerRequest('${r.requestId}')"><i class="fa fa-check"></i> Approve</button> <button class="btn btn-sm btn-danger" onclick="rejectSellerRequest('${r.requestId}')"><i class="fa fa-times"></i> Reject</button>`
+        : (r.status==='rejected' ? `<span style="font-size:.75rem;color:var(--text-muted)">${esc(r.rejectionReason||'')}</span>` : '');
+      return `<tr>
+        <td><strong style="font-size:.85rem">${esc(r.venture)}</strong><br><span style="font-size:.72rem;color:var(--text-muted)">${esc(r.cat||'')}</span></td>
+        <td style="font-size:.78rem"><i class="fa fa-building" style="color:var(--green)"></i> ${esc(r.society||'—')}</td>
+        <td style="font-size:.78rem">${esc(r.email)}<br>${esc(r.mobile||'')}</td>
+        <td style="font-size:.78rem">${esc(r.contact||'')}<br>Flat ${esc(r.flat||'—')}</td>
+        <td style="font-size:.72rem">${_fmtDate(r.createdAt)}</td>
+        <td style="white-space:nowrap">${_docLinks(r)}</td>
+        <td>${statusBadge}</td>
+        <td style="white-space:nowrap">${actions}</td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:20px">No ${_filter} requests</td></tr>`;
+    const pending = _srqAll.filter(r=>r.status==='pending').length;
+    const badge = document.getElementById('pendingSellerReqBadge');
+    if(badge){ badge.textContent=pending||''; badge.style.display=pending?'':'none'; }
+  }
+
+  const pending  = _srqAll.filter(r=>r.status==='pending').length;
+  const approved = _srqAll.filter(r=>r.status==='approved').length;
+  const rejected = _srqAll.filter(r=>r.status==='rejected').length;
+  c.innerHTML=`<div class="s-card">
+    <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Requests</div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:12px">Review KYC documents (click to view/download) before approving. Approving creates a live vendor listing and a seller login account, then emails the applicant.</p>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-primary srq-filter" onclick="_srqSetFilter('pending',this)">Pending (${pending})</button>
+      <button class="btn btn-sm btn-ghost srq-filter" onclick="_srqSetFilter('approved',this)">Approved (${approved})</button>
+      <button class="btn btn-sm btn-ghost srq-filter" onclick="_srqSetFilter('rejected',this)">Rejected (${rejected})</button>
+      <button class="btn btn-sm btn-ghost srq-filter" onclick="_srqSetFilter('all',this)">All (${_srqAll.length})</button>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="menu-table" style="font-size:.82rem">
+      <thead><tr><th>Business</th><th>Society</th><th>Applicant</th><th>Contact</th><th>Submitted</th><th>Documents</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="srqTableBody"></tbody>
+    </table>
+    </div>
+  </div>`;
+  window._srqSetFilter = function(f,btn){
+    _filter=f;
+    document.querySelectorAll('.srq-filter').forEach(b=>b.classList.replace('btn-primary','btn-ghost'));
+    btn.classList.replace('btn-ghost','btn-primary');
+    _renderTable();
+  };
+  _renderTable();
+}
+
+async function approveSellerRequest(requestId){
+  const req = _srqAll.find(r=>r.requestId===requestId); if(!req) return;
+  if(!confirm(`Approve "${req.venture}" (${req.society||'no society set'})?\n\nThis creates a live listing and a seller login for ${req.email}.`)) return;
+  if(!secondaryAuth||!secondaryDb){ showToast('Firebase not configured'); return; }
+  try{
+    showToast('Approving…');
+    // Create the seller's Firebase Auth account + accounts doc via the secondary
+    // app, exactly like admin-created seller accounts — keeps this compatible
+    // with security rules that require request.auth.uid == the account's uid.
+    const cred = await secondaryAuth.createUserWithEmailAndPassword(req.email, req.password);
+    const vendorId = 'u'+Date.now();
+    await secondaryDb.collection('accounts').doc(cred.user.uid).set({
+      email: req.email, displayName: req.venture, vendorId, role:'seller',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await secondaryAuth.signOut();
+
+    // Create the live vendor listing (admin's own primary session already has write access).
+    const vendorObj = {
+      id: vendorId, cat: req.cat, venture: req.venture, speciality: req.speciality||'',
+      desc: req.desc||'', contact: req.contact||'', flat: req.flat||'', phone: req.phone||'',
+      whatsapp: req.whatsapp||'', instagram: req.instagram||'', video: req.video||'', url: req.url||'',
+      image: req.image||'', society: req.society||'Prateek Laurel', menu: req.menu||[],
+      ownerUid: cred.user.uid,
+    };
+    await fsSaveVendor(vendorObj);
+    DATA.push(vendorObj); saveData(DATA);
+
+    // Mark the request approved and clear the temporarily-stored password.
+    await db.collection('seller_requests').doc(requestId).set({
+      status:'approved', password: firebase.firestore.FieldValue.delete(),
+      assignedVendorId: vendorId, assignedUid: cred.user.uid,
+      reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true});
+    req.status='approved';
+
+    await _sendSellerStatusEmail(req.email, req.venture, 'approved');
+    renderAll();
+    renderAdminTab('sellerreq');
+    showToast(`${req.venture} approved — listing is live ✓`);
+  }catch(e){
+    if(e.code==='auth/email-already-in-use'){
+      showToast('That email already has a Firebase Auth account — check Firebase Console → Authentication → Users');
+    } else {
+      showToast('Approval failed: '+e.message);
+    }
+  }
+}
+
+async function rejectSellerRequest(requestId){
+  const req = _srqAll.find(r=>r.requestId===requestId); if(!req) return;
+  const reason = prompt(`Reason for rejecting "${req.venture}"? (optional, shown to applicant)`) || '';
+  try{
+    await db.collection('seller_requests').doc(requestId).set({
+      status:'rejected', rejectionReason: reason, password: firebase.firestore.FieldValue.delete(),
+      reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true});
+    req.status='rejected'; req.rejectionReason=reason;
+    await _sendSellerStatusEmail(req.email, req.venture, 'rejected', reason);
+    renderAdminTab('sellerreq');
+    showToast('Application rejected');
+  }catch(e){ showToast('Error: '+e.message); }
 }
 
 /* ═══════════ DATA (localStorage + Firestore) ═══════════ */
@@ -2588,7 +2989,7 @@ function _nearestSociety(lat,lng){
 }
 function buildSocietySelector(){
   const list=_societyList();
-  ['societySelect','f_society'].forEach(id=>{
+  ['societySelect','f_society','sr_society'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
     const cur=el.value||selectedSociety;
@@ -2828,6 +3229,226 @@ async function deleteTile(id){
   showToast('Listing deleted');
   // Delete from Firestore in background
   if(db){ db.collection('vendors').doc(id).delete().catch(e=>console.warn('Firestore delete failed:',e.message)); }
+}
+
+/* ═══════════ SELLER SELF-REGISTRATION ═══════════ */
+let _srEmailOtp = { email:null, code:null, expiresAt:0, verified:false };
+let _srMobileVerified = false;
+let _srPendingImg = null;
+let _srDocFiles = { pan:null, aadhaar:null, fssai:null };
+let _srMenuItems = [];
+
+function openSellerRegModal(){
+  closeModal('loginModal');
+  _srEmailOtp = { email:null, code:null, expiresAt:0, verified:false };
+  _srMobileVerified = false;
+  _srPendingImg = null;
+  _srDocFiles = { pan:null, aadhaar:null, fssai:null };
+  _srMenuItems = [];
+  ['sr_email','sr_emailCode','sr_mobile','sr_mobileCode','sr_password','sr_password2','sr_venture','sr_speciality',
+   'sr_desc','sr_contact','sr_flat','sr_phone','sr_whatsapp','sr_instagram','sr_video','sr_url','sr_permAddress',
+   'sr_currAddress','sr_gstNumber'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('sr_category').value='Food, Bakery & Beverages';
+  document.getElementById('sr_canDeliver').value='yes';
+  document.getElementById('sr_emailCodeRow').style.display='none';
+  document.getElementById('sr_emailVerifiedBadge').style.display='none';
+  document.getElementById('sr_mobileCodeRow').style.display='none';
+  document.getElementById('sr_mobileVerifiedBadge').style.display='none';
+  document.getElementById('sr_email').disabled=false;
+  document.getElementById('sr_mobile').disabled=false;
+  document.getElementById('sr_emailSendBtn').disabled=false;
+  document.getElementById('sr_mobileSendBtn').disabled=false;
+  document.getElementById('sr_imgPreviewBox').innerHTML='<i class="fa fa-image img-ph"></i>';
+  ['sr_panFileName','sr_aadhaarFileName','sr_fssaiFileName'].forEach(id=>{ document.getElementById(id).textContent=''; });
+  document.getElementById('sr_addItemsNow').checked=false;
+  document.getElementById('sr_menuSection').style.display='none';
+  document.getElementById('sr_menuList').innerHTML='';
+  document.getElementById('sr_err').style.display='none';
+  buildSocietySelector();
+  const srSocietySel = document.getElementById('sr_society');
+  srSocietySel.insertAdjacentHTML('afterbegin', '<option value="">— Select your society —</option>');
+  srSocietySel.value = '';
+  document.getElementById('sellerRegModal').classList.add('open');
+}
+
+async function srSendEmailOtp(){
+  const email = document.getElementById('sr_email').value.trim();
+  if(!email || !email.includes('@')){ showToast('Enter a valid email'); return; }
+  const code = genOtpCode();
+  const expiresAt = Date.now()+15*60*1000;
+  const ejsPubKey   = SITE_CONFIG.ejsPublicKey||'';
+  const ejsService  = SITE_CONFIG.ejsServiceId||'';
+  const ejsTemplate = SITE_CONFIG.ejsOtpTemplateId || SITE_CONFIG.ejsTemplateId || '';
+  if(!(ejsPubKey && ejsService && ejsTemplate)){ showToast('Email service not configured — ask admin to set up EmailJS in Site Config.'); return; }
+  try{
+    await emailjs.init({publicKey: ejsPubKey});
+    await emailjs.send(ejsService, ejsTemplate, {
+      from_name:'Homebiz', from_email:'noreply@homebiz.co.in',
+      mobile:'', subject:'Your Homebiz Seller Registration Code',
+      message:`Your verification code is ${code}. It expires in 15 minutes.`,
+      passcode: code, time: new Date(expiresAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}), otp_code: code, to_email: email
+    });
+    _srEmailOtp = { email, code, expiresAt, verified:false };
+    document.getElementById('sr_emailCodeRow').style.display='block';
+    showToast(`Code sent to ${email}`);
+  }catch(e){ showToast('Could not send code: '+(e.text||e.message||'unknown error')); }
+}
+
+function srVerifyEmailOtp(){
+  const input = document.getElementById('sr_emailCode').value.trim();
+  if(!_srEmailOtp.code || Date.now() > _srEmailOtp.expiresAt || input !== _srEmailOtp.code){
+    showToast('Incorrect or expired code'); return;
+  }
+  _srEmailOtp.verified = true;
+  document.getElementById('sr_emailVerifiedBadge').style.display='block';
+  document.getElementById('sr_emailCodeRow').style.display='none';
+  document.getElementById('sr_email').disabled=true;
+  document.getElementById('sr_emailSendBtn').disabled=true;
+  showToast('Email verified ✓');
+}
+
+async function srSendMobileOtpClick(){
+  const mobile = document.getElementById('sr_mobile').value.trim();
+  if(!/^\d{10}$/.test(mobile)){ showToast('Enter a valid 10-digit mobile number'); return; }
+  const btn = document.getElementById('sr_mobileSendBtn');
+  btn.disabled=true;
+  const ok = await sendMobileOtp(mobile);
+  btn.disabled=false;
+  if(ok) document.getElementById('sr_mobileCodeRow').style.display='block';
+}
+
+async function srVerifyMobileOtpClick(){
+  const code = document.getElementById('sr_mobileCode').value.trim();
+  const ok = await verifyMobileOtp(code);
+  if(ok){
+    _srMobileVerified = true;
+    document.getElementById('sr_mobileVerifiedBadge').style.display='block';
+    document.getElementById('sr_mobileCodeRow').style.display='none';
+    document.getElementById('sr_mobile').disabled=true;
+    document.getElementById('sr_mobileSendBtn').disabled=true;
+    if(!document.getElementById('sr_phone').value) document.getElementById('sr_phone').value = _vnMobile;
+    showToast('Mobile verified ✓');
+  } else {
+    showToast('Incorrect or expired OTP');
+  }
+}
+
+function srHandleImageUpload(input){
+  const file = input.files[0]; if(!file) return;
+  if(file.size>4*1024*1024){ showToast('Image must be under 4 MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _srPendingImg = e.target.result;
+    document.getElementById('sr_imgPreviewBox').innerHTML = `<img src="${_srPendingImg}" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function srHandleDocFile(input, type){
+  const file = input.files[0]; if(!file) return;
+  if(file.size>8*1024*1024){ showToast('File must be under 8 MB'); input.value=''; return; }
+  _srDocFiles[type] = file;
+  document.getElementById('sr_'+type+'FileName').innerHTML = `<i class="fa fa-check" style="color:var(--green)"></i> ${esc(file.name)}`;
+}
+
+function srToggleMenuSection(show){
+  document.getElementById('sr_menuSection').style.display = show ? 'block' : 'none';
+}
+function srRenderMenuItems(){
+  const list = document.getElementById('sr_menuList');
+  list.innerHTML = _srMenuItems.map((m,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:8px;padding:8px 12px">
+      <span style="flex:1;font-size:.85rem"><strong>${esc(m.name)}</strong> — ₹${m.price}${m.desc?' · '+esc(m.desc):''}</span>
+      <button class="btn btn-sm btn-danger" onclick="srRemoveMenuItem(${i})"><i class="fa fa-trash"></i></button>
+    </div>`).join('');
+}
+function srAddMenuItem(){
+  const name = document.getElementById('sr_mi_name').value.trim();
+  const price = parseFloat(document.getElementById('sr_mi_price').value);
+  if(!name || isNaN(price)){ showToast('Item name and price are required'); return; }
+  _srMenuItems.push({ id:'m'+Date.now(), name, price, desc: document.getElementById('sr_mi_desc').value.trim(), available:true });
+  ['sr_mi_name','sr_mi_price','sr_mi_desc'].forEach(id=>document.getElementById(id).value='');
+  srRenderMenuItems();
+}
+function srRemoveMenuItem(i){ _srMenuItems.splice(i,1); srRenderMenuItems(); }
+
+async function srSubmit(){
+  const errEl = document.getElementById('sr_err');
+  errEl.style.display='none';
+  const venture = document.getElementById('sr_venture').value.trim();
+  const contact = document.getElementById('sr_contact').value.trim();
+  const phone   = document.getElementById('sr_phone').value.trim();
+  const permAddress = document.getElementById('sr_permAddress').value.trim();
+  const currAddress = document.getElementById('sr_currAddress').value.trim();
+  const password  = document.getElementById('sr_password').value;
+  const password2 = document.getElementById('sr_password2').value;
+  const society = document.getElementById('sr_society').value;
+
+  if(!_srEmailOtp.verified){ errEl.textContent='Please verify your email first.'; errEl.style.display='block'; return; }
+  if(!_srMobileVerified){ errEl.textContent='Please verify your mobile number first.'; errEl.style.display='block'; return; }
+  if(!password || password.length<6){ errEl.textContent='Password must be at least 6 characters.'; errEl.style.display='block'; return; }
+  if(password!==password2){ errEl.textContent='Passwords do not match.'; errEl.style.display='block'; return; }
+  if(!society){ errEl.textContent='Please select your society.'; errEl.style.display='block'; return; }
+  if(!venture || !contact || !phone){ errEl.textContent='Business name, contact person and phone are required.'; errEl.style.display='block'; return; }
+  if(!permAddress || !currAddress){ errEl.textContent='Both addresses are required.'; errEl.style.display='block'; return; }
+  if(!_srDocFiles.pan){ errEl.textContent='PAN card upload is required.'; errEl.style.display='block'; return; }
+  if(!_srDocFiles.aadhaar){ errEl.textContent='Aadhaar card upload is required.'; errEl.style.display='block'; return; }
+  if(!storage){ errEl.textContent='Document storage is not available right now.'; errEl.style.display='block'; return; }
+
+  const btn = document.getElementById('sr_submitBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting…';
+  try{
+    // Sign in anonymously so Storage/Firestore security rules (isSignedIn) are satisfied.
+    if(!auth.currentUser){ await auth.signInAnonymously(); }
+    const requestId = 'req'+Date.now()+Math.random().toString(36).slice(2,8);
+
+    async function uploadDoc(file, name){
+      if(!file) return '';
+      const ref = storage.ref(`seller_requests/${requestId}/${name}`);
+      await ref.put(file);
+      return await ref.getDownloadURL();
+    }
+    const [panUrl, aadhaarUrl, fssaiUrl] = await Promise.all([
+      uploadDoc(_srDocFiles.pan, 'pan_'+_srDocFiles.pan.name),
+      uploadDoc(_srDocFiles.aadhaar, 'aadhaar_'+_srDocFiles.aadhaar.name),
+      _srDocFiles.fssai ? uploadDoc(_srDocFiles.fssai, 'fssai_'+_srDocFiles.fssai.name) : Promise.resolve(''),
+    ]);
+
+    const reqData = {
+      requestId,
+      email: _srEmailOtp.email,
+      mobile: _vnMobile,
+      password, // stored only until admin approval creates the real account, then cleared
+      permAddress, currAddress,
+      canDeliverInSociety: document.getElementById('sr_canDeliver').value === 'yes',
+      cat: document.getElementById('sr_category').value,
+      society,
+      venture, speciality: document.getElementById('sr_speciality').value.trim(),
+      desc: document.getElementById('sr_desc').value.trim(),
+      contact, flat: document.getElementById('sr_flat').value.trim(), phone,
+      whatsapp: document.getElementById('sr_whatsapp').value.trim(),
+      instagram: document.getElementById('sr_instagram').value.trim(),
+      video: document.getElementById('sr_video').value.trim(),
+      url: document.getElementById('sr_url').value.trim(),
+      image: _srPendingImg || '',
+      panDocUrl: panUrl, aadhaarDocUrl: aadhaarUrl, fssaiDocUrl: fssaiUrl,
+      gstNumber: document.getElementById('sr_gstNumber').value.trim(),
+      menu: _srMenuItems,
+      status: 'pending',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    await db.collection('seller_requests').doc(requestId).set(reqData);
+    closeModal('sellerRegModal');
+    showToast('Application submitted! You will be emailed once approved. ✓');
+  }catch(e){
+    errEl.textContent = 'Submission failed: '+e.message;
+    errEl.style.display='block';
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Submit Application';
+  }
 }
 
 /* ═══════════ PDF ═══════════ */
@@ -3234,6 +3855,7 @@ function renderAdminTab(tab){
   switch(tab){
     case 'overview':  renderAdminOverview(c);  break;
     case 'vendors':   renderAdminVendors(c);   break;
+    case 'sellerreq': renderAdminSellerRequests(c); break;
     case 'accounts':  renderAdminAccounts(c);  break;
     case 'customers': renderAdminCustomers(c); break;
     case 'config':    renderAdminConfig(c);    break;
@@ -3718,6 +4340,18 @@ function renderAdminConfig(c){
         <div class="form-group" style="margin:0;max-width:260px"><label style="font-size:.75rem">OTP Template ID</label>
           <input id="cfg_ejsOtpTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsOtpTemplateId)}"></div>
       </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-mobile-screen" style="color:var(--green)"></i> Mobile OTP — VerifyNow (Message Central) Setup</div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Create a free account at <strong>messagecentral.com</strong> (VerifyNow product). Paste your Customer ID, account email and password below. Used to verify sellers' mobile numbers during registration.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div class="form-group" style="margin:0"><label style="font-size:.75rem">Customer ID</label>
+            <input id="cfg_vnCustomerId" placeholder="C-xxxxxxxxxxxx" value="${esc(SITE_CONFIG.vnCustomerId)}"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:.75rem">Account Email</label>
+            <input id="cfg_vnEmail" placeholder="you@email.com" value="${esc(SITE_CONFIG.vnEmail)}"></div>
+          <div class="form-group" style="margin:0"><label style="font-size:.75rem">Account Password</label>
+            <input type="password" id="cfg_vnPassword" placeholder="••••••••" value="${esc(SITE_CONFIG.vnPassword)}"></div>
+        </div>
+      </div>
     </div>
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdminConfig()"><i class="fa fa-save"></i> Save Config</button>
@@ -3798,6 +4432,9 @@ async function saveAdminConfig(){
     ejsServiceId:   document.getElementById('cfg_ejsServiceId').value.trim(),
     ejsTemplateId:  document.getElementById('cfg_ejsTemplateId').value.trim(),
     ejsOtpTemplateId: document.getElementById('cfg_ejsOtpTemplateId').value.trim(),
+    vnCustomerId:   document.getElementById('cfg_vnCustomerId').value.trim(),
+    vnEmail:        document.getElementById('cfg_vnEmail').value.trim(),
+    vnPassword:     document.getElementById('cfg_vnPassword').value.trim(),
   });
   applyFooterLinks();
   showToast('Config saved ✓');

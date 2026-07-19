@@ -1566,7 +1566,7 @@ let _vnVerificationId = null, _vnMobile = null, _vnMobileVerified = null;
 async function sendMobileOtp(mobile){
   try{
     const token = await _vnGetToken();
-    const url = `https://cpaas.messagecentral.com/verification/v2/verification/send?countryCode=91&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&flowType=SMS&mobileNumber=${encodeURIComponent(mobile)}`;
+    const url = `https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&flowType=SMS&mobileNumber=${encodeURIComponent(mobile)}`;
     const res = await fetch(url, { method:'POST', headers:{accept:'*/*', authToken: token} });
     const data = await res.json();
     if(data?.data?.verificationId){
@@ -1583,7 +1583,7 @@ async function verifyMobileOtp(code){
   try{
     if(!_vnVerificationId) return false;
     const token = await _vnGetToken();
-    const url = `https://cpaas.messagecentral.com/verification/v2/verification/validateOtp?countryCode=91&mobileNumber=${encodeURIComponent(_vnMobile)}&verificationId=${encodeURIComponent(_vnVerificationId)}&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&code=${encodeURIComponent(code)}`;
+    const url = `https://cpaas.messagecentral.com/verification/v3/validateOtp?countryCode=91&mobileNumber=${encodeURIComponent(_vnMobile)}&verificationId=${encodeURIComponent(_vnVerificationId)}&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&code=${encodeURIComponent(code)}`;
     const res = await fetch(url, { headers:{accept:'*/*', authToken: token} });
     const data = await res.json();
     if(data?.data?.verificationStatus === 'VERIFICATION_COMPLETED'){

@@ -3063,59 +3063,118 @@ async function _reverseGeocode(lat,lng){
   }catch(e){ console.warn('Reverse geocoding failed:',e.message); return null; }
 }
 
+/* Google's legacy Places REST endpoints (nearbysearch/autocomplete/details) don't send
+   CORS headers, so browsers silently block fetch() calls to them — unlike Geocoding,
+   which does support CORS and is why reverse-geocoding worked while Places didn't.
+   The Places *JavaScript* SDK is Google's browser-safe path: load it via <script>, then
+   call it as an object with callbacks (no fetch, no CORS issue). Loaded lazily, once,
+   as soon as the API key is known. Needs the "Maps JavaScript API" enabled alongside
+   Geocoding API and Places API in Google Cloud Console. */
+/* When the "Maps JavaScript API" isn't activated on the Cloud project, Google's SDK
+   doesn't throw or reject — it logs an internal error and the callback just never
+   fires, so a bare Promise around it hangs forever. Race it against a timeout so
+   every caller still resolves to a safe fallback within a few seconds. */
+function _withTimeout(promise,ms,fallback){
+  return Promise.race([
+    promise,
+    new Promise(resolve=>setTimeout(()=>resolve(fallback),ms)),
+  ]);
+}
+
+let _gmapsScriptPromise=null;
+function _ensureGoogleMapsScript(){
+  if(_gmapsScriptPromise) return _gmapsScriptPromise;
+  _gmapsScriptPromise=new Promise(resolve=>{
+    const key=SITE_CONFIG.gmapsApiKey||'';
+    if(!key){ resolve(false); return; }
+    if(window.google?.maps?.places){ resolve(true); return; }
+    const script=document.createElement('script');
+    script.src=`https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&libraries=places`;
+    script.async=true;
+    script.onload=()=>resolve(!!window.google?.maps?.places);
+    script.onerror=()=>{ console.warn('Failed to load Google Maps JS SDK'); resolve(false); };
+    document.head.appendChild(script);
+  });
+  return _gmapsScriptPromise;
+}
+let _placesServiceSingleton=null;
+function _getPlacesService(){
+  try{
+    if(!_placesServiceSingleton) _placesServiceSingleton=new google.maps.places.PlacesService(document.createElement('div'));
+    return _placesServiceSingleton;
+  }catch(e){ console.warn('PlacesService unavailable:',e.message); return null; }
+}
+
 /* Discover nearby residential societies/apartments via Google Places — so the dropdown
    shows real nearby communities even ones Homebiz hasn't onboarded yet, not just the
-   handful with vendors already registered. */
+   handful with vendors already registered. Every failure mode here (SDK not loaded, API
+   not activated on the Cloud project, network hiccup, etc.) must resolve to [] rather
+   than throw/reject — an uncaught rejection here would abort the whole location pipeline
+   and leave the location bar stuck on "Detecting…" forever. */
 async function _placesNearbySocieties(lat,lng){
-  const key=SITE_CONFIG.gmapsApiKey||'';
-  if(!key) return [];
   try{
-    const keyword=encodeURIComponent('society OR residency OR apartments OR enclave OR homes');
-    const url=`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&keyword=${keyword}&key=${encodeURIComponent(key)}`;
-    const res=await fetch(url);
-    const data=await res.json();
-    if(data.status!=='OK'&&data.status!=='ZERO_RESULTS'){ console.warn('Places API:',data.status,data.error_message||''); return []; }
-    return (data.results||[])
-      .filter(p=>p.geometry?.location)
-      .map(p=>({ name:p.name, lat:p.geometry.location.lat, lng:p.geometry.location.lng }))
-      .slice(0,20);
+    const ready=await _ensureGoogleMapsScript();
+    const service=ready?_getPlacesService():null;
+    if(!service) return [];
+    return await _withTimeout(new Promise(resolve=>{
+      try{
+        service.nearbySearch({
+          location:{lat,lng}, radius:5000,
+          keyword:'society OR residency OR apartments OR enclave OR homes',
+        },(results,status)=>{
+          if(status!==google.maps.places.PlacesServiceStatus.OK||!results){ resolve([]); return; }
+          resolve(results
+            .filter(p=>p.geometry?.location)
+            .map(p=>({ name:p.name, lat:p.geometry.location.lat(), lng:p.geometry.location.lng() }))
+            .slice(0,20));
+        });
+      }catch(e){ console.warn('Places nearby search threw:',e.message); resolve([]); }
+    }),6000,[]);
   }catch(e){ console.warn('Places nearby search failed:',e.message); return []; }
 }
 
 /* Shared pipeline for "here's a lat/lng, now figure out nearby societies + address" —
-   used by both GPS auto-detect and manual location search, so they behave identically. */
+   used by both GPS auto-detect and manual location search, so they behave identically.
+   Wrapped in try/catch/finally as a last line of defense: whatever goes wrong inside,
+   the location bar must still end up with SOME readable text, never stuck on
+   "Detecting your location…" indefinitely. */
 async function _applyDetectedLocation(lat,lng,knownAddress){
   const barText=document.getElementById('locationBarText');
   const barIcon=document.getElementById('locationBarIcon');
   if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
+  let address=knownAddress||null;
+  try{
+    // GPS/search can resolve before Firestore config does — wait for it so gmapsApiKey and
+    // the full societies list are actually available (otherwise this silently sees an empty
+    // config and only the DEFAULT_SOCIETIES fallback ever shows up).
+    if(window._configLoadPromise) await window._configLoadPromise;
 
-  // GPS/search can resolve before Firestore config does — wait for it so gmapsApiKey and
-  // the full societies list are actually available (otherwise this silently sees an empty
-  // config and only the DEFAULT_SOCIETIES fallback ever shows up).
-  if(window._configLoadPromise) await window._configLoadPromise;
+    // Societies Homebiz already has content for, within 5km (always shown first).
+    const configuredNearby=_societyList().filter(s=>{
+      if(!s.lat||!s.lng) return false;
+      return _haversineDist(lat,lng,+s.lat,+s.lng)<=5000;
+    });
 
-  // Societies Homebiz already has content for, within 5km (always shown first).
-  const configuredNearby=_societyList().filter(s=>{
-    if(!s.lat||!s.lng) return false;
-    return _haversineDist(lat,lng,+s.lat,+s.lng)<=5000;
-  });
+    // Any OTHER nearby society/community discovered via Google Places, even if
+    // Homebiz has no vendors there yet (selecting one shows a friendly empty state).
+    const discovered=await _placesNearbySocieties(lat,lng);
+    const configuredNames=new Set(_societyList().map(s=>s.name.toLowerCase()));
+    const discoveredOnly=discovered.filter(d=>!configuredNames.has(d.name.toLowerCase()));
+    const merged=[...configuredNearby, ...discoveredOnly.map(d=>({name:d.name}))];
 
-  // Any OTHER nearby society/community discovered via Google Places, even if
-  // Homebiz has no vendors there yet (selecting one shows a friendly empty state).
-  const discovered=await _placesNearbySocieties(lat,lng);
-  const configuredNames=new Set(_societyList().map(s=>s.name.toLowerCase()));
-  const discoveredOnly=discovered.filter(d=>!configuredNames.has(d.name.toLowerCase()));
-  const merged=[...configuredNearby, ...discoveredOnly.map(d=>({name:d.name}))];
+    if(merged.length){
+      _nearbySocieties=merged;
+      buildSocietySelector(merged);
+      const m=_nearestSociety(lat,lng);
+      if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(merged); renderAll(); }
+    } // else: keep showing the full list — nothing detected nearby yet.
 
-  if(merged.length){
-    _nearbySocieties=merged;
-    buildSocietySelector(merged);
-    const m=_nearestSociety(lat,lng);
-    if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(merged); renderAll(); }
-  } // else: keep showing the full list — nothing detected nearby yet.
-
-  const address=knownAddress || await _reverseGeocode(lat,lng);
-  if(barText) barText.textContent=address || 'Location detected — tap to set it ›';
+    if(!address) address=await _reverseGeocode(lat,lng);
+  }catch(e){
+    console.warn('Location detection pipeline failed:',e.message);
+  }finally{
+    if(barText) barText.textContent=address || 'Location detected — tap to set it ›';
+  }
 }
 
 function detectSociety(){
@@ -3137,25 +3196,45 @@ function detectSociety(){
 }
 
 /* ═══════════ MANUAL LOCATION SEARCH (Blinkit/Zepto-style "change location") ═══════════ */
-async function _placesAutocomplete(input){
-  const key=SITE_CONFIG.gmapsApiKey||'';
-  if(!key) return [];
+let _autocompleteServiceSingleton=null;
+function _getAutocompleteService(){
   try{
-    const res=await fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:in&key=${encodeURIComponent(key)}`);
-    const data=await res.json();
-    if(data.status!=='OK'&&data.status!=='ZERO_RESULTS'){ console.warn('Places Autocomplete:',data.status,data.error_message||''); return []; }
-    return (data.predictions||[]).map(p=>({description:p.description,placeId:p.place_id})).slice(0,8);
+    if(!_autocompleteServiceSingleton) _autocompleteServiceSingleton=new google.maps.places.AutocompleteService();
+    return _autocompleteServiceSingleton;
+  }catch(e){ console.warn('AutocompleteService unavailable:',e.message); return null; }
+}
+async function _placesAutocomplete(input){
+  try{
+    const ready=await _ensureGoogleMapsScript();
+    const service=ready?_getAutocompleteService():null;
+    if(!service) return [];
+    return await _withTimeout(new Promise(resolve=>{
+      try{
+        service.getPlacePredictions(
+          { input, componentRestrictions:{country:'in'} },
+          (predictions,status)=>{
+            if(status!==google.maps.places.PlacesServiceStatus.OK||!predictions){ resolve([]); return; }
+            resolve(predictions.map(p=>({description:p.description,placeId:p.place_id})).slice(0,8));
+          }
+        );
+      }catch(e){ console.warn('Autocomplete threw:',e.message); resolve([]); }
+    }),6000,[]);
   }catch(e){ console.warn('Places autocomplete failed:',e.message); return []; }
 }
 
 async function _placeDetails(placeId){
-  const key=SITE_CONFIG.gmapsApiKey||'';
-  if(!key) return null;
   try{
-    const res=await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=geometry,formatted_address&key=${encodeURIComponent(key)}`);
-    const data=await res.json();
-    if(data.status!=='OK') return null;
-    return { lat:data.result.geometry.location.lat, lng:data.result.geometry.location.lng, address:data.result.formatted_address };
+    const ready=await _ensureGoogleMapsScript();
+    const service=ready?_getPlacesService():null;
+    if(!service) return null;
+    return await _withTimeout(new Promise(resolve=>{
+      try{
+        service.getDetails({placeId, fields:['geometry','formatted_address']},(place,status)=>{
+          if(status!==google.maps.places.PlacesServiceStatus.OK||!place?.geometry?.location){ resolve(null); return; }
+          resolve({ lat:place.geometry.location.lat(), lng:place.geometry.location.lng(), address:place.formatted_address });
+        });
+      }catch(e){ console.warn('Place details threw:',e.message); resolve(null); }
+    }),6000,null);
   }catch(e){ console.warn('Place details failed:',e.message); return null; }
 }
 

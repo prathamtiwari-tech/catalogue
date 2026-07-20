@@ -99,6 +99,12 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
   .location-bar .loc-society-select{max-width:110px;font-size:.72rem}
 }
 
+/* Manual location search modal */
+.loc-suggest-list{display:flex;flex-direction:column;gap:2px;max-height:280px;overflow-y:auto}
+.loc-suggest-row{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:8px;cursor:pointer;font-size:.86rem;color:var(--text)}
+.loc-suggest-row:hover{background:var(--cream)}
+.loc-suggest-row i{color:var(--text-muted);flex-shrink:0}
+
 /* ADMIN BANNER */
 .admin-banner{display:none;background:var(--green-dark);color:var(--white);padding:10px 28px;position:sticky;top:84px;z-index:90;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .admin-banner-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -864,7 +870,7 @@ footer strong{color:var(--gold-light)}
     <div id="hdrRight" style="display:flex;align-items:center;gap:8px"></div>
   </div>
 </header>
-<div class="location-bar" id="locationBar" onclick="_openSocietySelectPicker()">
+<div class="location-bar" id="locationBar" onclick="openLocationSearchModal()">
   <i class="fa fa-location-crosshairs loc-icon" id="locationBarIcon"></i>
   <div class="loc-text-wrap">
     <span class="loc-label">Your Location</span>
@@ -872,6 +878,21 @@ footer strong{color:var(--gold-light)}
   </div>
   <select class="loc-society-select" id="societySelect" onchange="onSocietyChange()" onclick="event.stopPropagation()"></select>
   <i class="fa fa-chevron-down loc-chevron"></i>
+</div>
+
+<!-- ── MANUAL LOCATION SEARCH (Blinkit/Zepto-style) ── -->
+<div class="modal-overlay" id="locationSearchModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title"><i class="fa fa-location-dot" style="color:var(--gold)"></i> Set Your Location</div>
+    <div class="form-group full" style="margin-bottom:6px">
+      <input type="text" id="locSearchInput" placeholder="Search for area, street, society…" oninput="_onLocSearchInput()" autocomplete="off">
+    </div>
+    <div id="locSearchSuggestions" class="loc-suggest-list"></div>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:6px;border:1.5px solid var(--border)" onclick="_useCurrentLocationClick()"><i class="fa fa-location-crosshairs"></i> Use My Current Location</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('locationSearchModal')">Cancel</button>
+    </div>
+  </div>
 </div>
 <div class="tagline-bar">Connect &nbsp;•&nbsp; Collaborate &nbsp;•&nbsp; Create &nbsp;•&nbsp; Grow</div>
 
@@ -3026,12 +3047,6 @@ function onSocietyChange(){
   if(sel) selectedSociety=sel.value;
   renderAll();
 }
-function _openSocietySelectPicker(){
-  const sel=document.getElementById('societySelect');
-  if(!sel) return;
-  try{ sel.showPicker(); }catch(e){ sel.focus(); }
-}
-
 /* Reverse-geocode lat/lng into a short readable address via Google Maps Geocoding API. */
 async function _reverseGeocode(lat,lng){
   const key=SITE_CONFIG.gmapsApiKey||'';
@@ -3067,46 +3082,118 @@ async function _placesNearbySocieties(lat,lng){
   }catch(e){ console.warn('Places nearby search failed:',e.message); return []; }
 }
 
+/* Shared pipeline for "here's a lat/lng, now figure out nearby societies + address" —
+   used by both GPS auto-detect and manual location search, so they behave identically. */
+async function _applyDetectedLocation(lat,lng,knownAddress){
+  const barText=document.getElementById('locationBarText');
+  const barIcon=document.getElementById('locationBarIcon');
+  if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
+
+  // GPS/search can resolve before Firestore config does — wait for it so gmapsApiKey and
+  // the full societies list are actually available (otherwise this silently sees an empty
+  // config and only the DEFAULT_SOCIETIES fallback ever shows up).
+  if(window._configLoadPromise) await window._configLoadPromise;
+
+  // Societies Homebiz already has content for, within 5km (always shown first).
+  const configuredNearby=_societyList().filter(s=>{
+    if(!s.lat||!s.lng) return false;
+    return _haversineDist(lat,lng,+s.lat,+s.lng)<=5000;
+  });
+
+  // Any OTHER nearby society/community discovered via Google Places, even if
+  // Homebiz has no vendors there yet (selecting one shows a friendly empty state).
+  const discovered=await _placesNearbySocieties(lat,lng);
+  const configuredNames=new Set(_societyList().map(s=>s.name.toLowerCase()));
+  const discoveredOnly=discovered.filter(d=>!configuredNames.has(d.name.toLowerCase()));
+  const merged=[...configuredNearby, ...discoveredOnly.map(d=>({name:d.name}))];
+
+  if(merged.length){
+    _nearbySocieties=merged;
+    buildSocietySelector(merged);
+    const m=_nearestSociety(lat,lng);
+    if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(merged); renderAll(); }
+  } // else: keep showing the full list — nothing detected nearby yet.
+
+  const address=knownAddress || await _reverseGeocode(lat,lng);
+  if(barText) barText.textContent=address || 'Location detected — tap to set it ›';
+}
+
 function detectSociety(){
   buildSocietySelector();
   const barText=document.getElementById('locationBarText');
   const barIcon=document.getElementById('locationBarIcon');
   if(!navigator.geolocation){
-    if(barText) barText.textContent='Location unavailable — pick a society ›';
+    if(barText) barText.textContent='Location unavailable — tap to set it ›';
     return;
   }
   if(barText) barText.textContent='Detecting your location…';
   if(barIcon) barIcon.className='fa fa-spinner fa-spin loc-icon';
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const {latitude:lat, longitude:lng}=pos.coords;
-    if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
-
-    // Societies Homebiz already has content for, within 5km (always shown first).
-    const configuredNearby=_societyList().filter(s=>{
-      if(!s.lat||!s.lng) return false;
-      return _haversineDist(lat,lng,+s.lat,+s.lng)<=5000;
-    });
-
-    // Any OTHER nearby society/community discovered via Google Places, even if
-    // Homebiz has no vendors there yet (selecting one shows a friendly empty state).
-    const discovered=await _placesNearbySocieties(lat,lng);
-    const configuredNames=new Set(_societyList().map(s=>s.name.toLowerCase()));
-    const discoveredOnly=discovered.filter(d=>!configuredNames.has(d.name.toLowerCase()));
-    const merged=[...configuredNearby, ...discoveredOnly.map(d=>({name:d.name}))];
-
-    if(merged.length){
-      _nearbySocieties=merged;
-      buildSocietySelector(merged);
-      const m=_nearestSociety(lat,lng);
-      if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(merged); renderAll(); }
-    } // else: keep showing the full list (built above) — nothing detected nearby yet.
-
-    const address=await _reverseGeocode(lat,lng);
-    if(barText) barText.textContent=address || 'Location detected — pick a society ›';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    _applyDetectedLocation(pos.coords.latitude,pos.coords.longitude);
   },()=>{
-    if(barText) barText.textContent='Location unavailable — pick a society ›';
+    if(barText) barText.textContent='Location unavailable — tap to set it ›';
     if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
   },{timeout:8000,maximumAge:300000});
+}
+
+/* ═══════════ MANUAL LOCATION SEARCH (Blinkit/Zepto-style "change location") ═══════════ */
+async function _placesAutocomplete(input){
+  const key=SITE_CONFIG.gmapsApiKey||'';
+  if(!key) return [];
+  try{
+    const res=await fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:in&key=${encodeURIComponent(key)}`);
+    const data=await res.json();
+    if(data.status!=='OK'&&data.status!=='ZERO_RESULTS'){ console.warn('Places Autocomplete:',data.status,data.error_message||''); return []; }
+    return (data.predictions||[]).map(p=>({description:p.description,placeId:p.place_id})).slice(0,8);
+  }catch(e){ console.warn('Places autocomplete failed:',e.message); return []; }
+}
+
+async function _placeDetails(placeId){
+  const key=SITE_CONFIG.gmapsApiKey||'';
+  if(!key) return null;
+  try{
+    const res=await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=geometry,formatted_address&key=${encodeURIComponent(key)}`);
+    const data=await res.json();
+    if(data.status!=='OK') return null;
+    return { lat:data.result.geometry.location.lat, lng:data.result.geometry.location.lng, address:data.result.formatted_address };
+  }catch(e){ console.warn('Place details failed:',e.message); return null; }
+}
+
+function openLocationSearchModal(){
+  const input=document.getElementById('locSearchInput');
+  input.value='';
+  document.getElementById('locSearchSuggestions').innerHTML='';
+  document.getElementById('locationSearchModal').classList.add('open');
+  setTimeout(()=>input.focus(),150);
+}
+
+let _locSearchDebounce=null;
+function _onLocSearchInput(){
+  clearTimeout(_locSearchDebounce);
+  const q=document.getElementById('locSearchInput').value.trim();
+  const box=document.getElementById('locSearchSuggestions');
+  if(q.length<3){ box.innerHTML=''; return; }
+  box.innerHTML='<div style="padding:10px;color:var(--text-muted);font-size:.82rem"><i class="fa fa-spinner fa-spin"></i> Searching…</div>';
+  _locSearchDebounce=setTimeout(async ()=>{
+    const preds=await _placesAutocomplete(q);
+    box.innerHTML=preds.length
+      ? preds.map(p=>`<div class="loc-suggest-row" onclick="_selectLocationSuggestion('${p.placeId}')"><i class="fa fa-location-dot"></i><span>${esc(p.description)}</span></div>`).join('')
+      : '<div style="padding:10px;color:var(--text-muted);font-size:.82rem">No matches found</div>';
+  },350);
+}
+
+async function _selectLocationSuggestion(placeId){
+  closeModal('locationSearchModal');
+  const barText=document.getElementById('locationBarText');
+  if(barText) barText.textContent='Setting your location…';
+  const details=await _placeDetails(placeId);
+  if(!details){ showToast('Could not fetch that location — try again'); if(barText) barText.textContent='Location unavailable — tap to set it ›'; return; }
+  await _applyDetectedLocation(details.lat, details.lng, details.address);
+}
+
+function _useCurrentLocationClick(){
+  closeModal('locationSearchModal');
+  detectSociety();
 }
 
 function openAboutModal(){
@@ -4669,8 +4756,10 @@ async function migrateFromSeed(){
 
 /* ═══════════ INIT ═══════════ */
 (async function init(){
-  // Load site config from Firestore, then rebuild carousel + society selector with fresh data
-  fsLoadConfig().then(()=>{ applyFooterLinks(); buildSocietySelector(); renderAll(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
+  // Load site config from Firestore, then rebuild carousel + society selector with fresh data.
+  // Stored so detectSociety() can wait for it — gmapsApiKey and the full societies list only
+  // exist in SITE_CONFIG once this resolves, and GPS can otherwise resolve first on a fast fix.
+  window._configLoadPromise = fsLoadConfig().then(()=>{ applyFooterLinks(); buildSocietySelector(); renderAll(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
   // Load approved reviews so tiles show ratings
   fsLoadApprovedReviews().then(()=>renderAll()).catch(()=>{});
 

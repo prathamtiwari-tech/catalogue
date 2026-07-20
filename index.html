@@ -2268,7 +2268,11 @@ function renderAll(){
     const tg = sec.querySelector(`#tg_${cat.id}`);
     items.forEach((item,i) => tg.appendChild(makeTile(item, i+1, cat)));
   });
-  if(!total) grid.innerHTML = `<div class="empty-state"><i class="fa fa-magnifying-glass"></i><p>No results found for "<strong>${esc(q)}</strong>"</p></div>`;
+  if(!total){
+    grid.innerHTML = q
+      ? `<div class="empty-state"><i class="fa fa-magnifying-glass"></i><p>No results found for "<strong>${esc(q)}</strong>"</p></div>`
+      : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses registered in <strong>${esc(selectedSociety)}</strong> yet.<br>Check back soon, or pick a nearby society from the location bar above.</p></div>`;
+  }
   document.getElementById('statTotal').textContent = DATA.length;
 }
 
@@ -3044,6 +3048,25 @@ async function _reverseGeocode(lat,lng){
   }catch(e){ console.warn('Reverse geocoding failed:',e.message); return null; }
 }
 
+/* Discover nearby residential societies/apartments via Google Places — so the dropdown
+   shows real nearby communities even ones Homebiz hasn't onboarded yet, not just the
+   handful with vendors already registered. */
+async function _placesNearbySocieties(lat,lng){
+  const key=SITE_CONFIG.gmapsApiKey||'';
+  if(!key) return [];
+  try{
+    const keyword=encodeURIComponent('society OR residency OR apartments OR enclave OR homes');
+    const url=`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&keyword=${keyword}&key=${encodeURIComponent(key)}`;
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.status!=='OK'&&data.status!=='ZERO_RESULTS'){ console.warn('Places API:',data.status,data.error_message||''); return []; }
+    return (data.results||[])
+      .filter(p=>p.geometry?.location)
+      .map(p=>({ name:p.name, lat:p.geometry.location.lat, lng:p.geometry.location.lng }))
+      .slice(0,20);
+  }catch(e){ console.warn('Places nearby search failed:',e.message); return []; }
+}
+
 function detectSociety(){
   buildSocietySelector();
   const barText=document.getElementById('locationBarText');
@@ -3058,17 +3081,25 @@ function detectSociety(){
     const {latitude:lat, longitude:lng}=pos.coords;
     if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
 
-    // Show only societies within 5km of the visitor, so the dropdown stays relevant.
-    const nearby=_societyList().filter(s=>{
+    // Societies Homebiz already has content for, within 5km (always shown first).
+    const configuredNearby=_societyList().filter(s=>{
       if(!s.lat||!s.lng) return false;
       return _haversineDist(lat,lng,+s.lat,+s.lng)<=5000;
     });
-    if(nearby.length){
-      _nearbySocieties=nearby;
-      buildSocietySelector(nearby);
+
+    // Any OTHER nearby society/community discovered via Google Places, even if
+    // Homebiz has no vendors there yet (selecting one shows a friendly empty state).
+    const discovered=await _placesNearbySocieties(lat,lng);
+    const configuredNames=new Set(_societyList().map(s=>s.name.toLowerCase()));
+    const discoveredOnly=discovered.filter(d=>!configuredNames.has(d.name.toLowerCase()));
+    const merged=[...configuredNearby, ...discoveredOnly.map(d=>({name:d.name}))];
+
+    if(merged.length){
+      _nearbySocieties=merged;
+      buildSocietySelector(merged);
       const m=_nearestSociety(lat,lng);
-      if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(nearby); renderAll(); }
-    } // else: keep showing the full list (built above) — no configured society is nearby yet.
+      if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(merged); renderAll(); }
+    } // else: keep showing the full list (built above) — nothing detected nearby yet.
 
     const address=await _reverseGeocode(lat,lng);
     if(barText) barText.textContent=address || 'Location detected — pick a society ›';

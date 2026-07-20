@@ -3097,12 +3097,16 @@ function _ensureGoogleMapsScript(){
   });
   return _gmapsScriptPromise;
 }
-let _placesServiceSingleton=null;
-function _getPlacesService(){
-  try{
-    if(!_placesServiceSingleton) _placesServiceSingleton=new google.maps.places.PlacesService(document.createElement('div'));
-    return _placesServiceSingleton;
-  }catch(e){ console.warn('PlacesService unavailable:',e.message); return null; }
+/* google.maps.places.PlacesService / AutocompleteService are deprecated for any
+   Google Cloud project created after March 1 2025 — calls to them never throw, the
+   callback just never fires (see _withTimeout above). The replacements live behind
+   google.maps.importLibrary('places'): Place (searchByText/fetchFields) and
+   AutocompleteSuggestion. Both require "Places API (New)" enabled in Cloud Console,
+   in addition to the legacy Places API. */
+let _placesLibraryPromise=null;
+function _getPlacesLibrary(){
+  if(!_placesLibraryPromise) _placesLibraryPromise=google.maps.importLibrary('places');
+  return _placesLibraryPromise;
 }
 
 /* Discover nearby residential societies/apartments via Google Places — so the dropdown
@@ -3110,26 +3114,40 @@ function _getPlacesService(){
    handful with vendors already registered. Every failure mode here (SDK not loaded, API
    not activated on the Cloud project, network hiccup, etc.) must resolve to [] rather
    than throw/reject — an uncaught rejection here would abort the whole location pipeline
-   and leave the location bar stuck on "Detecting…" forever. */
+   and leave the location bar stuck on "Detecting…" forever.
+   Text Search (New) has no free-text "keyword" param like the legacy nearbySearch did —
+   it takes one textQuery per call — so several likely society-naming words are searched
+   in parallel and merged/deduped by name. */
 async function _placesNearbySocieties(lat,lng){
   try{
     const ready=await _ensureGoogleMapsScript();
-    const service=ready?_getPlacesService():null;
-    if(!service) return [];
-    return await _withTimeout(new Promise(resolve=>{
-      try{
-        service.nearbySearch({
-          location:{lat,lng}, radius:5000,
-          keyword:'society OR residency OR apartments OR enclave OR homes',
-        },(results,status)=>{
-          if(status!==google.maps.places.PlacesServiceStatus.OK||!results){ resolve([]); return; }
-          resolve(results
-            .filter(p=>p.geometry?.location)
-            .map(p=>({ name:p.name, lat:p.geometry.location.lat(), lng:p.geometry.location.lng() }))
-            .slice(0,20));
-        });
-      }catch(e){ console.warn('Places nearby search threw:',e.message); resolve([]); }
-    }),6000,[]);
+    if(!ready) return [];
+    const lib=await _getPlacesLibrary();
+    if(!lib?.Place) return [];
+    const {Place}=lib;
+    const queries=['society','apartments','residency','enclave'];
+    const searchAll=Promise.all(queries.map(q=>
+      Place.searchByText({
+        textQuery:q,
+        fields:['displayName','location'],
+        locationBias:{center:{lat,lng},radius:5000},
+        maxResultCount:10,
+        language:'en-US', region:'in',
+      }).then(r=>r.places||[]).catch(e=>{ console.warn('Places text search ("'+q+'") failed:',e.message); return []; })
+    )).catch(()=>[]);
+    const resultsByQuery=await _withTimeout(searchAll,6000,[]);
+    const seen=new Set();
+    const merged=[];
+    for(const list of (resultsByQuery||[])){
+      for(const p of (list||[])){
+        if(!p?.displayName||!p?.location) continue;
+        const key=p.displayName.toLowerCase();
+        if(seen.has(key)) continue;
+        seen.add(key);
+        merged.push({ name:p.displayName, lat:p.location.lat(), lng:p.location.lng() });
+      }
+    }
+    return merged.slice(0,20);
   }catch(e){ console.warn('Places nearby search failed:',e.message); return []; }
 }
 
@@ -3196,45 +3214,50 @@ function detectSociety(){
 }
 
 /* ═══════════ MANUAL LOCATION SEARCH (Blinkit/Zepto-style "change location") ═══════════ */
-let _autocompleteServiceSingleton=null;
-function _getAutocompleteService(){
-  try{
-    if(!_autocompleteServiceSingleton) _autocompleteServiceSingleton=new google.maps.places.AutocompleteService();
-    return _autocompleteServiceSingleton;
-  }catch(e){ console.warn('AutocompleteService unavailable:',e.message); return null; }
-}
+/* One AutocompleteSessionToken groups all the keystroke-by-keystroke autocomplete calls
+   plus the final fetchFields() call into a single billing session — created fresh each
+   time the search modal opens, and cleared once a place is picked. */
+let _locSearchSessionToken=null;
 async function _placesAutocomplete(input){
   try{
     const ready=await _ensureGoogleMapsScript();
-    const service=ready?_getAutocompleteService():null;
-    if(!service) return [];
-    return await _withTimeout(new Promise(resolve=>{
-      try{
-        service.getPlacePredictions(
-          { input, componentRestrictions:{country:'in'} },
-          (predictions,status)=>{
-            if(status!==google.maps.places.PlacesServiceStatus.OK||!predictions){ resolve([]); return; }
-            resolve(predictions.map(p=>({description:p.description,placeId:p.place_id})).slice(0,8));
-          }
-        );
-      }catch(e){ console.warn('Autocomplete threw:',e.message); resolve([]); }
-    }),6000,[]);
+    if(!ready) return [];
+    const lib=await _getPlacesLibrary();
+    if(!lib?.AutocompleteSuggestion) return [];
+    const {AutocompleteSuggestion,AutocompleteSessionToken}=lib;
+    if(!_locSearchSessionToken) _locSearchSessionToken=new AutocompleteSessionToken();
+    return await _withTimeout(
+      AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        input,
+        includedRegionCodes:['in'],
+        language:'en-US', region:'in',
+        sessionToken:_locSearchSessionToken,
+      }).then(({suggestions})=>(suggestions||[])
+        .filter(s=>s.placePrediction)
+        .map(s=>({ description:s.placePrediction.text.toString(), placeId:s.placePrediction.placeId }))
+        .slice(0,8)
+      ).catch(e=>{ console.warn('Autocomplete failed:',e.message); return []; }),
+      6000,[]
+    );
   }catch(e){ console.warn('Places autocomplete failed:',e.message); return []; }
 }
 
 async function _placeDetails(placeId){
   try{
     const ready=await _ensureGoogleMapsScript();
-    const service=ready?_getPlacesService():null;
-    if(!service) return null;
-    return await _withTimeout(new Promise(resolve=>{
-      try{
-        service.getDetails({placeId, fields:['geometry','formatted_address']},(place,status)=>{
-          if(status!==google.maps.places.PlacesServiceStatus.OK||!place?.geometry?.location){ resolve(null); return; }
-          resolve({ lat:place.geometry.location.lat(), lng:place.geometry.location.lng(), address:place.formatted_address });
-        });
-      }catch(e){ console.warn('Place details threw:',e.message); resolve(null); }
-    }),6000,null);
+    if(!ready) return null;
+    const lib=await _getPlacesLibrary();
+    if(!lib?.Place) return null;
+    const place=new lib.Place({id:placeId});
+    return await _withTimeout(
+      place.fetchFields({fields:['location','formattedAddress']})
+        .then(({place})=>{
+          if(!place?.location) return null;
+          return { lat:place.location.lat(), lng:place.location.lng(), address:place.formattedAddress };
+        })
+        .catch(e=>{ console.warn('Place details failed:',e.message); return null; }),
+      6000,null
+    );
   }catch(e){ console.warn('Place details failed:',e.message); return null; }
 }
 
@@ -3243,6 +3266,7 @@ function openLocationSearchModal(){
   input.value='';
   document.getElementById('locSearchSuggestions').innerHTML='';
   document.getElementById('locationSearchModal').classList.add('open');
+  _locSearchSessionToken=null;
   setTimeout(()=>input.focus(),150);
 }
 
@@ -3263,6 +3287,7 @@ function _onLocSearchInput(){
 
 async function _selectLocationSuggestion(placeId){
   closeModal('locationSearchModal');
+  _locSearchSessionToken=null;
   const barText=document.getElementById('locationBarText');
   if(barText) barText.textContent='Setting your location…';
   const details=await _placeDetails(placeId);

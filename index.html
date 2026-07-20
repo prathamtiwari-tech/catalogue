@@ -86,6 +86,19 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .society-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--green-dark);font-weight:700}
 .society-row i{color:var(--green)}
 
+/* LOCATION BAR — Blinkit/Zepto-style precise-location strip under the header */
+.location-bar{background:var(--white);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:10px;max-width:1400px;margin:0 auto;cursor:pointer}
+.location-bar .loc-icon{color:var(--gold);font-size:1.05rem;flex-shrink:0}
+.location-bar .loc-text-wrap{display:flex;flex-direction:column;min-width:0;flex:1}
+.location-bar .loc-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-weight:700}
+.location-bar .loc-address{font-size:.86rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.location-bar .loc-society-select{border:none;background:var(--cream);color:var(--green-dark);font-weight:700;font-size:.78rem;padding:6px 10px;border-radius:20px;font-family:inherit;flex-shrink:0;max-width:180px}
+.location-bar .loc-chevron{color:var(--text-muted);font-size:.7rem;flex-shrink:0}
+@media (max-width:640px){
+  .location-bar{padding:8px 12px}
+  .location-bar .loc-society-select{max-width:110px;font-size:.72rem}
+}
+
 /* ADMIN BANNER */
 .admin-banner{display:none;background:var(--green-dark);color:var(--white);padding:10px 28px;position:sticky;top:84px;z-index:90;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .admin-banner-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -851,6 +864,15 @@ footer strong{color:var(--gold-light)}
     <div id="hdrRight" style="display:flex;align-items:center;gap:8px"></div>
   </div>
 </header>
+<div class="location-bar" id="locationBar" onclick="_openSocietySelectPicker()">
+  <i class="fa fa-location-crosshairs loc-icon" id="locationBarIcon"></i>
+  <div class="loc-text-wrap">
+    <span class="loc-label">Your Location</span>
+    <span class="loc-address" id="locationBarText">Detecting your location…</span>
+  </div>
+  <select class="loc-society-select" id="societySelect" onchange="onSocietyChange()" onclick="event.stopPropagation()"></select>
+  <i class="fa fa-chevron-down loc-chevron"></i>
+</div>
 <div class="tagline-bar">Connect &nbsp;•&nbsp; Collaborate &nbsp;•&nbsp; Create &nbsp;•&nbsp; Grow</div>
 
 <!-- ── AD CAROUSEL ── -->
@@ -908,12 +930,6 @@ footer strong{color:var(--gold-light)}
 <!-- ── SOCIETY SELECTOR + BIG SEARCH (overlaps hero) ── -->
 <div class="browse-toolbar" id="searchSection">
   <div class="browse-toolbar-inner">
-    <div class="society-row" id="societyBar">
-      <i class="fa fa-location-dot"></i>
-      <span style="white-space:nowrap">Browsing Society:</span>
-      <select class="society-select" id="societySelect" onchange="onSocietyChange()"></select>
-      <span id="geoStatusText" style="font-size:.74rem;color:var(--text-muted);font-weight:400;display:inline-flex;align-items:center;gap:5px"></span>
-    </div>
     <div class="search-big-wrap">
       <i class="fa fa-magnifying-glass srch-ico"></i>
       <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" autocomplete="off"
@@ -2987,13 +3003,18 @@ function _nearestSociety(lat,lng){
   _societyList().forEach(s=>{ if(!s.lat||!s.lng) return; const d=_haversineDist(lat,lng,+s.lat,+s.lng); if(d<minD){minD=d;best=s;} });
   return (best&&minD<800) ? best.name : null;
 }
-function buildSocietySelector(){
-  const list=_societyList();
+// Once GPS detection resolves, this holds the societies within 5km — so any LATER call
+// to buildSocietySelector() (e.g. after Firestore config loads) still respects it instead
+// of racing back to the full list.
+let _nearbySocieties=null;
+function buildSocietySelector(filterList){
+  const list=filterList||_nearbySocieties||_societyList();
   ['societySelect','f_society','sr_society'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
     const cur=el.value||selectedSociety;
-    el.innerHTML=list.map(s=>`<option value="${s.name}"${s.name===cur?' selected':''}>${s.name}</option>`).join('');
+    const finalList=list.length?list:_societyList(); // never render an empty dropdown
+    el.innerHTML=finalList.map(s=>`<option value="${s.name}"${s.name===cur?' selected':''}>${s.name}</option>`).join('');
   });
 }
 function onSocietyChange(){
@@ -3001,16 +3022,60 @@ function onSocietyChange(){
   if(sel) selectedSociety=sel.value;
   renderAll();
 }
+function _openSocietySelectPicker(){
+  const sel=document.getElementById('societySelect');
+  if(!sel) return;
+  try{ sel.showPicker(); }catch(e){ sel.focus(); }
+}
+
+/* Reverse-geocode lat/lng into a short readable address via Google Maps Geocoding API. */
+async function _reverseGeocode(lat,lng){
+  const key=SITE_CONFIG.gmapsApiKey||'';
+  if(!key) return null;
+  try{
+    const res=await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${encodeURIComponent(key)}`);
+    const data=await res.json();
+    if(data.status!=='OK'||!data.results?.length) return null;
+    // Prefer a precise result (premise/sublocality) over the full formatted_address, and
+    // trim to the first 2-3 comma segments so it reads like "TOWER-C, Nirvana Country, Sec 50".
+    const best=data.results.find(r=>r.types?.some(t=>['premise','sublocality_level_1','sublocality'].includes(t)))||data.results[0];
+    const parts=best.formatted_address.split(',').map(s=>s.trim());
+    return parts.slice(0,3).join(', ');
+  }catch(e){ console.warn('Reverse geocoding failed:',e.message); return null; }
+}
+
 function detectSociety(){
   buildSocietySelector();
-  if(!navigator.geolocation) return;
-  const st=document.getElementById('geoStatusText');
-  if(st) st.innerHTML='<i class="fa fa-spinner fa-spin" style="color:var(--green)"></i> Detecting…';
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const m=_nearestSociety(pos.coords.latitude,pos.coords.longitude);
-    if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(); renderAll(); }
-    if(st){ st.innerHTML='<i class="fa fa-check" style="color:var(--green)"></i> Auto-detected'; setTimeout(()=>{if(st)st.innerHTML='';},3000); }
-  },()=>{ if(st) st.innerHTML=''; },{timeout:8000,maximumAge:300000});
+  const barText=document.getElementById('locationBarText');
+  const barIcon=document.getElementById('locationBarIcon');
+  if(!navigator.geolocation){
+    if(barText) barText.textContent='Location unavailable — pick a society ›';
+    return;
+  }
+  if(barText) barText.textContent='Detecting your location…';
+  if(barIcon) barIcon.className='fa fa-spinner fa-spin loc-icon';
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:lat, longitude:lng}=pos.coords;
+    if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
+
+    // Show only societies within 5km of the visitor, so the dropdown stays relevant.
+    const nearby=_societyList().filter(s=>{
+      if(!s.lat||!s.lng) return false;
+      return _haversineDist(lat,lng,+s.lat,+s.lng)<=5000;
+    });
+    if(nearby.length){
+      _nearbySocieties=nearby;
+      buildSocietySelector(nearby);
+      const m=_nearestSociety(lat,lng);
+      if(m&&m!==selectedSociety){ selectedSociety=m; buildSocietySelector(nearby); renderAll(); }
+    } // else: keep showing the full list (built above) — no configured society is nearby yet.
+
+    const address=await _reverseGeocode(lat,lng);
+    if(barText) barText.textContent=address || 'Location detected — pick a society ›';
+  },()=>{
+    if(barText) barText.textContent='Location unavailable — pick a society ›';
+    if(barIcon) barIcon.className='fa fa-location-crosshairs loc-icon';
+  },{timeout:8000,maximumAge:300000});
 }
 
 function openAboutModal(){
@@ -4352,6 +4417,12 @@ function renderAdminConfig(c){
             <input type="password" id="cfg_vnPassword" placeholder="••••••••" value="${esc(SITE_CONFIG.vnPassword)}"></div>
         </div>
       </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-location-dot" style="color:var(--green)"></i> Location Bar — Google Maps Geocoding API</div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Enable the "Geocoding API" in Google Cloud Console for this Firebase project, create an API key, and paste it below. Used to show visitors' precise address at the top of the app and to filter the society dropdown to societies within 5km.</p>
+        <div class="form-group" style="margin:0;max-width:340px"><label style="font-size:.75rem">Google Maps API Key</label>
+          <input id="cfg_gmapsApiKey" placeholder="AIzaSy..." value="${esc(SITE_CONFIG.gmapsApiKey)}"></div>
+      </div>
     </div>
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdminConfig()"><i class="fa fa-save"></i> Save Config</button>
@@ -4435,6 +4506,7 @@ async function saveAdminConfig(){
     vnCustomerId:   document.getElementById('cfg_vnCustomerId').value.trim(),
     vnEmail:        document.getElementById('cfg_vnEmail').value.trim(),
     vnPassword:     document.getElementById('cfg_vnPassword').value.trim(),
+    gmapsApiKey:    document.getElementById('cfg_gmapsApiKey').value.trim(),
   });
   applyFooterLinks();
   showToast('Config saved ✓');

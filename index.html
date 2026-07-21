@@ -236,9 +236,6 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
 .empty-state i{font-size:3rem;margin-bottom:12px;display:block;opacity:.35}
 
-footer{background:var(--green-dark);color:rgba(255,255,255,.7);text-align:center;padding:18px 18px 76px;font-size:.77rem}
-footer strong{color:var(--gold-light)}
-
 /* ── PANEL TABS ── */
 .panel-tabs{display:flex;gap:4px;background:rgba(255,255,255,.1);border-radius:10px;padding:4px}
 .panel-tab-btn{padding:6px 14px;border-radius:7px;border:none;background:transparent;color:rgba(255,255,255,.7);cursor:pointer;font-size:.78rem;font-weight:600;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
@@ -1092,6 +1089,32 @@ footer strong{color:var(--gold-light)}
   <div id="customerAccountPageBody"></div>
 </div>
 
+<!-- ── HELP PAGE ── -->
+<div id="customerHelpPage" style="display:none;padding:20px 16px 100px;max-width:600px;margin:0 auto;min-height:50vh">
+  <h2 style="font-family:'Playfair Display',serif;color:var(--green-dark);font-size:1.3rem;margin-bottom:16px"><i class="fa fa-circle-question" style="color:var(--green)"></i> Help &amp; Support</h2>
+
+  <div style="font-weight:700;color:var(--green-dark);margin-bottom:10px"><i class="fa fa-headset"></i> Get in Touch</div>
+  <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:20px" onclick="openContactModal()"><i class="fa fa-envelope"></i> Contact Us</button>
+
+  <div style="font-weight:700;color:var(--green-dark);margin-bottom:10px"><i class="fa fa-scale-balanced"></i> Legal &amp; Policies</div>
+  <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px">
+    <a onclick="openPolicyModal('terms')" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);font-size:.88rem"><i class="fa fa-file-lines" style="color:var(--green);width:18px"></i>Terms of Use</a>
+    <a onclick="openPolicyModal('return')" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);font-size:.88rem"><i class="fa fa-rotate-left" style="color:var(--green);width:18px"></i>Return Policy</a>
+    <a onclick="openPolicyModal('delivery')" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);font-size:.88rem"><i class="fa fa-truck" style="color:var(--green);width:18px"></i>Delivery Policy</a>
+    <a onclick="openPolicyModal('privacy')" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;font-size:.88rem"><i class="fa fa-user-shield" style="color:var(--green);width:18px"></i>Privacy Policy</a>
+  </div>
+
+  <div style="font-weight:700;color:var(--green-dark);margin-bottom:12px"><i class="fa fa-share-nodes"></i> Follow Us</div>
+  <div style="display:flex;align-items:center;gap:22px;margin-bottom:24px">
+    <a id="footerFbLink" href="#" target="_blank" onclick="return footerSocialClick('fb',event)" style="color:var(--green);font-size:1.5rem;display:none" title="Facebook"><i class="fab fa-facebook"></i></a>
+    <a id="footerIgLink" href="#" target="_blank" onclick="return footerSocialClick('ig',event)" style="color:var(--green);font-size:1.5rem;display:none" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a id="footerYtLink" href="#" target="_blank" onclick="return footerSocialClick('yt',event)" style="color:var(--green);font-size:1.5rem;display:none" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a id="footerWaLink" href="#" target="_blank" onclick="return footerSocialClick('wa',event)" style="color:var(--green);font-size:1.5rem;display:none" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  </div>
+
+  <p style="text-align:center;font-size:.74rem;color:var(--text-muted)">© Homebiz</p>
+</div>
+
 </div><!-- end #panel-customer -->
 
 <!-- ── BOTTOM NAV (app-shell, Home / Orders / Account) ── -->
@@ -1099,6 +1122,7 @@ footer strong{color:var(--gold-light)}
   <button class="bn-item active" data-page="home" onclick="switchCustomerPage('home')"><i class="fa fa-house"></i><span>Home</span></button>
   <button class="bn-item" data-page="orders" onclick="switchCustomerPage('orders')"><i class="fa fa-receipt"></i><span>Orders</span></button>
   <button class="bn-item" data-page="account" onclick="switchCustomerPage('account')"><i class="fa fa-circle-user"></i><span>Account</span></button>
+  <button class="bn-item" data-page="help" onclick="switchCustomerPage('help')"><i class="fa fa-circle-question"></i><span>Help</span></button>
 </nav>
 
 <!-- ══════════════════════════════════════════ -->
@@ -1185,29 +1209,6 @@ footer strong{color:var(--gold-light)}
     </div>
   </div>
 </div>
-
-<!-- ── FOOTER ── -->
-<footer>
-  <div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px">
-    <a id="footerFbLink"  href="#" target="_blank" onclick="return footerSocialClick('fb',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Facebook"><i class="fab fa-facebook"></i></a>
-    <a id="footerIgLink"  href="#" target="_blank" onclick="return footerSocialClick('ig',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="Instagram"><i class="fab fa-instagram"></i></a>
-    <a id="footerYtLink"  href="#" target="_blank" onclick="return footerSocialClick('yt',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="YouTube"><i class="fab fa-youtube"></i></a>
-    <a id="footerWaLink"  href="#" target="_blank" onclick="return footerSocialClick('wa',event)"  style="color:rgba(255,255,255,.7);font-size:1.3rem;transition:color .2s;display:none" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-  </div>
-  <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:.75rem">
-    <span style="opacity:.5">© Homebiz</span>
-    <span style="opacity:.3">|</span>
-    <a href="#" onclick="openPolicyModal('terms');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Terms of Use</a>
-    <span style="opacity:.3">|</span>
-    <a href="#" onclick="openPolicyModal('return');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Return Policy</a>
-    <span style="opacity:.3">|</span>
-    <a href="#" onclick="openPolicyModal('delivery');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Delivery Policy</a>
-    <span style="opacity:.3">|</span>
-    <a href="#" onclick="openPolicyModal('privacy');return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Privacy Policy</a>
-    <span style="opacity:.3">|</span>
-    <a href="#" onclick="openContactModal();return false" style="color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='rgba(255,255,255,.7)'">Contact Us</a>
-  </div>
-</footer>
 
 <!-- ── POLICY MODAL ── -->
 <div class="modal-overlay" id="policyModal" onclick="if(event.target===this)closeModal('policyModal')">
@@ -1756,7 +1757,7 @@ let _customerPage = 'home';
 function switchCustomerPage(page){
   _customerPage = page;
   switchPanel('customer');
-  ['home','orders','account'].forEach(p=>{
+  ['home','orders','account','help'].forEach(p=>{
     const el = document.getElementById('customer'+p.charAt(0).toUpperCase()+p.slice(1)+'Page');
     if(el) el.style.display = (p===page ? '' : 'none');
   });

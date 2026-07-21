@@ -55,13 +55,6 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(244,168,58,.45)}
 .btn-outline{background:rgba(255,255,255,.12);color:var(--white);border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
 .btn-outline:hover{background:rgba(255,255,255,.22)}
-/* About Us dropdown in header */
-.about-dropdown{position:relative;display:inline-flex}
-.about-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--green-dark);border:1px solid rgba(255,255,255,.18);border-radius:10px;min-width:168px;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.35);z-index:200}
-.about-menu a{display:block;padding:10px 16px;color:rgba(255,255,255,.82);font-size:.82rem;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.07)}
-.about-menu a:last-child{border-bottom:none}
-.about-menu a:hover{background:rgba(255,255,255,.12);color:var(--gold-light)}
-.about-dropdown.open .about-menu{display:block}
 .btn-ghost{background:transparent;color:var(--text-muted);border:1.5px solid var(--border)}
 .btn-ghost:hover{background:var(--green-pale);color:var(--green);border-color:var(--green)}
 .btn-danger{background:#c0392b;color:#fff}
@@ -85,16 +78,16 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .browse-toolbar{padding:18px 20px 6px}
 .browse-toolbar-inner{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 
-/* SOCIETY BOXES — replaces the old dropdown with tappable boxes (Blinkit/UC style) */
+/* SOCIETY BOXES — styled like the category boxes (icon-in-box above, label below) */
 .society-box-section{max-width:1000px;margin:0 auto;padding:14px 20px 4px}
-.society-box-row{display:flex;flex-wrap:wrap;gap:10px}
-.society-box{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:.86rem;font-weight:600;color:var(--text);transition:all var(--tr);white-space:nowrap}
+.society-box-row{display:flex;flex-wrap:wrap;gap:12px}
+.society-box{display:flex;flex-direction:column;align-items:center;gap:8px;width:94px;padding:14px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .society-box:hover{border-color:var(--green)}
-.society-box.active{background:var(--green);border-color:var(--green);color:#fff}
-.society-box.active i{color:#fff}
-.society-box i{color:var(--green);font-size:.8rem}
-.society-box-more{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:12px;border:1.5px dashed var(--border);background:var(--cream);cursor:pointer;font-size:.86rem;font-weight:600;color:var(--green-dark)}
-.society-box-more:hover{border-color:var(--green)}
+.society-box.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.society-box.active .society-box-icon{background:rgba(255,255,255,.22);color:#fff}
+.society-box-icon{width:42px;height:42px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s}
+.society-box-label{font-size:.72rem;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.society-box-more{border-style:dashed;background:var(--cream);color:var(--green-dark)}
 
 /* LOCATION BAR — Blinkit/Zepto-style precise-location strip under the header */
 .location-bar{background:var(--white);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:10px;max-width:1400px;margin:0 auto;cursor:pointer}
@@ -908,6 +901,19 @@ footer strong{color:var(--gold-light)}
   <i class="fa fa-chevron-down loc-chevron"></i>
 </div>
 
+<!-- ── BIG SEARCH (right after location, always visible across every browse level) ── -->
+<div class="browse-toolbar" id="searchSection">
+  <div class="browse-toolbar-inner">
+    <div class="search-big-wrap">
+      <i class="fa fa-magnifying-glass srch-ico"></i>
+      <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" autocomplete="off"
+        oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchInput()">
+      <button type="button" id="searchClearBtn" onclick="clearSearch()" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.95rem;padding:4px"><i class="fa fa-circle-xmark"></i></button>
+      <div class="search-suggest" id="searchSuggest"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ── MANUAL LOCATION SEARCH (Blinkit/Zepto-style) ── -->
 <div class="modal-overlay" id="locationSearchModal">
   <div class="modal" style="max-width:480px">
@@ -970,19 +976,6 @@ footer strong{color:var(--gold-light)}
 
 <!-- ── HOME PAGE (browse) ── -->
 <div id="customerHomePage">
-
-<!-- ── BIG SEARCH (always visible across every browse level) ── -->
-<div class="browse-toolbar" id="searchSection">
-  <div class="browse-toolbar-inner">
-    <div class="search-big-wrap">
-      <i class="fa fa-magnifying-glass srch-ico"></i>
-      <input type="text" id="searchInput" placeholder="Search businesses, food, services, names…" autocomplete="off"
-        oninput="onSearchInput()" onkeydown="onSearchKeydown(event)" onfocus="onSearchInput()">
-      <button type="button" id="searchClearBtn" onclick="clearSearch()" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.95rem;padding:4px"><i class="fa fa-circle-xmark"></i></button>
-      <div class="search-suggest" id="searchSuggest"></div>
-    </div>
-  </div>
-</div>
 
 <!-- ── LEVEL 1: SOCIETIES (Home — auto-detected nearby societies) ── -->
 <div id="browseLevelSocieties">
@@ -1798,18 +1791,32 @@ async function renderOrdersPage(){
     </div>`).join('');
 }
 
+function _accountAboutLinksHTML(){
+  const row = (icon,label,onclick) => `<a onclick="${onclick}" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);font-size:.88rem"><i class="fa ${icon}" style="color:var(--green);width:18px"></i>${label}</a>`;
+  return `
+    <div style="font-weight:700;color:var(--green-dark);margin:20px 0 10px"><i class="fa fa-circle-info"></i> About Homebiz</div>
+    <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden">
+      ${row('fa-circle-info','About Us',"openAboutModal()")}
+      ${row('fa-bullseye','Mission',"openPolicyModal('mission')")}
+      ${row('fa-eye','Vision',"openPolicyModal('vision')")}
+      ${row('fa-users','Who Can Join',"openPolicyModal('whocanjoin')").replace('border-bottom:1px solid var(--border);','')}
+    </div>`;
+}
+
 async function renderAccountPage(){
   const target = document.getElementById('customerAccountPageBody');
   if(!target) return;
   if(!currentCustomer){
     target.innerHTML = `<div class="empty-state"><i class="fa fa-circle-user"></i><p>You're not logged in.</p>
-      <button class="btn btn-primary" style="margin-top:12px" onclick="openCustomerAuthModal()"><i class="fa fa-right-to-bracket"></i> Login / Sign Up</button></div>`;
+      <button class="btn btn-primary" style="margin-top:12px" onclick="openCustomerAuthModal()"><i class="fa fa-right-to-bracket"></i> Login / Sign Up</button></div>
+      ${_accountAboutLinksHTML()}`;
     return;
   }
   _caEditMode = false;
   _caTargetId = 'customerAccountPageBody';
   await renderCustomerAccountBody();
-  target.insertAdjacentHTML('beforeend', `<button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:16px" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>`);
+  target.insertAdjacentHTML('beforeend', `<button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:16px" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>
+    ${_accountAboutLinksHTML()}`);
 }
 
 function openCustomerAuthModal(){
@@ -2481,29 +2488,18 @@ function updatePanelTabs(){
   const panelTabs = document.getElementById('panelTabs');
   if(browseTab) browseTab.style.display = hasOtherTabs ? 'inline-flex' : 'none';
   if(panelTabs) panelTabs.style.display = hasOtherTabs ? 'flex' : 'none';
-  const aboutBtn = `<div class="about-dropdown" id="aboutDropdown">
-    <button class="btn btn-outline btn-sm" onclick="toggleAboutDropdown(event)" style="gap:5px">
-      <i class="fa fa-circle-info"></i><span class="hdr-label"> About Us</span><i class="fa fa-chevron-down" style="font-size:.6rem;opacity:.75"></i>
-    </button>
-    <div class="about-menu">
-      <a onclick="openAboutModal();closeAboutDropdown()"><i class="fa fa-circle-info" style="margin-right:8px;opacity:.7"></i>About Us</a>
-      <a onclick="openPolicyModal('mission');closeAboutDropdown()"><i class="fa fa-bullseye" style="margin-right:8px;opacity:.7"></i>Mission</a>
-      <a onclick="openPolicyModal('vision');closeAboutDropdown()"><i class="fa fa-eye" style="margin-right:8px;opacity:.7"></i>Vision</a>
-      <a onclick="openPolicyModal('whocanjoin');closeAboutDropdown()"><i class="fa fa-users" style="margin-right:8px;opacity:.7"></i>Who Can Join</a>
-    </div>
-  </div>`;
   const customerBtn = currentCustomer
     ? `<button class="btn btn-outline btn-sm" onclick="openCustomerAccountModal()"><i class="fa fa-circle-user"></i><span class="hdr-label"> ${(currentCustomer.name||'My Account').split(' ')[0]}</span></button>`
     : `<button class="btn btn-outline btn-sm" onclick="openCustomerAuthModal()"><i class="fa fa-user"></i><span class="hdr-label"> Login / Sign Up</span></button>`;
   if(hdrRight){
     if(currentSeller){
-      hdrRight.innerHTML = `${customerBtn}${aboutBtn}<span class="hdr-label" style="font-size:.78rem;color:rgba(255,255,255,.8)">${currentSeller.displayName}</span>
+      hdrRight.innerHTML = `${customerBtn}<span class="hdr-label" style="font-size:.78rem;color:rgba(255,255,255,.8)">${currentSeller.displayName}</span>
         <button class="btn btn-sm btn-outline" onclick="sellerLogout()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Logout</span></button>`;
     } else if(isAdmin){
-      hdrRight.innerHTML = `${customerBtn}${aboutBtn}<span class="admin-badge hdr-label">Admin</span>
+      hdrRight.innerHTML = `${customerBtn}<span class="admin-badge hdr-label">Admin</span>
         <button class="btn btn-sm btn-outline" onclick="exitAdmin()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Exit Admin</span></button>`;
     } else {
-      hdrRight.innerHTML = `${customerBtn}${aboutBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i><span class="hdr-label"> Seller Login</span></button>
+      hdrRight.innerHTML = `${customerBtn}<button class="btn btn-gold btn-sm" onclick="openLoginModal('seller')"><i class="fa fa-right-to-bracket"></i><span class="hdr-label"> Seller Login</span></button>
         <button class="btn btn-outline btn-sm" onclick="openLoginModal('admin')"><i class="fa fa-lock"></i><span class="hdr-label"> Admin</span></button>`;
     }
   }
@@ -3220,17 +3216,6 @@ When you order from a Homebiz vendor, your money stays in the community. You sup
 
 Together, we grow stronger — one order at a time.`;
 
-function toggleAboutDropdown(e){
-  e.stopPropagation();
-  const el = document.getElementById('aboutDropdown');
-  if(el) el.classList.toggle('open');
-}
-function closeAboutDropdown(){
-  const el = document.getElementById('aboutDropdown');
-  if(el) el.classList.remove('open');
-}
-document.addEventListener('click', closeAboutDropdown);
-
 /* ═══════════ SOCIETY ═══════════ */
 function _societyList(){ return SITE_CONFIG.societies||DEFAULT_SOCIETIES; }
 function _haversineDist(lat1,lon1,lat2,lon2){
@@ -3274,12 +3259,13 @@ function renderSocietyBoxes(list){
   const visible = _societyBoxesExpanded ? _societyBoxesList : _societyBoxesList.slice(0,5);
   let html = visible.map((s,i) => `
     <button type="button" class="society-box${s.name===selectedSociety?' active':''}" onclick="selectSocietyBox(${_societyBoxesList.indexOf(s)})">
-      <i class="fa fa-location-dot"></i> ${esc(s.name)}
+      <span class="society-box-icon"><i class="fa fa-building"></i></span>
+      <span class="society-box-label">${esc(s.name)}</span>
     </button>`).join('');
   if(_societyBoxesList.length>5){
     html += _societyBoxesExpanded
-      ? `<button type="button" class="society-box-more" onclick="_societyBoxesExpanded=false;renderSocietyBoxes(_societyBoxesList)"><i class="fa fa-chevron-up"></i> Show less</button>`
-      : `<button type="button" class="society-box-more" onclick="_societyBoxesExpanded=true;renderSocietyBoxes(_societyBoxesList)"><i class="fa fa-chevron-down"></i> Show more (${_societyBoxesList.length-5})</button>`;
+      ? `<button type="button" class="society-box society-box-more" onclick="_societyBoxesExpanded=false;renderSocietyBoxes(_societyBoxesList)"><span class="society-box-icon"><i class="fa fa-chevron-up"></i></span><span class="society-box-label">Show less</span></button>`
+      : `<button type="button" class="society-box society-box-more" onclick="_societyBoxesExpanded=true;renderSocietyBoxes(_societyBoxesList)"><span class="society-box-icon"><i class="fa fa-chevron-down"></i></span><span class="society-box-label">Show more (${_societyBoxesList.length-5})</span></button>`;
   }
   row.innerHTML = html;
 }

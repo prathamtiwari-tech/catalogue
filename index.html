@@ -2508,7 +2508,8 @@ function updatePanelTabs(){
 
 /* ═══════════ SEARCH ═══════════ */
 function _searchHaystack(item){
-  return [item.venture, item.speciality, item.desc, item.contact, item.flat, item.cat]
+  const menuText = (item.menu||[]).map(m=>`${m.name||''} ${m.desc||''}`).join(' ');
+  return [item.venture, item.speciality, item.desc, item.contact, item.flat, item.cat, menuText]
     .filter(Boolean).join(' ').toLowerCase();
 }
 function _queryWords(q){
@@ -2580,34 +2581,74 @@ function closeSearchSuggestions(){
   _searchSuggestItems = []; _searchSuggestIdx = -1;
 }
 
+/* Search is global — it looks across every society, not just the one currently
+   selected, so a customer can find a society, a category (broken out per
+   society, since the same category exists in many), a business, or a
+   product/service by name from anywhere in the app. Picking any result
+   "zooms in" straight to that society/category via _navigateToCategory()/
+   _selectSocietyByName(), reusing the same drill-down navigation as tapping
+   the boxes directly. */
 function buildSearchSuggestions(q){
   const words = _queryWords(q);
-  const pool = DATA.filter(d => (d.society||'Prateek Laurel')===selectedSociety);
+  if(!words.length) return {societies:[], businesses:[], categories:[], products:[]};
 
-  const businesses = pool
-    .filter(d => words.every(w => (d.venture||'').toLowerCase().includes(w)))
-    .slice(0,5)
-    .map(d => ({type:'business', id:d.id, label:d.venture, sub:d.speciality||d.cat}));
-
-  const categories = CATS
-    .filter(c => words.every(w => c.name.toLowerCase().includes(w)))
+  // Societies — matched by name, from the same list the society boxes use.
+  const societyPool = _nearbySocieties || _societyList();
+  const societies = societyPool
+    .filter(s => words.every(w => (s.name||'').toLowerCase().includes(w)))
     .slice(0,3)
-    .map(c => ({type:'category', label:c.name}));
+    .map(s => ({type:'society', name:s.name, label:s.name}));
 
-  const seen = new Set(businesses.map(b=>b.id));
-  const seenSpec = new Set();
-  const keywords = [];
-  pool.forEach(d => {
-    if(!d.speciality || seen.has(d.id)) return;
-    const specLower = d.speciality.toLowerCase();
-    if(seenSpec.has(specLower)) return;
-    if(words.every(w => specLower.includes(w))){
-      seenSpec.add(specLower);
-      keywords.push({type:'keyword', label:d.speciality, sub:d.venture});
+  // Businesses — global, matched by venture name; sub-label shows which society.
+  const businesses = DATA
+    .filter(d => words.every(w => (d.venture||'').toLowerCase().includes(w)))
+    .slice(0,6)
+    .map(d => ({type:'business', id:d.id, label:d.venture, society:d.society||'Prateek Laurel', cat:d.cat,
+      sub:`${d.speciality||d.cat} • ${d.society||'Prateek Laurel'}`}));
+  const seenBizIds = new Set(businesses.map(b=>b.id));
+
+  // Categories — matched by category name, broken out per society (each society
+  // with at least one matching business becomes its own selectable result).
+  const catSocietyCounts = {};
+  DATA.forEach(d => {
+    const cat = CATS.find(c => c.name===d.cat);
+    if(!cat || !words.every(w => cat.name.toLowerCase().includes(w))) return;
+    const society = d.society||'Prateek Laurel';
+    const key = cat.name+'||'+society;
+    catSocietyCounts[key] = (catSocietyCounts[key]||0)+1;
+  });
+  const categories = Object.keys(catSocietyCounts)
+    .map(key => { const [catName,society] = key.split('||'); return {type:'category', catName, society, label:catName, count:catSocietyCounts[key]}; })
+    .sort((a,b) => b.count-a.count)
+    .slice(0,5);
+
+  // Products & services — menu item names (and, as a fallback, specialities)
+  // matched globally, showing which vendor + society they belong to.
+  const products = [];
+  const seenProduct = new Set();
+  DATA.forEach(d => {
+    const society = d.society||'Prateek Laurel';
+    (d.menu||[]).forEach(it => {
+      if(!it.name) return;
+      const nameLower = it.name.toLowerCase();
+      if(!words.every(w => nameLower.includes(w))) return;
+      const key = d.id+'|'+nameLower;
+      if(seenProduct.has(key)) return;
+      seenProduct.add(key);
+      products.push({type:'product', vendorId:d.id, label:it.name, society, cat:d.cat, sub:`${d.venture} • ${society}`});
+    });
+    if(products.length>=8) return;
+    if(!seenBizIds.has(d.id) && d.speciality){
+      const specLower = d.speciality.toLowerCase();
+      const key = d.id+'|spec|'+specLower;
+      if(!seenProduct.has(key) && words.every(w => specLower.includes(w))){
+        seenProduct.add(key);
+        products.push({type:'product', vendorId:d.id, label:d.speciality, society, cat:d.cat, sub:`${d.venture} • ${society}`});
+      }
     }
   });
 
-  return {businesses, categories, keywords: keywords.slice(0,4)};
+  return {societies, businesses, categories, products: products.slice(0,6)};
 }
 
 function _highlightMatch(text, q){
@@ -2623,8 +2664,8 @@ function renderSearchSuggestions(){
   _searchSuggestIdx = -1;
   if(!q){ closeSearchSuggestions(); return; }
 
-  const {businesses, categories, keywords} = buildSearchSuggestions(q);
-  _searchSuggestItems = [...businesses, ...categories, ...keywords];
+  const {societies, businesses, categories, products} = buildSearchSuggestions(q);
+  _searchSuggestItems = [...societies, ...businesses, ...categories, ...products];
 
   if(!_searchSuggestItems.length){
     box.innerHTML = `<div class="search-suggest-empty"><i class="fa fa-magnifying-glass" style="opacity:.4"></i> No matches — try a different keyword</div>`;
@@ -2633,15 +2674,16 @@ function renderSearchSuggestions(){
   }
 
   let html = '', idx = 0;
-  const row = (m, icon) => {
+  const row = (label, sub, icon) => {
     const i = idx++;
     return `<div class="search-suggest-item" data-idx="${i}" onmousedown="event.preventDefault();selectSearchSuggestion(${i})">
-      <i class="fa ${icon}"></i><span>${_highlightMatch(m.label,q)}${m.sub?`<div class="search-suggest-sub">${esc(m.sub)}</div>`:''}</span>
+      <i class="fa ${icon}"></i><span>${_highlightMatch(label,q)}${sub?`<div class="search-suggest-sub">${esc(sub)}</div>`:''}</span>
     </div>`;
   };
-  if(businesses.length){ html += `<div class="search-suggest-group">Businesses</div>` + businesses.map(m=>row(m,'fa-store')).join(''); }
-  if(categories.length){ html += `<div class="search-suggest-group">Categories</div>` + categories.map(m=>row(m,'fa-layer-group')).join(''); }
-  if(keywords.length){ html += `<div class="search-suggest-group">You might be looking for</div>` + keywords.map(m=>row(m,'fa-magnifying-glass')).join(''); }
+  if(societies.length){ html += `<div class="search-suggest-group">Societies</div>` + societies.map(m=>row(m.label,null,'fa-location-dot')).join(''); }
+  if(businesses.length){ html += `<div class="search-suggest-group">Businesses</div>` + businesses.map(m=>row(m.label,m.sub,'fa-store')).join(''); }
+  if(categories.length){ html += `<div class="search-suggest-group">Categories</div>` + categories.map(m=>row(m.catName,`${m.society} (${m.count})`,'fa-layer-group')).join(''); }
+  if(products.length){ html += `<div class="search-suggest-group">Products &amp; Services</div>` + products.map(m=>row(m.label,m.sub,'fa-tag')).join(''); }
 
   box.innerHTML = html;
   box.classList.add('open');
@@ -2651,17 +2693,23 @@ function selectSearchSuggestion(idx){
   const item = _searchSuggestItems[idx];
   if(!item) return;
   const input = document.getElementById('searchInput');
+  closeSearchSuggestions();
   if(item.type==='business'){
     input.value = item.label;
-    closeSearchSuggestions();
+    _navigateToCategory(item.society, item.cat);
     openMenuModal(item.id);
+  } else if(item.type==='product'){
+    input.value = item.label;
+    _navigateToCategory(item.society, item.cat);
+    openMenuModal(item.vendorId);
   } else if(item.type==='category'){
     input.value = '';
-    closeSearchSuggestions();
-    openCategoryPage(item.label);
+    _navigateToCategory(item.society, item.catName);
+  } else if(item.type==='society'){
+    input.value = '';
+    _selectSocietyByName(item.name);
   } else {
     input.value = item.label;
-    closeSearchSuggestions();
     renderAll();
   }
   document.getElementById('searchClearBtn').style.display = input.value ? 'block' : 'none';
@@ -3273,11 +3321,25 @@ function renderSocietyBoxes(list){
 function selectSocietyBox(idx){
   const s = _societyBoxesList[idx];
   if(!s) return;
-  selectedSociety = s.name;
+  _selectSocietyByName(s.name);
+}
+
+/* Shared by the society boxes and search suggestions — jump straight to a
+   society (or a specific category within one), same "zoom in" navigation
+   either way. */
+function _selectSocietyByName(name){
+  selectedSociety = name;
   const sel = document.getElementById('societySelect');
-  if(sel) sel.value = s.name;
+  if(sel) sel.value = name;
   renderSocietyBoxes(_societyBoxesList);
   openSocietyPage();
+}
+function _navigateToCategory(society, catName){
+  selectedSociety = society;
+  const sel = document.getElementById('societySelect');
+  if(sel) sel.value = society;
+  renderSocietyBoxes(_societyBoxesList);
+  openCategoryPage(catName);
 }
 
 /* ═══════════ DRILL-DOWN NAVIGATION (Home → Society → Category → Business) ═══════════ */

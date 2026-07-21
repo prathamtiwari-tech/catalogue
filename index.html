@@ -980,6 +980,31 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
   <div class="society-box-section" id="societyBoxSection">
     <div class="society-box-row" id="societyBoxRow"></div>
   </div>
+
+  <!-- Scroll past the societies without picking one: browse by category instead -->
+  <div class="cat-box-label" style="max-width:1000px;margin:20px auto 0;padding:0 20px"><i class="fa fa-layer-group" style="margin-right:6px;opacity:.6"></i>Categories</div>
+  <div class="society-box-section">
+    <div class="society-box-row" id="globalCategoryRow"></div>
+  </div>
+
+  <!-- Or skip straight to a specific product/service, if that's all you need -->
+  <div class="cat-box-label" style="max-width:1000px;margin:20px auto 0;padding:0 20px"><i class="fa fa-tag" style="margin-right:6px;opacity:.6"></i>Products &amp; Services</div>
+  <div class="society-box-section">
+    <div class="society-box-row" id="globalProductRow"></div>
+  </div>
+</div>
+
+<!-- ── LEVEL: SOCIETY PICKER (which society has this globally-picked category/product) ── -->
+<div id="browseLevelSocietyPicker" style="display:none">
+  <div style="position:sticky;top:60px;z-index:50;background:var(--green-dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(0,0,0,.25)">
+    <button onclick="backToSocieties()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:8px;padding:7px 18px;font-size:.9rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0">
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
+    <span id="societyPickerTitle" style="font-weight:600;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0"></span>
+  </div>
+  <div class="society-box-section" style="padding-bottom:100px">
+    <div class="society-box-row" id="societyPickerRow"></div>
+  </div>
 </div>
 
 <!-- ── LEVEL 2: SOCIETY (category quick-boxes on top, full business feed below) ── -->
@@ -1444,8 +1469,9 @@ const _restoredAdminUid = sessionStorage.getItem('hb_adminUid');
 let isAdmin = !!_restoredAdminUid, currentSeller = null;
 if(_restoredAdminUid) window._adminUid = _restoredAdminUid;
 let editingId = null, pendingImg = null;
-let _browseLevel = 'societies'; // 'societies' | 'society' | 'category' — drill-down nav state
+let _browseLevel = 'societies'; // 'societies' | 'societyPicker' | 'society' | 'category' — drill-down nav state
 let _browseCategory = null;
+let _browseProductQuery = null; // set instead of _browseCategory when level 'category' was reached via a global product pick
 let SITE_CONFIG = {};
 const DEFAULT_SOCIETIES = [
   { name:'Prateek Laurel', address:'Sector 120, Noida, UP', lat:28.5900, lng:77.3610 }
@@ -1774,7 +1800,7 @@ function switchCustomerPage(page){
     adCarousel.style.display = (page==='home' && hasAds) ? '' : 'none';
   }
   document.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  if(page==='home'){ _browseLevel='societies'; closeVendorDetail(); }
+  if(page==='home'){ _browseLevel='societies'; _browseCategory=null; _browseProductQuery=null; closeVendorDetail(); }
   if(page==='orders') renderOrdersPage();
   if(page==='account') renderAccountPage();
   window.scrollTo({top:0, behavior:'smooth'});
@@ -3356,7 +3382,7 @@ function _navigateToCategory(society, catName){
 
 /* ═══════════ DRILL-DOWN NAVIGATION (Home → Society → Category → Business) ═══════════ */
 function hideAllBrowseLevels(){
-  ['browseLevelSocieties','browseLevelSociety','browseLevelCategory'].forEach(id=>{
+  ['browseLevelSocieties','browseLevelSocietyPicker','browseLevelSociety','browseLevelCategory'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.style.display = 'none';
   });
@@ -3364,7 +3390,7 @@ function hideAllBrowseLevels(){
 function showBrowseLevel(level){
   _browseLevel = level;
   hideAllBrowseLevels();
-  const map = { societies:'browseLevelSocieties', society:'browseLevelSociety', category:'browseLevelCategory' };
+  const map = { societies:'browseLevelSocieties', societyPicker:'browseLevelSocietyPicker', society:'browseLevelSociety', category:'browseLevelCategory' };
   const el = document.getElementById(map[level]);
   if(el) el.style.display = '';
   window.scrollTo({top:0, behavior:'smooth'});
@@ -3381,11 +3407,13 @@ function backToSocieties(){
 }
 function backToSociety(){
   _browseCategory = null;
+  _browseProductQuery = null;
   showBrowseLevel('society');
   buildTabs();
 }
 function openCategoryPage(catName){
   _browseCategory = catName;
+  _browseProductQuery = null;
   const titleEl = document.getElementById('categoryPageTitle');
   if(titleEl) titleEl.textContent = `${catName.split(',')[0]} in ${selectedSociety}`;
   showBrowseLevel('category');
@@ -3396,11 +3424,133 @@ function renderCategoryPage(){
   const grid = document.getElementById('bizBoxGrid');
   if(!grid) return;
   const q = (document.getElementById('searchInput').value||'').trim();
-  let items = DATA.filter(d => d.cat === _browseCategory && (d.society||'Prateek Laurel')===selectedSociety);
+  let items;
+  if(_browseProductQuery){
+    const pq = _browseProductQuery.toLowerCase();
+    items = DATA.filter(d => (d.society||'Prateek Laurel')===selectedSociety && (d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq));
+  } else {
+    items = DATA.filter(d => d.cat === _browseCategory && (d.society||'Prateek Laurel')===selectedSociety);
+  }
   if(q) items = items.filter(d => itemMatchesQuery(d, q));
   grid.innerHTML = items.length
     ? items.map(item => makeBizBox(item)).join('')
-    : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses in this category yet.</p></div>`;
+    : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses found here yet.</p></div>`;
+}
+
+/* ═══════════ GLOBAL CATEGORY / PRODUCT BOXES (Home, below the society boxes) ═══════════
+   Scrolling past the society boxes without picking one reveals a global Categories
+   row, then a global Products & Services row — for a customer who knows what they
+   want before they know (or care) which society to order it from. Picking either
+   opens a "which society has this?" picker (same box format throughout), which then
+   zooms into the existing category/business drill-down for whichever society is chosen. */
+let _globalCatExpanded = false;
+function renderGlobalCategoryBoxes(){
+  const row = document.getElementById('globalCategoryRow');
+  if(!row) return;
+  const visible = _globalCatExpanded ? CATS : CATS.slice(0,5);
+  let html = visible.map(c => `
+    <button type="button" class="society-box" onclick="openSocietyPickerForCategory('${c.name.replace(/'/g,"\\'")}')">
+      <span class="society-box-icon"><i class="fa ${c.icon}"></i></span>
+      <span class="society-box-label">${esc(c.name.split(',')[0])}</span>
+    </button>`).join('');
+  if(CATS.length>5){
+    html += _globalCatExpanded
+      ? `<button type="button" class="society-box society-box-more" onclick="_globalCatExpanded=false;renderGlobalCategoryBoxes()"><span class="society-box-icon"><i class="fa fa-chevron-up"></i></span><span class="society-box-label">Show less</span></button>`
+      : `<button type="button" class="society-box society-box-more" onclick="_globalCatExpanded=true;renderGlobalCategoryBoxes()"><span class="society-box-icon"><i class="fa fa-chevron-down"></i></span><span class="society-box-label">Show more (${CATS.length-5})</span></button>`;
+  }
+  row.innerHTML = html;
+}
+
+function _globalProductsList(){
+  const seen = new Map();
+  DATA.forEach(d => {
+    (d.menu||[]).forEach(it => {
+      const name = (it.name||'').trim();
+      if(!name) return;
+      const key = name.toLowerCase();
+      if(!seen.has(key)) seen.set(key, {label:name, count:0});
+      seen.get(key).count++;
+    });
+  });
+  return Array.from(seen.values()).sort((a,b)=>b.count-a.count);
+}
+let _globalProdExpanded = false;
+function renderGlobalProductBoxes(){
+  const row = document.getElementById('globalProductRow');
+  if(!row) return;
+  const list = _globalProductsList();
+  const visible = _globalProdExpanded ? list : list.slice(0,5);
+  let html = visible.map(p => `
+    <button type="button" class="society-box" onclick="openSocietyPickerForProduct('${p.label.replace(/'/g,"\\'")}')">
+      <span class="society-box-icon"><i class="fa fa-tag"></i></span>
+      <span class="society-box-label">${esc(p.label)}</span>
+    </button>`).join('');
+  if(list.length>5){
+    html += _globalProdExpanded
+      ? `<button type="button" class="society-box society-box-more" onclick="_globalProdExpanded=false;renderGlobalProductBoxes()"><span class="society-box-icon"><i class="fa fa-chevron-up"></i></span><span class="society-box-label">Show less</span></button>`
+      : `<button type="button" class="society-box society-box-more" onclick="_globalProdExpanded=true;renderGlobalProductBoxes()"><span class="society-box-icon"><i class="fa fa-chevron-down"></i></span><span class="society-box-label">Show more (${list.length-5})</span></button>`;
+  }
+  row.innerHTML = html;
+}
+
+function openSocietyPickerForCategory(catName){
+  const titleEl = document.getElementById('societyPickerTitle');
+  if(titleEl) titleEl.textContent = `Which society has ${catName.split(',')[0]}?`;
+  const counts = {};
+  DATA.forEach(d => {
+    if(d.cat!==catName) return;
+    const society = d.society||'Prateek Laurel';
+    counts[society] = (counts[society]||0)+1;
+  });
+  const row = document.getElementById('societyPickerRow');
+  const catEsc = catName.replace(/'/g,"\\'");
+  row.innerHTML = Object.keys(counts).length ? Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(society => `
+    <button type="button" class="society-box" onclick="_navigateToCategory('${society.replace(/'/g,"\\'")}','${catEsc}')">
+      <span class="society-box-icon"><i class="fa fa-building"></i></span>
+      <span class="society-box-label">${esc(society)} (${counts[society]})</span>
+    </button>`).join('') : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No societies have this category yet.</p></div>`;
+  showBrowseLevel('societyPicker');
+}
+
+function openSocietyPickerForProduct(productName){
+  const titleEl = document.getElementById('societyPickerTitle');
+  if(titleEl) titleEl.textContent = `Which society has ${productName}?`;
+  const pq = productName.toLowerCase();
+  const counts = {};
+  DATA.forEach(d => {
+    if(!(d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq)) return;
+    const society = d.society||'Prateek Laurel';
+    counts[society] = (counts[society]||0)+1;
+  });
+  const row = document.getElementById('societyPickerRow');
+  const prodEsc = productName.replace(/'/g,"\\'");
+  row.innerHTML = Object.keys(counts).length ? Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(society => `
+    <button type="button" class="society-box" onclick="_navigateToProductResults('${society.replace(/'/g,"\\'")}','${prodEsc}')">
+      <span class="society-box-icon"><i class="fa fa-building"></i></span>
+      <span class="society-box-label">${esc(society)} (${counts[society]})</span>
+    </button>`).join('') : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No societies have this yet.</p></div>`;
+  showBrowseLevel('societyPicker');
+}
+
+function _navigateToProductResults(society, productName){
+  selectedSociety = society;
+  const sel = document.getElementById('societySelect');
+  if(sel) sel.value = society;
+  renderSocietyBoxes(_societyBoxesList);
+  const pq = productName.toLowerCase();
+  const matches = DATA.filter(d => (d.society||'Prateek Laurel')===society && (d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq));
+  if(matches.length===1){
+    _navigateToCategory(society, matches[0].cat);
+    openMenuModal(matches[0].id);
+    return;
+  }
+  _browseCategory = null;
+  _browseProductQuery = productName;
+  const titleEl = document.getElementById('categoryPageTitle');
+  if(titleEl) titleEl.textContent = `${productName} in ${society}`;
+  showBrowseLevel('category');
+  buildTabs();
+  renderCategoryPage();
 }
 function makeBizBox(item){
   const imgSrc = item.image || IMGS[item.id] || '';
@@ -5269,7 +5419,7 @@ async function migrateFromSeed(){
   setupSellerAuth();
 
   // Initial render from localStorage / SEED
-  buildTabs(); renderAll();
+  buildTabs(); renderAll(); renderGlobalCategoryBoxes(); renderGlobalProductBoxes();
 
   // Update header buttons
   updatePanelTabs();
@@ -5290,7 +5440,7 @@ async function migrateFromSeed(){
     try{
       const vendors = await fsLoadVendors();
       if(vendors && vendors.length){
-        DATA = vendors; saveData(DATA); renderAll();
+        DATA = vendors; saveData(DATA); renderAll(); renderGlobalProductBoxes();
         if(typeof initAd === 'function') initAd(); // rebuild carousel with fresh images
         return; // Firestore loaded — skip JSON fetch
       }
@@ -5301,7 +5451,7 @@ async function migrateFromSeed(){
     const res = await fetch('./catalogue-data.json?t='+Date.now());
     if(res.ok){
       const remote = await res.json();
-      if(Array.isArray(remote)&&remote.length){ DATA=remote; saveData(DATA); renderAll(); }
+      if(Array.isArray(remote)&&remote.length){ DATA=remote; saveData(DATA); renderAll(); renderGlobalProductBoxes(); }
     }
   }catch(e){}
 })();

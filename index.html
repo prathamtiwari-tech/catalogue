@@ -16,19 +16,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Homebiz brand palette — Trust & Security Blue + gold accent (ACTIVE THEME) */
+  /* Homebiz brand palette — Classic Saffron + gold accent (ACTIVE THEME) */
+  --green:#FF9933;--green-dark:#B85C1A;--green-light:#FFB366;--green-pale:#FFF3E0;
+  --gold:#F5A623;--gold-light:#FFC65C;--cream:#F6F9FC;--white:#ffffff;
+  --text:#1C2733;--text-muted:#5B6B7A;--border:#E1E8F0;--danger:#c0392b;
+  --shadow:0 4px 20px rgba(184,92,26,.14);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
+}
+/* ── PREVIOUS TRUST & SECURITY BLUE THEME (kept for easy revert) ──
+   To switch back: delete the :root block above and uncomment this one.
+:root{
   --green:#0B5FA8;--green-dark:#073A6B;--green-light:#3D8BD4;--green-pale:#EAF3FC;
   --gold:#F5A623;--gold-light:#FFC65C;--cream:#F6F9FC;--white:#ffffff;
   --text:#1C2733;--text-muted:#5B6B7A;--border:#E1E8F0;--danger:#c0392b;
   --shadow:0 4px 20px rgba(11,95,168,.12);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
-}
-/* ── PREVIOUS ORANGE/SLATE THEME (kept for easy revert) ──
-   To switch back: delete the :root block above and uncomment this one.
-:root{
-  --green:#E8792A;--green-dark:#3E4750;--green-light:#F4A83A;--green-pale:#FFF2E0;
-  --gold:#F4A83A;--gold-light:#FFC266;--cream:#F7F7F9;--white:#ffffff;
-  --text:#2B2F33;--text-muted:#6B7480;--border:#EAEAEC;--danger:#c0392b;
-  --shadow:0 4px 20px rgba(20,20,30,.08);--radius:16px;--tr:.22s cubic-bezier(.4,0,.2,1);
 }
 ── END PREVIOUS THEME ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -79,7 +79,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .tagline-bar{background:var(--gold);color:var(--green-dark);text-align:center;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:5px}
 /* SOCIETY SELECT (shared by toolbar + add/edit forms) */
 .society-select{border:1.5px solid var(--green);border-radius:8px;padding:5px 32px 5px 10px;font-size:.84rem;font-family:inherit;background:var(--white);color:var(--green-dark);cursor:pointer;outline:none;font-weight:600;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233E4750' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:box-shadow .2s}
-.society-select:focus{box-shadow:0 0 0 2px rgba(232,121,42,.2)}
+.society-select:focus{box-shadow:0 0 0 2px rgba(255,153,51,.25)}
 
 /* BROWSE TOOLBAR — big search, plain section (no more hero overlap) */
 .browse-toolbar{padding:18px 20px 6px}
@@ -134,7 +134,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .search-big-wrap i.srch-ico{position:absolute;left:22px;top:50%;transform:translateY(-50%);color:var(--green);font-size:1.15rem;pointer-events:none}
 .search-big-wrap input{width:100%;padding:19px 48px 19px 58px;border:2px solid var(--border);border-radius:50px;font-size:1.05rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box;box-shadow:0 6px 20px rgba(20,20,30,.06)}
 .search-big-wrap input::placeholder{color:var(--text-muted)}
-.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(232,121,42,.12)}
+.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(255,153,51,.15)}
 .search-suggest{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:var(--shadow);max-height:360px;overflow-y:auto;z-index:60;display:none;text-align:left;padding:6px 0}
 .search-suggest.open{display:block}
 .search-suggest-group{padding:10px 16px 4px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
@@ -156,6 +156,15 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .cat-tab-icon{width:42px;height:42px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s}
 .cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22);color:#fff}
 .cat-tab-label{font-size:.72rem;line-height:1.25}
+/* BIZ BOX GRID — compact business cards for the dedicated Category-level screen */
+.biz-box-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.biz-box{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all var(--tr)}
+.biz-box:hover{border-color:var(--green);box-shadow:var(--shadow)}
+.biz-box-img{width:100%;aspect-ratio:1/1;background:var(--cream);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.biz-box-img img{width:100%;height:100%;object-fit:cover}
+.biz-box-body{padding:10px 12px}
+.biz-box-name{font-weight:700;font-size:.86rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.biz-box-spec{font-size:.74rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 /* GRID */
 .grid-container{margin-bottom:40px}
 .category-section{margin-bottom:40px}
@@ -165,7 +174,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 
 /* ── TILE CARD ── */
 .tile{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border);box-shadow:var(--shadow);transition:all var(--tr);position:relative;overflow:hidden;display:flex;flex-direction:column}
-.tile:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(232,121,42,.16);border-color:var(--green)}
+.tile:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(255,153,51,.2);border-color:var(--green)}
 
 /* Image area */
 .tile-img-wrap{position:relative;width:100%;height:178px;overflow:hidden;flex-shrink:0;background:var(--cream)}
@@ -487,17 +496,17 @@ footer strong{color:var(--gold-light)}
   </div>
 </div>
 
-<!-- ── CUSTOMER LOGIN / SIGNUP (Email OTP) ── -->
+<!-- ── CUSTOMER LOGIN / SIGNUP (Mobile OTP) ── -->
 <div class="modal-overlay" id="customerAuthModal" style="z-index:300">
   <div class="modal" style="max-width:400px">
     <div class="modal-title"><i class="fa fa-user" style="color:var(--green)"></i> Login / Sign Up</div>
 
-    <!-- Step 1: Email -->
+    <!-- Step 1: Mobile -->
     <div id="caStep1" style="text-align:left">
-      <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">New here or returning — just enter your email. We'll send a verification code, and set up your account automatically if you don't have one yet.</p>
+      <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">New here or returning — just enter your mobile number. We'll text you a verification code, and set up your account automatically if you don't have one yet.</p>
       <div class="form-group" style="margin-bottom:14px">
-        <label>Email Address *</label>
-        <input type="email" id="ca_email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')caSendOtp()">
+        <label>Mobile Number *</label>
+        <input type="tel" id="ca_mobile" maxlength="15" placeholder="10-digit mobile number" onkeydown="if(event.key==='Enter')caSendOtp()">
       </div>
       <p id="caStep1Err" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
       <div style="display:flex;gap:8px;justify-content:flex-end">
@@ -508,7 +517,7 @@ footer strong{color:var(--gold-light)}
 
     <!-- Step 2: OTP -->
     <div id="caStep2" style="display:none;text-align:left">
-      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Enter the 6-digit code sent to <strong id="caEmailShown"></strong></p>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Enter the 6-digit code sent to <strong id="caMobileShown"></strong></p>
       <div class="form-group" style="margin-bottom:14px">
         <label>Verification Code *</label>
         <input type="text" id="ca_otp" maxlength="6" placeholder="123456" style="letter-spacing:.3em;font-size:1.1rem;text-align:center" onkeydown="if(event.key==='Enter')caVerifyOtp()">
@@ -525,10 +534,21 @@ footer strong{color:var(--gold-light)}
 
     <!-- Step 3: Profile details (first-time signup) -->
     <div id="caStep3" style="display:none;text-align:left">
-      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px"><i class="fa fa-circle-check" style="color:var(--green)"></i> Email verified! Complete your profile:</p>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px"><i class="fa fa-circle-check" style="color:var(--green)"></i> Mobile verified! Complete your profile:</p>
       <div class="form-group" style="margin-bottom:12px"><label>Full Name *</label><input type="text" id="ca_name" placeholder="Your name"></div>
-      <div class="form-group" style="margin-bottom:12px"><label>Mobile Number *</label><input type="tel" id="ca_mobile" maxlength="15" placeholder="10-digit mobile number"></div>
-      <div class="form-group" style="margin-bottom:14px"><label>Address</label><input type="text" id="ca_address" placeholder="Flat, tower, society…"></div>
+      <div class="form-group" style="margin-bottom:12px"><label>Address</label><input type="text" id="ca_address" placeholder="Flat, tower, society…"></div>
+      <div class="form-group" style="margin-bottom:8px">
+        <label>Email (optional)</label>
+        <div style="display:flex;gap:8px">
+          <input type="email" id="ca_email" placeholder="you@email.com" style="flex:1">
+          <button type="button" class="btn btn-ghost btn-sm" id="caEmailVerifyBtn" onclick="caSendEmailVerifyOtp()">Verify</button>
+        </div>
+      </div>
+      <div id="caEmailOtpRow" style="display:none;gap:8px;margin-bottom:8px">
+        <input type="text" id="ca_emailOtp" maxlength="6" placeholder="Email code" style="flex:1;letter-spacing:.25em;text-align:center">
+        <button type="button" class="btn btn-primary btn-sm" onclick="caVerifyEmailOtp()">Confirm</button>
+      </div>
+      <p id="caEmailStatus" style="font-size:.76rem;color:var(--green-dark);margin-bottom:10px;display:none"><i class="fa fa-circle-check"></i> Email verified</p>
       <p id="caStep3Err" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn btn-primary" onclick="caSaveProfile()"><i class="fa fa-floppy-disk"></i> Save &amp; Continue</button>
@@ -951,12 +971,7 @@ footer strong{color:var(--gold-light)}
 <!-- ── HOME PAGE (browse) ── -->
 <div id="customerHomePage">
 
-<!-- ── SOCIETY BOXES (auto-detected nearby societies) ── -->
-<div class="society-box-section" id="societyBoxSection">
-  <div class="society-box-row" id="societyBoxRow"></div>
-</div>
-
-<!-- ── BIG SEARCH ── -->
+<!-- ── BIG SEARCH (always visible across every browse level) ── -->
 <div class="browse-toolbar" id="searchSection">
   <div class="browse-toolbar-inner">
     <div class="search-big-wrap">
@@ -969,12 +984,40 @@ footer strong{color:var(--gold-light)}
   </div>
 </div>
 
-<!-- ── BROWSE: category boxes on top, business feed below ── -->
-<div class="browse-layout" id="browseLayout">
-  <div class="cat-box-label"><i class="fa fa-grip" style="margin-right:6px;opacity:.6"></i>Categories</div>
-  <nav class="cat-box-row" id="catTabs"></nav>
-  <div class="browse-content">
-    <div class="grid-container" id="mainGrid"></div>
+<!-- ── LEVEL 1: SOCIETIES (Home — auto-detected nearby societies) ── -->
+<div id="browseLevelSocieties">
+  <div class="society-box-section" id="societyBoxSection">
+    <div class="society-box-row" id="societyBoxRow"></div>
+  </div>
+</div>
+
+<!-- ── LEVEL 2: SOCIETY (category quick-boxes on top, full business feed below) ── -->
+<div id="browseLevelSociety" style="display:none">
+  <div style="position:sticky;top:60px;z-index:50;background:var(--green-dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(0,0,0,.25)">
+    <button onclick="backToSocieties()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:8px;padding:7px 18px;font-size:.9rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0">
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
+    <span id="societyPageTitle" style="font-weight:600;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0"></span>
+  </div>
+  <div class="browse-layout" id="browseLayout">
+    <div class="cat-box-label"><i class="fa fa-grip" style="margin-right:6px;opacity:.6"></i>Categories</div>
+    <nav class="cat-box-row" id="catTabs"></nav>
+    <div class="browse-content">
+      <div class="grid-container" id="mainGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LEVEL 3: CATEGORY (compact business grid) ── -->
+<div id="browseLevelCategory" style="display:none">
+  <div style="position:sticky;top:60px;z-index:50;background:var(--green-dark);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(0,0,0,.25)">
+    <button onclick="backToSociety()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:8px;padding:7px 18px;font-size:.9rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0">
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
+    <span id="categoryPageTitle" style="font-weight:600;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0"></span>
+  </div>
+  <div style="max-width:900px;margin:0 auto;padding:16px">
+    <div class="biz-box-grid" id="bizBoxGrid"></div>
   </div>
 </div>
 
@@ -1008,19 +1051,11 @@ footer strong{color:var(--gold-light)}
     <div id="menuFlatRow" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
       <input type="text" id="menuCustomerName" placeholder="Your name *" maxlength="80"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
-      <input type="email" id="menuCustomerEmail" placeholder="Your email (for verification) *" maxlength="120"
-        style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
       <input type="tel" id="menuCustomerMobile" placeholder="Your mobile number *" maxlength="15"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
       <select id="menuAddressPicker" onchange="onMenuAddressPick()" style="display:none;width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;background:var(--white);box-sizing:border-box"></select>
       <input type="text" id="menuCustomerAddress" placeholder="Complete delivery address (flat, tower, society…) *" maxlength="200"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
-      <div id="menuOtpRow" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
-        <input type="text" id="menuOtpInput" maxlength="6" placeholder="Enter 6-digit code"
-          style="flex:1;min-width:140px;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.95rem;letter-spacing:.25em;text-align:center;font-family:inherit;outline:none;box-sizing:border-box">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="resendMenuOtp()"><i class="fa fa-rotate"></i> Resend</button>
-      </div>
-      <p id="menuOtpHint" style="display:none;font-size:.76rem;color:var(--text-muted)"></p>
     </div>
     <button class="order-btn" id="menuOrderBtn" onclick="placeOrder()" style="margin-bottom:14px">
       <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
@@ -1413,7 +1448,9 @@ let githubToken = '';
 const _restoredAdminUid = sessionStorage.getItem('hb_adminUid');
 let isAdmin = !!_restoredAdminUid, currentSeller = null;
 if(_restoredAdminUid) window._adminUid = _restoredAdminUid;
-let activeFilter = 'All', editingId = null, pendingImg = null;
+let editingId = null, pendingImg = null;
+let _browseLevel = 'societies'; // 'societies' | 'society' | 'category' — drill-down nav state
+let _browseCategory = null;
 let SITE_CONFIG = {};
 const DEFAULT_SOCIETIES = [
   { name:'Prateek Laurel', address:'Sector 120, Noida, UP', lat:28.5900, lng:77.3610 }
@@ -1422,10 +1459,9 @@ let selectedSociety = 'Prateek Laurel';
 
 /* ═══════════ CUSTOMER ACCOUNT STATE ═══════════ */
 function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-let currentCustomer = null; // {name,email,mobile,address}
-let _custOtp = { email:null, code:null, expiresAt:0, verifiedEmail:null };
-let _pendingOrderCtx = null;
-const _restoredCustomerEmail = localStorage.getItem('hb_customerEmail');
+let currentCustomer = null; // {name,mobile,email,emailVerified,address,addresses}
+let _custOtp = { email:null, code:null, expiresAt:0, verifiedEmail:null }; // used for optional email-field verification
+const _restoredCustomerMobile = localStorage.getItem('hb_customerMobile');
 
 /* ═══════════ FIRESTORE HELPERS ═══════════ */
 async function fsLoadVendors(){
@@ -1555,7 +1591,7 @@ async function fsRecordStat(vendorId, field){
   }catch(e){}
 }
 
-async function fsLogOrder(vendorId, vendorName, items, total, flat, customerEmail, customerName){
+async function fsLogOrder(vendorId, vendorName, items, total, flat, customerEmail, customerName, customerMobile){
   if(!db) return;
   // Rule requires isSignedIn() — customers are anonymous, so use Firebase Anonymous Auth
   try{
@@ -1565,7 +1601,7 @@ async function fsLogOrder(vendorId, vendorName, items, total, flat, customerEmai
     if(!auth || !auth.currentUser) return; // still no auth, skip log
     await db.collection('order_logs').add({
       vendorId, vendorName, items, total, flat,
-      customerEmail: customerEmail||null, customerName: customerName||'',
+      customerEmail: customerEmail||null, customerName: customerName||'', customerMobile: customerMobile||null,
       ts: firebase.firestore.FieldValue.serverTimestamp()
     });
   }catch(e){}
@@ -1662,11 +1698,11 @@ async function verifyMobileOtp(code){
 }
 
 async function fsSaveCustomerProfile(profile){
-  const data = { name:profile.name||'', email:profile.email, mobile:profile.mobile||'', address:profile.address||'', addresses:profile.addresses||[] };
+  const data = { name:profile.name||'', mobile:profile.mobile||'', email:profile.email||'', emailVerified:!!profile.emailVerified, address:profile.address||'', addresses:profile.addresses||[] };
   if(!db) return data;
   try{
     if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
-    const ref = db.collection('customers').doc(profile.email);
+    const ref = db.collection('customers').doc(profile.mobile);
     const snap = await ref.get();
     const toWrite = {...data, updatedAt: firebase.firestore.FieldValue.serverTimestamp()};
     if(!snap.exists) toWrite.createdAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -1675,20 +1711,20 @@ async function fsSaveCustomerProfile(profile){
   return data;
 }
 
-async function fsLoadCustomerProfile(email){
-  if(!db || !email) return null;
+async function fsLoadCustomerProfile(mobile){
+  if(!db || !mobile) return null;
   try{
     if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
-    const snap = await db.collection('customers').doc(email).get();
-    return snap.exists ? {...snap.data(), email} : null;
+    const snap = await db.collection('customers').doc(mobile).get();
+    return snap.exists ? {...snap.data(), mobile} : null;
   }catch(e){ return null; }
 }
 
-async function fsLoadCustomerOrders(email){
-  if(!db || !email) return [];
+async function fsLoadCustomerOrders(mobile){
+  if(!db || !mobile) return [];
   try{
     if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
-    const snap = await db.collection('order_logs').where('customerEmail','==',email).get();
+    const snap = await db.collection('order_logs').where('customerMobile','==',mobile).get();
     const docs = snap.docs.map(d=>({id:d.id,...d.data()}));
     docs.sort((a,b)=>((b.ts&&b.ts.seconds)||0)-((a.ts&&a.ts.seconds)||0));
     return docs;
@@ -1708,13 +1744,13 @@ async function fsLoadVendorOrders(vendorId){
 
 function customerLogin(profile){
   currentCustomer = profile;
-  localStorage.setItem('hb_customerEmail', profile.email);
+  localStorage.setItem('hb_customerMobile', profile.mobile);
   updatePanelTabs();
 }
 
 async function customerLogout(){
   currentCustomer = null;
-  localStorage.removeItem('hb_customerEmail');
+  localStorage.removeItem('hb_customerMobile');
   closeModal('customerAccountModal');
   updatePanelTabs();
   if(_customerPage==='account') renderAccountPage();
@@ -1732,7 +1768,7 @@ function switchCustomerPage(page){
     if(el) el.style.display = (p===page ? '' : 'none');
   });
   document.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  if(page==='home') closeVendorDetail();
+  if(page==='home'){ _browseLevel='societies'; closeVendorDetail(); }
   if(page==='orders') renderOrdersPage();
   if(page==='account') renderAccountPage();
   window.scrollTo({top:0, behavior:'smooth'});
@@ -1747,7 +1783,7 @@ async function renderOrdersPage(){
     return;
   }
   body.innerHTML = `<p style="color:var(--text-muted);text-align:center"><i class="fa fa-spinner fa-spin"></i> Loading…</p>`;
-  const orders = await fsLoadCustomerOrders(currentCustomer.email);
+  const orders = await fsLoadCustomerOrders(currentCustomer.mobile);
   if(!orders.length){
     body.innerHTML = `<div class="empty-state"><i class="fa fa-receipt"></i><p>No orders yet. Browse businesses and place your first order!</p></div>`;
     return;
@@ -1777,11 +1813,15 @@ async function renderAccountPage(){
 }
 
 function openCustomerAuthModal(){
-  document.getElementById('ca_email').value='';
+  document.getElementById('ca_mobile').value='';
   document.getElementById('ca_otp').value='';
   document.getElementById('ca_name').value='';
-  document.getElementById('ca_mobile').value='';
   document.getElementById('ca_address').value='';
+  document.getElementById('ca_email').value='';
+  document.getElementById('ca_emailOtp').value='';
+  document.getElementById('caEmailOtpRow').style.display='none';
+  document.getElementById('caEmailStatus').style.display='none';
+  _caEmailVerified = null;
   document.getElementById('caStep1Err').style.display='none';
   document.getElementById('caStep2Err').style.display='none';
   document.getElementById('caStep3Err').style.display='none';
@@ -1789,42 +1829,44 @@ function openCustomerAuthModal(){
   document.getElementById('caStep2').style.display='none';
   document.getElementById('caStep3').style.display='none';
   document.getElementById('customerAuthModal').classList.add('open');
-  setTimeout(()=>document.getElementById('ca_email').focus(),120);
+  setTimeout(()=>document.getElementById('ca_mobile').focus(),120);
 }
 
-async function caSendOtp(){
-  const emailEl = document.getElementById('ca_email');
-  const email = (emailEl.value||'').trim().toLowerCase();
+async function caSendOtp(isResend){
+  const mobileEl = document.getElementById('ca_mobile');
+  const mobile = (mobileEl.value||'').trim().replace(/[\s\-]/g,'');
   const errEl = document.getElementById('caStep1Err');
-  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    errEl.textContent='Please enter a valid email address.'; errEl.style.display='block'; return;
+  if(!/^\d{7,15}$/.test(mobile)){
+    errEl.textContent='Please enter a valid mobile number.'; errEl.style.display='block'; return;
   }
   errEl.style.display='none';
   const btn = document.getElementById('caSendOtpBtn');
-  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Sending…'; }
-  await sendCustomerOtp(email, ()=>{
-    document.getElementById('caEmailShown').textContent = email;
+  if(btn && !isResend){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Sending…'; }
+  const sent = await sendMobileOtp(mobile);
+  if(btn && !isResend){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Send OTP'; }
+  if(sent){
+    document.getElementById('caMobileShown').textContent = mobile;
     document.getElementById('caStep1').style.display='none';
     document.getElementById('caStep2').style.display='block';
     document.getElementById('ca_otp').value='';
     setTimeout(()=>document.getElementById('ca_otp').focus(),120);
-  });
-  if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i> Send OTP'; }
+  }
 }
 
 async function caVerifyOtp(){
   const code = (document.getElementById('ca_otp').value||'').trim();
   const errEl = document.getElementById('caStep2Err');
-  if(!verifyCustomerOtpCode(code)){
+  const ok = await verifyMobileOtp(code);
+  if(!ok){
     errEl.textContent='Invalid or expired code. Please try again.'; errEl.style.display='block'; return;
   }
   errEl.style.display='none';
-  const email = _custOtp.email;
-  const existing = await fsLoadCustomerProfile(email);
+  const mobile = _vnMobile;
+  const existing = await fsLoadCustomerProfile(mobile);
   if(existing){
     customerLogin(existing);
     closeModal('customerAuthModal');
-    showToast(`Welcome back, ${existing.name||email}!`);
+    showToast(`Welcome back, ${existing.name||mobile}!`);
     return;
   }
   document.getElementById('caStep2').style.display='none';
@@ -1832,17 +1874,43 @@ async function caVerifyOtp(){
   document.getElementById('ca_name').focus();
 }
 
+let _caEmailVerified = null;
+async function caSendEmailVerifyOtp(){
+  const emailEl = document.getElementById('ca_email');
+  const email = (emailEl.value||'').trim().toLowerCase();
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showToast('Please enter a valid email address first'); return;
+  }
+  const btn = document.getElementById('caEmailVerifyBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i>'; }
+  await sendCustomerOtp(email, ()=>{
+    document.getElementById('caEmailOtpRow').style.display='flex';
+    document.getElementById('ca_emailOtp').focus();
+  });
+  if(btn){ btn.disabled=false; btn.innerHTML='Verify'; }
+}
+
+function caVerifyEmailOtp(){
+  const code = (document.getElementById('ca_emailOtp').value||'').trim();
+  if(!verifyCustomerOtpCode(code)){ showToast('Invalid or expired code'); return; }
+  _caEmailVerified = _custOtp.email;
+  document.getElementById('caEmailOtpRow').style.display='none';
+  document.getElementById('caEmailStatus').style.display='block';
+  showToast('Email verified ✓');
+}
+
 async function caSaveProfile(){
   const name    = (document.getElementById('ca_name').value||'').trim();
-  const mobile  = (document.getElementById('ca_mobile').value||'').trim();
   const address = (document.getElementById('ca_address').value||'').trim();
+  const emailInput = (document.getElementById('ca_email').value||'').trim().toLowerCase();
   const errEl   = document.getElementById('caStep3Err');
-  if(!name || !mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g,''))){
-    errEl.textContent='Please enter your name and a valid mobile number.'; errEl.style.display='block'; return;
+  if(!name){
+    errEl.textContent='Please enter your name.'; errEl.style.display='block'; return;
   }
   errEl.style.display='none';
   const addresses = address ? [{label:'Home', address}] : [];
-  const profile = { name, email:_custOtp.email, mobile, address, addresses };
+  const emailVerified = !!(emailInput && _caEmailVerified===emailInput);
+  const profile = { name, mobile:_vnMobile, email:emailInput, emailVerified, address, addresses };
   await fsSaveCustomerProfile(profile);
   customerLogin(profile);
   closeModal('customerAuthModal');
@@ -1863,12 +1931,24 @@ async function renderCustomerAccountBody(){
   const body = document.getElementById(_caTargetId);
   if(!body || !currentCustomer) return;
   body.innerHTML = `<p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading…</p>`;
-  const orders = await fsLoadCustomerOrders(currentCustomer.email);
+  const orders = await fsLoadCustomerOrders(currentCustomer.mobile);
   const addresses = currentCustomer.addresses||[];
   if(_caEditMode){
+    _caEditEmailVerified = null;
     body.innerHTML = `
       <div class="form-group" style="margin-bottom:10px"><label>Full Name</label><input id="caEdit_name" value="${esc(currentCustomer.name)}"></div>
-      <div class="form-group" style="margin-bottom:14px"><label>Mobile Number</label><input id="caEdit_mobile" value="${esc(currentCustomer.mobile)}"></div>
+      <div class="form-group" style="margin-bottom:10px"><label>Mobile Number</label><input value="${esc(currentCustomer.mobile)}" disabled style="opacity:.6"></div>
+      <div class="form-group" style="margin-bottom:8px">
+        <label>Email (optional)</label>
+        <div style="display:flex;gap:8px">
+          <input id="caEdit_email" value="${esc(currentCustomer.email)}" placeholder="you@email.com" style="flex:1">
+          <button type="button" class="btn btn-ghost btn-sm" id="caEditEmailVerifyBtn" onclick="caEditSendEmailVerifyOtp()">Verify</button>
+        </div>
+      </div>
+      <div id="caEditEmailOtpRow" style="display:none;gap:8px;margin-bottom:10px">
+        <input type="text" id="caEdit_emailOtp" maxlength="6" placeholder="Email code" style="flex:1;letter-spacing:.25em;text-align:center">
+        <button type="button" class="btn btn-primary btn-sm" onclick="caEditVerifyEmailOtp()">Confirm</button>
+      </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="_caEditMode=false;renderCustomerAccountBody()">Cancel</button>
         <button class="btn btn-primary" onclick="caSaveEditedProfile()"><i class="fa fa-floppy-disk"></i> Save</button>
@@ -1880,8 +1960,8 @@ async function renderCustomerAccountBody(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
         <div>
           <div style="font-weight:700;color:var(--green-dark);margin-bottom:4px">${esc(currentCustomer.name)}</div>
-          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-envelope" style="width:14px"></i> ${esc(currentCustomer.email)}</div>
-          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-phone" style="width:14px"></i> ${esc(currentCustomer.mobile)||'—'}</div>
+          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-phone" style="width:14px"></i> ${esc(currentCustomer.mobile)}</div>
+          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-envelope" style="width:14px"></i> ${currentCustomer.email ? esc(currentCustomer.email)+(currentCustomer.emailVerified?' <i class="fa fa-circle-check" style="color:var(--green-dark)"></i>':' <span style="color:var(--danger);font-size:.72rem">(unverified)</span>') : '<span style="font-style:italic">Not added</span>'}</div>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="_caEditMode=true;renderCustomerAccountBody()"><i class="fa fa-pen"></i></button>
       </div>
@@ -1951,14 +2031,43 @@ async function deleteCustomerAddress(idx){
   showToast('Address removed');
 }
 
+let _caEditEmailVerified = null;
+async function caEditSendEmailVerifyOtp(){
+  const emailEl = document.getElementById('caEdit_email');
+  const email = (emailEl.value||'').trim().toLowerCase();
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showToast('Please enter a valid email address first'); return;
+  }
+  const btn = document.getElementById('caEditEmailVerifyBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i>'; }
+  await sendCustomerOtp(email, ()=>{
+    document.getElementById('caEditEmailOtpRow').style.display='flex';
+    document.getElementById('caEdit_emailOtp').focus();
+  });
+  if(btn){ btn.disabled=false; btn.innerHTML='Verify'; }
+}
+
+function caEditVerifyEmailOtp(){
+  const code = (document.getElementById('caEdit_emailOtp').value||'').trim();
+  if(!verifyCustomerOtpCode(code)){ showToast('Invalid or expired code'); return; }
+  _caEditEmailVerified = _custOtp.email;
+  document.getElementById('caEditEmailOtpRow').style.display='none';
+  showToast('Email verified ✓');
+}
+
 async function caSaveEditedProfile(){
-  const name    = (document.getElementById('caEdit_name').value||'').trim();
-  const mobile  = (document.getElementById('caEdit_mobile').value||'').trim();
-  if(!name || !mobile){ showToast('Name and mobile are required'); return; }
-  const profile = { ...currentCustomer, name, mobile };
+  const name  = (document.getElementById('caEdit_name').value||'').trim();
+  const emailInput = (document.getElementById('caEdit_email').value||'').trim().toLowerCase();
+  if(!name){ showToast('Name is required'); return; }
+  const emailChanged = emailInput !== (currentCustomer.email||'');
+  const emailVerified = emailInput
+    ? (emailChanged ? _caEditEmailVerified===emailInput : !!currentCustomer.emailVerified)
+    : false;
+  const profile = { ...currentCustomer, name, email:emailInput, emailVerified };
   await fsSaveCustomerProfile(profile);
   customerLogin(profile);
   _caEditMode = false;
+  _caEditEmailVerified = null;
   renderCustomerAccountBody();
   showToast('Profile updated');
 }
@@ -2419,11 +2528,11 @@ function itemMatchesQuery(item, q){
 function renderAll(){
   const q = (document.getElementById('searchInput').value||'').trim();
   const grid = document.getElementById('mainGrid');
+  if(!grid) return;
   grid.innerHTML = '';
   let total = 0;
   CATS.forEach(cat => {
     let items = DATA.filter(d => d.cat === cat.name && (d.society||'Prateek Laurel')===selectedSociety);
-    if(activeFilter !== 'All' && activeFilter !== cat.name) return;
     if(q) items = items.filter(d => itemMatchesQuery(d, q));
     if(!items.length) return;
     total += items.length;
@@ -2441,7 +2550,7 @@ function renderAll(){
   if(!total){
     grid.innerHTML = q
       ? `<div class="empty-state"><i class="fa fa-magnifying-glass"></i><p>No results found for "<strong>${esc(q)}</strong>"</p></div>`
-      : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses registered in <strong>${esc(selectedSociety)}</strong> yet.<br>Check back soon, or pick a nearby society from the location bar above.</p></div>`;
+      : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses registered in <strong>${esc(selectedSociety)}</strong> yet.<br>Check back soon, or tap Back to choose a different society.</p></div>`;
   }
   document.getElementById('statTotal').textContent = DATA.length;
 }
@@ -2453,6 +2562,7 @@ function onSearchInput(){
   document.getElementById('searchClearBtn').style.display = document.getElementById('searchInput').value ? 'block' : 'none';
   clearTimeout(_searchDebounce);
   renderAll();
+  if(_browseLevel==='category') renderCategoryPage();
   _searchDebounce = setTimeout(renderSearchSuggestions, 100);
 }
 
@@ -2463,6 +2573,7 @@ function clearSearch(){
   document.getElementById('searchClearBtn').style.display = 'none';
   closeSearchSuggestions();
   renderAll();
+  if(_browseLevel==='category') renderCategoryPage();
 }
 
 function closeSearchSuggestions(){
@@ -2549,11 +2660,8 @@ function selectSearchSuggestion(idx){
     openMenuModal(item.id);
   } else if(item.type==='category'){
     input.value = '';
-    activeFilter = item.label;
     closeSearchSuggestions();
-    buildTabs();
-    renderAll();
-    document.getElementById('browseLayout')?.scrollIntoView({behavior:'smooth',block:'start'});
+    openCategoryPage(item.label);
   } else {
     input.value = item.label;
     closeSearchSuggestions();
@@ -2687,10 +2795,9 @@ function openMenuModal(vendorId){
   document.getElementById('menuModalSpec').textContent  = _menuVendor.speciality||'';
   document.getElementById('menuModalTerm').textContent  = _catCfg.modalTerm;
   document.getElementById('menuCustomerName').value = currentCustomer ? (currentCustomer.name||'') : '';
-  document.getElementById('menuCustomerEmail').value = currentCustomer ? (currentCustomer.email||'') : '';
   document.getElementById('menuCustomerMobile').value = currentCustomer ? (currentCustomer.mobile||'') : '';
   document.getElementById('menuCustomerAddress').value = currentCustomer ? (currentCustomer.address||'') : '';
-  ['menuCustomerName','menuCustomerEmail','menuCustomerMobile','menuCustomerAddress'].forEach(id=>{
+  ['menuCustomerName','menuCustomerMobile','menuCustomerAddress'].forEach(id=>{
     document.getElementById(id).style.borderColor = 'var(--border)';
   });
   const addrPicker = document.getElementById('menuAddressPicker');
@@ -2703,7 +2810,6 @@ function openMenuModal(vendorId){
   } else {
     addrPicker.style.display = 'none';
   }
-  resetMenuOtpUI();
 
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
   const list = document.getElementById('menuItemsList');
@@ -2751,8 +2857,17 @@ function openMenuModal(vendorId){
           ${it.price>0?`<div class="menu-item-price" style="flex-shrink:0;margin-left:10px">₹${it.price}</div>`:`<div class="menu-item-price" style="flex-shrink:0;margin-left:10px;font-size:.72rem;color:var(--text-muted)">Enquiry</div>`}
         </div>`).join('');
     }
-    document.getElementById('menuOrderBtn').style.display = 'flex';
-    document.getElementById('menuFlatRow').style.display  = 'flex';
+    const orderBtn = document.getElementById('menuOrderBtn');
+    orderBtn.style.display = 'flex';
+    if(currentCustomer){
+      document.getElementById('menuFlatRow').style.display = 'flex';
+      orderBtn.onclick = placeOrder;
+      orderBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Place Order via WhatsApp';
+    } else {
+      document.getElementById('menuFlatRow').style.display = 'none';
+      orderBtn.onclick = openCustomerAuthModal;
+      orderBtn.innerHTML = '<i class="fa fa-right-to-bracket"></i> Login to Order';
+    }
   }
   // Populate vendor image and description
   const imgSrc = _menuVendor.image || IMGS[_menuVendor.id] || '';
@@ -2784,9 +2899,8 @@ function openMenuModal(vendorId){
   // Similar vendors
   _renderSimilarVendors(vendorId);
 
-  // Show inline detail view, hide search + browse layout
-  const browseLayout = document.getElementById('browseLayout');
-  if(browseLayout) browseLayout.style.display = 'none';
+  // Show inline detail view, hide search + whichever browse level is active
+  hideAllBrowseLevels();
   const searchSection = document.getElementById('searchSection');
   if(searchSection) searchSection.style.display = 'none';
   document.getElementById('vendorDetailView').style.display = 'block';
@@ -2797,11 +2911,9 @@ function openMenuModal(vendorId){
 
 function closeVendorDetail(){
   document.getElementById('vendorDetailView').style.display = 'none';
-  const browseLayout = document.getElementById('browseLayout');
-  if(browseLayout) browseLayout.style.display = '';
   const searchSection = document.getElementById('searchSection');
   if(searchSection) searchSection.style.display = '';
-  window.scrollTo({top: (searchSection||document.getElementById('browseLayout')).offsetTop - 80, behavior:'smooth'});
+  showBrowseLevel(_browseLevel);
   _menuVendor = null; _catCfg = null; _menuQtys = {};
 }
 
@@ -2827,7 +2939,7 @@ function _renderSimilarVendors(currentId){
         var ratingHtml = rating
           ? '<div style="font-size:.72rem;color:var(--gold);font-weight:600">★ ' + rating.avg + '<span style="color:var(--text-muted);font-weight:400"> (' + rating.count + ')</span></div>'
           : '<div style="font-size:.72rem;color:var(--text-muted)">Tap to view</div>';
-        return '<div onclick="openMenuModal(\'' + v.id + '\')" style="cursor:pointer;background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,border-color .2s,transform .2s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 24px rgba(232,121,42,.15)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+        return '<div onclick="openMenuModal(\'' + v.id + '\')" style="cursor:pointer;background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,border-color .2s,transform .2s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 24px rgba(255,153,51,.18)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
           + imgHtml
           + '<div style="padding:8px 10px">'
           + '<div style="font-size:.82rem;font-weight:700;color:var(--green-dark);line-height:1.3;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + v.venture + '</div>'
@@ -2848,23 +2960,26 @@ function _updMenuTotal(){
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
   const btn = document.getElementById('menuOrderBtn');
   if(!btn) return;
+  const label = currentCustomer ? _catCfg.actionText : 'Login to Order';
+  const icon = currentCustomer ? 'fab fa-whatsapp' : 'fa fa-right-to-bracket';
   if(_catCfg.useQty){
     let total=0;
     menu.forEach(it=>{ total+=((_menuQtys[it.id]||0)*it.price); });
     btn.innerHTML = total>0
-      ? `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText} — ₹${total}`
-      : `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText}`;
+      ? `<i class="${icon}"></i> ${label} — ₹${total}`
+      : `<i class="${icon}"></i> ${label}`;
   } else {
     const anyChecked = menu.some(it=>document.getElementById('chk_'+it.id)?.checked);
     const total = menu.filter(it=>document.getElementById('chk_'+it.id)?.checked).reduce((s,it)=>s+(it.price||0),0);
     btn.innerHTML = anyChecked && total>0
-      ? `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText} — ₹${total}`
-      : `<i class="fab fa-whatsapp"></i> ${_catCfg.actionText}`;
+      ? `<i class="${icon}"></i> ${label} — ₹${total}`
+      : `<i class="${icon}"></i> ${label}`;
   }
 }
 
 function placeOrder(){
   if(!_menuVendor||!_catCfg) return;
+  if(!currentCustomer){ openCustomerAuthModal(); return; }
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
   const wa = _menuVendor.whatsapp||_menuVendor.phone;
 
@@ -2886,13 +3001,11 @@ function placeOrder(){
     });
   }
 
-  // Validate customer details (always required regardless of category)
+  // Validate customer details (name/mobile/address — email no longer needed to order)
   const nameEl    = document.getElementById('menuCustomerName');
-  const emailEl   = document.getElementById('menuCustomerEmail');
   const mobileEl  = document.getElementById('menuCustomerMobile');
   const addressEl = document.getElementById('menuCustomerAddress');
   const name    = (nameEl.value||'').trim();
-  const email   = (emailEl.value||'').trim().toLowerCase();
   const mobile  = (mobileEl.value||'').trim();
   const address = (addressEl.value||'').trim();
 
@@ -2902,12 +3015,6 @@ function placeOrder(){
     showToast('Please enter your name');
     valid = false;
   } else { nameEl.style.borderColor = 'var(--green)'; }
-
-  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    emailEl.style.borderColor = 'var(--danger)';
-    if(valid) showToast('Please enter a valid email address');
-    valid = false;
-  } else { emailEl.style.borderColor = 'var(--green)'; }
 
   if(!mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g,''))){
     mobileEl.style.borderColor = 'var(--danger)';
@@ -2923,63 +3030,7 @@ function placeOrder(){
 
   if(!valid) return;
 
-  const ctx = {chosen,lines,total,name,email,mobile,address,wa};
-
-  // Already logged in as this exact customer, or already verified this email in this modal session
-  if((currentCustomer && currentCustomer.email===email) || _custOtp.verifiedEmail===email){
-    _finalizePlaceOrder(ctx);
-    return;
-  }
-
-  // First time this session for this email — send OTP and pause for verification
-  _pendingOrderCtx = ctx;
-  const btn = document.getElementById('menuOrderBtn');
-  if(btn){ btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending code…'; }
-  sendCustomerOtp(email, ()=>{
-    document.getElementById('menuOtpRow').style.display = 'flex';
-    const hint = document.getElementById('menuOtpHint');
-    hint.style.display = 'block';
-    hint.textContent = `Enter the code we emailed to ${email} to confirm your order.`;
-    if(btn){
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa fa-check"></i> Verify & Place Order';
-      btn.onclick = verifyMenuOtpAndOrder;
-    }
-    document.getElementById('menuOtpInput').focus();
-  }).then(sent=>{
-    if(!sent && btn){ btn.disabled = false; btn.innerHTML = '<i class="fab fa-whatsapp"></i> Place Order via WhatsApp'; }
-  });
-}
-
-async function verifyMenuOtpAndOrder(){
-  const code = (document.getElementById('menuOtpInput').value||'').trim();
-  if(!verifyCustomerOtpCode(code)){ showToast('Invalid or expired code'); return; }
-  const ctx = _pendingOrderCtx;
-  if(!ctx) return;
-  await fsSaveCustomerProfile({name:ctx.name,email:ctx.email,mobile:ctx.mobile,address:ctx.address});
-  customerLogin({name:ctx.name,email:ctx.email,mobile:ctx.mobile,address:ctx.address});
-  _finalizePlaceOrder(ctx);
-}
-
-function resendMenuOtp(){
-  if(!_pendingOrderCtx) return;
-  sendCustomerOtp(_pendingOrderCtx.email);
-}
-
-function resetMenuOtpUI(){
-  _pendingOrderCtx = null;
-  const row = document.getElementById('menuOtpRow');
-  const hint = document.getElementById('menuOtpHint');
-  const otpInput = document.getElementById('menuOtpInput');
-  if(row) row.style.display = 'none';
-  if(hint) hint.style.display = 'none';
-  if(otpInput) otpInput.value = '';
-  const btn = document.getElementById('menuOrderBtn');
-  if(btn){
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fab fa-whatsapp"></i> Place Order via WhatsApp';
-    btn.onclick = placeOrder;
-  }
+  _finalizePlaceOrder({chosen,lines,total,name,mobile,address,wa});
 }
 
 function onMenuAddressPick(){
@@ -2991,26 +3042,24 @@ function onMenuAddressPick(){
 }
 
 function _finalizePlaceOrder(ctx){
-  const {chosen,lines,total,name,email,mobile,address,wa} = ctx;
+  const {chosen,lines,total,name,mobile,address,wa} = ctx;
   const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, address)}\n👤 ${name}\n📱 Mobile: ${mobile}`;
   window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`, '_blank');
   fsRecordStat(_menuVendor.id,'orderClicks');
   fsRecordStat(_menuVendor.id,'whatsappClicks');
-  if(_catCfg.useQty){
-    fsLogOrder(_menuVendor.id,_menuVendor.venture,
-      chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]})),
-      total, `${address} | 📱 ${mobile}`, email, name);
-  }
-  closeVendorDetail();
-  _menuQtys={};
-  resetMenuOtpUI();
+  fsLogOrder(_menuVendor.id,_menuVendor.venture,
+    chosen.map(it=>({name:it.name,price:it.price,qty:_menuQtys[it.id]||1})),
+    total, `${address} | 📱 ${mobile}`, currentCustomer?.email||null, name, mobile);
   const toastMap = {
     "I'm Interested — WhatsApp":'Interest sent via WhatsApp!',
     'Consult Now — WhatsApp':'Consultation request sent!',
     'Book Now — WhatsApp':'Booking request sent!',
     'Connect Now — WhatsApp':'Message sent via WhatsApp!'
   };
-  showToast(toastMap[_catCfg.actionText]||'Sent via WhatsApp!');
+  const toastMsg = toastMap[_catCfg.actionText]||'Sent via WhatsApp!';
+  closeVendorDetail();
+  _menuQtys={};
+  showToast(toastMsg);
 }
 
 function showVendorContact(type){
@@ -3049,19 +3098,18 @@ function showVendorContact(type){
   }
 }
 
-/* ═══════════ CATEGORY TABS ═══════════ */
+/* ═══════════ CATEGORY TABS (quick-jump navigation into the Category-level screen) ═══════════ */
 function buildTabs(){
   const el = document.getElementById('catTabs');
   if(!el) return;
   el.innerHTML = '';
   const mk = (label, val, icon) => {
     const b = document.createElement('button');
-    b.className = 'cat-tab' + (activeFilter===val?' active':'');
+    b.className = 'cat-tab' + (_browseLevel==='category' && _browseCategory===val ? ' active' : '');
     b.innerHTML = `<span class="cat-tab-icon"><i class="fa ${icon}"></i></span><span class="cat-tab-label">${label}</span>`;
-    b.onclick = () => { activeFilter = val; buildTabs(); renderAll(); };
+    b.onclick = () => openCategoryPage(val);
     el.appendChild(b);
   };
-  mk('All', 'All', 'fa-grip');
   CATS.forEach(c => mk(c.name.split(',')[0], c.name, c.icon));
 }
 
@@ -3242,7 +3290,69 @@ function selectSocietyBox(idx){
   const sel = document.getElementById('societySelect');
   if(sel) sel.value = s.name;
   renderSocietyBoxes(_societyBoxesList);
+  openSocietyPage();
+}
+
+/* ═══════════ DRILL-DOWN NAVIGATION (Home → Society → Category → Business) ═══════════ */
+function hideAllBrowseLevels(){
+  ['browseLevelSocieties','browseLevelSociety','browseLevelCategory'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'none';
+  });
+}
+function showBrowseLevel(level){
+  _browseLevel = level;
+  hideAllBrowseLevels();
+  const map = { societies:'browseLevelSocieties', society:'browseLevelSociety', category:'browseLevelCategory' };
+  const el = document.getElementById(map[level]);
+  if(el) el.style.display = '';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function openSocietyPage(){
+  const titleEl = document.getElementById('societyPageTitle');
+  if(titleEl) titleEl.textContent = selectedSociety;
+  showBrowseLevel('society');
+  buildTabs();
   renderAll();
+}
+function backToSocieties(){
+  showBrowseLevel('societies');
+}
+function backToSociety(){
+  _browseCategory = null;
+  showBrowseLevel('society');
+  buildTabs();
+}
+function openCategoryPage(catName){
+  _browseCategory = catName;
+  const titleEl = document.getElementById('categoryPageTitle');
+  if(titleEl) titleEl.textContent = `${catName.split(',')[0]} in ${selectedSociety}`;
+  showBrowseLevel('category');
+  buildTabs();
+  renderCategoryPage();
+}
+function renderCategoryPage(){
+  const grid = document.getElementById('bizBoxGrid');
+  if(!grid) return;
+  const q = (document.getElementById('searchInput').value||'').trim();
+  let items = DATA.filter(d => d.cat === _browseCategory && (d.society||'Prateek Laurel')===selectedSociety);
+  if(q) items = items.filter(d => itemMatchesQuery(d, q));
+  grid.innerHTML = items.length
+    ? items.map(item => makeBizBox(item)).join('')
+    : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses in this category yet.</p></div>`;
+}
+function makeBizBox(item){
+  const imgSrc = item.image || IMGS[item.id] || '';
+  const img = imgSrc
+    ? `<img src="${imgSrc}" alt="${esc(item.venture)}" loading="lazy">`
+    : `<div class="default-logo">${PL_LOGO_SVG}</div>`;
+  return `<div class="biz-box" onclick="openMenuModal('${item.id}')">
+    <div class="biz-box-img">${img}</div>
+    <div class="biz-box-body">
+      <div class="biz-box-name">${esc(item.venture)}</div>
+      <div class="biz-box-spec">${esc(item.speciality||'')}</div>
+    </div>
+  </div>`;
 }
 /* Reverse-geocode lat/lng into a short readable address via Google Maps Geocoding API. */
 async function _reverseGeocode(lat,lng){
@@ -5103,11 +5213,11 @@ async function migrateFromSeed(){
   // Update header buttons
   updatePanelTabs();
 
-  // Restore persisted customer login (email OTP session)
-  if(_restoredCustomerEmail){
-    fsLoadCustomerProfile(_restoredCustomerEmail).then(profile=>{
+  // Restore persisted customer login (mobile OTP session)
+  if(_restoredCustomerMobile){
+    fsLoadCustomerProfile(_restoredCustomerMobile).then(profile=>{
       if(profile){ currentCustomer = profile; updatePanelTabs(); }
-      else localStorage.removeItem('hb_customerEmail');
+      else localStorage.removeItem('hb_customerMobile');
     });
   }
 

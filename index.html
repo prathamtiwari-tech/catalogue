@@ -527,7 +527,9 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
     <div id="caStep3" style="display:none;text-align:left">
       <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px"><i class="fa fa-circle-check" style="color:var(--green)"></i> Mobile verified! Complete your profile:</p>
       <div class="form-group" style="margin-bottom:12px"><label>Full Name *</label><input type="text" id="ca_name" placeholder="Your name"></div>
-      <div class="form-group" style="margin-bottom:12px"><label>Address</label><input type="text" id="ca_address" placeholder="Flat, tower, society…"></div>
+      <div class="form-group" style="margin-bottom:8px"><label>Flat / House No.</label><input type="text" id="ca_addrFlat" placeholder="e.g. A-501"></div>
+      <div class="form-group" style="margin-bottom:8px"><label>Tower / Building</label><input type="text" id="ca_addrTower" placeholder="e.g. Tower C"></div>
+      <div class="form-group" style="margin-bottom:12px"><label>Landmark (optional)</label><input type="text" id="ca_addrLandmark" placeholder="e.g. Gate 2"></div>
       <div class="form-group" style="margin-bottom:8px">
         <label>Email (optional)</label>
         <div style="display:flex;gap:8px">
@@ -1073,9 +1075,10 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
       <input type="text" id="menuCustomerAddress" placeholder="Complete delivery address (flat, tower, society…) *" maxlength="200"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
     </div>
-    <button class="order-btn" id="menuOrderBtn" onclick="placeOrder()" style="margin-bottom:14px">
+    <button class="order-btn" id="menuOrderBtn" onclick="placeOrder()" style="margin-bottom:6px">
       <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
     </button>
+    <p style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-bottom:14px">By tapping Order Now, you agree to our <a onclick="openPolicyModal('terms')" style="color:var(--green-dark);cursor:pointer;text-decoration:underline">Terms &amp; Conditions</a>.</p>
 
     <!-- Contact vendor -->
     <div id="menuContactSection" style="display:none;border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px">
@@ -1084,6 +1087,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
         <button id="menuCallBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:120px;justify-content:center" onclick="showVendorContact('call')"><i class="fa fa-phone"></i> Call Vendor</button>
         <button id="menuWaBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:120px;justify-content:center;color:#1a8c3f;border-color:#25d366" onclick="showVendorContact('wa')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
       </div>
+      <p style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-top:10px">By contacting the vendor, you agree to our <a onclick="openPolicyModal('terms')" style="color:var(--green-dark);cursor:pointer;text-decoration:underline">Terms &amp; Conditions</a>.</p>
       <div id="menuVendorNumber" style="display:none;margin-top:10px;text-align:center;font-weight:700;font-size:1.1rem;color:var(--green-dark);background:var(--green-pale);padding:10px 14px;border-radius:8px"></div>
     </div>
 
@@ -1862,7 +1866,9 @@ function openCustomerAuthModal(){
   document.getElementById('ca_mobile').value='';
   document.getElementById('ca_otp').value='';
   document.getElementById('ca_name').value='';
-  document.getElementById('ca_address').value='';
+  document.getElementById('ca_addrFlat').value='';
+  document.getElementById('ca_addrTower').value='';
+  document.getElementById('ca_addrLandmark').value='';
   document.getElementById('ca_email').value='';
   document.getElementById('ca_emailOtp').value='';
   document.getElementById('caEmailOtpRow').style.display='none';
@@ -1945,16 +1951,28 @@ function caVerifyEmailOtp(){
   showToast('Email verified ✓');
 }
 
+/* Composes a full address from separate flat/tower/landmark boxes into the single
+   string used everywhere else (order messages, address picker, account display). */
+function _composeAddress(flat, tower, landmark){
+  const parts = [flat, tower].filter(Boolean);
+  let s = parts.join(', ');
+  if(landmark) s += (s ? ' — ' : '') + 'Near ' + landmark;
+  return s;
+}
+
 async function caSaveProfile(){
   const name    = (document.getElementById('ca_name').value||'').trim();
-  const address = (document.getElementById('ca_address').value||'').trim();
+  const flat    = (document.getElementById('ca_addrFlat').value||'').trim();
+  const tower   = (document.getElementById('ca_addrTower').value||'').trim();
+  const landmark= (document.getElementById('ca_addrLandmark').value||'').trim();
+  const address = _composeAddress(flat, tower, landmark);
   const emailInput = (document.getElementById('ca_email').value||'').trim().toLowerCase();
   const errEl   = document.getElementById('caStep3Err');
   if(!name){
     errEl.textContent='Please enter your name.'; errEl.style.display='block'; return;
   }
   errEl.style.display='none';
-  const addresses = address ? [{label:'Home', address}] : [];
+  const addresses = address ? [{label:'Home', flat, tower, landmark, address}] : [];
   const emailVerified = !!(emailInput && _caEmailVerified===emailInput);
   const profile = { name, mobile:_vnMobile, email:emailInput, emailVerified, address, addresses };
   await fsSaveCustomerProfile(profile);
@@ -2024,14 +2042,20 @@ async function renderCustomerAccountBody(){
             <div style="font-weight:700;font-size:.7rem;color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em">${esc(a.label||'Address')}</div>
             <div style="font-size:.84rem;color:var(--text)">${esc(a.address)}</div>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="deleteCustomerAddress(${i})"><i class="fa fa-trash" style="color:var(--danger)"></i></button>
+          <div style="display:flex;gap:2px;flex-shrink:0">
+            <button class="btn btn-ghost btn-sm" onclick="openAddAddressForm(${i})"><i class="fa fa-pen"></i></button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteCustomerAddress(${i})"><i class="fa fa-trash" style="color:var(--danger)"></i></button>
+          </div>
         </div>`).join('') : '<p style="color:var(--text-muted);font-size:.84rem;margin-bottom:10px">No saved addresses yet.</p>'}
     </div>
     <div id="caAddAddressForm" style="display:none;border:1.5px dashed var(--border);border-radius:10px;padding:12px;margin-bottom:16px">
+      <div id="caAddAddressFormTitle" style="font-weight:700;font-size:.8rem;color:var(--green-dark);margin-bottom:10px">Add Address</div>
       <div class="form-group" style="margin-bottom:8px"><label>Label</label><input id="caNewAddrLabel" placeholder="Home, Office…"></div>
-      <div class="form-group" style="margin-bottom:10px"><label>Address</label><input id="caNewAddrText" placeholder="Flat, tower, society…"></div>
+      <div class="form-group" style="margin-bottom:8px"><label>Flat / House No. *</label><input id="caNewAddrFlat" placeholder="e.g. A-501"></div>
+      <div class="form-group" style="margin-bottom:8px"><label>Tower / Building</label><input id="caNewAddrTower" placeholder="e.g. Tower C"></div>
+      <div class="form-group" style="margin-bottom:10px"><label>Landmark (optional)</label><input id="caNewAddrLandmark" placeholder="e.g. Gate 2"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('caAddAddressForm').style.display='none'">Cancel</button>
+        <button class="btn btn-ghost btn-sm" onclick="cancelAddressForm()">Cancel</button>
         <button class="btn btn-primary btn-sm" onclick="saveNewCustomerAddress()"><i class="fa fa-floppy-disk"></i> Save Address</button>
       </div>
     </div>
@@ -2050,20 +2074,49 @@ async function renderCustomerAccountBody(){
   `;
 }
 
-function openAddAddressForm(){
+let _caEditingAddressIdx = null;
+function openAddAddressForm(idx){
+  _caEditingAddressIdx = (idx===undefined || idx===null) ? null : idx;
   const f = document.getElementById('caAddAddressForm');
   if(f) f.style.display = 'block';
-  document.getElementById('caNewAddrLabel')?.focus();
+  const titleEl = document.getElementById('caAddAddressFormTitle');
+  const labelEl = document.getElementById('caNewAddrLabel');
+  const flatEl = document.getElementById('caNewAddrFlat');
+  const towerEl = document.getElementById('caNewAddrTower');
+  const landmarkEl = document.getElementById('caNewAddrLandmark');
+  const a = _caEditingAddressIdx!==null ? (currentCustomer.addresses||[])[_caEditingAddressIdx] : null;
+  if(titleEl) titleEl.textContent = a ? 'Edit Address' : 'Add Address';
+  if(labelEl) labelEl.value = a?.label||'';
+  if(flatEl) flatEl.value = a?.flat||'';
+  if(towerEl) towerEl.value = a?.tower||'';
+  if(landmarkEl) landmarkEl.value = a?.landmark||'';
+  flatEl?.focus();
+}
+
+function cancelAddressForm(){
+  _caEditingAddressIdx = null;
+  const f = document.getElementById('caAddAddressForm');
+  if(f) f.style.display = 'none';
 }
 
 async function saveNewCustomerAddress(){
-  const label   = (document.getElementById('caNewAddrLabel').value||'').trim() || 'Address';
-  const address = (document.getElementById('caNewAddrText').value||'').trim();
-  if(!address){ showToast('Please enter an address'); return; }
-  const addresses = [...(currentCustomer.addresses||[]), {label, address}];
+  const label    = (document.getElementById('caNewAddrLabel').value||'').trim() || 'Address';
+  const flat     = (document.getElementById('caNewAddrFlat').value||'').trim();
+  const tower    = (document.getElementById('caNewAddrTower').value||'').trim();
+  const landmark = (document.getElementById('caNewAddrLandmark').value||'').trim();
+  if(!flat){ showToast('Please enter your flat / house number'); return; }
+  const address = _composeAddress(flat, tower, landmark);
+  const entry = {label, flat, tower, landmark, address};
+  const addresses = [...(currentCustomer.addresses||[])];
+  if(_caEditingAddressIdx!==null && addresses[_caEditingAddressIdx]){
+    addresses[_caEditingAddressIdx] = entry;
+  } else {
+    addresses.push(entry);
+  }
   const profile = { ...currentCustomer, addresses, address: currentCustomer.address || address };
   await fsSaveCustomerProfile(profile);
   customerLogin(profile);
+  _caEditingAddressIdx = null;
   renderCustomerAccountBody();
   showToast('Address saved');
 }

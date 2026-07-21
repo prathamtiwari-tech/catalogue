@@ -35,6 +35,13 @@
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
 
+/* BOTTOM NAV — app-shell (Home / Orders / Account) */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:150;display:flex;background:var(--white);border-top:1px solid var(--border);box-shadow:0 -4px 20px rgba(20,20,30,.08);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:6px 4px;font-family:inherit;color:var(--text-muted);font-size:.68rem;font-weight:600;border-radius:10px;transition:color .15s}
+.bn-item i{font-size:1.15rem}
+.bn-item.active{color:var(--green)}
+.bn-item:hover{color:var(--green)}
+
 /* HEADER */
 header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25)}
 .header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 28px;gap:16px}
@@ -74,17 +81,20 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .society-select{border:1.5px solid var(--green);border-radius:8px;padding:5px 32px 5px 10px;font-size:.84rem;font-family:inherit;background:var(--white);color:var(--green-dark);cursor:pointer;outline:none;font-weight:600;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233E4750' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:box-shadow .2s}
 .society-select:focus{box-shadow:0 0 0 2px rgba(232,121,42,.2)}
 
-/* HERO BAND (customer browse view) */
-.hero-band{background:var(--green);padding:46px 28px 66px;text-align:center}
-.hero-band-inner{max-width:640px;margin:0 auto}
-.hero-band h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.3rem);color:#fff;margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,.18)}
-.hero-band p{color:rgba(255,255,255,.92);font-size:.95rem;max-width:480px;margin:0 auto}
+/* BROWSE TOOLBAR — big search, plain section (no more hero overlap) */
+.browse-toolbar{padding:18px 20px 6px}
+.browse-toolbar-inner{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 
-/* BROWSE TOOLBAR — society + search, overlapping the hero's bottom edge */
-.browse-toolbar{padding:0 20px;margin-top:-40px}
-.browse-toolbar-inner{max-width:760px;margin:0 auto;background:var(--white);border-radius:18px;box-shadow:0 16px 40px rgba(62,71,80,.2);padding:20px 24px;display:flex;flex-direction:column;gap:14px}
-.society-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--green-dark);font-weight:700}
-.society-row i{color:var(--green)}
+/* SOCIETY BOXES — replaces the old dropdown with tappable boxes (Blinkit/UC style) */
+.society-box-section{max-width:1000px;margin:0 auto;padding:14px 20px 4px}
+.society-box-row{display:flex;flex-wrap:wrap;gap:10px}
+.society-box{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:.86rem;font-weight:600;color:var(--text);transition:all var(--tr);white-space:nowrap}
+.society-box:hover{border-color:var(--green)}
+.society-box.active{background:var(--green);border-color:var(--green);color:#fff}
+.society-box.active i{color:#fff}
+.society-box i{color:var(--green);font-size:.8rem}
+.society-box-more{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:12px;border:1.5px dashed var(--border);background:var(--cream);cursor:pointer;font-size:.86rem;font-weight:600;color:var(--green-dark)}
+.society-box-more:hover{border-color:var(--green)}
 
 /* LOCATION BAR — Blinkit/Zepto-style precise-location strip under the header */
 .location-bar{background:var(--white);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:10px;max-width:1400px;margin:0 auto;cursor:pointer}
@@ -92,11 +102,10 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .location-bar .loc-text-wrap{display:flex;flex-direction:column;min-width:0;flex:1}
 .location-bar .loc-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-weight:700}
 .location-bar .loc-address{font-size:.86rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.location-bar .loc-society-select{border:none;background:var(--cream);color:var(--green-dark);font-weight:700;font-size:.78rem;padding:6px 10px;border-radius:20px;font-family:inherit;flex-shrink:0;max-width:180px}
+.location-bar .loc-society-select{display:none}
 .location-bar .loc-chevron{color:var(--text-muted);font-size:.7rem;flex-shrink:0}
 @media (max-width:640px){
   .location-bar{padding:8px 12px}
-  .location-bar .loc-society-select{max-width:110px;font-size:.72rem}
 }
 
 /* Manual location search modal */
@@ -122,9 +131,10 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 
 /* BIG SEARCH */
 .search-big-wrap{position:relative;max-width:700px;margin:0 auto;width:100%}
-.search-big-wrap i.srch-ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1.05rem;pointer-events:none}
-.search-big-wrap input{width:100%;padding:14px 42px 14px 52px;border:2px solid var(--border);border-radius:14px;font-size:.98rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box}
-.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(232,121,42,.1)}
+.search-big-wrap i.srch-ico{position:absolute;left:22px;top:50%;transform:translateY(-50%);color:var(--green);font-size:1.15rem;pointer-events:none}
+.search-big-wrap input{width:100%;padding:19px 48px 19px 58px;border:2px solid var(--border);border-radius:50px;font-size:1.05rem;font-family:inherit;background:var(--white);outline:none;transition:border .2s,box-shadow .2s;box-sizing:border-box;box-shadow:0 6px 20px rgba(20,20,30,.06)}
+.search-big-wrap input::placeholder{color:var(--text-muted)}
+.search-big-wrap input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(232,121,42,.12)}
 .search-suggest{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:var(--shadow);max-height:360px;overflow-y:auto;z-index:60;display:none;text-align:left;padding:6px 0}
 .search-suggest.open{display:block}
 .search-suggest-group{padding:10px 16px 4px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
@@ -135,16 +145,17 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .search-suggest-sub{font-size:.72rem;color:var(--text-muted)}
 .search-suggest-empty{padding:16px;text-align:center;font-size:.82rem;color:var(--text-muted)}
 /* BROWSE LAYOUT */
-.browse-layout{max-width:1400px;margin:0 auto;padding:20px 24px 60px;display:flex;gap:20px;align-items:flex-start}
-.browse-content{flex:1;min-width:0}
-/* CATEGORY SIDEBAR */
-.cat-sidebar{width:214px;flex-shrink:0;position:sticky;top:72px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
-.cat-sidebar-hdr{font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;padding:12px 14px 8px;border-bottom:1px solid var(--border)}
-.cat-tab{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:none;background:transparent;color:var(--text);cursor:pointer;font-size:.84rem;font-family:inherit;font-weight:500;transition:background .15s,color .15s;text-align:left;border-radius:0}
-.cat-tab:hover{background:var(--green-pale);color:var(--green-dark)}
-.cat-tab.active{background:var(--green);color:#fff;font-weight:700}
-.cat-tab-icon{width:28px;height:28px;border-radius:7px;background:rgba(232,121,42,.1);display:flex;align-items:center;justify-content:center;font-size:.76rem;flex-shrink:0;transition:background .15s}
-.cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22)}
+.browse-layout{max-width:1400px;margin:0 auto;padding:20px 24px 60px}
+.browse-content{width:100%}
+/* CATEGORY BOXES — replaces the old left sidebar with tappable boxes (Blinkit/UC style) */
+.cat-box-label{font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.cat-box-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
+.cat-tab{display:flex;flex-direction:column;align-items:center;gap:8px;width:94px;padding:14px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
+.cat-tab:hover{border-color:var(--green)}
+.cat-tab.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.cat-tab-icon{width:42px;height:42px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s}
+.cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22);color:#fff}
+.cat-tab-label{font-size:.72rem;line-height:1.25}
 /* GRID */
 .grid-container{margin-bottom:40px}
 .category-section{margin-bottom:40px}
@@ -223,7 +234,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
 .empty-state i{font-size:3rem;margin-bottom:12px;display:block;opacity:.35}
 
-footer{background:var(--green-dark);color:rgba(255,255,255,.7);text-align:center;padding:18px;font-size:.77rem}
+footer{background:var(--green-dark);color:rgba(255,255,255,.7);text-align:center;padding:18px 18px 76px;font-size:.77rem}
 footer strong{color:var(--gold-light)}
 
 /* ── PANEL TABS ── */
@@ -303,27 +314,24 @@ footer strong{color:var(--gold-light)}
   .stat-box{min-width:80px;padding:8px 14px}
   .stat-box .num{font-size:1.4rem}
 
-  /* ── HERO BAND + TOOLBAR ── */
-  .hero-band{padding:30px 18px 46px}
-  .hero-band p{font-size:.84rem}
-  .browse-toolbar{padding:0 12px;margin-top:-28px}
-  .browse-toolbar-inner{padding:14px 16px;border-radius:14px}
-  .society-row{font-size:.74rem;gap:6px}
-  .search-big-wrap input{padding:12px 36px 12px 44px;font-size:.9rem;border-radius:10px}
-  .search-big-wrap i.srch-ico{left:14px;font-size:.9rem}
+  /* ── SEARCH TOOLBAR + SOCIETY BOXES ── */
+  .browse-toolbar{padding:10px 12px 4px}
+  .society-box-section{padding:10px 12px 2px}
+  .society-box{padding:8px 12px;font-size:.78rem}
+  .society-box-more{padding:8px 12px;font-size:.78rem}
+  .search-big-wrap input{padding:15px 40px 15px 48px;font-size:.92rem;border-radius:50px}
+  .search-big-wrap i.srch-ico{left:18px;font-size:1rem}
   .search-suggest{border-radius:10px;max-height:280px}
   .search-suggest-item{padding:8px 12px;font-size:.82rem}
-  /* ── BROWSE LAYOUT: stack vertically on mobile ── */
-  .browse-layout{flex-direction:column;padding:0 0 40px;gap:0}
-  /* Sidebar becomes horizontal scrollable strip */
-  .cat-sidebar{width:100%;border-radius:0;border:none;border-bottom:2px solid var(--green-pale);position:relative;top:0;overflow-x:auto;display:flex;flex-direction:row;align-items:center;padding:8px 12px;gap:6px;scrollbar-width:none}
-  .cat-sidebar::-webkit-scrollbar{display:none}
-  .cat-sidebar-hdr{display:none}
-  .cat-tab{flex-shrink:0;width:auto;border-radius:20px;border:1.5px solid var(--border);padding:6px 12px;font-size:.74rem;white-space:nowrap;background:var(--white);color:var(--text-muted)}
-  .cat-tab.active{background:var(--green);color:#fff;border-color:var(--green)}
-  .cat-tab-icon{display:none}
+  /* ── BROWSE LAYOUT: category boxes wrap into a compact grid on mobile ── */
+  .browse-layout{padding:0 14px 40px}
+  .cat-box-label{margin-top:14px}
+  .cat-box-row{gap:8px;margin-bottom:22px}
+  .cat-tab{width:72px;padding:10px 4px;border-radius:14px;gap:6px}
+  .cat-tab-icon{width:34px;height:34px;font-size:.9rem;border-radius:10px}
+  .cat-tab-label{font-size:.66rem}
   /* Grid inside browse-content */
-  .browse-content{padding:12px 14px 0;width:100%;box-sizing:border-box}
+  .browse-content{width:100%;box-sizing:border-box}
   .grid-container{margin-bottom:24px}
   .tiles{grid-template-columns:1fr;gap:14px}
 
@@ -938,17 +946,17 @@ footer strong{color:var(--gold-light)}
 <!-- ══════════════════════════════════════════ -->
 <div id="panel-customer">
 
-<!-- ── HERO BAND ── -->
-<div class="hero-band">
-  <div class="hero-band-inner">
-    <h2 id="heroHeadline">Discover &amp; Support Local Businesses</h2>
-    <p id="heroSubText">For the residents, by the residents.</p>
-  </div>
-</div>
-
 <span id="statTotal" style="display:none"></span>
 
-<!-- ── SOCIETY SELECTOR + BIG SEARCH (overlaps hero) ── -->
+<!-- ── HOME PAGE (browse) ── -->
+<div id="customerHomePage">
+
+<!-- ── SOCIETY BOXES (auto-detected nearby societies) ── -->
+<div class="society-box-section" id="societyBoxSection">
+  <div class="society-box-row" id="societyBoxRow"></div>
+</div>
+
+<!-- ── BIG SEARCH ── -->
 <div class="browse-toolbar" id="searchSection">
   <div class="browse-toolbar-inner">
     <div class="search-big-wrap">
@@ -961,9 +969,10 @@ footer strong{color:var(--gold-light)}
   </div>
 </div>
 
-<!-- ── BROWSE: sidebar + grid ── -->
+<!-- ── BROWSE: category boxes on top, business feed below ── -->
 <div class="browse-layout" id="browseLayout">
-  <nav class="cat-sidebar" id="catTabs"></nav>
+  <div class="cat-box-label"><i class="fa fa-grip" style="margin-right:6px;opacity:.6"></i>Categories</div>
+  <nav class="cat-box-row" id="catTabs"></nav>
   <div class="browse-content">
     <div class="grid-container" id="mainGrid"></div>
   </div>
@@ -1003,6 +1012,7 @@ footer strong{color:var(--gold-light)}
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
       <input type="tel" id="menuCustomerMobile" placeholder="Your mobile number *" maxlength="15"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
+      <select id="menuAddressPicker" onchange="onMenuAddressPick()" style="display:none;width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;background:var(--white);box-sizing:border-box"></select>
       <input type="text" id="menuCustomerAddress" placeholder="Complete delivery address (flat, tower, society…) *" maxlength="200"
         style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
       <div id="menuOtpRow" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
@@ -1041,7 +1051,27 @@ footer strong{color:var(--gold-light)}
   </div>
 </div>
 
+</div><!-- end #customerHomePage -->
+
+<!-- ── ORDERS PAGE ── -->
+<div id="customerOrdersPage" style="display:none;padding:20px 16px 100px;max-width:700px;margin:0 auto;min-height:50vh">
+  <h2 style="font-family:'Playfair Display',serif;color:var(--green-dark);font-size:1.3rem;margin-bottom:16px"><i class="fa fa-receipt" style="color:var(--green)"></i> My Orders</h2>
+  <div id="customerOrdersBody"></div>
+</div>
+
+<!-- ── ACCOUNT PAGE ── -->
+<div id="customerAccountPage" style="display:none;padding:20px 16px 100px;max-width:600px;margin:0 auto;min-height:50vh">
+  <div id="customerAccountPageBody"></div>
+</div>
+
 </div><!-- end #panel-customer -->
+
+<!-- ── BOTTOM NAV (app-shell, Home / Orders / Account) ── -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item active" data-page="home" onclick="switchCustomerPage('home')"><i class="fa fa-house"></i><span>Home</span></button>
+  <button class="bn-item" data-page="orders" onclick="switchCustomerPage('orders')"><i class="fa fa-receipt"></i><span>Orders</span></button>
+  <button class="bn-item" data-page="account" onclick="switchCustomerPage('account')"><i class="fa fa-circle-user"></i><span>Account</span></button>
+</nav>
 
 <!-- ══════════════════════════════════════════ -->
 <!--  SELLER PANEL                            -->
@@ -1632,7 +1662,7 @@ async function verifyMobileOtp(code){
 }
 
 async function fsSaveCustomerProfile(profile){
-  const data = { name:profile.name||'', email:profile.email, mobile:profile.mobile||'', address:profile.address||'' };
+  const data = { name:profile.name||'', email:profile.email, mobile:profile.mobile||'', address:profile.address||'', addresses:profile.addresses||[] };
   if(!db) return data;
   try{
     if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
@@ -1665,6 +1695,17 @@ async function fsLoadCustomerOrders(email){
   }catch(e){ return []; }
 }
 
+async function fsLoadVendorOrders(vendorId){
+  if(!db || !vendorId) return [];
+  try{
+    if(auth && !auth.currentUser) await auth.signInAnonymously().catch(()=>{});
+    const snap = await db.collection('order_logs').where('vendorId','==',vendorId).get();
+    const docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    docs.sort((a,b)=>((b.ts&&b.ts.seconds)||0)-((a.ts&&a.ts.seconds)||0));
+    return docs;
+  }catch(e){ return []; }
+}
+
 function customerLogin(profile){
   currentCustomer = profile;
   localStorage.setItem('hb_customerEmail', profile.email);
@@ -1676,7 +1717,63 @@ async function customerLogout(){
   localStorage.removeItem('hb_customerEmail');
   closeModal('customerAccountModal');
   updatePanelTabs();
+  if(_customerPage==='account') renderAccountPage();
+  if(_customerPage==='orders') renderOrdersPage();
   showToast('Logged out');
+}
+
+/* ═══════════ BOTTOM NAV (Home / Orders / Account app-shell) ═══════════ */
+let _customerPage = 'home';
+function switchCustomerPage(page){
+  _customerPage = page;
+  switchPanel('customer');
+  ['home','orders','account'].forEach(p=>{
+    const el = document.getElementById('customer'+p.charAt(0).toUpperCase()+p.slice(1)+'Page');
+    if(el) el.style.display = (p===page ? '' : 'none');
+  });
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  if(page==='home') closeVendorDetail();
+  if(page==='orders') renderOrdersPage();
+  if(page==='account') renderAccountPage();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function renderOrdersPage(){
+  const body = document.getElementById('customerOrdersBody');
+  if(!body) return;
+  if(!currentCustomer){
+    body.innerHTML = `<div class="empty-state"><i class="fa fa-lock"></i><p>Login to see your orders.</p>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="openCustomerAuthModal()"><i class="fa fa-right-to-bracket"></i> Login / Sign Up</button></div>`;
+    return;
+  }
+  body.innerHTML = `<p style="color:var(--text-muted);text-align:center"><i class="fa fa-spinner fa-spin"></i> Loading…</p>`;
+  const orders = await fsLoadCustomerOrders(currentCustomer.email);
+  if(!orders.length){
+    body.innerHTML = `<div class="empty-state"><i class="fa fa-receipt"></i><p>No orders yet. Browse businesses and place your first order!</p></div>`;
+    return;
+  }
+  body.innerHTML = orders.map(o=>`
+    <div style="border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:var(--white)">
+      <div style="display:flex;justify-content:space-between;gap:10px;font-weight:700;color:var(--green-dark)">
+        <span>${esc(o.vendorName)}</span><span style="white-space:nowrap">₹${o.total||0}</span>
+      </div>
+      <div style="font-size:.8rem;color:var(--text-muted);margin-top:4px">${(o.items||[]).map(it=>`${esc(it.name)} x${it.qty}`).join(', ')}</div>
+      <div style="font-size:.72rem;color:var(--text-muted);margin-top:6px">${o.ts && o.ts.seconds ? new Date(o.ts.seconds*1000).toLocaleString() : ''}</div>
+    </div>`).join('');
+}
+
+async function renderAccountPage(){
+  const target = document.getElementById('customerAccountPageBody');
+  if(!target) return;
+  if(!currentCustomer){
+    target.innerHTML = `<div class="empty-state"><i class="fa fa-circle-user"></i><p>You're not logged in.</p>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="openCustomerAuthModal()"><i class="fa fa-right-to-bracket"></i> Login / Sign Up</button></div>`;
+    return;
+  }
+  _caEditMode = false;
+  _caTargetId = 'customerAccountPageBody';
+  await renderCustomerAccountBody();
+  target.insertAdjacentHTML('beforeend', `<button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:16px" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>`);
 }
 
 function openCustomerAuthModal(){
@@ -1744,7 +1841,8 @@ async function caSaveProfile(){
     errEl.textContent='Please enter your name and a valid mobile number.'; errEl.style.display='block'; return;
   }
   errEl.style.display='none';
-  const profile = { name, email:_custOtp.email, mobile, address };
+  const addresses = address ? [{label:'Home', address}] : [];
+  const profile = { name, email:_custOtp.email, mobile, address, addresses };
   await fsSaveCustomerProfile(profile);
   customerLogin(profile);
   closeModal('customerAuthModal');
@@ -1752,23 +1850,25 @@ async function caSaveProfile(){
 }
 
 let _caEditMode = false;
+let _caTargetId = 'caAccountBody'; // which container renderCustomerAccountBody() targets — modal vs inline Account page
 async function openCustomerAccountModal(){
   if(!currentCustomer){ openCustomerAuthModal(); return; }
   _caEditMode = false;
+  _caTargetId = 'caAccountBody';
   document.getElementById('customerAccountModal').classList.add('open');
   await renderCustomerAccountBody();
 }
 
 async function renderCustomerAccountBody(){
-  const body = document.getElementById('caAccountBody');
+  const body = document.getElementById(_caTargetId);
   if(!body || !currentCustomer) return;
   body.innerHTML = `<p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading…</p>`;
   const orders = await fsLoadCustomerOrders(currentCustomer.email);
+  const addresses = currentCustomer.addresses||[];
   if(_caEditMode){
     body.innerHTML = `
       <div class="form-group" style="margin-bottom:10px"><label>Full Name</label><input id="caEdit_name" value="${esc(currentCustomer.name)}"></div>
-      <div class="form-group" style="margin-bottom:10px"><label>Mobile Number</label><input id="caEdit_mobile" value="${esc(currentCustomer.mobile)}"></div>
-      <div class="form-group" style="margin-bottom:14px"><label>Address</label><input id="caEdit_address" value="${esc(currentCustomer.address)}"></div>
+      <div class="form-group" style="margin-bottom:14px"><label>Mobile Number</label><input id="caEdit_mobile" value="${esc(currentCustomer.mobile)}"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="_caEditMode=false;renderCustomerAccountBody()">Cancel</button>
         <button class="btn btn-primary" onclick="caSaveEditedProfile()"><i class="fa fa-floppy-disk"></i> Save</button>
@@ -1782,11 +1882,34 @@ async function renderCustomerAccountBody(){
           <div style="font-weight:700;color:var(--green-dark);margin-bottom:4px">${esc(currentCustomer.name)}</div>
           <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-envelope" style="width:14px"></i> ${esc(currentCustomer.email)}</div>
           <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-phone" style="width:14px"></i> ${esc(currentCustomer.mobile)||'—'}</div>
-          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-location-dot" style="width:14px"></i> ${esc(currentCustomer.address)||'—'}</div>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="_caEditMode=true;renderCustomerAccountBody()"><i class="fa fa-pen"></i></button>
       </div>
     </div>
+
+    <div style="font-weight:700;color:var(--green-dark);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <span><i class="fa fa-location-dot"></i> Saved Addresses</span>
+      <button class="btn btn-ghost btn-sm" onclick="openAddAddressForm()"><i class="fa fa-plus"></i> Add</button>
+    </div>
+    <div id="caAddressList" style="margin-bottom:6px">
+      ${addresses.length ? addresses.map((a,i)=>`
+        <div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+          <div>
+            <div style="font-weight:700;font-size:.7rem;color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em">${esc(a.label||'Address')}</div>
+            <div style="font-size:.84rem;color:var(--text)">${esc(a.address)}</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="deleteCustomerAddress(${i})"><i class="fa fa-trash" style="color:var(--danger)"></i></button>
+        </div>`).join('') : '<p style="color:var(--text-muted);font-size:.84rem;margin-bottom:10px">No saved addresses yet.</p>'}
+    </div>
+    <div id="caAddAddressForm" style="display:none;border:1.5px dashed var(--border);border-radius:10px;padding:12px;margin-bottom:16px">
+      <div class="form-group" style="margin-bottom:8px"><label>Label</label><input id="caNewAddrLabel" placeholder="Home, Office…"></div>
+      <div class="form-group" style="margin-bottom:10px"><label>Address</label><input id="caNewAddrText" placeholder="Flat, tower, society…"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('caAddAddressForm').style.display='none'">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="saveNewCustomerAddress()"><i class="fa fa-floppy-disk"></i> Save Address</button>
+      </div>
+    </div>
+
     <div style="font-weight:700;color:var(--green-dark);margin-bottom:10px"><i class="fa fa-receipt"></i> My Orders (${orders.length})</div>
     <div style="max-height:280px;overflow-y:auto">
     ${orders.length ? orders.map(o=>`
@@ -1801,12 +1924,38 @@ async function renderCustomerAccountBody(){
   `;
 }
 
+function openAddAddressForm(){
+  const f = document.getElementById('caAddAddressForm');
+  if(f) f.style.display = 'block';
+  document.getElementById('caNewAddrLabel')?.focus();
+}
+
+async function saveNewCustomerAddress(){
+  const label   = (document.getElementById('caNewAddrLabel').value||'').trim() || 'Address';
+  const address = (document.getElementById('caNewAddrText').value||'').trim();
+  if(!address){ showToast('Please enter an address'); return; }
+  const addresses = [...(currentCustomer.addresses||[]), {label, address}];
+  const profile = { ...currentCustomer, addresses, address: currentCustomer.address || address };
+  await fsSaveCustomerProfile(profile);
+  customerLogin(profile);
+  renderCustomerAccountBody();
+  showToast('Address saved');
+}
+
+async function deleteCustomerAddress(idx){
+  const addresses = (currentCustomer.addresses||[]).filter((_,i)=>i!==idx);
+  const profile = { ...currentCustomer, addresses };
+  await fsSaveCustomerProfile(profile);
+  customerLogin(profile);
+  renderCustomerAccountBody();
+  showToast('Address removed');
+}
+
 async function caSaveEditedProfile(){
   const name    = (document.getElementById('caEdit_name').value||'').trim();
   const mobile  = (document.getElementById('caEdit_mobile').value||'').trim();
-  const address = (document.getElementById('caEdit_address').value||'').trim();
   if(!name || !mobile){ showToast('Name and mobile are required'); return; }
-  const profile = { ...currentCustomer, name, mobile, address };
+  const profile = { ...currentCustomer, name, mobile };
   await fsSaveCustomerProfile(profile);
   customerLogin(profile);
   _caEditMode = false;
@@ -2544,6 +2693,16 @@ function openMenuModal(vendorId){
   ['menuCustomerName','menuCustomerEmail','menuCustomerMobile','menuCustomerAddress'].forEach(id=>{
     document.getElementById(id).style.borderColor = 'var(--border)';
   });
+  const addrPicker = document.getElementById('menuAddressPicker');
+  const savedAddresses = currentCustomer ? (currentCustomer.addresses||[]) : [];
+  if(savedAddresses.length){
+    addrPicker.style.display = 'block';
+    addrPicker.innerHTML = savedAddresses.map((a,i)=>`<option value="${i}">${esc(a.label||'Address')} — ${esc(a.address)}</option>`).join('')
+      + `<option value="new">+ Use a different address</option>`;
+    document.getElementById('menuCustomerAddress').value = savedAddresses[0].address;
+  } else {
+    addrPicker.style.display = 'none';
+  }
   resetMenuOtpUI();
 
   const menu = (_menuVendor.menu||[]).filter(it=>it.available!==false);
@@ -2823,6 +2982,14 @@ function resetMenuOtpUI(){
   }
 }
 
+function onMenuAddressPick(){
+  const sel = document.getElementById('menuAddressPicker');
+  const addrInput = document.getElementById('menuCustomerAddress');
+  if(sel.value==='new'){ addrInput.value=''; addrInput.focus(); return; }
+  const a = (currentCustomer?.addresses||[])[+sel.value];
+  if(a) addrInput.value = a.address;
+}
+
 function _finalizePlaceOrder(ctx){
   const {chosen,lines,total,name,email,mobile,address,wa} = ctx;
   const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, address)}\n👤 ${name}\n📱 Mobile: ${mobile}`;
@@ -2886,7 +3053,7 @@ function showVendorContact(type){
 function buildTabs(){
   const el = document.getElementById('catTabs');
   if(!el) return;
-  el.innerHTML = '<div class="cat-sidebar-hdr"><i class="fa fa-filter" style="margin-right:6px;opacity:.6"></i>Categories</div>';
+  el.innerHTML = '';
   const mk = (label, val, icon) => {
     const b = document.createElement('button');
     b.className = 'cat-tab' + (activeFilter===val?' active':'');
@@ -3041,10 +3208,40 @@ function buildSocietySelector(filterList){
     const finalList=list.length?list:_societyList(); // never render an empty dropdown
     el.innerHTML=finalList.map(s=>`<option value="${s.name}"${s.name===cur?' selected':''}>${s.name}</option>`).join('');
   });
+  renderSocietyBoxes(list.length?list:_societyList());
 }
 function onSocietyChange(){
   const sel=document.getElementById('societySelect');
   if(sel) selectedSociety=sel.value;
+  renderAll();
+}
+
+/* ═══════════ SOCIETY BOXES (Blinkit/UC-style picker, replaces the plain dropdown) ═══════════ */
+let _societyBoxesExpanded = false;
+let _societyBoxesList = [];
+function renderSocietyBoxes(list){
+  _societyBoxesList = list||[];
+  const row = document.getElementById('societyBoxRow');
+  if(!row) return;
+  const visible = _societyBoxesExpanded ? _societyBoxesList : _societyBoxesList.slice(0,5);
+  let html = visible.map((s,i) => `
+    <button type="button" class="society-box${s.name===selectedSociety?' active':''}" onclick="selectSocietyBox(${_societyBoxesList.indexOf(s)})">
+      <i class="fa fa-location-dot"></i> ${esc(s.name)}
+    </button>`).join('');
+  if(_societyBoxesList.length>5){
+    html += _societyBoxesExpanded
+      ? `<button type="button" class="society-box-more" onclick="_societyBoxesExpanded=false;renderSocietyBoxes(_societyBoxesList)"><i class="fa fa-chevron-up"></i> Show less</button>`
+      : `<button type="button" class="society-box-more" onclick="_societyBoxesExpanded=true;renderSocietyBoxes(_societyBoxesList)"><i class="fa fa-chevron-down"></i> Show more (${_societyBoxesList.length-5})</button>`;
+  }
+  row.innerHTML = html;
+}
+function selectSocietyBox(idx){
+  const s = _societyBoxesList[idx];
+  if(!s) return;
+  selectedSociety = s.name;
+  const sel = document.getElementById('societySelect');
+  if(sel) sel.value = s.name;
+  renderSocietyBoxes(_societyBoxesList);
   renderAll();
 }
 /* Reverse-geocode lat/lng into a short readable address via Google Maps Geocoding API. */
@@ -4111,6 +4308,8 @@ function switchPanel(panel){
   document.querySelectorAll('.panel-tab-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.panel===panel);
   });
+  const bottomNav = document.getElementById('bottomNav');
+  if(bottomNav) bottomNav.style.display = panel==='customer' ? 'flex' : 'none';
   if(panel==='seller') renderSellerPanel();
   if(panel==='admin')  renderAdminPanel();
 }
@@ -4161,7 +4360,35 @@ function renderSellerPanel(){
     document.getElementById('sellerContent').innerHTML=`<div class="empty-state"><i class="fa fa-store"></i><p>No vendor assigned. Contact admin.</p></div>`;
     return;
   }
-  document.getElementById('sellerContent').innerHTML = _sellerBusinessHTML(vendor) + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
+  document.getElementById('sellerContent').innerHTML = _sellerBusinessHTML(vendor) + _sellerOrdersPlaceholderHTML() + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
+  renderSellerOrders(vendor.id);
+}
+
+function _sellerOrdersPlaceholderHTML(){
+  return `<div class="s-card">
+    <div class="s-card-title"><i class="fa fa-receipt" style="color:var(--green)"></i> Orders Received</div>
+    <div id="sellerOrdersBody"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading orders…</p></div>
+  </div>`;
+}
+
+async function renderSellerOrders(vendorId){
+  const body = document.getElementById('sellerOrdersBody');
+  if(!body) return;
+  const orders = await fsLoadVendorOrders(vendorId);
+  if(!orders.length){
+    body.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem">No orders yet.</p>`;
+    return;
+  }
+  body.innerHTML = `<div style="overflow-x:auto"><table class="menu-table">
+    <thead><tr><th>Customer</th><th>Items</th><th>Total</th><th>Delivery</th><th>Placed</th></tr></thead>
+    <tbody>${orders.map(o=>`<tr>
+      <td>${esc(o.customerName)||'—'}${o.customerEmail?`<br><span style="font-size:.72rem;color:var(--text-muted)">${esc(o.customerEmail)}</span>`:''}</td>
+      <td style="font-size:.8rem">${(o.items||[]).map(it=>`${esc(it.name)} x${it.qty}`).join(', ')}</td>
+      <td style="font-weight:700;color:var(--green)">₹${o.total||0}</td>
+      <td style="font-size:.78rem">${esc(o.flat)||'—'}</td>
+      <td style="font-size:.72rem;color:var(--text-muted);white-space:nowrap">${o.ts && o.ts.seconds ? new Date(o.ts.seconds*1000).toLocaleString() : ''}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
 }
 
 function _sellerBusinessHTML(v){

@@ -1521,14 +1521,17 @@ async function fsLoadSellerRequests(){
   }catch(e){ console.warn('Could not load seller requests:',e.message); return []; }
 }
 
+/* Returns {ok:true} on success or {ok:false, reason} on failure, instead of
+   swallowing errors silently — callers surface the failure to the admin so a
+   broken/misconfigured EmailJS setup doesn't silently leave sellers unnotified. */
 async function _sendSellerStatusEmail(email, venture, status, reason){
   const ejsPubKey   = SITE_CONFIG.ejsPublicKey||'';
   const ejsService  = SITE_CONFIG.ejsServiceId||'';
   const ejsTemplate = SITE_CONFIG.ejsTemplateId||'';
-  if(!(ejsPubKey && ejsService && ejsTemplate)) return; // EmailJS not configured — skip silently
+  if(!(ejsPubKey && ejsService && ejsTemplate)) return {ok:false, reason:'Email service not configured — set up EmailJS in Site Config.'};
   const subject = status==='approved' ? 'Your Homebiz Seller Account Has Been Approved!' : 'Update on Your Homebiz Seller Application';
   const message = status==='approved'
-    ? `Congratulations! Your seller application for "${venture}" has been approved. You can now log in at Homebiz using your registered email and password to manage your listing.`
+    ? `Congratulations! Your seller application for "${venture}" has been approved. Please log in to Homebiz using your registered email and password, and start listing your products/services.`
     : `Your seller application for "${venture}" was not approved.${reason?' Reason: '+reason:''} Feel free to reach out if you have questions.`;
   try{
     await emailjs.init({publicKey: ejsPubKey});
@@ -1536,7 +1539,11 @@ async function _sendSellerStatusEmail(email, venture, status, reason){
       from_name:'Homebiz', from_email:'noreply@homebiz.co.in', mobile:'',
       subject, message, to_email: email
     });
-  }catch(e){ console.warn('Approval/rejection email failed:', e.message); }
+    return {ok:true};
+  }catch(e){
+    console.warn('Approval/rejection email failed:', e.message);
+    return {ok:false, reason: e.text || e.message || 'unknown error'};
+  }
 }
 
 async function fsLoadConfig(){
@@ -2473,10 +2480,12 @@ async function approveSellerRequest(requestId){
     }, {merge:true});
     req.status='approved';
 
-    await _sendSellerStatusEmail(req.email, req.venture, 'approved');
+    const emailResult = await _sendSellerStatusEmail(req.email, req.venture, 'approved');
     renderAll();
     renderAdminTab('sellerreq');
-    showToast(`${req.venture} approved — listing is live ✓`);
+    showToast(emailResult.ok
+      ? `${req.venture} approved — listing is live ✓ Seller notified by email.`
+      : `${req.venture} approved — listing is live ✓ ⚠️ Seller email failed to send: ${emailResult.reason}`);
   }catch(e){
     if(e.code==='auth/email-already-in-use'){
       showToast('That email already has a Firebase Auth account — check Firebase Console → Authentication → Users');
@@ -2495,9 +2504,9 @@ async function rejectSellerRequest(requestId){
       reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge:true});
     req.status='rejected'; req.rejectionReason=reason;
-    await _sendSellerStatusEmail(req.email, req.venture, 'rejected', reason);
+    const emailResult = await _sendSellerStatusEmail(req.email, req.venture, 'rejected', reason);
     renderAdminTab('sellerreq');
-    showToast('Application rejected');
+    showToast(emailResult.ok ? 'Application rejected — applicant notified by email.' : `Application rejected — ⚠️ notification email failed: ${emailResult.reason}`);
   }catch(e){ showToast('Error: '+e.message); }
 }
 

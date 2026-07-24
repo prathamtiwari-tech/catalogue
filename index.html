@@ -82,7 +82,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 #browseLevelSocieties{padding-bottom:100px} /* clears the fixed bottom nav when "Show more" is expanded and scrolled to the end */
 .society-box-section{max-width:1000px;margin:0 auto;padding:14px 20px 4px}
 .society-box-row{display:flex;flex-wrap:wrap;gap:12px}
-.society-box{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
+.society-box{display:flex;flex-direction:column;align-items:center;gap:8px;width:132px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .society-box:hover{border-color:var(--green)}
 .society-box.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
 .society-box.active .society-box-icon{background:rgba(255,255,255,.22);color:#fff}
@@ -144,12 +144,12 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 /* CATEGORY BOXES — replaces the old left sidebar with tappable boxes (Blinkit/UC style) */
 .cat-box-label{font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
 .cat-box-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
-.cat-tab{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
+.cat-tab{display:flex;flex-direction:column;align-items:center;gap:8px;width:132px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .cat-tab:hover{border-color:var(--green)}
 .cat-tab.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
 .cat-tab-icon{width:68px;height:68px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:2rem;line-height:1;color:var(--green);flex-shrink:0;transition:background .15s;overflow:hidden}
 .cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22);color:#fff}
-.cat-tab-label{font-size:.72rem;line-height:1.25}
+.cat-tab-label{font-size:.72rem;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 /* BIZ BOX GRID — compact business cards for the dedicated Category-level screen */
 .biz-box-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
 .biz-box{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all var(--tr)}
@@ -325,7 +325,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
   .browse-layout{padding:0 14px 100px}
   .cat-box-label{margin-top:14px}
   .cat-box-row{gap:8px;margin-bottom:22px}
-  .cat-tab{width:78px;padding:10px 4px;border-radius:14px;gap:6px}
+  .cat-tab{width:96px;padding:10px 4px;border-radius:14px;gap:6px}
   .cat-tab-icon{width:56px;height:56px;font-size:1.7rem;border-radius:10px}
   .cat-tab-label{font-size:.66rem}
   /* Grid inside browse-content */
@@ -632,7 +632,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
           <option value="Camps, Music &amp; Kids Activities">⛺ Camps, Music &amp; Kids Activities</option>
           <option value="Fashion &amp; Lifestyle">👗 Fashion &amp; Lifestyle</option>
           <option value="Gift, Jewellery &amp; Home Decor">🎁 Gift, Jewellery &amp; Home Decor</option>
-          <option value="Home, Print &amp; Technology Services">🖨️ Home, Print &amp; Technology</option>
+          <option value="Home, Print &amp; Tech Services">🖨️ Home, Print &amp; Tech Services</option>
           <option value="Health Services">🩺 Health Services</option>
           <option value="Professional Services">👔 Professional Services</option>
         </select>
@@ -768,7 +768,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
           <option value="Camps, Music &amp; Kids Activities">⛺ Camps, Music &amp; Kids Activities</option>
           <option value="Fashion &amp; Lifestyle">👗 Fashion &amp; Lifestyle</option>
           <option value="Gift, Jewellery &amp; Home Decor">🎁 Gift, Jewellery &amp; Home Decor</option>
-          <option value="Home, Print &amp; Technology Services">🖨️ Home, Print &amp; Technology</option>
+          <option value="Home, Print &amp; Tech Services">🖨️ Home, Print &amp; Tech Services</option>
           <option value="Health Services">🩺 Health Services</option>
           <option value="Professional Services">👔 Professional Services</option>
         </select>
@@ -1086,8 +1086,8 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
     <div id="menuContactSection" style="display:none;border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px">
       <div style="font-size:.75rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Contact Vendor Directly</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="menuCallBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:120px;justify-content:center" onclick="showVendorContact('call')"><i class="fa fa-phone"></i> Call Vendor</button>
-        <button id="menuWaBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:120px;justify-content:center;color:#1a8c3f;border-color:#25d366" onclick="showVendorContact('wa')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+        <button id="menuCallBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:132px;justify-content:center" onclick="showVendorContact('call')"><i class="fa fa-phone"></i> Call Vendor</button>
+        <button id="menuWaBtn" class="btn btn-sm btn-ghost" style="flex:1;min-width:132px;justify-content:center;color:#1a8c3f;border-color:#25d366" onclick="showVendorContact('wa')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
       </div>
       <p style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-top:10px">By contacting the vendor, you agree to our <a onclick="openPolicyModal('terms')" style="color:var(--green-dark);cursor:pointer;text-decoration:underline">Terms &amp; Conditions</a>.</p>
       <div id="menuVendorNumber" style="display:none;margin-top:10px;text-align:center;font-weight:700;font-size:1.1rem;color:var(--green-dark);background:var(--green-pale);padding:10px 14px;border-radius:8px"></div>
@@ -1332,7 +1332,7 @@ const CATS = [
   {id:'camp', name:'Camps, Music & Kids Activities',  icon:'fa-campground'},
   {id:'fash', name:'Fashion & Lifestyle',             icon:'fa-shirt'},
   {id:'gift', name:'Gift, Jewellery & Home Decor',    icon:'fa-gift'},
-  {id:'home', name:'Home, Print & Technology Services',icon:'fa-print'},
+  {id:'home', name:'Home, Print & Tech Services',icon:'fa-print'},
   {id:'hlth', name:'Health Services',                 icon:'fa-heart-pulse'},
   {id:'prof', name:'Professional Services',           icon:'fa-briefcase'},
 ];
@@ -1348,7 +1348,7 @@ const CATEGORY_EMOJI = {
   'Camps, Music & Kids Activities': '⛺',
   'Fashion & Lifestyle': '👗',
   'Gift, Jewellery & Home Decor': '🎁',
-  'Home, Print & Technology Services': '🖨️',
+  'Home, Print & Tech Services': '🖨️',
   'Health Services': '🩺',
   'Professional Services': '👔',
 };
@@ -1358,7 +1358,7 @@ const CATEGORY_BG = {
   'Camps, Music & Kids Activities': '#FDE2F3',
   'Fashion & Lifestyle': '#F3E5FF',
   'Gift, Jewellery & Home Decor': '#FFE9F5',
-  'Home, Print & Technology Services': '#E2F5E9',
+  'Home, Print & Tech Services': '#E2F5E9',
   'Health Services': '#FFE0E0',
   'Professional Services': '#E7E9F5',
 };
@@ -1468,9 +1468,9 @@ const SEED = [
   {id:"l20",cat:"Gift, Jewellery & Home Decor",venture:"Bedsheet & Handloom",speciality:"Cotton Bedsheets",desc:"Pure cotton handloom bedsheets with traditional weaving charm. Comfortable, breathable and durable for everyday use.",contact:"Shakuntla Rawat",flat:"N-1206",phone:"9013578063",whatsapp:"9013578063",instagram:"",video:"",url:""},
   {id:"l25",cat:"Gift, Jewellery & Home Decor",venture:"Home Collections",speciality:"Home Ease, Tupperware, Kitchen Cleaning & Home Decor",desc:"Home Ease products, Tupperware essentials, kitchen cleaning solutions and attractive home décor items all under one roof.",contact:"Shubhi Srivastava",flat:"J-1202",phone:"6392789456",whatsapp:"6392789456",instagram:"",video:"",url:""},
   {id:"h1",cat:"Gift, Jewellery & Home Decor",venture:"APNI Dukaan",speciality:"Stationery Items, Gifts",desc:"Your neighbourhood stationery store — school supplies, office stationery, greeting cards and small gift items. Conveniently accessible.",contact:"Bhawana Srivastava",flat:"E-506",phone:"9634557080",whatsapp:"9634557080",instagram:"",video:"",url:""},
-  {id:"h2",cat:"Home, Print & Technology Services",venture:"CP Plus",speciality:"Laptop & CCTV Sales & Service",desc:"Authorised dealer for laptops and CP Plus CCTV systems. Installation, AMC and repair services at your doorstep.",contact:"Ashish Jain",flat:"E-602",phone:"9999244850",whatsapp:"9999244850",instagram:"",video:"",url:""},
-  {id:"h3",cat:"Home, Print & Technology Services",venture:"Dev Quick Print Service",speciality:"Print, Xerox, Scan",desc:"Fast, affordable printing, xerox and scanning services. Colour and B&W. Bulk orders welcome. Quick turnaround guaranteed.",contact:"Deependra Singh",flat:"C-706",phone:"9457711885",whatsapp:"9457711885",instagram:"",video:"",url:""},
-  {id:"h4",cat:"Home, Print & Technology Services",venture:"MODI Solution",speciality:"Laptop & CCTV Sales & Service",desc:"Comprehensive tech solutions — laptop sales, CCTV installation and maintenance, networking and IT support for homes and offices.",contact:"Sarika Jain",flat:"E-602",phone:"9999244850",whatsapp:"9999244850",instagram:"",video:"",url:""},
+  {id:"h2",cat:"Home, Print & Tech Services",venture:"CP Plus",speciality:"Laptop & CCTV Sales & Service",desc:"Authorised dealer for laptops and CP Plus CCTV systems. Installation, AMC and repair services at your doorstep.",contact:"Ashish Jain",flat:"E-602",phone:"9999244850",whatsapp:"9999244850",instagram:"",video:"",url:""},
+  {id:"h3",cat:"Home, Print & Tech Services",venture:"Dev Quick Print Service",speciality:"Print, Xerox, Scan",desc:"Fast, affordable printing, xerox and scanning services. Colour and B&W. Bulk orders welcome. Quick turnaround guaranteed.",contact:"Deependra Singh",flat:"C-706",phone:"9457711885",whatsapp:"9457711885",instagram:"",video:"",url:""},
+  {id:"h4",cat:"Home, Print & Tech Services",venture:"MODI Solution",speciality:"Laptop & CCTV Sales & Service",desc:"Comprehensive tech solutions — laptop sales, CCTV installation and maintenance, networking and IT support for homes and offices.",contact:"Sarika Jain",flat:"E-602",phone:"9999244850",whatsapp:"9999244850",instagram:"",video:"",url:""},
   {id:"p8",cat:"Health Services",venture:"AllBrite Dental Clinic",speciality:"Dentist",desc:"Complete dental care by Dr. Rohini Tikkha — consultations, cleanings, fillings, root canals and cosmetic dentistry. Healthy smiles for the whole family.",contact:"Dr. Rohini Tikkha",flat:"K-507",phone:"8510982345",whatsapp:"8510982345",instagram:"",video:"",url:""},
   {id:"p1",cat:"Professional Services",venture:"Amit Gulati",speciality:"Mutual Fund Distributor",desc:"AMFI-registered mutual fund distributor. Get personalised investment plans, SIP guidance and portfolio reviews. Grow wealth smartly.",contact:"Amit Gulati",flat:"I-501",phone:"9810134459",whatsapp:"9810134459",instagram:"",video:"",url:""},
   {id:"p2",cat:"Professional Services",venture:"AR Digitel Wealth",speciality:"Mutual Fund Advising",desc:"Digital-first wealth management — SIPs, lump-sum investments, tax-saving ELSS and retirement planning. Transparent advisory.",contact:"V P Singh",flat:"D-408",phone:"9650992955",whatsapp:"9650992955",instagram:"",video:"",url:""},
@@ -3133,7 +3133,7 @@ function _renderSimilarVendors(currentId){
   if(!similar.length){ el.style.display = 'none'; return; }
   const catObj = CATS.find(c => c.name === _menuVendor.cat);
   const catIcon = catObj ? catObj.icon : 'fa-store';
-  const catLabel = (_menuVendor.cat || '').split(',')[0];
+  const catLabel = _menuVendor.cat || '';
   el.style.display = 'block';
   el.innerHTML = '<div style="font-weight:700;font-size:1rem;color:var(--green-dark);margin-bottom:14px">'
     + '<i class="fa ' + catIcon + '" style="color:var(--green);margin-right:6px"></i>More in ' + catLabel
@@ -3319,7 +3319,7 @@ function buildTabs(){
     b.onclick = () => openCategoryPage(val);
     el.appendChild(b);
   };
-  CATS.forEach(c => mk(c.name.split(',')[0], c.name));
+  CATS.forEach(c => mk(c.name, c.name));
 }
 
 /* ═══════════ ADMIN AUTH ═══════════ */
@@ -3541,7 +3541,7 @@ function openCategoryPage(catName){
   _browseCategory = catName;
   _browseProductQuery = null;
   const titleEl = document.getElementById('categoryPageTitle');
-  if(titleEl) titleEl.textContent = `${catName.split(',')[0]} in ${selectedSociety}`;
+  if(titleEl) titleEl.textContent = `${catName} in ${selectedSociety}`;
   showBrowseLevel('category');
   buildTabs();
   renderCategoryPage();
@@ -3577,7 +3577,7 @@ function renderGlobalCategoryBoxes(){
   let html = visible.map(c => `
     <button type="button" class="society-box" onclick="openSocietyPickerForCategory('${c.name.replace(/'/g,"\\'")}')">
       ${_categoryIconBox('society-box-icon', c.name)}
-      <span class="society-box-label">${esc(c.name.split(',')[0])}</span>
+      <span class="society-box-label">${esc(c.name)}</span>
     </button>`).join('');
   if(CATS.length>5){
     html += _globalCatExpanded
@@ -3621,7 +3621,7 @@ function renderGlobalProductBoxes(){
 
 function openSocietyPickerForCategory(catName){
   const titleEl = document.getElementById('societyPickerTitle');
-  if(titleEl) titleEl.textContent = `Which society has ${catName.split(',')[0]}?`;
+  if(titleEl) titleEl.textContent = `Which society has ${catName}?`;
   const counts = {};
   DATA.forEach(d => {
     if(d.cat!==catName) return;

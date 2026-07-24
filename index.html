@@ -2338,7 +2338,7 @@ async function submitReview(){
   btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Submitting…';
   st.style.display='none';
   try{
-    const vendor = DATA.find(d=>d.id===_reviewVendorId);
+    const vendor = getBrowseData().find(d=>d.id===_reviewVendorId);
     await fsSubmitReview(_reviewVendorId, vendor?.venture||'', _reviewStar, feedback, name, flat);
     st.textContent='Thank you! Your review has been submitted and is awaiting admin approval.';
     st.style.background='#eaffea'; st.style.color='var(--green-dark)'; st.style.display='block';
@@ -2595,6 +2595,13 @@ function saveData(d){ try{localStorage.setItem('pl_dir_v3',JSON.stringify(d));}c
 
 let DATA = loadData();
 let IMGS = loadImages();
+/* Categories with zero real (Firestore-backed) vendors fall back to the built-in
+   demo listings so customer browsing doesn't look empty before local sellers sign
+   up; any category with at least one real vendor shows only real ones (no mixing). */
+function getBrowseData(){
+  const realCats = new Set(DATA.map(d => d.cat));
+  return DATA.concat(SEED.filter(s => !realCats.has(s.cat)));
+}
 
 /* ═══════════ SELLER AUTH ═══════════ */
 function setupSellerAuth(){
@@ -2699,8 +2706,9 @@ function renderAll(){
   if(!grid) return;
   grid.innerHTML = '';
   let total = 0;
+  const browseData = getBrowseData();
   CATS.forEach(cat => {
-    let items = DATA.filter(d => d.cat === cat.name && (d.society||'Prateek Laurel')===selectedSociety);
+    let items = browseData.filter(d => d.cat === cat.name && (d.society||'Prateek Laurel')===selectedSociety);
     if(q) items = items.filter(d => itemMatchesQuery(d, q));
     if(!items.length) return;
     total += items.length;
@@ -2762,6 +2770,8 @@ function buildSearchSuggestions(q){
   const words = _queryWords(q);
   if(!words.length) return {societies:[], businesses:[], categories:[], products:[]};
 
+  const browseData = getBrowseData();
+
   // Societies — matched by name, from the same list the society boxes use.
   const societyPool = _nearbySocieties || _societyList();
   const societies = societyPool
@@ -2770,7 +2780,7 @@ function buildSearchSuggestions(q){
     .map(s => ({type:'society', name:s.name, label:s.name}));
 
   // Businesses — global, matched by venture name; sub-label shows which society.
-  const businesses = DATA
+  const businesses = browseData
     .filter(d => words.every(w => (d.venture||'').toLowerCase().includes(w)))
     .slice(0,6)
     .map(d => ({type:'business', id:d.id, label:d.venture, society:d.society||'Prateek Laurel', cat:d.cat,
@@ -2780,7 +2790,7 @@ function buildSearchSuggestions(q){
   // Categories — matched by category name, broken out per society (each society
   // with at least one matching business becomes its own selectable result).
   const catSocietyCounts = {};
-  DATA.forEach(d => {
+  browseData.forEach(d => {
     const cat = CATS.find(c => c.name===d.cat);
     if(!cat || !words.every(w => cat.name.toLowerCase().includes(w))) return;
     const society = d.society||'Prateek Laurel';
@@ -2796,7 +2806,7 @@ function buildSearchSuggestions(q){
   // matched globally, showing which vendor + society they belong to.
   const products = [];
   const seenProduct = new Set();
-  DATA.forEach(d => {
+  browseData.forEach(d => {
     const society = d.society||'Prateek Laurel';
     (d.menu||[]).forEach(it => {
       if(!it.name) return;
@@ -2996,7 +3006,7 @@ function getCatConfig(cat){
 let _menuVendor = null, _menuQtys = {}, _catCfg = null;
 
 function openMenuModal(vendorId){
-  _menuVendor = DATA.find(d=>d.id===vendorId);
+  _menuVendor = getBrowseData().find(d=>d.id===vendorId);
   if(!_menuVendor) return;
   _catCfg = getCatConfig(_menuVendor.cat);
   _menuQtys = {};
@@ -3129,7 +3139,7 @@ function closeVendorDetail(){
 function _renderSimilarVendors(currentId){
   const el = document.getElementById('vdSimilar');
   if(!el || !_menuVendor) return;
-  const similar = DATA.filter(d => d.cat === _menuVendor.cat && d.id !== currentId && d.visible !== false);
+  const similar = getBrowseData().filter(d => d.cat === _menuVendor.cat && d.id !== currentId && d.visible !== false);
   if(!similar.length){ el.style.display = 'none'; return; }
   const catObj = CATS.find(c => c.name === _menuVendor.cat);
   const catIcon = catObj ? catObj.icon : 'fa-store';
@@ -3551,11 +3561,12 @@ function renderCategoryPage(){
   if(!grid) return;
   const q = (document.getElementById('searchInput').value||'').trim();
   let items;
+  const browseData = getBrowseData();
   if(_browseProductQuery){
     const pq = _browseProductQuery.toLowerCase();
-    items = DATA.filter(d => (d.society||'Prateek Laurel')===selectedSociety && (d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq));
+    items = browseData.filter(d => (d.society||'Prateek Laurel')===selectedSociety && (d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq));
   } else {
-    items = DATA.filter(d => d.cat === _browseCategory && (d.society||'Prateek Laurel')===selectedSociety);
+    items = browseData.filter(d => d.cat === _browseCategory && (d.society||'Prateek Laurel')===selectedSociety);
   }
   if(q) items = items.filter(d => itemMatchesQuery(d, q));
   grid.innerHTML = items.length
@@ -3589,7 +3600,7 @@ function renderGlobalCategoryBoxes(){
 
 function _globalProductsList(){
   const seen = new Map();
-  DATA.forEach(d => {
+  getBrowseData().forEach(d => {
     (d.menu||[]).forEach(it => {
       const name = (it.name||'').trim();
       if(!name) return;
@@ -3623,7 +3634,7 @@ function openSocietyPickerForCategory(catName){
   const titleEl = document.getElementById('societyPickerTitle');
   if(titleEl) titleEl.textContent = `Which society has ${catName}?`;
   const counts = {};
-  DATA.forEach(d => {
+  getBrowseData().forEach(d => {
     if(d.cat!==catName) return;
     const society = d.society||'Prateek Laurel';
     counts[society] = (counts[society]||0)+1;
@@ -3643,7 +3654,7 @@ function openSocietyPickerForProduct(productName){
   if(titleEl) titleEl.textContent = `Which society has ${productName}?`;
   const pq = productName.toLowerCase();
   const counts = {};
-  DATA.forEach(d => {
+  getBrowseData().forEach(d => {
     if(!(d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq)) return;
     const society = d.society||'Prateek Laurel';
     counts[society] = (counts[society]||0)+1;
@@ -3664,7 +3675,7 @@ function _navigateToProductResults(society, productName){
   if(sel) sel.value = society;
   renderSocietyBoxes(_societyBoxesList);
   const pq = productName.toLowerCase();
-  const matches = DATA.filter(d => (d.society||'Prateek Laurel')===society && (d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq));
+  const matches = getBrowseData().filter(d => (d.society||'Prateek Laurel')===society && (d.menu||[]).some(it=>(it.name||'').toLowerCase()===pq));
   if(matches.length===1){
     _navigateToCategory(society, matches[0].cat);
     openMenuModal(matches[0].id);

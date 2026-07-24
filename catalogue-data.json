@@ -645,7 +645,7 @@
   },
   {
     "id": "l1",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Alka Trendy Finds",
     "speciality": "Bedsheets, Dupattas, Hair Accessories, Crochet",
     "desc": "Vibrant collection of cotton bedsheets, designer dupattas, handmade crochet bags and trendy hair accessories at great prices.",
@@ -659,7 +659,7 @@
   },
   {
     "id": "l2",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Beauty Products",
     "speciality": "Skincare, Fragrances, Personal Care & Makeup",
     "desc": "Curated selection of premium skincare, long-lasting fragrances, daily personal care essentials and professional makeup products.",
@@ -673,7 +673,7 @@
   },
   {
     "id": "l17",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Bliss Bedsheets",
     "speciality": "Premium Quality Blankets, Comforter Sets, Dohar Sets, AC Quilts",
     "desc": "Premium quality blankets, comforter sets, dohar sets and AC quilts for cozy, comfortable sleep. Elegant designs, superior fabric.",
@@ -687,7 +687,7 @@
   },
   {
     "id": "l24",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Coloroid Art",
     "speciality": "Crochet, Sketching, Painting, Handmade Articles",
     "desc": "Hand-crafted crochet items, detailed sketching and original paintings. Unique handmade articles ideal for gifting and home décor.",
@@ -701,7 +701,7 @@
   },
   {
     "id": "l3",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Craftxpress",
     "speciality": "Handmade Hangings, Nameplates, Décor, Return Gifts",
     "desc": "Bespoke handcrafted home décor, personalised nameplates, macramé wall hangings and unique return gift solutions.",
@@ -715,7 +715,7 @@
   },
   {
     "id": "l4",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Fashion Fiesta",
     "speciality": "Clothing",
     "desc": "Trendy ethnic and fusion wear for women. Kurtis, co-ord sets, lehengas and party wear at pocket-friendly prices.",
@@ -729,7 +729,7 @@
   },
   {
     "id": "l26",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Gift Paradise by Anjali",
     "speciality": "Birthday Gifts, Toys, School Bags, Lunch Box, Organisers, Bags, Pouches, Swimming Accessories",
     "desc": "Birthday gifts, toys, school bags, lunch boxes, organisers, pouches, bags and swimming accessories — a paradise for shoppers of all ages.",
@@ -743,7 +743,7 @@
   },
   {
     "id": "l5",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Gravita Footwear",
     "speciality": "Footwear",
     "desc": "Stylish and comfortable footwear collection — flats, heels, sandals and sports shoes for women and kids.",
@@ -757,7 +757,7 @@
   },
   {
     "id": "l6",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Hampers Hub",
     "speciality": "Customized Gift Hampers, Trousseau Packing, Hair Accessories",
     "desc": "Gorgeous customised gift hampers for every occasion, luxurious trousseau packing and a stunning range of hair accessories.",
@@ -771,7 +771,7 @@
   },
   {
     "id": "l7",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Her Hawen",
     "speciality": "Lingerie",
     "desc": "Premium comfort lingerie for women — thoughtfully designed, perfectly fitted and available in a wide range of sizes.",
@@ -785,7 +785,7 @@
   },
   {
     "id": "l18",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Kashi Sarees & Suits",
     "speciality": "Sarees, Suits & Matching Centre",
     "desc": "Beautiful sarees, suits and a matching centre for all occasions. Authentic Kashi weaves and contemporary designs for the modern woman.",
@@ -799,7 +799,7 @@
   },
   {
     "id": "l8",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "KATHA – A Tale of Ethnic Weaves",
     "speciality": "Sarees",
     "desc": "Exquisite handloom and woven sarees — Banarasi, Chanderi, Kalamkari, Tant and more. Each saree tells a timeless story.",
@@ -813,7 +813,7 @@
   },
   {
     "id": "l27",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Kiran Jewellery",
     "speciality": "Imitation & Silver Jewellery",
     "desc": "Beautiful imitation and silver jewellery pieces for every occasion. Elegant, affordable and fashionable designs for the modern woman.",
@@ -827,7 +827,7 @@
   },
   {
     "id": "l9",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Kitchenware Utilities",
     "speciality": "Wonder Chef, Airlock Glassware, Tupperware",
     "desc": "Premium kitchenware from top brands — Wonder Chef cookware, air-lock glass storage and the complete Tupperware range.",
@@ -841,7 +841,7 @@
   },
   {
     "id": "l10",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Label By Rupam",
     "speciality": "Custom Made Baby Dresses",
     "desc": "Adorable, handcrafted baby dresses with custom embroidery and smocking. Perfect for newborns to 3-year-olds.",
@@ -855,7 +855,7 @@
   },
   {
     "id": "l11",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Makeup Studio By Deepi Jassal",
     "speciality": "Makeup, Hair, Skin, Nails",
     "desc": "Professional bridal and party makeup, hair styling, facials and nail art. Book for weddings, events and photoshoots.",
@@ -869,7 +869,7 @@
   },
   {
     "id": "l12",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Personalised Items",
     "speciality": "Mugs, Cups, Bottles, T-shirts, Caps",
     "desc": "High-quality personalised gifts — photo mugs, custom t-shirts, printed bottles and caps. Great for corporates and events.",
@@ -883,7 +883,7 @@
   },
   {
     "id": "l19",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Pinkbasket",
     "speciality": "Trendy & Comfortable Women's Wear",
     "desc": "Trendy yet comfortable women's wear collection. Casual, ethnic and fusion outfits perfect for everyday style.",
@@ -897,7 +897,7 @@
   },
   {
     "id": "l28",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Pooja Kreations",
     "speciality": "Handmade Bags, Pouches, Organisers, Cotton Bedsheets, Scrunchies",
     "desc": "Handmade bags, pouches and organisers; readymade cotton bedsheets and handcrafted scrunchies. Creative products made with care.",
@@ -911,7 +911,7 @@
   },
   {
     "id": "l29",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "SaavliSaloni Jewels (SRS Ventures)",
     "speciality": "High Fashion Statement Jewellery",
     "desc": "High-fashion statement jewellery that turns heads. Bold, contemporary pieces designed to elevate every outfit and occasion.",
@@ -925,7 +925,7 @@
   },
   {
     "id": "l13",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Sheetal Alterations",
     "speciality": "Fall, Pico, Alteration",
     "desc": "Expert saree fall stitching, pico work and precision alterations for all types of garments. Quick turnaround.",
@@ -939,7 +939,7 @@
   },
   {
     "id": "l14",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Soot Saga",
     "speciality": "Bedsheets, Comforters",
     "desc": "Premium cotton and microfiber bedsheets, comforters and quilts. Elegant prints, soft feel, durable quality.",
@@ -953,7 +953,7 @@
   },
   {
     "id": "l15",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Stellar Purse Collections",
     "speciality": "Ladies Handbags & Gift Packing",
     "desc": "Stylish handbags, clutches and wallets for every occasion. Beautiful gift packing and wrapping services also available.",
@@ -967,7 +967,7 @@
   },
   {
     "id": "l21",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Style Sutra-Fashion at Wholesale Prices",
     "speciality": "Clothing Business",
     "desc": "Fashionable clothing at wholesale prices. Quality ethnic and western wear for women available at unbeatable value.",
@@ -981,7 +981,7 @@
   },
   {
     "id": "l22",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Sunny Mehra Agencies",
     "speciality": "Fashion Advisor – Specialist in Ladies Garments Industry",
     "desc": "Expert fashion advice and sourcing from a specialist in the ladies garments industry. Curated styles, bulk and retail options available.",
@@ -995,7 +995,7 @@
   },
   {
     "id": "l16",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Veka Jewels",
     "speciality": "Art Jewellery",
     "desc": "One-of-a-kind handcrafted art jewellery — statement earrings, necklaces and bracelets inspired by nature and heritage.",
@@ -1009,7 +1009,7 @@
   },
   {
     "id": "l23",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Fashion & Lifestyle",
     "venture": "Vastralaye",
     "speciality": "Clothing (Ladies, Kids & Gents)",
     "desc": "A wide range of clothing for ladies, kids and gents. Ethnic, casual and formal wear to suit every taste and occasion.",
@@ -1023,7 +1023,7 @@
   },
   {
     "id": "l20",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Bedsheet & Handloom",
     "speciality": "Cotton Bedsheets",
     "desc": "Pure cotton handloom bedsheets with traditional weaving charm. Comfortable, breathable and durable for everyday use.",
@@ -1037,7 +1037,7 @@
   },
   {
     "id": "l25",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "Home Collections",
     "speciality": "Home Ease, Tupperware, Kitchen Cleaning & Home Decor",
     "desc": "Home Ease products, Tupperware essentials, kitchen cleaning solutions and attractive home décor items all under one roof.",
@@ -1051,7 +1051,7 @@
   },
   {
     "id": "h1",
-    "cat": "Fashion, Gifts & Lifestyle",
+    "cat": "Gift, Jewellery & Home Decor",
     "venture": "APNI Dukaan",
     "speciality": "Stationery Items, Gifts",
     "desc": "Your neighbourhood stationery store — school supplies, office stationery, greeting cards and small gift items. Conveniently accessible.",
@@ -1065,7 +1065,7 @@
   },
   {
     "id": "h2",
-    "cat": "Home, Print & Technology Services",
+    "cat": "Home, Print & Tech Services",
     "venture": "CP Plus",
     "speciality": "Laptop & CCTV Sales & Service",
     "desc": "Authorised dealer for laptops and CP Plus CCTV systems. Installation, AMC and repair services at your doorstep.",
@@ -1079,7 +1079,7 @@
   },
   {
     "id": "h3",
-    "cat": "Home, Print & Technology Services",
+    "cat": "Home, Print & Tech Services",
     "venture": "Dev Quick Print Service",
     "speciality": "Print, Xerox, Scan",
     "desc": "Fast, affordable printing, xerox and scanning services. Colour and B&W. Bulk orders welcome. Quick turnaround guaranteed.",
@@ -1093,7 +1093,7 @@
   },
   {
     "id": "h4",
-    "cat": "Home, Print & Technology Services",
+    "cat": "Home, Print & Tech Services",
     "venture": "MODI Solution",
     "speciality": "Laptop & CCTV Sales & Service",
     "desc": "Comprehensive tech solutions — laptop sales, CCTV installation and maintenance, networking and IT support for homes and offices.",
@@ -1107,7 +1107,7 @@
   },
   {
     "id": "p8",
-    "cat": "Health & Professional Services",
+    "cat": "Health Services",
     "venture": "AllBrite Dental Clinic",
     "speciality": "Dentist",
     "desc": "Complete dental care by Dr. Rohini Tikkha — consultations, cleanings, fillings, root canals and cosmetic dentistry. Healthy smiles for the whole family.",
@@ -1121,7 +1121,7 @@
   },
   {
     "id": "p1",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Amit Gulati",
     "speciality": "Mutual Fund Distributor",
     "desc": "AMFI-registered mutual fund distributor. Get personalised investment plans, SIP guidance and portfolio reviews. Grow wealth smartly.",
@@ -1135,7 +1135,7 @@
   },
   {
     "id": "p2",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "AR Digitel Wealth",
     "speciality": "Mutual Fund Advising",
     "desc": "Digital-first wealth management — SIPs, lump-sum investments, tax-saving ELSS and retirement planning. Transparent advisory.",
@@ -1149,7 +1149,7 @@
   },
   {
     "id": "p3",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Destiny Digits By Shivanii",
     "speciality": "Numerology",
     "desc": "Unlock life's blueprint through numerology — name corrections, business naming, lucky numbers and destiny readings.",
@@ -1163,7 +1163,7 @@
   },
   {
     "id": "p4",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Diviinemaagnet",
     "speciality": "Astrologer",
     "desc": "Vedic astrology readings, kundli matching, career and relationship guidance. In-person and online consultations available.",
@@ -1177,7 +1177,7 @@
   },
   {
     "id": "p9",
-    "cat": "Health & Professional Services",
+    "cat": "Health Services",
     "venture": "GeetaShakti Cancer Care Foundation",
     "speciality": "Cancer Care",
     "desc": "A compassionate foundation providing cancer care guidance, awareness and support. Dr Babul Bansal leads with expertise and empathy.",
@@ -1191,7 +1191,7 @@
   },
   {
     "id": "p10",
-    "cat": "Health & Professional Services",
+    "cat": "Health Services",
     "venture": "IQ Diagnostics & Clinics",
     "speciality": "Diagnostic Centre",
     "desc": "Full-range diagnostic centre offering blood tests, imaging and health check-up packages. Accurate results, convenient and affordable.",
@@ -1205,7 +1205,7 @@
   },
   {
     "id": "p11",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Ipscholar.com",
     "speciality": "Legal / Patents / Copyrights / Trademarks / Designs Registration",
     "desc": "Legal experts specialising in intellectual property — patents, copyrights, trademarks and designs registration. Protect your ideas with confidence.",
@@ -1219,7 +1219,7 @@
   },
   {
     "id": "p12",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "MADMEN Production",
     "speciality": "Branding, Photography, Videography",
     "desc": "Creative branding, professional photography and high-quality videography services. Elevate your personal or business brand with compelling visuals.",
@@ -1233,7 +1233,7 @@
   },
   {
     "id": "p5",
-    "cat": "Health & Professional Services",
+    "cat": "Health Services",
     "venture": "Nutrospect",
     "speciality": "Nutritionist",
     "desc": "Certified nutritionist offering personalised diet plans for weight management, PCOD, diabetes, thyroid and sports nutrition.",
@@ -1247,7 +1247,7 @@
   },
   {
     "id": "p6",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "SKB's Eduinvest",
     "speciality": "Insurance, Mutual Funds & Loan Distributor",
     "desc": "One-stop financial services — life & health insurance, mutual fund investments and loan assistance. Trusted neighbourhood advisor.",
@@ -1261,7 +1261,7 @@
   },
   {
     "id": "p7",
-    "cat": "Health & Professional Services",
+    "cat": "Health Services",
     "venture": "Spire Child & Mother Clinic",
     "speciality": "Doctor – Paediatrician",
     "desc": "Expert paediatric care for newborns to adolescents. Vaccinations, growth monitoring and sick child consultations by Dr Gaurav Agarwal.",
@@ -1275,7 +1275,7 @@
   },
   {
     "id": "p13",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Surya Trading",
     "speciality": "Industrial Solutions",
     "desc": "Reliable industrial solutions and trading services. Catering to a wide range of industrial needs with quality products and timely delivery.",
@@ -1289,7 +1289,7 @@
   },
   {
     "id": "p14",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Taxyojna Consultants",
     "speciality": "Income Tax, GST, MCA & Litigation",
     "desc": "Expert chartered accountant services — income tax filing, GST compliance, MCA filings and litigation support by CA Preeti Gupta.",
@@ -1303,7 +1303,7 @@
   },
   {
     "id": "p15",
-    "cat": "Health & Professional Services",
+    "cat": "Professional Services",
     "venture": "Yc Productionz",
     "speciality": "Photography, Videography, Video Editing & Social Media Marketing",
     "desc": "Professional photography, videography, video editing and social media marketing services. Capture your moments and grow your digital presence.",

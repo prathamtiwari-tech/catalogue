@@ -627,12 +627,14 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
       <div class="form-group">
         <label>Category *</label>
         <select id="f_category">
-          <option value="Food, Bakery &amp; Beverages">🍰 Food, Bakery &amp; Beverages</option>
-          <option value="Education &amp; Coaching">📚 Education &amp; Coaching</option>
-          <option value="Camps, Music &amp; Kids Activities">🎵 Camps, Music &amp; Kids Activities</option>
-          <option value="Fashion, Gifts &amp; Lifestyle">👗 Fashion, Gifts &amp; Lifestyle</option>
+          <option value="Food, Bakery &amp; Beverages">🍔 Food, Bakery &amp; Beverages</option>
+          <option value="Education &amp; Coaching">🎓 Education &amp; Coaching</option>
+          <option value="Camps, Music &amp; Kids Activities">⛺ Camps, Music &amp; Kids Activities</option>
+          <option value="Fashion &amp; Lifestyle">👗 Fashion &amp; Lifestyle</option>
+          <option value="Gift, Jewellery &amp; Home Decor">🎁 Gift, Jewellery &amp; Home Decor</option>
           <option value="Home, Print &amp; Technology Services">🖨️ Home, Print &amp; Technology</option>
-          <option value="Health &amp; Professional Services">💼 Health &amp; Professional Services</option>
+          <option value="Health Services">🩺 Health Services</option>
+          <option value="Professional Services">👔 Professional Services</option>
         </select>
       </div>
       <div class="form-group">
@@ -761,12 +763,14 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
       <div class="form-group">
         <label>Category *</label>
         <select id="sr_category">
-          <option value="Food, Bakery &amp; Beverages">🍰 Food, Bakery &amp; Beverages</option>
-          <option value="Education &amp; Coaching">📚 Education &amp; Coaching</option>
-          <option value="Camps, Music &amp; Kids Activities">🎵 Camps, Music &amp; Kids Activities</option>
-          <option value="Fashion, Gifts &amp; Lifestyle">👗 Fashion, Gifts &amp; Lifestyle</option>
+          <option value="Food, Bakery &amp; Beverages">🍔 Food, Bakery &amp; Beverages</option>
+          <option value="Education &amp; Coaching">🎓 Education &amp; Coaching</option>
+          <option value="Camps, Music &amp; Kids Activities">⛺ Camps, Music &amp; Kids Activities</option>
+          <option value="Fashion &amp; Lifestyle">👗 Fashion &amp; Lifestyle</option>
+          <option value="Gift, Jewellery &amp; Home Decor">🎁 Gift, Jewellery &amp; Home Decor</option>
           <option value="Home, Print &amp; Technology Services">🖨️ Home, Print &amp; Technology</option>
-          <option value="Health &amp; Professional Services">💼 Health &amp; Professional Services</option>
+          <option value="Health Services">🩺 Health Services</option>
+          <option value="Professional Services">👔 Professional Services</option>
         </select>
       </div>
       <div class="form-group">
@@ -1325,10 +1329,12 @@ const PL_LOGO_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/sv
 const CATS = [
   {id:'food', name:'Food, Bakery & Beverages',       icon:'fa-utensils'},
   {id:'edu',  name:'Education & Coaching',            icon:'fa-graduation-cap'},
-  {id:'camp', name:'Camps, Music & Kids Activities',  icon:'fa-music'},
-  {id:'fash', name:'Fashion, Gifts & Lifestyle',      icon:'fa-bag-shopping'},
+  {id:'camp', name:'Camps, Music & Kids Activities',  icon:'fa-campground'},
+  {id:'fash', name:'Fashion & Lifestyle',             icon:'fa-shirt'},
+  {id:'gift', name:'Gift, Jewellery & Home Decor',    icon:'fa-gift'},
   {id:'home', name:'Home, Print & Technology Services',icon:'fa-print'},
-  {id:'hlth', name:'Health & Professional Services',  icon:'fa-briefcase-medical'},
+  {id:'hlth', name:'Health Services',                 icon:'fa-heart-pulse'},
+  {id:'prof', name:'Professional Services',           icon:'fa-briefcase'},
 ];
 
 /* Cartoon-style (emoji) icons on category-tinted backgrounds for society/category/product
@@ -1337,20 +1343,28 @@ const CATS = [
    nothing can ever fail to load. Keyed by CATS[].name. Every society uses the SAME
    icon/background (one visual identity for "society"), not a different one per name. */
 const CATEGORY_EMOJI = {
-  'Food, Bakery & Beverages': '🍛',
-  'Education & Coaching': '📚',
-  'Camps, Music & Kids Activities': '🎵',
-  'Fashion, Gifts & Lifestyle': '🛍️',
-  'Home, Print & Technology Services': '🛠️',
-  'Health & Professional Services': '🩺',
+  'Food, Bakery & Beverages': '🍔',
+  'Education & Coaching': '🎓',
+  'Camps, Music & Kids Activities': '⛺',
+  'Fashion & Lifestyle': '👗',
+  'Gift, Jewellery & Home Decor': '🎁',
+  'Home, Print & Technology Services': '🖨️',
+  'Health Services': '🩺',
+  'Professional Services': '👔',
 };
 const CATEGORY_BG = {
   'Food, Bakery & Beverages': '#FFE8CC',
   'Education & Coaching': '#DCEBFF',
   'Camps, Music & Kids Activities': '#FDE2F3',
-  'Fashion, Gifts & Lifestyle': '#F3E5FF',
+  'Fashion & Lifestyle': '#F3E5FF',
+  'Gift, Jewellery & Home Decor': '#FFE9F5',
   'Home, Print & Technology Services': '#E2F5E9',
-  'Health & Professional Services': '#FFE0E0',
+  'Health Services': '#FFE0E0',
+  'Professional Services': '#E7E9F5',
+};
+/* Well-known individual products get their own icon instead of the shared category one. */
+const PRODUCT_EMOJI = {
+  'samosa': '🥟', 'tea': '🍵', 'chai': '🍵', 'cookies': '🍪', 'cookie': '🍪',
 };
 const SOCIETY_EMOJI = '🏘️';
 const SOCIETY_BG = '#E0F0FF';
@@ -1362,6 +1376,13 @@ function _societyIconBox(cls){
 }
 function _categoryIconBox(cls, catName){
   return `<span class="${cls||'society-box-icon'}" style="background:${CATEGORY_BG[catName]||'var(--green-pale)'}">${CATEGORY_EMOJI[catName]||'🏪'}</span>`;
+}
+/* Same as _categoryIconBox, but well-known individual products (samosa, tea, cookies…)
+   get their own specific icon instead of falling straight to the shared category one. */
+function _productIconBox(cls, productLabel, catName){
+  const specific = PRODUCT_EMOJI[(productLabel||'').trim().toLowerCase()];
+  if(!specific) return _categoryIconBox(cls, catName);
+  return `<span class="${cls||'society-box-icon'}" style="background:${CATEGORY_BG[catName]||'var(--green-pale)'}">${specific}</span>`;
 }
 /* Full-bleed version for larger image areas (business tiles/cards) when a vendor hasn't
    uploaded a real photo — same icon, filling the whole image slot instead of a small box. */
@@ -1417,54 +1438,54 @@ const SEED = [
   {id:"c8",cat:"Camps, Music & Kids Activities",venture:"Summer Fun Fest",speciality:"Summer Camp",desc:"High-energy summer festival camp with daily themes, team challenges, talent shows and creative exploration.",contact:"Pihu Dalmia",flat:"B-1501",phone:"9914523462",whatsapp:"9914523462",instagram:"",video:"",url:""},
   {id:"c9",cat:"Camps, Music & Kids Activities",venture:"Tasty Trail Camp",speciality:"Summer Camp",desc:"A unique camp where kids learn maths and abacus through food and cooking activities. Delicious and educational!",contact:"Shilpi & Ritika",flat:"H-202",phone:"9654797570",whatsapp:"9654797570",instagram:"",video:"",url:""},
   {id:"c10",cat:"Camps, Music & Kids Activities",venture:"Udaan Summer Camp",speciality:"Summer Camp",desc:"Udaan gives children wings — a confidence-building camp with public speaking, leadership games and creative arts.",contact:"Amisha Gupta",flat:"—",phone:"9582836656",whatsapp:"9582836656",instagram:"",video:"",url:""},
-  {id:"l1",cat:"Fashion, Gifts & Lifestyle",venture:"Alka Trendy Finds",speciality:"Bedsheets, Dupattas, Hair Accessories, Crochet",desc:"Vibrant collection of cotton bedsheets, designer dupattas, handmade crochet bags and trendy hair accessories at great prices.",contact:"Alka",flat:"M-1004",phone:"7838893893",whatsapp:"7838893893",instagram:"",video:"",url:""},
-  {id:"l2",cat:"Fashion, Gifts & Lifestyle",venture:"Beauty Products",speciality:"Skincare, Fragrances, Personal Care & Makeup",desc:"Curated selection of premium skincare, long-lasting fragrances, daily personal care essentials and professional makeup products.",contact:"Sudeshna",flat:"B-1203",phone:"9899215551",whatsapp:"9899215551",instagram:"",video:"",url:""},
-  {id:"l17",cat:"Fashion, Gifts & Lifestyle",venture:"Bliss Bedsheets",speciality:"Premium Quality Blankets, Comforter Sets, Dohar Sets, AC Quilts",desc:"Premium quality blankets, comforter sets, dohar sets and AC quilts for cozy, comfortable sleep. Elegant designs, superior fabric.",contact:"Sushila Agarwal",flat:"D-703",phone:"9891012565",whatsapp:"9891012565",instagram:"",video:"",url:""},
-  {id:"l24",cat:"Fashion, Gifts & Lifestyle",venture:"Coloroid Art",speciality:"Crochet, Sketching, Painting, Handmade Articles",desc:"Hand-crafted crochet items, detailed sketching and original paintings. Unique handmade articles ideal for gifting and home décor.",contact:"Supriya Srivastava",flat:"A-006",phone:"8008639350",whatsapp:"8008639350",instagram:"",video:"",url:""},
-  {id:"l3",cat:"Fashion, Gifts & Lifestyle",venture:"Craftxpress",speciality:"Handmade Hangings, Nameplates, Décor, Return Gifts",desc:"Bespoke handcrafted home décor, personalised nameplates, macramé wall hangings and unique return gift solutions.",contact:"Anushi Singhal",flat:"N-1402",phone:"9911984209",whatsapp:"9911984209",instagram:"",video:"",url:""},
-  {id:"l4",cat:"Fashion, Gifts & Lifestyle",venture:"Fashion Fiesta",speciality:"Clothing",desc:"Trendy ethnic and fusion wear for women. Kurtis, co-ord sets, lehengas and party wear at pocket-friendly prices.",contact:"Ateet Chopra",flat:"L-1402",phone:"8527932932",whatsapp:"8527932932",instagram:"",video:"",url:""},
-  {id:"l26",cat:"Fashion, Gifts & Lifestyle",venture:"Gift Paradise by Anjali",speciality:"Birthday Gifts, Toys, School Bags, Lunch Box, Organisers, Bags, Pouches, Swimming Accessories",desc:"Birthday gifts, toys, school bags, lunch boxes, organisers, pouches, bags and swimming accessories — a paradise for shoppers of all ages.",contact:"Anjali Gupta",flat:"K-1105",phone:"6386733139",whatsapp:"6386733139",instagram:"",video:"",url:""},
-  {id:"l5",cat:"Fashion, Gifts & Lifestyle",venture:"Gravita Footwear",speciality:"Footwear",desc:"Stylish and comfortable footwear collection — flats, heels, sandals and sports shoes for women and kids.",contact:"Garvita Rastogi",flat:"K-802",phone:"9986117878",whatsapp:"9986117878",instagram:"",video:"",url:""},
-  {id:"l6",cat:"Fashion, Gifts & Lifestyle",venture:"Hampers Hub",speciality:"Customized Gift Hampers, Trousseau Packing, Hair Accessories",desc:"Gorgeous customised gift hampers for every occasion, luxurious trousseau packing and a stunning range of hair accessories.",contact:"Rashita",flat:"C-202",phone:"9953068752",whatsapp:"9953068752",instagram:"",video:"",url:""},
-  {id:"l7",cat:"Fashion, Gifts & Lifestyle",venture:"Her Hawen",speciality:"Lingerie",desc:"Premium comfort lingerie for women — thoughtfully designed, perfectly fitted and available in a wide range of sizes.",contact:"Harshita",flat:"C-203",phone:"9650997485",whatsapp:"9650997485",instagram:"",video:"",url:""},
-  {id:"l18",cat:"Fashion, Gifts & Lifestyle",venture:"Kashi Sarees & Suits",speciality:"Sarees, Suits & Matching Centre",desc:"Beautiful sarees, suits and a matching centre for all occasions. Authentic Kashi weaves and contemporary designs for the modern woman.",contact:"Shivangi Mishra",flat:"N-1205",phone:"8896768674",whatsapp:"8896768674",instagram:"",video:"",url:""},
-  {id:"l8",cat:"Fashion, Gifts & Lifestyle",venture:"KATHA – A Tale of Ethnic Weaves",speciality:"Sarees",desc:"Exquisite handloom and woven sarees — Banarasi, Chanderi, Kalamkari, Tant and more. Each saree tells a timeless story.",contact:"Mahua & Sujata",flat:"J-1103",phone:"9910341339",whatsapp:"9910341339",instagram:"",video:"",url:""},
-  {id:"l27",cat:"Fashion, Gifts & Lifestyle",venture:"Kiran Jewellery",speciality:"Imitation & Silver Jewellery",desc:"Beautiful imitation and silver jewellery pieces for every occasion. Elegant, affordable and fashionable designs for the modern woman.",contact:"Shilpa Jain",flat:"K-1206",phone:"8826924388",whatsapp:"8826924388",instagram:"",video:"",url:""},
-  {id:"l9",cat:"Fashion, Gifts & Lifestyle",venture:"Kitchenware Utilities",speciality:"Wonder Chef, Airlock Glassware, Tupperware",desc:"Premium kitchenware from top brands — Wonder Chef cookware, air-lock glass storage and the complete Tupperware range.",contact:"Sudeshna",flat:"B-1203",phone:"9899215551",whatsapp:"9899215551",instagram:"",video:"",url:""},
-  {id:"l10",cat:"Fashion, Gifts & Lifestyle",venture:"Label By Rupam",speciality:"Custom Made Baby Dresses",desc:"Adorable, handcrafted baby dresses with custom embroidery and smocking. Perfect for newborns to 3-year-olds.",contact:"Varshney Rupam",flat:"E-903",phone:"9650120251",whatsapp:"9650120251",instagram:"",video:"",url:""},
-  {id:"l11",cat:"Fashion, Gifts & Lifestyle",venture:"Makeup Studio By Deepi Jassal",speciality:"Makeup, Hair, Skin, Nails",desc:"Professional bridal and party makeup, hair styling, facials and nail art. Book for weddings, events and photoshoots.",contact:"Deepi Jassal",flat:"G-1405 / Shop 8",phone:"9643485467",whatsapp:"9643485467",instagram:"",video:"",url:""},
-  {id:"l12",cat:"Fashion, Gifts & Lifestyle",venture:"Personalised Items",speciality:"Mugs, Cups, Bottles, T-shirts, Caps",desc:"High-quality personalised gifts — photo mugs, custom t-shirts, printed bottles and caps. Great for corporates and events.",contact:"Sudeshna",flat:"B-1203",phone:"9899215551",whatsapp:"9899215551",instagram:"",video:"",url:""},
-  {id:"l19",cat:"Fashion, Gifts & Lifestyle",venture:"Pinkbasket",speciality:"Trendy & Comfortable Women's Wear",desc:"Trendy yet comfortable women's wear collection. Casual, ethnic and fusion outfits perfect for everyday style.",contact:"Anuja Goswami",flat:"N-805",phone:"9958465183",whatsapp:"9958465183",instagram:"",video:"",url:""},
-  {id:"l28",cat:"Fashion, Gifts & Lifestyle",venture:"Pooja Kreations",speciality:"Handmade Bags, Pouches, Organisers, Cotton Bedsheets, Scrunchies",desc:"Handmade bags, pouches and organisers; readymade cotton bedsheets and handcrafted scrunchies. Creative products made with care.",contact:"Pooja Singh",flat:"K-1201",phone:"7678185461",whatsapp:"7678185461",instagram:"",video:"",url:""},
-  {id:"l29",cat:"Fashion, Gifts & Lifestyle",venture:"SaavliSaloni Jewels (SRS Ventures)",speciality:"High Fashion Statement Jewellery",desc:"High-fashion statement jewellery that turns heads. Bold, contemporary pieces designed to elevate every outfit and occasion.",contact:"Saloni Bhargava",flat:"J-1003",phone:"7290005776",whatsapp:"7290005776",instagram:"",video:"",url:""},
-  {id:"l13",cat:"Fashion, Gifts & Lifestyle",venture:"Sheetal Alterations",speciality:"Fall, Pico, Alteration",desc:"Expert saree fall stitching, pico work and precision alterations for all types of garments. Quick turnaround.",contact:"Sheetal",flat:"F-304",phone:"8126594447",whatsapp:"8126594447",instagram:"",video:"",url:""},
-  {id:"l14",cat:"Fashion, Gifts & Lifestyle",venture:"Soot Saga",speciality:"Bedsheets, Comforters",desc:"Premium cotton and microfiber bedsheets, comforters and quilts. Elegant prints, soft feel, durable quality.",contact:"Neha Sukh Singh",flat:"L-005",phone:"9625222226",whatsapp:"9625222226",instagram:"",video:"",url:""},
-  {id:"l15",cat:"Fashion, Gifts & Lifestyle",venture:"Stellar Purse Collections",speciality:"Ladies Handbags & Gift Packing",desc:"Stylish handbags, clutches and wallets for every occasion. Beautiful gift packing and wrapping services also available.",contact:"Priyanka",flat:"N-1405",phone:"9873359478",whatsapp:"9873359478",instagram:"",video:"",url:""},
-  {id:"l21",cat:"Fashion, Gifts & Lifestyle",venture:"Style Sutra-Fashion at Wholesale Prices",speciality:"Clothing Business",desc:"Fashionable clothing at wholesale prices. Quality ethnic and western wear for women available at unbeatable value.",contact:"Samiksha",flat:"A-1102",phone:"9958132339",whatsapp:"9958132339",instagram:"",video:"",url:""},
-  {id:"l22",cat:"Fashion, Gifts & Lifestyle",venture:"Sunny Mehra Agencies",speciality:"Fashion Advisor – Specialist in Ladies Garments Industry",desc:"Expert fashion advice and sourcing from a specialist in the ladies garments industry. Curated styles, bulk and retail options available.",contact:"Ankush Mehra",flat:"G-201",phone:"9540101773",whatsapp:"9540101773",instagram:"",video:"",url:""},
-  {id:"l16",cat:"Fashion, Gifts & Lifestyle",venture:"Veka Jewels",speciality:"Art Jewellery",desc:"One-of-a-kind handcrafted art jewellery — statement earrings, necklaces and bracelets inspired by nature and heritage.",contact:"Preeti Malick",flat:"C-1407",phone:"9899149790",whatsapp:"9899149790",instagram:"",video:"",url:""},
-  {id:"l23",cat:"Fashion, Gifts & Lifestyle",venture:"Vastralaye",speciality:"Clothing (Ladies, Kids & Gents)",desc:"A wide range of clothing for ladies, kids and gents. Ethnic, casual and formal wear to suit every taste and occasion.",contact:"Madhu Singhal",flat:"N-102",phone:"8586800846",whatsapp:"8586800846",instagram:"",video:"",url:""},
-  {id:"l20",cat:"Fashion, Gifts & Lifestyle",venture:"Bedsheet & Handloom",speciality:"Cotton Bedsheets",desc:"Pure cotton handloom bedsheets with traditional weaving charm. Comfortable, breathable and durable for everyday use.",contact:"Shakuntla Rawat",flat:"N-1206",phone:"9013578063",whatsapp:"9013578063",instagram:"",video:"",url:""},
-  {id:"l25",cat:"Fashion, Gifts & Lifestyle",venture:"Home Collections",speciality:"Home Ease, Tupperware, Kitchen Cleaning & Home Decor",desc:"Home Ease products, Tupperware essentials, kitchen cleaning solutions and attractive home décor items all under one roof.",contact:"Shubhi Srivastava",flat:"J-1202",phone:"6392789456",whatsapp:"6392789456",instagram:"",video:"",url:""},
-  {id:"h1",cat:"Fashion, Gifts & Lifestyle",venture:"APNI Dukaan",speciality:"Stationery Items, Gifts",desc:"Your neighbourhood stationery store — school supplies, office stationery, greeting cards and small gift items. Conveniently accessible.",contact:"Bhawana Srivastava",flat:"E-506",phone:"9634557080",whatsapp:"9634557080",instagram:"",video:"",url:""},
+  {id:"l1",cat:"Gift, Jewellery & Home Decor",venture:"Alka Trendy Finds",speciality:"Bedsheets, Dupattas, Hair Accessories, Crochet",desc:"Vibrant collection of cotton bedsheets, designer dupattas, handmade crochet bags and trendy hair accessories at great prices.",contact:"Alka",flat:"M-1004",phone:"7838893893",whatsapp:"7838893893",instagram:"",video:"",url:""},
+  {id:"l2",cat:"Fashion & Lifestyle",venture:"Beauty Products",speciality:"Skincare, Fragrances, Personal Care & Makeup",desc:"Curated selection of premium skincare, long-lasting fragrances, daily personal care essentials and professional makeup products.",contact:"Sudeshna",flat:"B-1203",phone:"9899215551",whatsapp:"9899215551",instagram:"",video:"",url:""},
+  {id:"l17",cat:"Gift, Jewellery & Home Decor",venture:"Bliss Bedsheets",speciality:"Premium Quality Blankets, Comforter Sets, Dohar Sets, AC Quilts",desc:"Premium quality blankets, comforter sets, dohar sets and AC quilts for cozy, comfortable sleep. Elegant designs, superior fabric.",contact:"Sushila Agarwal",flat:"D-703",phone:"9891012565",whatsapp:"9891012565",instagram:"",video:"",url:""},
+  {id:"l24",cat:"Gift, Jewellery & Home Decor",venture:"Coloroid Art",speciality:"Crochet, Sketching, Painting, Handmade Articles",desc:"Hand-crafted crochet items, detailed sketching and original paintings. Unique handmade articles ideal for gifting and home décor.",contact:"Supriya Srivastava",flat:"A-006",phone:"8008639350",whatsapp:"8008639350",instagram:"",video:"",url:""},
+  {id:"l3",cat:"Gift, Jewellery & Home Decor",venture:"Craftxpress",speciality:"Handmade Hangings, Nameplates, Décor, Return Gifts",desc:"Bespoke handcrafted home décor, personalised nameplates, macramé wall hangings and unique return gift solutions.",contact:"Anushi Singhal",flat:"N-1402",phone:"9911984209",whatsapp:"9911984209",instagram:"",video:"",url:""},
+  {id:"l4",cat:"Fashion & Lifestyle",venture:"Fashion Fiesta",speciality:"Clothing",desc:"Trendy ethnic and fusion wear for women. Kurtis, co-ord sets, lehengas and party wear at pocket-friendly prices.",contact:"Ateet Chopra",flat:"L-1402",phone:"8527932932",whatsapp:"8527932932",instagram:"",video:"",url:""},
+  {id:"l26",cat:"Gift, Jewellery & Home Decor",venture:"Gift Paradise by Anjali",speciality:"Birthday Gifts, Toys, School Bags, Lunch Box, Organisers, Bags, Pouches, Swimming Accessories",desc:"Birthday gifts, toys, school bags, lunch boxes, organisers, pouches, bags and swimming accessories — a paradise for shoppers of all ages.",contact:"Anjali Gupta",flat:"K-1105",phone:"6386733139",whatsapp:"6386733139",instagram:"",video:"",url:""},
+  {id:"l5",cat:"Fashion & Lifestyle",venture:"Gravita Footwear",speciality:"Footwear",desc:"Stylish and comfortable footwear collection — flats, heels, sandals and sports shoes for women and kids.",contact:"Garvita Rastogi",flat:"K-802",phone:"9986117878",whatsapp:"9986117878",instagram:"",video:"",url:""},
+  {id:"l6",cat:"Gift, Jewellery & Home Decor",venture:"Hampers Hub",speciality:"Customized Gift Hampers, Trousseau Packing, Hair Accessories",desc:"Gorgeous customised gift hampers for every occasion, luxurious trousseau packing and a stunning range of hair accessories.",contact:"Rashita",flat:"C-202",phone:"9953068752",whatsapp:"9953068752",instagram:"",video:"",url:""},
+  {id:"l7",cat:"Fashion & Lifestyle",venture:"Her Hawen",speciality:"Lingerie",desc:"Premium comfort lingerie for women — thoughtfully designed, perfectly fitted and available in a wide range of sizes.",contact:"Harshita",flat:"C-203",phone:"9650997485",whatsapp:"9650997485",instagram:"",video:"",url:""},
+  {id:"l18",cat:"Fashion & Lifestyle",venture:"Kashi Sarees & Suits",speciality:"Sarees, Suits & Matching Centre",desc:"Beautiful sarees, suits and a matching centre for all occasions. Authentic Kashi weaves and contemporary designs for the modern woman.",contact:"Shivangi Mishra",flat:"N-1205",phone:"8896768674",whatsapp:"8896768674",instagram:"",video:"",url:""},
+  {id:"l8",cat:"Fashion & Lifestyle",venture:"KATHA – A Tale of Ethnic Weaves",speciality:"Sarees",desc:"Exquisite handloom and woven sarees — Banarasi, Chanderi, Kalamkari, Tant and more. Each saree tells a timeless story.",contact:"Mahua & Sujata",flat:"J-1103",phone:"9910341339",whatsapp:"9910341339",instagram:"",video:"",url:""},
+  {id:"l27",cat:"Gift, Jewellery & Home Decor",venture:"Kiran Jewellery",speciality:"Imitation & Silver Jewellery",desc:"Beautiful imitation and silver jewellery pieces for every occasion. Elegant, affordable and fashionable designs for the modern woman.",contact:"Shilpa Jain",flat:"K-1206",phone:"8826924388",whatsapp:"8826924388",instagram:"",video:"",url:""},
+  {id:"l9",cat:"Gift, Jewellery & Home Decor",venture:"Kitchenware Utilities",speciality:"Wonder Chef, Airlock Glassware, Tupperware",desc:"Premium kitchenware from top brands — Wonder Chef cookware, air-lock glass storage and the complete Tupperware range.",contact:"Sudeshna",flat:"B-1203",phone:"9899215551",whatsapp:"9899215551",instagram:"",video:"",url:""},
+  {id:"l10",cat:"Fashion & Lifestyle",venture:"Label By Rupam",speciality:"Custom Made Baby Dresses",desc:"Adorable, handcrafted baby dresses with custom embroidery and smocking. Perfect for newborns to 3-year-olds.",contact:"Varshney Rupam",flat:"E-903",phone:"9650120251",whatsapp:"9650120251",instagram:"",video:"",url:""},
+  {id:"l11",cat:"Fashion & Lifestyle",venture:"Makeup Studio By Deepi Jassal",speciality:"Makeup, Hair, Skin, Nails",desc:"Professional bridal and party makeup, hair styling, facials and nail art. Book for weddings, events and photoshoots.",contact:"Deepi Jassal",flat:"G-1405 / Shop 8",phone:"9643485467",whatsapp:"9643485467",instagram:"",video:"",url:""},
+  {id:"l12",cat:"Gift, Jewellery & Home Decor",venture:"Personalised Items",speciality:"Mugs, Cups, Bottles, T-shirts, Caps",desc:"High-quality personalised gifts — photo mugs, custom t-shirts, printed bottles and caps. Great for corporates and events.",contact:"Sudeshna",flat:"B-1203",phone:"9899215551",whatsapp:"9899215551",instagram:"",video:"",url:""},
+  {id:"l19",cat:"Fashion & Lifestyle",venture:"Pinkbasket",speciality:"Trendy & Comfortable Women's Wear",desc:"Trendy yet comfortable women's wear collection. Casual, ethnic and fusion outfits perfect for everyday style.",contact:"Anuja Goswami",flat:"N-805",phone:"9958465183",whatsapp:"9958465183",instagram:"",video:"",url:""},
+  {id:"l28",cat:"Gift, Jewellery & Home Decor",venture:"Pooja Kreations",speciality:"Handmade Bags, Pouches, Organisers, Cotton Bedsheets, Scrunchies",desc:"Handmade bags, pouches and organisers; readymade cotton bedsheets and handcrafted scrunchies. Creative products made with care.",contact:"Pooja Singh",flat:"K-1201",phone:"7678185461",whatsapp:"7678185461",instagram:"",video:"",url:""},
+  {id:"l29",cat:"Gift, Jewellery & Home Decor",venture:"SaavliSaloni Jewels (SRS Ventures)",speciality:"High Fashion Statement Jewellery",desc:"High-fashion statement jewellery that turns heads. Bold, contemporary pieces designed to elevate every outfit and occasion.",contact:"Saloni Bhargava",flat:"J-1003",phone:"7290005776",whatsapp:"7290005776",instagram:"",video:"",url:""},
+  {id:"l13",cat:"Fashion & Lifestyle",venture:"Sheetal Alterations",speciality:"Fall, Pico, Alteration",desc:"Expert saree fall stitching, pico work and precision alterations for all types of garments. Quick turnaround.",contact:"Sheetal",flat:"F-304",phone:"8126594447",whatsapp:"8126594447",instagram:"",video:"",url:""},
+  {id:"l14",cat:"Gift, Jewellery & Home Decor",venture:"Soot Saga",speciality:"Bedsheets, Comforters",desc:"Premium cotton and microfiber bedsheets, comforters and quilts. Elegant prints, soft feel, durable quality.",contact:"Neha Sukh Singh",flat:"L-005",phone:"9625222226",whatsapp:"9625222226",instagram:"",video:"",url:""},
+  {id:"l15",cat:"Fashion & Lifestyle",venture:"Stellar Purse Collections",speciality:"Ladies Handbags & Gift Packing",desc:"Stylish handbags, clutches and wallets for every occasion. Beautiful gift packing and wrapping services also available.",contact:"Priyanka",flat:"N-1405",phone:"9873359478",whatsapp:"9873359478",instagram:"",video:"",url:""},
+  {id:"l21",cat:"Fashion & Lifestyle",venture:"Style Sutra-Fashion at Wholesale Prices",speciality:"Clothing Business",desc:"Fashionable clothing at wholesale prices. Quality ethnic and western wear for women available at unbeatable value.",contact:"Samiksha",flat:"A-1102",phone:"9958132339",whatsapp:"9958132339",instagram:"",video:"",url:""},
+  {id:"l22",cat:"Fashion & Lifestyle",venture:"Sunny Mehra Agencies",speciality:"Fashion Advisor – Specialist in Ladies Garments Industry",desc:"Expert fashion advice and sourcing from a specialist in the ladies garments industry. Curated styles, bulk and retail options available.",contact:"Ankush Mehra",flat:"G-201",phone:"9540101773",whatsapp:"9540101773",instagram:"",video:"",url:""},
+  {id:"l16",cat:"Gift, Jewellery & Home Decor",venture:"Veka Jewels",speciality:"Art Jewellery",desc:"One-of-a-kind handcrafted art jewellery — statement earrings, necklaces and bracelets inspired by nature and heritage.",contact:"Preeti Malick",flat:"C-1407",phone:"9899149790",whatsapp:"9899149790",instagram:"",video:"",url:""},
+  {id:"l23",cat:"Fashion & Lifestyle",venture:"Vastralaye",speciality:"Clothing (Ladies, Kids & Gents)",desc:"A wide range of clothing for ladies, kids and gents. Ethnic, casual and formal wear to suit every taste and occasion.",contact:"Madhu Singhal",flat:"N-102",phone:"8586800846",whatsapp:"8586800846",instagram:"",video:"",url:""},
+  {id:"l20",cat:"Gift, Jewellery & Home Decor",venture:"Bedsheet & Handloom",speciality:"Cotton Bedsheets",desc:"Pure cotton handloom bedsheets with traditional weaving charm. Comfortable, breathable and durable for everyday use.",contact:"Shakuntla Rawat",flat:"N-1206",phone:"9013578063",whatsapp:"9013578063",instagram:"",video:"",url:""},
+  {id:"l25",cat:"Gift, Jewellery & Home Decor",venture:"Home Collections",speciality:"Home Ease, Tupperware, Kitchen Cleaning & Home Decor",desc:"Home Ease products, Tupperware essentials, kitchen cleaning solutions and attractive home décor items all under one roof.",contact:"Shubhi Srivastava",flat:"J-1202",phone:"6392789456",whatsapp:"6392789456",instagram:"",video:"",url:""},
+  {id:"h1",cat:"Gift, Jewellery & Home Decor",venture:"APNI Dukaan",speciality:"Stationery Items, Gifts",desc:"Your neighbourhood stationery store — school supplies, office stationery, greeting cards and small gift items. Conveniently accessible.",contact:"Bhawana Srivastava",flat:"E-506",phone:"9634557080",whatsapp:"9634557080",instagram:"",video:"",url:""},
   {id:"h2",cat:"Home, Print & Technology Services",venture:"CP Plus",speciality:"Laptop & CCTV Sales & Service",desc:"Authorised dealer for laptops and CP Plus CCTV systems. Installation, AMC and repair services at your doorstep.",contact:"Ashish Jain",flat:"E-602",phone:"9999244850",whatsapp:"9999244850",instagram:"",video:"",url:""},
   {id:"h3",cat:"Home, Print & Technology Services",venture:"Dev Quick Print Service",speciality:"Print, Xerox, Scan",desc:"Fast, affordable printing, xerox and scanning services. Colour and B&W. Bulk orders welcome. Quick turnaround guaranteed.",contact:"Deependra Singh",flat:"C-706",phone:"9457711885",whatsapp:"9457711885",instagram:"",video:"",url:""},
   {id:"h4",cat:"Home, Print & Technology Services",venture:"MODI Solution",speciality:"Laptop & CCTV Sales & Service",desc:"Comprehensive tech solutions — laptop sales, CCTV installation and maintenance, networking and IT support for homes and offices.",contact:"Sarika Jain",flat:"E-602",phone:"9999244850",whatsapp:"9999244850",instagram:"",video:"",url:""},
-  {id:"p8",cat:"Health & Professional Services",venture:"AllBrite Dental Clinic",speciality:"Dentist",desc:"Complete dental care by Dr. Rohini Tikkha — consultations, cleanings, fillings, root canals and cosmetic dentistry. Healthy smiles for the whole family.",contact:"Dr. Rohini Tikkha",flat:"K-507",phone:"8510982345",whatsapp:"8510982345",instagram:"",video:"",url:""},
-  {id:"p1",cat:"Health & Professional Services",venture:"Amit Gulati",speciality:"Mutual Fund Distributor",desc:"AMFI-registered mutual fund distributor. Get personalised investment plans, SIP guidance and portfolio reviews. Grow wealth smartly.",contact:"Amit Gulati",flat:"I-501",phone:"9810134459",whatsapp:"9810134459",instagram:"",video:"",url:""},
-  {id:"p2",cat:"Health & Professional Services",venture:"AR Digitel Wealth",speciality:"Mutual Fund Advising",desc:"Digital-first wealth management — SIPs, lump-sum investments, tax-saving ELSS and retirement planning. Transparent advisory.",contact:"V P Singh",flat:"D-408",phone:"9650992955",whatsapp:"9650992955",instagram:"",video:"",url:""},
-  {id:"p3",cat:"Health & Professional Services",venture:"Destiny Digits By Shivanii",speciality:"Numerology",desc:"Unlock life's blueprint through numerology — name corrections, business naming, lucky numbers and destiny readings.",contact:"Shivanii Verma",flat:"C-706",phone:"7249419821",whatsapp:"7249419821",instagram:"",video:"",url:""},
-  {id:"p4",cat:"Health & Professional Services",venture:"Diviinemaagnet",speciality:"Astrologer",desc:"Vedic astrology readings, kundli matching, career and relationship guidance. In-person and online consultations available.",contact:"Neeru Tripathi",flat:"G-1501",phone:"9536761711",whatsapp:"9536761711",instagram:"",video:"",url:""},
-  {id:"p9",cat:"Health & Professional Services",venture:"GeetaShakti Cancer Care Foundation",speciality:"Cancer Care",desc:"A compassionate foundation providing cancer care guidance, awareness and support. Dr Babul Bansal leads with expertise and empathy.",contact:"Dr Babul Bansal",flat:"J-407",phone:"8114222222",whatsapp:"8114222222",instagram:"",video:"",url:""},
-  {id:"p10",cat:"Health & Professional Services",venture:"IQ Diagnostics & Clinics",speciality:"Diagnostic Centre",desc:"Full-range diagnostic centre offering blood tests, imaging and health check-up packages. Accurate results, convenient and affordable.",contact:"Dr Ankita Singhal",flat:"J-407",phone:"6398667493",whatsapp:"6398667493",instagram:"",video:"",url:""},
-  {id:"p11",cat:"Health & Professional Services",venture:"Ipscholar.com",speciality:"Legal / Patents / Copyrights / Trademarks / Designs Registration",desc:"Legal experts specialising in intellectual property — patents, copyrights, trademarks and designs registration. Protect your ideas with confidence.",contact:"Shakti Khera",flat:"K-307",phone:"9354948661",whatsapp:"9354948661",instagram:"",video:"",url:""},
-  {id:"p12",cat:"Health & Professional Services",venture:"MADMEN Production",speciality:"Branding, Photography, Videography",desc:"Creative branding, professional photography and high-quality videography services. Elevate your personal or business brand with compelling visuals.",contact:"Saransh Gupta",flat:"C-1204",phone:"9205002408",whatsapp:"9205002408",instagram:"",video:"",url:""},
-  {id:"p5",cat:"Health & Professional Services",venture:"Nutrospect",speciality:"Nutritionist",desc:"Certified nutritionist offering personalised diet plans for weight management, PCOD, diabetes, thyroid and sports nutrition.",contact:"Richa Srivastava",flat:"G-402",phone:"9958895624",whatsapp:"9958895624",instagram:"",video:"",url:""},
-  {id:"p6",cat:"Health & Professional Services",venture:"SKB's Eduinvest",speciality:"Insurance, Mutual Funds & Loan Distributor",desc:"One-stop financial services — life & health insurance, mutual fund investments and loan assistance. Trusted neighbourhood advisor.",contact:"Sanjay Kumar Bharti",flat:"K-1506",phone:"9810094256",whatsapp:"9810094256",instagram:"",video:"",url:""},
-  {id:"p7",cat:"Health & Professional Services",venture:"Spire Child & Mother Clinic",speciality:"Doctor – Paediatrician",desc:"Expert paediatric care for newborns to adolescents. Vaccinations, growth monitoring and sick child consultations by Dr Gaurav Agarwal.",contact:"Dr Gaurav Agarwal",flat:"N-1204",phone:"7770837517",whatsapp:"7770837517",instagram:"",video:"",url:""},
-  {id:"p13",cat:"Health & Professional Services",venture:"Surya Trading",speciality:"Industrial Solutions",desc:"Reliable industrial solutions and trading services. Catering to a wide range of industrial needs with quality products and timely delivery.",contact:"Pawan Arora",flat:"C-1508",phone:"9811164700",whatsapp:"9811164700",instagram:"",video:"",url:""},
-  {id:"p14",cat:"Health & Professional Services",venture:"Taxyojna Consultants",speciality:"Income Tax, GST, MCA & Litigation",desc:"Expert chartered accountant services — income tax filing, GST compliance, MCA filings and litigation support by CA Preeti Gupta.",contact:"CA Preeti Gupta",flat:"N-206",phone:"8447033883",whatsapp:"8447033883",instagram:"",video:"",url:""},
-  {id:"p15",cat:"Health & Professional Services",venture:"Yc Productionz",speciality:"Photography, Videography, Video Editing & Social Media Marketing",desc:"Professional photography, videography, video editing and social media marketing services. Capture your moments and grow your digital presence.",contact:"Yashasvi Chugh",flat:"E-402",phone:"8708287403",whatsapp:"8708287403",instagram:"",video:"",url:""},
+  {id:"p8",cat:"Health Services",venture:"AllBrite Dental Clinic",speciality:"Dentist",desc:"Complete dental care by Dr. Rohini Tikkha — consultations, cleanings, fillings, root canals and cosmetic dentistry. Healthy smiles for the whole family.",contact:"Dr. Rohini Tikkha",flat:"K-507",phone:"8510982345",whatsapp:"8510982345",instagram:"",video:"",url:""},
+  {id:"p1",cat:"Professional Services",venture:"Amit Gulati",speciality:"Mutual Fund Distributor",desc:"AMFI-registered mutual fund distributor. Get personalised investment plans, SIP guidance and portfolio reviews. Grow wealth smartly.",contact:"Amit Gulati",flat:"I-501",phone:"9810134459",whatsapp:"9810134459",instagram:"",video:"",url:""},
+  {id:"p2",cat:"Professional Services",venture:"AR Digitel Wealth",speciality:"Mutual Fund Advising",desc:"Digital-first wealth management — SIPs, lump-sum investments, tax-saving ELSS and retirement planning. Transparent advisory.",contact:"V P Singh",flat:"D-408",phone:"9650992955",whatsapp:"9650992955",instagram:"",video:"",url:""},
+  {id:"p3",cat:"Professional Services",venture:"Destiny Digits By Shivanii",speciality:"Numerology",desc:"Unlock life's blueprint through numerology — name corrections, business naming, lucky numbers and destiny readings.",contact:"Shivanii Verma",flat:"C-706",phone:"7249419821",whatsapp:"7249419821",instagram:"",video:"",url:""},
+  {id:"p4",cat:"Professional Services",venture:"Diviinemaagnet",speciality:"Astrologer",desc:"Vedic astrology readings, kundli matching, career and relationship guidance. In-person and online consultations available.",contact:"Neeru Tripathi",flat:"G-1501",phone:"9536761711",whatsapp:"9536761711",instagram:"",video:"",url:""},
+  {id:"p9",cat:"Health Services",venture:"GeetaShakti Cancer Care Foundation",speciality:"Cancer Care",desc:"A compassionate foundation providing cancer care guidance, awareness and support. Dr Babul Bansal leads with expertise and empathy.",contact:"Dr Babul Bansal",flat:"J-407",phone:"8114222222",whatsapp:"8114222222",instagram:"",video:"",url:""},
+  {id:"p10",cat:"Health Services",venture:"IQ Diagnostics & Clinics",speciality:"Diagnostic Centre",desc:"Full-range diagnostic centre offering blood tests, imaging and health check-up packages. Accurate results, convenient and affordable.",contact:"Dr Ankita Singhal",flat:"J-407",phone:"6398667493",whatsapp:"6398667493",instagram:"",video:"",url:""},
+  {id:"p11",cat:"Professional Services",venture:"Ipscholar.com",speciality:"Legal / Patents / Copyrights / Trademarks / Designs Registration",desc:"Legal experts specialising in intellectual property — patents, copyrights, trademarks and designs registration. Protect your ideas with confidence.",contact:"Shakti Khera",flat:"K-307",phone:"9354948661",whatsapp:"9354948661",instagram:"",video:"",url:""},
+  {id:"p12",cat:"Professional Services",venture:"MADMEN Production",speciality:"Branding, Photography, Videography",desc:"Creative branding, professional photography and high-quality videography services. Elevate your personal or business brand with compelling visuals.",contact:"Saransh Gupta",flat:"C-1204",phone:"9205002408",whatsapp:"9205002408",instagram:"",video:"",url:""},
+  {id:"p5",cat:"Health Services",venture:"Nutrospect",speciality:"Nutritionist",desc:"Certified nutritionist offering personalised diet plans for weight management, PCOD, diabetes, thyroid and sports nutrition.",contact:"Richa Srivastava",flat:"G-402",phone:"9958895624",whatsapp:"9958895624",instagram:"",video:"",url:""},
+  {id:"p6",cat:"Professional Services",venture:"SKB's Eduinvest",speciality:"Insurance, Mutual Funds & Loan Distributor",desc:"One-stop financial services — life & health insurance, mutual fund investments and loan assistance. Trusted neighbourhood advisor.",contact:"Sanjay Kumar Bharti",flat:"K-1506",phone:"9810094256",whatsapp:"9810094256",instagram:"",video:"",url:""},
+  {id:"p7",cat:"Health Services",venture:"Spire Child & Mother Clinic",speciality:"Doctor – Paediatrician",desc:"Expert paediatric care for newborns to adolescents. Vaccinations, growth monitoring and sick child consultations by Dr Gaurav Agarwal.",contact:"Dr Gaurav Agarwal",flat:"N-1204",phone:"7770837517",whatsapp:"7770837517",instagram:"",video:"",url:""},
+  {id:"p13",cat:"Professional Services",venture:"Surya Trading",speciality:"Industrial Solutions",desc:"Reliable industrial solutions and trading services. Catering to a wide range of industrial needs with quality products and timely delivery.",contact:"Pawan Arora",flat:"C-1508",phone:"9811164700",whatsapp:"9811164700",instagram:"",video:"",url:""},
+  {id:"p14",cat:"Professional Services",venture:"Taxyojna Consultants",speciality:"Income Tax, GST, MCA & Litigation",desc:"Expert chartered accountant services — income tax filing, GST compliance, MCA filings and litigation support by CA Preeti Gupta.",contact:"CA Preeti Gupta",flat:"N-206",phone:"8447033883",whatsapp:"8447033883",instagram:"",video:"",url:""},
+  {id:"p15",cat:"Professional Services",venture:"Yc Productionz",speciality:"Photography, Videography, Video Editing & Social Media Marketing",desc:"Professional photography, videography, video editing and social media marketing services. Capture your moments and grow your digital presence.",contact:"Yashasvi Chugh",flat:"E-402",phone:"8708287403",whatsapp:"8708287403",instagram:"",video:"",url:""},
 ];
 /* SEED_END */
 
@@ -3587,7 +3608,7 @@ function renderGlobalProductBoxes(){
   const visible = _globalProdExpanded ? list : list.slice(0,5);
   let html = visible.map(p => `
     <button type="button" class="society-box" onclick="openSocietyPickerForProduct('${p.label.replace(/'/g,"\\'")}')">
-      ${_categoryIconBox('society-box-icon', p.cat)}
+      ${_productIconBox('society-box-icon', p.label, p.cat)}
       <span class="society-box-label">${esc(p.label)}</span>
     </button>`).join('');
   if(list.length>5){

@@ -1527,8 +1527,12 @@ async function fsLoadSellerRequests(){
 async function _sendSellerStatusEmail(email, venture, status, reason){
   const ejsPubKey   = SITE_CONFIG.ejsPublicKey||'';
   const ejsService  = SITE_CONFIG.ejsServiceId||'';
-  const ejsTemplate = SITE_CONFIG.ejsTemplateId||'';
-  if(!(ejsPubKey && ejsService && ejsTemplate)) return {ok:false, reason:'Email service not configured — set up EmailJS in Site Config.'};
+  // Deliberately does NOT fall back to ejsTemplateId (the Contact Us template) — that
+  // template's "To Email" is hardcoded to the contact address on EmailJS's dashboard,
+  // so reusing it here silently misdelivers every seller email to the contact inbox
+  // instead of the seller. Requires its own dedicated template with To Email={{to_email}}.
+  const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId||'';
+  if(!(ejsPubKey && ejsService && ejsTemplate)) return {ok:false, reason:'Seller status email template not configured — create a dedicated EmailJS template (To Email = {{to_email}}) and add its ID under Site Config → Seller Status Template ID.'};
   const subject = status==='approved' ? 'Your Homebiz Seller Account Has Been Approved!' : 'Update on Your Homebiz Seller Application';
   const message = status==='approved'
     ? `Congratulations! Your seller application for "${venture}" has been approved. Please log in to Homebiz using your registered email and password, and start listing your products/services.`
@@ -5234,8 +5238,11 @@ function renderAdminConfig(c){
             <input id="cfg_ejsTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsTemplateId)}"></div>
         </div>
         <p style="font-size:.78rem;color:var(--text-muted);margin:14px 0 8px">Optional: a separate template for customer OTP emails (include variable: <code>message</code> or <code>otp_code</code>). Leave blank to reuse the Template ID above.</p>
-        <div class="form-group" style="margin:0;max-width:260px"><label style="font-size:.75rem">OTP Template ID</label>
+        <div class="form-group" style="margin:0 0 14px;max-width:260px"><label style="font-size:.75rem">OTP Template ID</label>
           <input id="cfg_ejsOtpTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsOtpTemplateId)}"></div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:8px">Required for seller approval/rejection emails: a <strong>dedicated</strong> template whose "To Email" setting on EmailJS.com is set to <code>{{to_email}}</code> (not a fixed address) — the Template ID above is shared with the Contact Us form, which has "To Email" hardcoded to your contact address, so it can't be reused here.</p>
+        <div class="form-group" style="margin:0;max-width:260px"><label style="font-size:.75rem">Seller Status Template ID</label>
+          <input id="cfg_ejsSellerTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsSellerTemplateId)}"></div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
         <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-mobile-screen" style="color:var(--green)"></i> Mobile OTP — VerifyNow (Message Central) Setup</div>
@@ -5335,6 +5342,7 @@ async function saveAdminConfig(){
     ejsServiceId:   document.getElementById('cfg_ejsServiceId').value.trim(),
     ejsTemplateId:  document.getElementById('cfg_ejsTemplateId').value.trim(),
     ejsOtpTemplateId: document.getElementById('cfg_ejsOtpTemplateId').value.trim(),
+    ejsSellerTemplateId: document.getElementById('cfg_ejsSellerTemplateId').value.trim(),
     vnCustomerId:   document.getElementById('cfg_vnCustomerId').value.trim(),
     vnEmail:        document.getElementById('cfg_vnEmail').value.trim(),
     vnPassword:     document.getElementById('cfg_vnPassword').value.trim(),

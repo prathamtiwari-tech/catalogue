@@ -82,11 +82,12 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 #browseLevelSocieties{padding-bottom:100px} /* clears the fixed bottom nav when "Show more" is expanded and scrolled to the end */
 .society-box-section{max-width:1000px;margin:0 auto;padding:14px 20px 4px}
 .society-box-row{display:flex;flex-wrap:wrap;gap:12px}
-.society-box{display:flex;flex-direction:column;align-items:center;gap:8px;width:94px;padding:14px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
+.society-box{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .society-box:hover{border-color:var(--green)}
 .society-box.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
 .society-box.active .society-box-icon{background:rgba(255,255,255,.22);color:#fff}
-.society-box-icon{width:42px;height:42px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s}
+.society-box-icon{width:68px;height:68px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s;overflow:hidden}
+.society-box-icon img{width:100%;height:100%;object-fit:cover;display:block}
 .society-box-label{font-size:.72rem;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .society-box-more{border-style:dashed;background:var(--cream);color:var(--green-dark)}
 
@@ -144,10 +145,11 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 /* CATEGORY BOXES — replaces the old left sidebar with tappable boxes (Blinkit/UC style) */
 .cat-box-label{font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
 .cat-box-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
-.cat-tab{display:flex;flex-direction:column;align-items:center;gap:8px;width:94px;padding:14px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
+.cat-tab{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .cat-tab:hover{border-color:var(--green)}
 .cat-tab.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
-.cat-tab-icon{width:42px;height:42px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s}
+.cat-tab-icon{width:68px;height:68px;border-radius:12px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--green);flex-shrink:0;transition:background .15s;overflow:hidden}
+.cat-tab-icon img{width:100%;height:100%;object-fit:cover;display:block}
 .cat-tab.active .cat-tab-icon{background:rgba(255,255,255,.22);color:#fff}
 .cat-tab-label{font-size:.72rem;line-height:1.25}
 /* BIZ BOX GRID — compact business cards for the dedicated Category-level screen */
@@ -174,9 +176,6 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
 .tile-img-wrap{position:relative;width:100%;height:178px;overflow:hidden;flex-shrink:0;background:var(--cream)}
 .tile-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .4s ease}
 .tile:hover .tile-img-wrap img{transform:scale(1.04)}
-.tile-img-wrap .default-logo{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--green);gap:6px}
-.tile-img-wrap .default-logo svg{width:70px;height:70px;opacity:.95}
-.tile-img-wrap .default-logo span{color:rgba(255,255,255,.6);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
 .tile-cat-badge{position:absolute;top:10px;left:10px;background:rgba(62,71,80,.82);color:var(--gold-light);font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(6px)}
 .tile-sno{position:absolute;top:10px;right:10px;background:var(--gold);color:var(--green-dark);font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:20px}
 
@@ -318,6 +317,7 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
   .browse-toolbar{padding:10px 12px 4px}
   .society-box-section{padding:10px 12px 2px}
   .society-box{padding:8px 12px;font-size:.78rem}
+  .society-box-icon{width:56px;height:56px;font-size:.9rem;border-radius:10px}
   .society-box-more{padding:8px 12px;font-size:.78rem}
   .search-big-wrap input{padding:15px 40px 15px 48px;font-size:.92rem;border-radius:50px}
   .search-big-wrap i.srch-ico{left:18px;font-size:1rem}
@@ -327,8 +327,8 @@ header{background:var(--green);color:var(--white);position:sticky;top:0;z-index:
   .browse-layout{padding:0 14px 100px}
   .cat-box-label{margin-top:14px}
   .cat-box-row{gap:8px;margin-bottom:22px}
-  .cat-tab{width:72px;padding:10px 4px;border-radius:14px;gap:6px}
-  .cat-tab-icon{width:34px;height:34px;font-size:.9rem;border-radius:10px}
+  .cat-tab{width:78px;padding:10px 4px;border-radius:14px;gap:6px}
+  .cat-tab-icon{width:56px;height:56px;font-size:.9rem;border-radius:10px}
   .cat-tab-label{font-size:.66rem}
   /* Grid inside browse-content */
   .browse-content{width:100%;box-sizing:border-box}
@@ -1332,6 +1332,24 @@ const CATS = [
   {id:'home', name:'Home, Print & Technology Services',icon:'fa-print'},
   {id:'hlth', name:'Health & Professional Services',  icon:'fa-briefcase-medical'},
 ];
+
+/* Real photos (Wikimedia Commons, stable direct links) for category/society/product boxes
+   — so the app reads as a live, colorful storefront (Blinkit/Zomato/Zepto/Urban Company
+   style) instead of flat monochrome icons. Keyed by CATS[].name. */
+const CATEGORY_IMAGES = {
+  'Food, Bakery & Beverages': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Traditional_North_Indian_Thali.jpg/500px-Traditional_North_Indian_Thali.jpg',
+  'Education & Coaching': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Lesson_1_Private_Tutor.jpg/500px-Lesson_1_Private_Tutor.jpg',
+  'Camps, Music & Kids Activities': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Children_Playing_Violin_Suzuki_Institute_2011.JPG/500px-Children_Playing_Violin_Suzuki_Institute_2011.JPG',
+  'Fashion, Gifts & Lifestyle': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Modern_Fashion_Store-3.jpg/500px-Modern_Fashion_Store-3.jpg',
+  'Home, Print & Technology Services': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Plumber_uses_two_wrenches_to_tighten_a_fitting.jpg/500px-Plumber_uses_two_wrenches_to_tighten_a_fitting.jpg',
+  'Health & Professional Services': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Doctor_examines_patient.jpg/500px-Doctor_examines_patient.jpg',
+};
+const SOCIETY_IMAGES = [
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Dosti_Acres.jpg/500px-Dosti_Acres.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Vernacular_styled_residential_building_in_Ayyappa_society.jpg/500px-Vernacular_styled_residential_building_in_Ayyappa_society.jpg',
+];
+function _societyImageFor(idx){ return SOCIETY_IMAGES[idx % SOCIETY_IMAGES.length]; }
+function _categoryImageFor(catName){ return CATEGORY_IMAGES[catName] || SOCIETY_IMAGES[0]; }
 
 /* SEED_START */
 const SEED = [
@@ -2855,23 +2873,16 @@ function makeTile(item, sno, cat){
   div.className = 'tile';
   div.style.cursor = 'pointer';
   div.addEventListener('click', () => openMenuModal(item.id));
-  const imgSrc = item.image || IMGS[item.id] || '';
+  // Real vendor photo if uploaded; otherwise a real category photo instead of a flat
+  // placeholder logo, so the feed reads as live/colorful even before sellers add photos.
+  const imgSrc = item.image || IMGS[item.id] || _categoryImageFor(item.cat);
 
   /* Image zone */
-  let imgHtml = '';
-  if(imgSrc){
-    imgHtml = `<div class="tile-img-wrap">
+  const imgHtml = `<div class="tile-img-wrap">
       <img src="${imgSrc}" alt="${item.venture}" loading="lazy">
       <span class="tile-cat-badge">${cat.name.split(',')[0]}</span>
       <span class="tile-sno">#${sno}</span>
     </div>`;
-  } else {
-    imgHtml = `<div class="tile-img-wrap">
-      <div class="default-logo">${PL_LOGO_SVG}<span>Homebiz</span></div>
-      <span class="tile-cat-badge">${cat.name.split(',')[0]}</span>
-      <span class="tile-sno">#${sno}</span>
-    </div>`;
-  }
 
   /* Links — phone & WhatsApp are hidden on tile; accessible via modal */
   let links = '';
@@ -3253,14 +3264,14 @@ function buildTabs(){
   const el = document.getElementById('catTabs');
   if(!el) return;
   el.innerHTML = '';
-  const mk = (label, val, icon) => {
+  const mk = (label, val) => {
     const b = document.createElement('button');
     b.className = 'cat-tab' + (_browseLevel==='category' && _browseCategory===val ? ' active' : '');
-    b.innerHTML = `<span class="cat-tab-icon"><i class="fa ${icon}"></i></span><span class="cat-tab-label">${label}</span>`;
+    b.innerHTML = `<span class="cat-tab-icon"><img src="${_categoryImageFor(val)}" alt="${esc(label)}" loading="lazy"></span><span class="cat-tab-label">${label}</span>`;
     b.onclick = () => openCategoryPage(val);
     el.appendChild(b);
   };
-  CATS.forEach(c => mk(c.name.split(',')[0], c.name, c.icon));
+  CATS.forEach(c => mk(c.name.split(',')[0], c.name));
 }
 
 /* ═══════════ ADMIN AUTH ═══════════ */
@@ -3413,7 +3424,7 @@ function renderSocietyBoxes(list){
   const visible = _societyBoxesExpanded ? _societyBoxesList : _societyBoxesList.slice(0,5);
   let html = visible.map((s,i) => `
     <button type="button" class="society-box${s.name===selectedSociety?' active':''}" onclick="selectSocietyBox(${_societyBoxesList.indexOf(s)})">
-      <span class="society-box-icon"><i class="fa fa-building"></i></span>
+      <span class="society-box-icon"><img src="${_societyImageFor(_societyBoxesList.indexOf(s))}" alt="${esc(s.name)}" loading="lazy"></span>
       <span class="society-box-label">${esc(s.name)}</span>
     </button>`).join('');
   if(_societyBoxesList.length>5){
@@ -3517,7 +3528,7 @@ function renderGlobalCategoryBoxes(){
   const visible = _globalCatExpanded ? CATS : CATS.slice(0,5);
   let html = visible.map(c => `
     <button type="button" class="society-box" onclick="openSocietyPickerForCategory('${c.name.replace(/'/g,"\\'")}')">
-      <span class="society-box-icon"><i class="fa ${c.icon}"></i></span>
+      <span class="society-box-icon"><img src="${_categoryImageFor(c.name)}" alt="${esc(c.name.split(',')[0])}" loading="lazy"></span>
       <span class="society-box-label">${esc(c.name.split(',')[0])}</span>
     </button>`).join('');
   if(CATS.length>5){
@@ -3535,7 +3546,7 @@ function _globalProductsList(){
       const name = (it.name||'').trim();
       if(!name) return;
       const key = name.toLowerCase();
-      if(!seen.has(key)) seen.set(key, {label:name, count:0});
+      if(!seen.has(key)) seen.set(key, {label:name, count:0, cat:d.cat});
       seen.get(key).count++;
     });
   });
@@ -3549,7 +3560,7 @@ function renderGlobalProductBoxes(){
   const visible = _globalProdExpanded ? list : list.slice(0,5);
   let html = visible.map(p => `
     <button type="button" class="society-box" onclick="openSocietyPickerForProduct('${p.label.replace(/'/g,"\\'")}')">
-      <span class="society-box-icon"><i class="fa fa-tag"></i></span>
+      <span class="society-box-icon"><img src="${_categoryImageFor(p.cat)}" alt="${esc(p.label)}" loading="lazy"></span>
       <span class="society-box-label">${esc(p.label)}</span>
     </button>`).join('');
   if(list.length>5){
@@ -3571,9 +3582,9 @@ function openSocietyPickerForCategory(catName){
   });
   const row = document.getElementById('societyPickerRow');
   const catEsc = catName.replace(/'/g,"\\'");
-  row.innerHTML = Object.keys(counts).length ? Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(society => `
+  row.innerHTML = Object.keys(counts).length ? Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map((society,idx) => `
     <button type="button" class="society-box" onclick="_navigateToCategory('${society.replace(/'/g,"\\'")}','${catEsc}')">
-      <span class="society-box-icon"><i class="fa fa-building"></i></span>
+      <span class="society-box-icon"><img src="${_societyImageFor(idx)}" alt="${esc(society)}" loading="lazy"></span>
       <span class="society-box-label">${esc(society)} (${counts[society]})</span>
     </button>`).join('') : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No societies have this category yet.</p></div>`;
   showBrowseLevel('societyPicker');
@@ -3591,9 +3602,9 @@ function openSocietyPickerForProduct(productName){
   });
   const row = document.getElementById('societyPickerRow');
   const prodEsc = productName.replace(/'/g,"\\'");
-  row.innerHTML = Object.keys(counts).length ? Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(society => `
+  row.innerHTML = Object.keys(counts).length ? Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map((society,idx) => `
     <button type="button" class="society-box" onclick="_navigateToProductResults('${society.replace(/'/g,"\\'")}','${prodEsc}')">
-      <span class="society-box-icon"><i class="fa fa-building"></i></span>
+      <span class="society-box-icon"><img src="${_societyImageFor(idx)}" alt="${esc(society)}" loading="lazy"></span>
       <span class="society-box-label">${esc(society)} (${counts[society]})</span>
     </button>`).join('') : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No societies have this yet.</p></div>`;
   showBrowseLevel('societyPicker');
@@ -3620,10 +3631,10 @@ function _navigateToProductResults(society, productName){
   renderCategoryPage();
 }
 function makeBizBox(item){
-  const imgSrc = item.image || IMGS[item.id] || '';
-  const img = imgSrc
-    ? `<img src="${imgSrc}" alt="${esc(item.venture)}" loading="lazy">`
-    : `<div class="default-logo">${PL_LOGO_SVG}</div>`;
+  // Real vendor photo if uploaded; otherwise a real category photo reads as much more
+  // "alive" than the flat placeholder logo, matching Blinkit/Zomato/Zepto-style tiles.
+  const imgSrc = item.image || IMGS[item.id] || _categoryImageFor(item.cat);
+  const img = `<img src="${imgSrc}" alt="${esc(item.venture)}" loading="lazy">`;
   return `<div class="biz-box" onclick="openMenuModal('${item.id}')">
     <div class="biz-box-img">${img}</div>
     <div class="biz-box-body">

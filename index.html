@@ -33,7 +33,7 @@
 ── END PREVIOUS THEME ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overscroll-behavior-y:contain}
 
 /* BOTTOM NAV — app-shell (Home / Orders / Account) */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:150;display:flex;background:var(--white);border-top:1px solid var(--border);box-shadow:0 -4px 20px rgba(20,20,30,.08);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
@@ -434,6 +434,14 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 .location-perm-banner i.fa-triangle-exclamation{color:var(--gold);flex-shrink:0;margin-top:2px}
 .location-perm-banner span{flex:1;line-height:1.45}
 .location-perm-banner button{background:none;border:none;color:var(--text-muted);cursor:pointer;flex-shrink:0;padding:4px;font-size:.9rem}
+
+/* ── PULL-TO-REFRESH (Home tab) ── */
+.ptr-indicator{height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:1.3rem}
+.ptr-indicator:not(.ptr-dragging){transition:height .25s ease}
+.ptr-indicator i{transition:transform .2s ease}
+.ptr-indicator.ptr-ready i{transform:rotate(180deg)}
+.ptr-indicator.ptr-spinning i{animation:ptrSpin .7s linear infinite;transform:none}
+@keyframes ptrSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -1012,6 +1020,9 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 
 <!-- ── HOME PAGE (browse) ── -->
 <div id="customerHomePage">
+
+<!-- Pull-to-refresh indicator — grows as the user drags down from the top of Home -->
+<div id="ptrIndicator" class="ptr-indicator"><i class="fa fa-arrows-rotate"></i></div>
 
 <!-- ── LEVEL 1: SOCIETIES (Home — auto-detected nearby societies) ── -->
 <div id="browseLevelSocieties">
@@ -4978,6 +4989,77 @@ function _setupHardwareBackButton(){
   window.Capacitor.Plugins.App?.addListener('backButton', _handleHardwareBack);
 }
 
+/* ═══════════ PULL-TO-REFRESH (Home tab only) ═══════════
+   Plain touch-event gesture (works in the app AND a mobile browser — no
+   native plugin needed). Only arms when on the Home tab, scrolled all the
+   way to the top, and nothing (modal/vendor detail) is covering it. */
+let _ptrStartY = null, _ptrPull = 0, _ptrActive = false, _ptrRefreshing = false;
+const PTR_THRESHOLD = 70, PTR_MAX = 100;
+
+function _ptrEligible(){
+  if(_customerPage!=='home' || _ptrRefreshing) return false;
+  if((window.scrollY||document.documentElement.scrollTop||0) > 2) return false;
+  if(_topOpenModal() || _menuVendor) return false;
+  return true;
+}
+function _ptrReset(){
+  const el = document.getElementById('ptrIndicator');
+  if(el){ el.style.height='0px'; el.classList.remove('ptr-ready','ptr-spinning','ptr-dragging'); }
+  _ptrPull = 0;
+}
+function _ptrTouchStart(e){
+  _ptrStartY = _ptrEligible() ? e.touches[0].clientY : null;
+}
+function _ptrTouchMove(e){
+  if(_ptrStartY==null) return;
+  const dy = e.touches[0].clientY - _ptrStartY;
+  if(dy <= 0) return;
+  if(!_ptrEligible()){ _ptrStartY=null; _ptrReset(); return; }
+  _ptrActive = true;
+  const el = document.getElementById('ptrIndicator');
+  el.classList.add('ptr-dragging');
+  _ptrPull = Math.min(dy * 0.5, PTR_MAX);
+  el.style.height = _ptrPull+'px';
+  el.classList.toggle('ptr-ready', _ptrPull >= PTR_THRESHOLD);
+  e.preventDefault();
+}
+function _ptrTouchEnd(){
+  if(!_ptrActive){ _ptrStartY=null; return; }
+  _ptrActive = false;
+  document.getElementById('ptrIndicator').classList.remove('ptr-dragging');
+  if(_ptrPull >= PTR_THRESHOLD) _ptrDoRefresh();
+  else _ptrReset();
+  _ptrStartY = null;
+}
+async function _ptrDoRefresh(){
+  _ptrRefreshing = true;
+  const el = document.getElementById('ptrIndicator');
+  el.style.height = '56px';
+  el.classList.add('ptr-spinning');
+  el.classList.remove('ptr-ready');
+  try{
+    if(FB_READY && db){
+      const vendors = await fsLoadVendors();
+      if(vendors && vendors.length){ DATA = vendors; saveData(DATA); }
+    }
+    await fsLoadConfig();
+    applyFooterLinks(); buildSocietySelector();
+    renderAll(); renderGlobalCategoryBoxes(); renderGlobalProductBoxes(); renderCategoryPage();
+    if(typeof window.initAd==='function') window.initAd();
+    showToast('Refreshed ✓');
+  }catch(e){}
+  finally{
+    _ptrRefreshing = false;
+    setTimeout(_ptrReset, 300);
+  }
+}
+function _setupPullToRefresh(){
+  document.addEventListener('touchstart', _ptrTouchStart, {passive:true});
+  document.addEventListener('touchmove', _ptrTouchMove, {passive:false});
+  document.addEventListener('touchend', _ptrTouchEnd, {passive:true});
+  document.addEventListener('touchcancel', _ptrTouchEnd, {passive:true});
+}
+
 function openLoginModal(){
   document.getElementById('loginErr').style.display = 'none';
   document.getElementById('loginModal').classList.add('open');
@@ -5839,6 +5921,7 @@ async function migrateFromSeed(){
   if(!navigator.onLine){ showNoInternetScreen(); hideLocationSplash(); }
 
   _setupHardwareBackButton();
+  _setupPullToRefresh();
 
   // Load site config from Firestore, then rebuild carousel + society selector with fresh data.
   // Stored so detectSociety() can wait for it — gmapsApiKey and the full societies list only

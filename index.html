@@ -83,7 +83,7 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 /* SOCIETY BOXES — styled like the category boxes (icon-in-box above, label below) */
 #browseLevelSocieties{padding-bottom:100px} /* clears the fixed bottom nav when "Show more" is expanded and scrolled to the end */
 .society-box-section{max-width:1000px;margin:0 auto;padding:14px 20px 4px}
-.society-box-row{display:flex;flex-wrap:wrap;gap:12px}
+.society-box-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .society-box{display:flex;flex-direction:column;align-items:center;gap:8px;width:132px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .society-box:hover{border-color:var(--green)}
 .society-box.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
@@ -145,7 +145,7 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 .browse-content{width:100%}
 /* CATEGORY BOXES — replaces the old left sidebar with tappable boxes (Blinkit/UC style) */
 .cat-box-label{font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-.cat-box-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
+.cat-box-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px;justify-content:center}
 .cat-tab{display:flex;flex-direction:column;align-items:center;gap:8px;width:132px;padding:12px 8px;border:1.5px solid var(--border);background:var(--white);border-radius:16px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all var(--tr);text-align:center}
 .cat-tab:hover{border-color:var(--green)}
 .cat-tab.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
@@ -1036,10 +1036,13 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
     <div class="society-box-row" id="globalCategoryRow"></div>
   </div>
 
-  <!-- Or skip straight to a specific product/service, if that's all you need -->
-  <div class="cat-box-label" style="max-width:1000px;margin:20px auto 0;padding:0 20px"><i class="fa fa-tag" style="margin-right:6px;opacity:.6"></i>Products &amp; Services</div>
-  <div class="society-box-section">
-    <div class="society-box-row" id="globalProductRow"></div>
+  <!-- Or skip straight to a specific product/service, if that's all you need — hidden by
+       default, admin can turn it on from Site Config ("Show Product Listing on Home"). -->
+  <div id="globalProductsSection" style="display:none">
+    <div class="cat-box-label" style="max-width:1000px;margin:20px auto 0;padding:0 20px"><i class="fa fa-tag" style="margin-right:6px;opacity:.6"></i>Products &amp; Services</div>
+    <div class="society-box-section">
+      <div class="society-box-row" id="globalProductRow"></div>
+    </div>
   </div>
 </div>
 
@@ -3718,8 +3721,11 @@ function _globalProductsList(){
 }
 let _globalProdExpanded = false;
 function renderGlobalProductBoxes(){
+  const section = document.getElementById('globalProductsSection');
+  if(section) section.style.display = SITE_CONFIG.showProductListing ? '' : 'none';
   const row = document.getElementById('globalProductRow');
   if(!row) return;
+  if(!SITE_CONFIG.showProductListing) return;
   const list = _globalProductsList();
   const visible = _globalProdExpanded ? list : list.slice(0,5);
   let html = visible.map(p => `
@@ -5602,6 +5608,13 @@ function renderAdminConfig(c){
         <input id="cfg_tagline" value="${esc(SITE_CONFIG.tagline)||'Connect • Collaborate • Create • Grow'}"></div>
       <div class="form-group full"><label>Hero Subtitle</label>
         <input id="cfg_heroSub" value="${esc(SITE_CONFIG.heroSub)||'For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.'}"></div>
+      <div class="form-group full">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="cfg_showProductListing" ${SITE_CONFIG.showProductListing?'checked':''} style="accent-color:var(--green);width:auto">
+          Show Product Listing on Home Page
+        </label>
+        <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Off by default. When on, the "Products &amp; Services" row (samosa, tea, cookies, etc.) appears on the customer Home tab below Categories.</p>
+      </div>
       <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook URL</label>
         <input id="cfg_fbUrl" placeholder="https://facebook.com/yourpage" value="${esc(SITE_CONFIG.fbUrl)}"></div>
       <div class="form-group"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram URL</label>
@@ -5764,6 +5777,7 @@ async function saveAdminConfig(){
   await fsSaveConfig({
     tagline: document.getElementById('cfg_tagline').value.trim(),
     heroSub: document.getElementById('cfg_heroSub').value.trim(),
+    showProductListing: document.getElementById('cfg_showProductListing').checked,
     fbUrl:   document.getElementById('cfg_fbUrl').value.trim(),
     igUrl:   document.getElementById('cfg_igUrl').value.trim(),
     ytUrl:          document.getElementById('cfg_ytUrl').value.trim(),
@@ -5787,6 +5801,7 @@ async function saveAdminConfig(){
     gmapsApiKey:    document.getElementById('cfg_gmapsApiKey').value.trim(),
   });
   applyFooterLinks();
+  renderGlobalProductBoxes();
   showToast('Config saved ✓');
 }
 
@@ -5926,7 +5941,7 @@ async function migrateFromSeed(){
   // Load site config from Firestore, then rebuild carousel + society selector with fresh data.
   // Stored so detectSociety() can wait for it — gmapsApiKey and the full societies list only
   // exist in SITE_CONFIG once this resolves, and GPS can otherwise resolve first on a fast fix.
-  window._configLoadPromise = fsLoadConfig().then(()=>{ applyFooterLinks(); buildSocietySelector(); renderAll(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
+  window._configLoadPromise = fsLoadConfig().then(()=>{ applyFooterLinks(); buildSocietySelector(); renderAll(); renderGlobalProductBoxes(); if(typeof window.initAd==='function') window.initAd(); }).catch(()=>{});
   // Load approved reviews so tiles show ratings
   fsLoadApprovedReviews().then(()=>renderAll()).catch(()=>{});
 

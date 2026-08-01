@@ -4928,6 +4928,56 @@ function switchPanel(panel){
   if(panel==='admin')  renderAdminPanel();
 }
 
+/* ═══════════ HARDWARE BACK BUTTON (Android) ═══════════
+   Amazon-style: unwind whatever's on top (modal, vendor detail, seller/admin
+   panel, non-home tab, drill-down level) one step at a time; once at the Home
+   tab's root, a second back press within 2s exits the app, otherwise shows a
+   "press back again" toast and re-arms. Only registers on native Android —
+   this event never fires on iOS or the plain website. */
+let _backExitArmed = false, _backExitTimer = null;
+
+function _topOpenModal(){
+  const adModal = document.getElementById('adModalOverlay');
+  if(adModal && adModal.classList.contains('open')) return adModal;
+  const reAuth = document.getElementById('reAuthModal');
+  if(reAuth && reAuth.classList.contains('open')) return reAuth;
+  return document.querySelector('.modal-overlay.open');
+}
+
+function _handleHardwareBack(){
+  const topModal = _topOpenModal();
+  if(topModal){
+    if(topModal.id==='reAuthModal') _reAuthCancel();
+    else if(topModal.id==='adModalOverlay') closeAdModal();
+    else closeModal(topModal.id);
+    return;
+  }
+  if(_menuVendor){ closeVendorDetail(); return; }
+
+  const activePanel = document.querySelector('.panel-tab-btn.active')?.dataset.panel || 'customer';
+  if(activePanel==='seller' || activePanel==='admin'){ switchCustomerPage('home'); return; }
+
+  if(_customerPage!=='home'){ switchCustomerPage('home'); return; }
+
+  if(_browseLevel==='category'){ backToSociety(); return; }
+  if(_browseLevel==='society' || _browseLevel==='societyPicker'){ backToSocieties(); return; }
+
+  // At the Home-tab root — double-back-to-exit.
+  if(_backExitArmed){
+    clearTimeout(_backExitTimer);
+    window.Capacitor?.Plugins?.App?.exitApp();
+    return;
+  }
+  _backExitArmed = true;
+  showToast('Press back again to exit');
+  _backExitTimer = setTimeout(()=>{ _backExitArmed = false; }, 2000);
+}
+
+function _setupHardwareBackButton(){
+  if(!window.Capacitor?.isNativePlatform?.()) return;
+  window.Capacitor.Plugins.App?.addListener('backButton', _handleHardwareBack);
+}
+
 function openLoginModal(){
   document.getElementById('loginErr').style.display = 'none';
   document.getElementById('loginModal').classList.add('open');
@@ -5787,6 +5837,8 @@ async function migrateFromSeed(){
   // Catch the case where the app is opened while already offline — no point waiting
   // on Firestore/geolocation calls that will just hang or fail.
   if(!navigator.onLine){ showNoInternetScreen(); hideLocationSplash(); }
+
+  _setupHardwareBackButton();
 
   // Load site config from Firestore, then rebuild carousel + society selector with fresh data.
   // Stored so detectSociety() can wait for it — gmapsApiKey and the full societies list only

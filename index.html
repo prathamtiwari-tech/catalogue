@@ -390,7 +390,7 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 .ad-slide{position:absolute;inset:0;max-width:1000px;margin:0 auto;padding:0 20px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
 .ad-slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
 .ad-slide.exit{opacity:0;transform:translateX(-60px)}
-.ad-slide-img{width:100%;height:100%;border-radius:16px;object-fit:cover}
+.ad-slide-img{width:100%;height:100%;border-radius:16px;object-fit:contain;background:var(--white)}
 .ad-slide-img svg{width:100px;height:100px}
 .ad-pause-badge{position:absolute;top:10px;right:14px;background:var(--white);color:var(--text-muted);font-size:.65rem;padding:3px 9px;border-radius:20px;letter-spacing:.08em;box-shadow:var(--shadow)}
 .ad-dots{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
@@ -4854,7 +4854,7 @@ async function publishToGitHub(){
 
   function imgHTML(item){
     const img = item.image || IMGS[item.id] || '';
-    if(img) return `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px">`;
+    if(img) return `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:16px;background:var(--white)">`;
     return PL_LOGO_SVG;
   }
 

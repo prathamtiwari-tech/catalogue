@@ -360,10 +360,10 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
   .menu-table{font-size:.75rem;min-width:480px} /* allow horizontal scroll inside s-card */
   .menu-table th,.menu-table td{padding:7px 6px}
 
-  /* ── AD CAROUSEL ── */
-  .ad-carousel-inner{height:160px}
-  .ad-slide{padding:0 14px}
-  .ad-slide-img svg{width:70px;height:70px}
+  /* ── ADVERTISEMENT GRID ── */
+  .ad-grid{gap:10px}
+  .ad-box.big{height:170px}
+  .ad-box.small{height:120px}
 
   /* ── TOAST ── */
   .toast{left:12px;right:12px;bottom:12px;font-size:.8rem}
@@ -375,47 +375,21 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
   .menu-item-row{flex-wrap:wrap;gap:8px}
   .qty-ctrl{margin-left:auto}
 
-  /* ── AD DETAIL MODAL ── */
-  .ad-modal-overlay{padding:0;align-items:flex-end}
-  .ad-modal{border-radius:18px 18px 0 0;max-width:100%;width:100%}
-
   /* ── FORM GRID inside s-card ── */
   .s-card .form-grid{grid-template-columns:1fr}
   .s-card .form-group.full{grid-column:1}
 }
 
-/* ── AD CAROUSEL — full-bleed banner cards, no border (Blinkit/Urban Company style) ── */
-.ad-carousel{position:relative;width:100%;background:var(--cream);overflow:hidden;cursor:pointer;user-select:none}
-.ad-carousel-inner{height:200px;position:relative}
-.ad-slide{position:absolute;inset:0;max-width:1000px;margin:0 auto;padding:0 20px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
-.ad-slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
-.ad-slide.exit{opacity:0;transform:translateX(-60px)}
-.ad-slide-img{width:100%;height:100%;border-radius:16px;object-fit:contain;background:var(--white)}
-.ad-slide-img svg{width:100px;height:100px}
-.ad-pause-badge{position:absolute;top:10px;right:14px;background:var(--white);color:var(--text-muted);font-size:.65rem;padding:3px 9px;border-radius:20px;letter-spacing:.08em;box-shadow:var(--shadow)}
-.ad-dots{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
-.ad-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background .3s,transform .3s}
-.ad-dot.active{background:var(--green);transform:scale(1.3)}
-.ad-nav{position:absolute;top:50%;transform:translateY(-50%);background:var(--white);border:1px solid var(--border);color:var(--green-dark);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s;box-shadow:var(--shadow)}
-.ad-nav:hover{background:var(--green-pale)}
-.ad-nav.prev{left:10px}
-.ad-nav.next{right:10px}
-
-/* ── AD DETAIL MODAL ── */
-.ad-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
-.ad-modal-overlay.open{opacity:1;pointer-events:auto}
-.ad-modal{background:#fff;border-radius:18px;max-width:420px;width:100%;overflow:hidden;transform:scale(.92);transition:transform .25s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.ad-modal-overlay.open .ad-modal{transform:scale(1)}
-.ad-modal-header{background:var(--green);padding:28px 24px 20px;text-align:center;position:relative}
-.ad-modal-header img,.ad-modal-header .ad-modal-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.9);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--green-dark);overflow:hidden}
-.ad-modal-header svg{width:54px;height:54px}
-.ad-modal-title{color:#fff;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin:0 0 4px}
-.ad-modal-spec{color:rgba(255,255,255,.8);font-size:.8rem}
-.ad-modal-body{padding:20px 24px}
-.ad-modal-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem;color:var(--text)}
-.ad-modal-row:last-child{border-bottom:none}
-.ad-modal-row i{color:var(--green);width:18px;text-align:center}
-.ad-modal-close{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+/* ── ADVERTISEMENT GRID — borderless bento-style boxes, full uncropped images, varied
+   sizes (Urban Company/Blinkit promo-tile style). Every 3rd item is "big" (full width),
+   the other two of each trio are "small" (side by side) — a repeating bento rhythm that
+   looks reasonable regardless of how many ads are configured. */
+.ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:24px auto 0;padding:0 20px 4px}
+.ad-box{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;background:var(--white);display:flex;align-items:center;justify-content:center;transition:transform .15s ease}
+.ad-box:active{transform:scale(.97)}
+.ad-box img{width:100%;height:100%;object-fit:contain;background:var(--white)}
+.ad-box.big{grid-column:1/-1;height:220px}
+.ad-box.small{height:160px}
 
 /* ── FULL-SCREEN STATES (location splash + no-internet) ── */
 .fullscreen-state{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .3s ease}
@@ -974,19 +948,6 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
   </div>
 </div>
 
-<!-- ── AD DETAIL MODAL ── -->
-<div class="ad-modal-overlay" id="adModalOverlay" onclick="closeAdModal(event)">
-  <div class="ad-modal">
-    <div class="ad-modal-header">
-      <button class="ad-modal-close" onclick="closeAdModal()">✕</button>
-      <div class="ad-modal-logo" id="adModalLogo"></div>
-      <div class="ad-modal-title" id="adModalTitle"></div>
-      <div class="ad-modal-spec" id="adModalSpec"></div>
-    </div>
-    <div class="ad-modal-body" id="adModalBody"></div>
-  </div>
-</div>
-
 <!-- ── ADMIN STICKY BANNER ── -->
 <div class="admin-banner" id="adminBanner">
   <div class="admin-banner-inner">
@@ -1036,14 +997,8 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
     </div>
   </div>
 
-  <!-- ── AD CAROUSEL — at the bottom of the Home page, after all listings ── -->
-  <div class="ad-carousel" id="adCarousel">
-    <button class="ad-nav prev" id="adPrev" onclick="adNav(-1)">&#8249;</button>
-    <div class="ad-carousel-inner" id="adInner"></div>
-    <button class="ad-nav next" id="adNext" onclick="adNav(1)">&#8250;</button>
-    <div class="ad-dots" id="adDots"></div>
-    <div class="ad-pause-badge" id="adBadge">▶ Auto</div>
-  </div>
+  <!-- ── ADVERTISEMENT GRID — bento-style boxes of varying sizes, at the bottom of the Home page, after all listings ── -->
+  <div class="ad-grid" id="adGrid"></div>
 </div>
 
 <!-- ── LEVEL: SOCIETY PICKER (which society has this globally-picked category/product) ── -->
@@ -1923,17 +1878,11 @@ function switchCustomerPage(page){
     const el = document.getElementById('customer'+p.charAt(0).toUpperCase()+p.slice(1)+'Page');
     if(el) el.style.display = (p===page ? '' : 'none');
   });
-  // Search bar and ad carousel are Home-browsing chrome only — Orders/Account/Help
-  // start straight into their own content.
+  // Search bar is Home-browsing chrome only — Orders/Account/Help start straight
+  // into their own content. (The ad grid lives inside #browseLevelSocieties, so it
+  // already hides/shows automatically with the rest of the Home tab's root level.)
   const searchSection = document.getElementById('searchSection');
   if(searchSection) searchSection.style.display = (page==='home' ? '' : 'none');
-  const adCarousel = document.getElementById('adCarousel');
-  if(adCarousel){
-    // Respect the carousel's own "no featured vendors configured" hidden state -
-    // only ever show it on Home, and only when it actually has slides to show.
-    const hasAds = document.getElementById('adInner')?.children.length > 0;
-    adCarousel.style.display = (page==='home' && hasAds) ? '' : 'none';
-  }
   document.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
   if(page==='home'){ _browseLevel='societies'; _browseCategory=null; _browseProductQuery=null; closeVendorDetail(); }
   if(page==='orders') renderOrdersPage();
@@ -4841,11 +4790,11 @@ async function publishToGitHub(){
   }
 }
 
-/* ═══════════ AD CAROUSEL ═══════════ */
+/* ═══════════ ADVERTISEMENT GRID ═══════════
+   Static bento-style grid — every ad box is shown at once (no rotation), sizes
+   alternate big/small for visual rhythm. Tapping a box opens the vendor's full
+   detail view directly, same as tapping any other business tile. */
 (function(){
-  const INTERVAL = 4000;
-  let cur = 0, paused = false, timer = null, slides = [], items = [];
-
   function pickItems(){
     const featured = SITE_CONFIG.featuredVendorIds||[];
     if(!featured.length) return []; // No featured vendors = no ads shown
@@ -4854,80 +4803,28 @@ async function publishToGitHub(){
 
   function imgHTML(item){
     const img = item.image || IMGS[item.id] || '';
-    if(img) return `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:16px;background:var(--white)">`;
+    if(img) return `<img src="${img}" alt="">`;
     return PL_LOGO_SVG;
   }
 
-  function buildSlides(){
-    items = pickItems();
-    const carousel = document.getElementById('adCarousel');
-    const inner = document.getElementById('adInner');
-    const dots  = document.getElementById('adDots');
-    inner.innerHTML = ''; dots.innerHTML = '';
-    slides = [];
-    // Hide carousel completely when no featured vendors are configured
-    if(!items.length){ if(carousel) carousel.style.display='none'; return; }
-    if(carousel) carousel.style.display='';
+  function buildGrid(){
+    const items = pickItems();
+    const grid = document.getElementById('adGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    if(!items.length){ grid.style.display='none'; return; }
+    grid.style.display = '';
     items.forEach((item, i)=>{
-      const sl = document.createElement('div');
-      sl.className = 'ad-slide' + (i===0?' active':'');
-      sl.innerHTML = `<div class="ad-slide-img">${imgHTML(item)}</div>`;
-      sl.addEventListener('click', ()=>{ pauseAd(); openAdModal(item); });
-      inner.appendChild(sl);
-      slides.push(sl);
-
-      const dot = document.createElement('div');
-      dot.className = 'ad-dot'+(i===0?' active':'');
-      dots.appendChild(dot);
+      const box = document.createElement('div');
+      box.className = 'ad-box ' + (i % 3 === 0 ? 'big' : 'small');
+      box.innerHTML = imgHTML(item);
+      box.addEventListener('click', ()=>{ openMenuModal(item.id); });
+      grid.appendChild(box);
     });
   }
 
-  function goTo(n){
-    const total = slides.length;
-    if(!total) return;
-    slides[cur].classList.add('exit');
-    slides[cur].classList.remove('active');
-    setTimeout(()=>{ slides[cur] && slides[cur].classList.remove('exit'); }, 550);
-    cur = (n + total) % total;
-    slides[cur].classList.add('active');
-    document.querySelectorAll('.ad-dot').forEach((d,i)=> d.classList.toggle('active', i===cur));
-  }
-
-  function startAd(){
-    timer = setInterval(()=>{ if(!paused) goTo(cur+1); }, INTERVAL);
-  }
-
-  function pauseAd(){
-    paused = true;
-    document.getElementById('adBadge').textContent = '⏸ Paused — click to resume';
-    document.getElementById('adCarousel').addEventListener('click', resumeAd, {once:true});
-  }
-
-  function resumeAd(){
-    paused = false;
-    document.getElementById('adBadge').textContent = '▶ Auto';
-  }
-
-  window.adNav = function(dir){
-    pauseAd();
-    goTo(cur + dir);
-  };
-
-  /* ── AD DETAIL MODAL ── */
-  window.openAdModal = function(item){
-    // Just open the full menu modal — same experience as clicking the vendor tile
-    closeAdModal();
-    openMenuModal(item.id);
-  };
-
-  window.closeAdModal = function(e){
-    if(e && e.target !== document.getElementById('adModalOverlay')) return;
-    document.getElementById('adModalOverlay').classList.remove('open');
-  };
-
-  window.initAd = function(){ if(timer) clearInterval(timer); buildSlides(); if(items.length) startAd(); };
-  buildSlides();
-  startAd();
+  window.initAd = function(){ buildGrid(); };
+  buildGrid();
 })();
 
 /* ═══════════ PANEL SWITCHING ═══════════ */
@@ -4954,8 +4851,6 @@ function switchPanel(panel){
 let _backExitArmed = false, _backExitTimer = null;
 
 function _topOpenModal(){
-  const adModal = document.getElementById('adModalOverlay');
-  if(adModal && adModal.classList.contains('open')) return adModal;
   const reAuth = document.getElementById('reAuthModal');
   if(reAuth && reAuth.classList.contains('open')) return reAuth;
   return document.querySelector('.modal-overlay.open');
@@ -4965,7 +4860,6 @@ function _handleHardwareBack(){
   const topModal = _topOpenModal();
   if(topModal){
     if(topModal.id==='reAuthModal') _reAuthCancel();
-    else if(topModal.id==='adModalOverlay') closeAdModal();
     else closeModal(topModal.id);
     return;
   }

@@ -362,8 +362,6 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 
   /* ── ADVERTISEMENT GRID ── */
   .ad-grid{gap:10px}
-  .ad-box.big{height:170px}
-  .ad-box.small{height:120px}
 
   /* ── TOAST ── */
   .toast{left:12px;right:12px;bottom:12px;font-size:.8rem}
@@ -380,16 +378,15 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
   .s-card .form-group.full{grid-column:1}
 }
 
-/* ── ADVERTISEMENT GRID — borderless bento-style boxes, full uncropped images, varied
-   sizes (Urban Company/Blinkit promo-tile style). Every 3rd item is "big" (full width),
-   the other two of each trio are "small" (side by side) — a repeating bento rhythm that
-   looks reasonable regardless of how many ads are configured. */
-.ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:24px auto 0;padding:0 20px 4px}
-.ad-box{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;background:var(--white);display:flex;align-items:center;justify-content:center;transition:transform .15s ease}
+/* ── ADVERTISEMENT GRID — just the images, no card/panel behind them. Every 3rd item
+   is "big" (full width), the other two of each trio are "small" (side by side). No
+   fixed box height — each image keeps its own natural aspect ratio (width:100%;
+   height:auto), so there's never any letterboxing or empty background to show. */
+.ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:24px auto 0;padding:0 20px 4px;align-items:start}
+.ad-box{cursor:pointer;border-radius:18px;overflow:hidden;transition:transform .15s ease}
 .ad-box:active{transform:scale(.97)}
-.ad-box img{width:100%;height:100%;object-fit:contain;background:var(--white)}
-.ad-box.big{grid-column:1/-1;height:220px}
-.ad-box.small{height:160px}
+.ad-box img{width:100%;height:auto;display:block}
+.ad-box.big{grid-column:1/-1}
 
 /* ── FULL-SCREEN STATES (location splash + no-internet) ── */
 .fullscreen-state{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .3s ease}

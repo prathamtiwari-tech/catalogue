@@ -385,6 +385,9 @@ header{background:var(--white);color:var(--text);position:sticky;top:0;z-index:1
 .ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:24px auto 0;padding:0 20px 4px;align-items:start}
 .ad-box{cursor:pointer;border-radius:18px;overflow:hidden;transition:transform .15s ease}
 .ad-box:active{transform:scale(.97)}
+
+.order-history-card{transition:transform .15s ease,border-color .15s ease}
+.order-history-card:active{transform:scale(.98);border-color:var(--green)}
 .ad-box img{width:100%;height:auto;display:block}
 .ad-box.big{grid-column:1/-1}
 
@@ -1902,13 +1905,27 @@ async function renderOrdersPage(){
     return;
   }
   body.innerHTML = orders.map(o=>`
-    <div style="border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:var(--white)">
+    <div class="order-history-card" onclick="reorderFromHistory('${o.vendorId}')" style="border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:var(--white);cursor:pointer">
       <div style="display:flex;justify-content:space-between;gap:10px;font-weight:700;color:var(--green-dark)">
         <span>${esc(o.vendorName)}</span><span style="white-space:nowrap">₹${o.total||0}</span>
       </div>
       <div style="font-size:.8rem;color:var(--text-muted);margin-top:4px">${(o.items||[]).map(it=>`${esc(it.name)} x${it.qty}`).join(', ')}</div>
-      <div style="font-size:.72rem;color:var(--text-muted);margin-top:6px">${o.ts && o.ts.seconds ? new Date(o.ts.seconds*1000).toLocaleString() : ''}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span style="font-size:.72rem;color:var(--text-muted)">${o.ts && o.ts.seconds ? new Date(o.ts.seconds*1000).toLocaleString() : ''}</span>
+        <span style="font-size:.76rem;color:var(--green);font-weight:700;white-space:nowrap"><i class="fa fa-rotate-right"></i> Reorder</span>
+      </div>
     </div>`).join('');
+}
+
+/* Tapping a past order in the Orders tab jumps straight to that vendor's listing
+   (switching to the Home tab first, since the detail view lives inside it) so the
+   customer can quickly reorder. If the vendor is gone/delisted, say so instead of
+   silently switching tabs to nothing. */
+function reorderFromHistory(vendorId){
+  const vendor = getBrowseData().find(d=>d.id===vendorId);
+  if(!vendor){ showToast('This business is no longer listed'); return; }
+  switchCustomerPage('home');
+  openMenuModal(vendorId);
 }
 
 function _accountAboutLinksHTML(){

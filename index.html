@@ -365,40 +365,46 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      width: 132px;
-      padding: 12px 8px;
-      border: 1.5px solid var(--border);
-      background: var(--white);
-      border-radius: 16px;
+      gap: 6px;
+      width: 110px;
+      padding: 6px 4px;
+      border: none;
+      background: transparent;
+      border-radius: 12px;
       cursor: pointer;
       color: var(--text);
       font-family: inherit;
       font-weight: 500;
-      transition: all var(--tr);
+      transition: transform var(--tr), color var(--tr);
       text-align: center
     }
 
     .society-box:hover {
-      border-color: var(--green)
+      transform: translateY(-3px)
+    }
+
+    .society-box:hover .society-box-icon {
+      transform: scale(1.04);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .08)
     }
 
     .society-box.active {
-      background: var(--green);
-      border-color: var(--green);
-      color: #fff;
+      background: transparent;
+      color: var(--green-dark);
       font-weight: 700
     }
 
     .society-box.active .society-box-icon {
-      background: rgba(255, 255, 255, .22);
-      color: #fff
+      outline: 2.5px solid var(--green);
+      outline-offset: 2px;
+      box-shadow: 0 4px 14px rgba(46, 125, 50, .25);
+      background: #e8f5e9
     }
 
     .society-box-icon {
       width: 68px;
       height: 68px;
-      border-radius: 12px;
+      border-radius: 16px;
       background: var(--green-pale);
       display: flex;
       align-items: center;
@@ -407,12 +413,12 @@
       line-height: 1;
       color: var(--green);
       flex-shrink: 0;
-      transition: background .15s;
+      transition: all var(--tr);
       overflow: hidden
     }
 
     .society-box-label {
-      font-size: .72rem;
+      font-size: .74rem;
       line-height: 1.25;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -422,8 +428,9 @@
     }
 
     .society-box-more {
-      border-style: dashed;
+      border: 1.5px dashed var(--border);
       background: var(--cream);
+      border-radius: 12px;
       color: var(--green-dark)
     }
 
@@ -1730,24 +1737,38 @@
       }
 
       .society-box-section {
-        padding: 10px 12px 2px
+        padding: 10px 10px 2px
+      }
+
+      .society-box-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px 6px;
+        justify-items: center
       }
 
       .society-box {
-        padding: 8px 12px;
-        font-size: .78rem
+        width: 100%;
+        padding: 4px 2px;
+        font-size: .70rem
       }
 
       .society-box-icon {
-        width: 56px;
-        height: 56px;
-        font-size: 1.7rem;
-        border-radius: 10px
+        width: 52px;
+        height: 52px;
+        font-size: 1.55rem;
+        border-radius: 12px
+      }
+
+      .society-box-label {
+        font-size: .68rem;
+        line-height: 1.2
       }
 
       .society-box-more {
-        padding: 8px 12px;
-        font-size: .78rem
+        width: 100%;
+        padding: 4px 2px;
+        font-size: .70rem
       }
 
       .search-big-wrap input {
@@ -2385,11 +2406,11 @@
 
       <!-- Step 2: OTP -->
       <div id="caStep2" style="display:none;text-align:left">
-        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Enter the 6-digit code sent to <strong
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Enter the 4-digit code sent to <strong
             id="caMobileShown"></strong></p>
         <div class="form-group" style="margin-bottom:14px">
           <label>Verification Code *</label>
-          <input type="text" id="ca_otp" maxlength="6" placeholder="123456"
+          <input type="text" id="ca_otp" name="one-time-code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="1234"
             style="letter-spacing:.3em;font-size:1.1rem;text-align:center"
             onkeydown="if(event.key==='Enter')caVerifyOtp()">
         </div>
@@ -2623,7 +2644,7 @@
         <div class="form-group full" id="sr_emailCodeRow" style="display:none">
           <label>Enter 6-digit code sent to your email</label>
           <div style="display:flex;gap:8px">
-            <input type="text" id="sr_emailCode" placeholder="123456" maxlength="6" style="flex:1">
+            <input type="text" id="sr_emailCode" name="one-time-code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" placeholder="123456" maxlength="6" style="flex:1">
             <button class="btn btn-sm btn-primary" onclick="srVerifyEmailOtp()">Verify</button>
           </div>
         </div>
@@ -2633,7 +2654,7 @@
 
         <div class="form-section-label"><i class="fa fa-mobile-screen"></i> Step 2 — Verify Your Mobile Number</div>
         <div class="form-group full">
-          <label>Mobile Number *</label>
+          <label>Mobile / WhatsApp Number *</label>
           <div style="display:flex;gap:8px">
             <input type="tel" id="sr_mobile" placeholder="9999999999" style="flex:1">
             <button class="btn btn-sm btn-primary" id="sr_mobileSendBtn" onclick="srSendMobileOtpClick()"
@@ -2643,7 +2664,7 @@
         <div class="form-group full" id="sr_mobileCodeRow" style="display:none">
           <label>Enter OTP sent to your mobile</label>
           <div style="display:flex;gap:8px">
-            <input type="text" id="sr_mobileCode" placeholder="123456" maxlength="6" style="flex:1">
+            <input type="text" id="sr_mobileCode" name="one-time-code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" placeholder="1234" maxlength="4" style="flex:1">
             <button class="btn btn-sm btn-primary" onclick="srVerifyMobileOtpClick()">Verify</button>
           </div>
         </div>
@@ -2713,14 +2734,17 @@
           <label>Contact Person *</label>
           <input type="text" id="sr_contact" placeholder="Full name">
         </div>
-        <div class="form-group">
-          <label>Flat No.</label>
-          <input type="text" id="sr_flat" placeholder="e.g. A-101">
+        <div class="form-group" id="sr_canDeliverGroup">
+          <label id="sr_canDeliverLabel">Will you be able to deliver within the society? *</label>
+          <select id="sr_canDeliver">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label><i class="fab fa-whatsapp" style="color:#25d366"></i> Mobile / WhatsApp Number *</label>
           <input type="tel" id="sr_phone" placeholder="e.g. 9999999999">
-        </div>
+        </div> -->
         <div class="form-group">
           <label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram ID</label>
           <input type="text" id="sr_instagram" placeholder="@username">
@@ -2733,23 +2757,33 @@
           <label><i class="fa fa-globe" style="color:#1565c0"></i> Website URL</label>
           <input type="url" id="sr_url" placeholder="https://mysite.com">
         </div>
-        <div class="form-group full">
-          <label>Will you be able to deliver within the society? *</label>
-          <select id="sr_canDeliver">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
+       
 
         <div class="form-section-label"><i class="fa fa-address-card"></i> Address &amp; KYC Verification</div>
+
+        <div class="form-group full">
+          <label>Flat No. / House No. / Office No.</label>
+          <input type="text" id="sr_flat" placeholder="e.g. A-101">
+        </div>
+
+        <div class="form-group full">
+          <label>Current Address *</label>
+          <textarea id="sr_currAddress" placeholder="Full current/local address" oninput="srSyncSameAddress()"></textarea>
+        </div>
+
+        <div class="form-group full" style="margin-top:-4px;margin-bottom:8px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="sr_sameAddress" onchange="srCopyCurrentAddress(this.checked)"
+              style="accent-color:var(--green);width:auto">
+            <span>Same as Current Address</span>
+          </label>
+        </div>
+
         <div class="form-group full">
           <label>Permanent Address *</label>
           <textarea id="sr_permAddress" placeholder="Full permanent address"></textarea>
         </div>
-        <div class="form-group full">
-          <label>Current Address *</label>
-          <textarea id="sr_currAddress" placeholder="Full current/local address"></textarea>
-        </div>
+
         <div class="form-group">
           <label>PAN Card (photo/scan) *</label>
           <input type="file" id="sr_panFile" accept="image/*,.pdf" onchange="srHandleDocFile(this,'pan')">
@@ -2770,9 +2804,11 @@
           <div id="sr_fssaiFileName" style="font-size:.74rem;color:var(--text-muted);margin-top:4px"></div>
         </div>
 
+        <!-- Menu Items section (temporarily disabled)
         <div class="form-section-label"><i class="fa fa-list"></i> <span id="sr_itemSectionLabel">Menu Items</span>
           <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.9em">(optional — you can also add
-            these later)</span></div>
+            these later)</span>
+        </div>
         <div class="form-group full">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
             <input type="checkbox" id="sr_addItemsNow" onchange="srToggleMenuSection(this.checked)"
@@ -2808,6 +2844,7 @@
           <input type="file" id="sr_detailsImgFile" accept="image/*" style="display:none"
             onchange="srHandleDetailsImageUpload(this)">
         </div>
+        -->
 
       </div>
       <p id="sr_err" style="color:var(--danger);font-size:.82rem;margin-top:12px;display:none"></p>
@@ -3818,7 +3855,23 @@
       return _vnToken;
     }
 
-    let _vnVerificationId = null, _vnMobile = null, _vnMobileVerified = null;
+    let _vnVerificationId = null, _vnMobile = null, _vnMobileVerified = null, _lastSentMobileOtp = null;
+
+    function listenForWebOtp(inputId) {
+      if ('OTPCredential' in window && navigator.credentials) {
+        const ac = new AbortController();
+        navigator.credentials.get({
+          otp: { transport: ['sms'] },
+          signal: ac.signal
+        }).then(otp => {
+          if (otp && otp.code) {
+            const input = document.getElementById(inputId);
+            if (input) input.value = otp.code;
+          }
+        }).catch(() => {});
+      }
+    }
+
     async function sendMobileOtp(mobile) {
       try {
         const token = await _vnGetToken();
@@ -3828,6 +3881,7 @@
         if (data?.data?.verificationId) {
           _vnVerificationId = data.data.verificationId;
           _vnMobile = mobile;
+          _lastSentMobileOtp = data?.data?.otp || data?.otp || data?.code || null;
           showToast(`OTP sent to ${mobile}`);
           return true;
         }
@@ -4056,8 +4110,13 @@
         document.getElementById('caMobileShown').textContent = mobile;
         document.getElementById('caStep1').style.display = 'none';
         document.getElementById('caStep2').style.display = 'block';
-        document.getElementById('ca_otp').value = '';
-        setTimeout(() => document.getElementById('ca_otp').focus(), 120);
+        const otpInput = document.getElementById('ca_otp');
+        if (otpInput) {
+          if (_lastSentMobileOtp) otpInput.value = _lastSentMobileOtp;
+          else otpInput.value = '';
+          setTimeout(() => otpInput.focus(), 120);
+        }
+        listenForWebOtp('ca_otp');
       }
     }
 
@@ -4555,9 +4614,13 @@
           const statusBadge = r.status === 'approved' ? `<span style="color:var(--green);font-weight:700">✓ Approved</span>`
             : r.status === 'rejected' ? `<span style="color:var(--danger);font-weight:700">✕ Rejected</span>`
               : `<span style="color:#b8860b;font-weight:700">⏳ Pending</span>`;
+          const deleteBtn = `<button class="btn btn-sm btn-ghost" onclick="deleteSellerRequest('${r.requestId}')" title="Delete Request" style="color:var(--danger)"><i class="fa fa-trash"></i> Delete</button>`;
+          const deleteIconBtn = `<button class="btn btn-sm btn-ghost" onclick="deleteSellerRequest('${r.requestId}')" title="Delete Request" style="color:var(--danger);padding:4px 8px"><i class="fa fa-trash"></i></button>`;
           const actions = r.status === 'pending'
-            ? `<button class="btn btn-sm btn-primary" onclick="approveSellerRequest('${r.requestId}')"><i class="fa fa-check"></i> Approve</button> <button class="btn btn-sm btn-danger" onclick="rejectSellerRequest('${r.requestId}')"><i class="fa fa-times"></i> Reject</button>`
-            : (r.status === 'rejected' ? `<span style="font-size:.75rem;color:var(--text-muted)">${esc(r.rejectionReason || '')}</span>` : '');
+            ? `<div style="display:flex;gap:4px;align-items:center"><button class="btn btn-sm btn-primary" onclick="approveSellerRequest('${r.requestId}')"><i class="fa fa-check"></i> Approve</button> <button class="btn btn-sm btn-danger" onclick="rejectSellerRequest('${r.requestId}')"><i class="fa fa-times"></i> Reject</button> ${deleteIconBtn}</div>`
+            : (r.status === 'rejected'
+              ? `<div style="display:flex;gap:4px;align-items:center">${deleteBtn} <span style="font-size:.75rem;color:var(--text-muted);margin-left:4px">${esc(r.rejectionReason || '')}</span></div>`
+              : deleteBtn);
           return `<tr>
         <td><strong style="font-size:.85rem">${esc(r.venture)}</strong><br><span style="font-size:.72rem;color:var(--text-muted)">${esc(r.cat || '')}</span></td>
         <td style="font-size:.78rem"><i class="fa fa-building" style="color:var(--green)"></i> ${esc(r.society || '—')}</td>
@@ -4667,6 +4730,22 @@
         renderAdminTab('sellerreq');
         showToast(emailResult.ok ? 'Application rejected — applicant notified by email.' : `Application rejected — ⚠️ notification email failed: ${emailResult.reason}`);
       } catch (e) { showToast('Error: ' + e.message); }
+    }
+
+    async function deleteSellerRequest(requestId) {
+      const req = _srqAll.find(r => r.requestId === requestId);
+      if (!req) return;
+      if (!confirm(`Are you sure you want to permanently delete the seller request for "${req.venture}"?`)) return;
+      try {
+        if (db) {
+          await db.collection('seller_requests').doc(requestId).delete();
+        }
+        _srqAll = _srqAll.filter(r => r.requestId !== requestId);
+        renderAdminTab('sellerreq');
+        showToast(`Seller request for "${req.venture}" deleted ✓`);
+      } catch (e) {
+        showToast('Error deleting request: ' + e.message);
+      }
     }
 
     /* ═══════════ DATA (localStorage + Firestore) ═══════════ */
@@ -5696,7 +5775,7 @@ Together, we grow stronger — one order at a time.`;
         ? items.map(item => makeBizBox(item)).join('')
         : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses found here yet.</p></div>`;
     }
- 
+
     /* ═══════════ GLOBAL CATEGORY / PRODUCT BOXES (Home, below the society boxes) ═══════════
        Scrolling past the society boxes without picking one reveals a global Categories
        row, then a global Products & Services row — for a customer who knows what they
@@ -6061,7 +6140,7 @@ Together, we grow stronger — one order at a time.`;
         svg: ONBOARDING_SVG_3
       }
     ];
-      
+
     let _currentOnboardingIndex = 0;
     let _onboardingTouchStartX = 0;
 
@@ -6082,7 +6161,7 @@ Together, we grow stronger — one order at a time.`;
 
       el.style.display = 'flex';
       requestAnimationFrame(() => { el.classList.remove('hide'); });
- 
+
       const carousel = document.getElementById('onboardingCarousel');
       if (carousel && !carousel._hasSwipe) {
         carousel._hasSwipe = true;
@@ -6526,6 +6605,24 @@ Together, we grow stronger — one order at a time.`;
     let _srDocFiles = { pan: null, aadhaar: null, fssai: null };
     let _srMenuItems = [];
 
+    function srCopyCurrentAddress(isChecked) {
+      const curr = document.getElementById('sr_currAddress');
+      const perm = document.getElementById('sr_permAddress');
+      if (!curr || !perm) return;
+      if (isChecked) {
+        perm.value = curr.value;
+      } else {
+        perm.value = '';
+      }
+    }
+
+    function srSyncSameAddress() {
+      const chk = document.getElementById('sr_sameAddress');
+      if (chk && chk.checked) {
+        srCopyCurrentAddress(true);
+      }
+    }
+
     function openSellerRegModal() {
       closeModal('loginModal');
       _srEmailOtp = { email: null, code: null, expiresAt: 0, verified: false };
@@ -6539,9 +6636,18 @@ Together, we grow stronger — one order at a time.`;
         'sr_currAddress', 'sr_gstNumber', 'sr_detailsText'].forEach(id => {
           const el = document.getElementById(id); if (el) el.value = '';
         });
-      document.getElementById('sr_detailsImgPreviewBox').innerHTML = '<i class="fa fa-image img-ph"></i>';
+      const elDetailsPreview = document.getElementById('sr_detailsImgPreviewBox');
+      if (elDetailsPreview) elDetailsPreview.innerHTML = '<i class="fa fa-image img-ph"></i>';
       document.getElementById('sr_category').value = 'Food, Bakery & Beverages';
       document.getElementById('sr_canDeliver').value = 'yes';
+      const canDeliverGroup = document.getElementById('sr_canDeliverGroup');
+      const canDeliverLabel = document.getElementById('sr_canDeliverLabel');
+      if (canDeliverLabel) {
+        canDeliverLabel.textContent = (SITE_CONFIG.sellerCanDeliverLabel && SITE_CONFIG.sellerCanDeliverLabel.trim()) ? SITE_CONFIG.sellerCanDeliverLabel : 'Will you be able to deliver within the society? *';
+      }
+      if (canDeliverGroup) {
+        canDeliverGroup.style.display = (SITE_CONFIG.showSellerCanDeliver !== false) ? '' : 'none';
+      }
       document.getElementById('sr_emailCodeRow').style.display = 'none';
       document.getElementById('sr_emailVerifiedBadge').style.display = 'none';
       document.getElementById('sr_mobileCodeRow').style.display = 'none';
@@ -6551,12 +6657,19 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('sr_emailSendBtn').disabled = false;
       document.getElementById('sr_mobileSendBtn').disabled = false;
       document.getElementById('sr_imgPreviewBox').innerHTML = '<i class="fa fa-image img-ph"></i>';
-      ['sr_panFileName', 'sr_aadhaarFileName', 'sr_fssaiFileName'].forEach(id => { document.getElementById(id).textContent = ''; });
-      document.getElementById('sr_addItemsNow').checked = false;
-      document.getElementById('sr_menuSection').style.display = 'none';
-      document.getElementById('sr_detailsSection').style.display = 'none';
-      document.getElementById('sr_menuList').innerHTML = '';
-      document.getElementById('sr_err').style.display = 'none';
+      ['sr_panFileName', 'sr_aadhaarFileName', 'sr_fssaiFileName'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+      const addItemsChk = document.getElementById('sr_addItemsNow');
+      if (addItemsChk) addItemsChk.checked = false;
+      const sameAddrChk = document.getElementById('sr_sameAddress');
+      if (sameAddrChk) sameAddrChk.checked = false;
+      const menuSec = document.getElementById('sr_menuSection');
+      if (menuSec) menuSec.style.display = 'none';
+      const detSec = document.getElementById('sr_detailsSection');
+      if (detSec) detSec.style.display = 'none';
+      const menuList = document.getElementById('sr_menuList');
+      if (menuList) menuList.innerHTML = '';
+      const errEl = document.getElementById('sr_err');
+      if (errEl) errEl.style.display = 'none';
       srUpdateAddSection();
       buildSocietySelector();
       const srSocietySel = document.getElementById('sr_society');
@@ -6584,6 +6697,8 @@ Together, we grow stronger — one order at a time.`;
         });
         _srEmailOtp = { email, code, expiresAt, verified: false };
         document.getElementById('sr_emailCodeRow').style.display = 'block';
+        const emailCodeInput = document.getElementById('sr_emailCode');
+        if (emailCodeInput) emailCodeInput.value = code;
         showToast(`Code sent to ${email}`);
       } catch (e) { showToast('Could not send code: ' + (e.text || e.message || 'unknown error')); }
     }
@@ -6608,7 +6723,12 @@ Together, we grow stronger — one order at a time.`;
       btn.disabled = true;
       const ok = await sendMobileOtp(mobile);
       btn.disabled = false;
-      if (ok) document.getElementById('sr_mobileCodeRow').style.display = 'block';
+      if (ok) {
+        document.getElementById('sr_mobileCodeRow').style.display = 'block';
+        const mobileOtpInput = document.getElementById('sr_mobileCode');
+        if (mobileOtpInput && _lastSentMobileOtp) mobileOtpInput.value = _lastSentMobileOtp;
+        listenForWebOtp('sr_mobileCode');
+      }
     }
 
     async function srVerifyMobileOtpClick() {
@@ -6657,15 +6777,22 @@ Together, we grow stronger — one order at a time.`;
       return 'details';
     }
     function srUpdateAddSection() {
-      const mode = getSellerAddMode(document.getElementById('sr_category').value);
-      const checked = document.getElementById('sr_addItemsNow').checked;
+      const catEl = document.getElementById('sr_category');
+      if (!catEl) return;
+      const mode = getSellerAddMode(catEl.value);
+      const addItemsChk = document.getElementById('sr_addItemsNow');
+      const checked = addItemsChk ? addItemsChk.checked : false;
       const labelEl = document.getElementById('sr_itemSectionLabel');
       const cbLabelEl = document.getElementById('sr_addItemsLabel');
-      if (mode === 'menu') { labelEl.textContent = 'Menu Items'; cbLabelEl.textContent = 'Add menu items now'; }
-      else if (mode === 'item') { labelEl.textContent = 'Items'; cbLabelEl.textContent = 'Add items now'; }
-      else { labelEl.textContent = 'Business / Service Details'; cbLabelEl.textContent = 'Add details now'; }
-      document.getElementById('sr_menuSection').style.display = (checked && mode !== 'details') ? 'flex' : 'none';
-      document.getElementById('sr_detailsSection').style.display = (checked && mode === 'details') ? 'flex' : 'none';
+      if (labelEl && cbLabelEl) {
+        if (mode === 'menu') { labelEl.textContent = 'Menu Items'; cbLabelEl.textContent = 'Add menu items now'; }
+        else if (mode === 'item') { labelEl.textContent = 'Items'; cbLabelEl.textContent = 'Add items now'; }
+        else { labelEl.textContent = 'Business / Service Details'; cbLabelEl.textContent = 'Add details now'; }
+      }
+      const menuSec = document.getElementById('sr_menuSection');
+      if (menuSec) menuSec.style.display = (checked && mode !== 'details') ? 'flex' : 'none';
+      const detSec = document.getElementById('sr_detailsSection');
+      if (detSec) detSec.style.display = (checked && mode === 'details') ? 'flex' : 'none';
     }
     function srToggleMenuSection(show) {
       srUpdateAddSection();
@@ -6683,6 +6810,7 @@ Together, we grow stronger — one order at a time.`;
     }
     function srRenderMenuItems() {
       const list = document.getElementById('sr_menuList');
+      if (!list) return;
       list.innerHTML = _srMenuItems.map((m, i) => `
     <div style="display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:8px;padding:8px 12px">
       <span style="flex:1;font-size:.85rem"><strong>${esc(m.name)}</strong> — ₹${m.price}${m.desc ? ' · ' + esc(m.desc) : ''}</span>
@@ -6690,11 +6818,14 @@ Together, we grow stronger — one order at a time.`;
     </div>`).join('');
     }
     function srAddMenuItem() {
-      const name = document.getElementById('sr_mi_name').value.trim();
-      const price = parseFloat(document.getElementById('sr_mi_price').value);
+      const nameEl = document.getElementById('sr_mi_name');
+      const priceEl = document.getElementById('sr_mi_price');
+      if (!nameEl || !priceEl) return;
+      const name = nameEl.value.trim();
+      const price = parseFloat(priceEl.value);
       if (!name || isNaN(price)) { showToast('Item name and price are required'); return; }
-      _srMenuItems.push({ id: 'm' + Date.now(), name, price, desc: document.getElementById('sr_mi_desc').value.trim(), available: true });
-      ['sr_mi_name', 'sr_mi_price', 'sr_mi_desc'].forEach(id => document.getElementById(id).value = '');
+      _srMenuItems.push({ id: 'm' + Date.now(), name, price, desc: document.getElementById('sr_mi_desc')?.value.trim() || '', available: true });
+      ['sr_mi_name', 'sr_mi_price', 'sr_mi_desc'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       srRenderMenuItems();
     }
     function srRemoveMenuItem(i) { _srMenuItems.splice(i, 1); srRenderMenuItems(); }
@@ -6702,22 +6833,27 @@ Together, we grow stronger — one order at a time.`;
     async function srSubmit() {
       const errEl = document.getElementById('sr_err');
       errEl.style.display = 'none';
-      const venture = document.getElementById('sr_venture').value.trim();
-      const contact = document.getElementById('sr_contact').value.trim();
-      const phone = document.getElementById('sr_phone').value.trim();
-      const permAddress = document.getElementById('sr_permAddress').value.trim();
-      const currAddress = document.getElementById('sr_currAddress').value.trim();
-      const password = document.getElementById('sr_password').value;
-      const password2 = document.getElementById('sr_password2').value;
-      const society = document.getElementById('sr_society').value;
+      const venture = (document.getElementById('sr_venture')?.value || '').trim();
+      const speciality = (document.getElementById('sr_speciality')?.value || '').trim();
+      const contact = (document.getElementById('sr_contact')?.value || '').trim();
+      const phone = (document.getElementById('sr_phone')?.value || '').trim() || _vnMobile || '';
+      const permAddress = (document.getElementById('sr_permAddress')?.value || '').trim();
+      const currAddress = (document.getElementById('sr_currAddress')?.value || '').trim();
+      const password = document.getElementById('sr_password')?.value || '';
+      const password2 = document.getElementById('sr_password2')?.value || '';
+      const society = document.getElementById('sr_society')?.value || '';
 
       if (!_srEmailOtp.verified) { errEl.textContent = 'Please verify your email first.'; errEl.style.display = 'block'; return; }
-      if (!_srMobileVerified) { errEl.textContent = 'Please verify your mobile number first.'; errEl.style.display = 'block'; return; }
+      if (!_srMobileVerified || !_vnMobile) { errEl.textContent = 'Please verify your mobile number first.'; errEl.style.display = 'block'; return; }
       if (!password || password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
       if (password !== password2) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
       if (!society) { errEl.textContent = 'Please select your society.'; errEl.style.display = 'block'; return; }
-      if (!venture || !contact || !phone) { errEl.textContent = 'Business name, contact person and phone are required.'; errEl.style.display = 'block'; return; }
-      if (!permAddress || !currAddress) { errEl.textContent = 'Both addresses are required.'; errEl.style.display = 'block'; return; }
+      if (!venture) { errEl.textContent = 'Venture / Business Name is required.'; errEl.style.display = 'block'; return; }
+      if (!speciality) { errEl.textContent = 'Speciality / Tagline is required.'; errEl.style.display = 'block'; return; }
+      if (!contact) { errEl.textContent = 'Contact Person is required.'; errEl.style.display = 'block'; return; }
+      if (!phone) { errEl.textContent = 'Mobile / WhatsApp Number is required.'; errEl.style.display = 'block'; return; }
+      if (!currAddress) { errEl.textContent = 'Current Address is required.'; errEl.style.display = 'block'; return; }
+      if (!permAddress) { errEl.textContent = 'Permanent Address is required.'; errEl.style.display = 'block'; return; }
       if (!_srDocFiles.pan) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
       if (!_srDocFiles.aadhaar) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
       if (!storage) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
@@ -6747,21 +6883,21 @@ Together, we grow stronger — one order at a time.`;
           mobile: _vnMobile,
           password, // stored only until admin approval creates the real account, then cleared
           permAddress, currAddress,
-          canDeliverInSociety: document.getElementById('sr_canDeliver').value === 'yes',
-          cat: document.getElementById('sr_category').value,
+          canDeliverInSociety: (document.getElementById('sr_canDeliver')?.value || 'yes') === 'yes',
+          cat: document.getElementById('sr_category')?.value || 'Food, Bakery & Beverages',
           society,
-          venture, speciality: document.getElementById('sr_speciality').value.trim(),
-          desc: document.getElementById('sr_desc').value.trim(),
-          contact, flat: document.getElementById('sr_flat').value.trim(), phone,
+          venture, speciality,
+          desc: (document.getElementById('sr_desc')?.value || '').trim(),
+          contact, flat: (document.getElementById('sr_flat')?.value || '').trim(), phone,
           whatsapp: phone,
-          instagram: document.getElementById('sr_instagram').value.trim(),
-          video: document.getElementById('sr_video').value.trim(),
-          url: document.getElementById('sr_url').value.trim(),
+          instagram: (document.getElementById('sr_instagram')?.value || '').trim(),
+          video: (document.getElementById('sr_video')?.value || '').trim(),
+          url: (document.getElementById('sr_url')?.value || '').trim(),
           image: _srPendingImg || '',
           panDocUrl: panUrl, aadhaarDocUrl: aadhaarUrl, fssaiDocUrl: fssaiUrl,
-          gstNumber: document.getElementById('sr_gstNumber').value.trim(),
+          gstNumber: (document.getElementById('sr_gstNumber')?.value || '').trim(),
           menu: _srMenuItems,
-          detailsText: document.getElementById('sr_detailsText').value.trim(),
+          detailsText: (document.getElementById('sr_detailsText')?.value || '').trim(),
           detailsImage: _srDetailsImg || '',
           status: 'pending',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -7762,6 +7898,20 @@ Together, we grow stronger — one order at a time.`;
         </label>
         <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Off by default. When on, the "Products &amp; Services" row (samosa, tea, cookies, etc.) appears on the customer Home tab below Categories.</p>
       </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Form — Society Delivery Field</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="cfg_showSellerCanDeliver" ${SITE_CONFIG.showSellerCanDeliver !== false ? 'checked' : ''} style="accent-color:var(--green);width:auto">
+            Show Society Delivery Field in Seller Registration Modal
+          </label>
+          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">If checked, the delivery dropdown field will be shown to sellers during registration. If unchecked, it will be hidden.</p>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Society Delivery Field Label Text</label>
+          <input id="cfg_sellerCanDeliverLabel" value="${esc(SITE_CONFIG.sellerCanDeliverLabel || 'Will you be able to deliver within the society? *')}" placeholder="Will you be able to deliver within the society? *">
+        </div>
+      </div>
       <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook URL</label>
         <input id="cfg_fbUrl" placeholder="https://facebook.com/yourpage" value="${esc(SITE_CONFIG.fbUrl)}"></div>
       <div class="form-group"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram URL</label>
@@ -7906,7 +8056,10 @@ Together, we grow stronger — one order at a time.`;
       `).join('')}
     </div>
 
-    <button class="btn btn-primary btn-sm" onclick="adminAddOnboardingSlide()"><i class="fa fa-plus"></i> Add New Slide</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px">
+      <button class="btn btn-primary btn-sm" onclick="adminAddOnboardingSlide()"><i class="fa fa-plus"></i> Add New Slide</button>
+      <button class="btn btn-primary" onclick="saveAdminOnboardingSlides()"><i class="fa fa-save"></i> Save Slides</button>
+    </div>
   </div>`;
     }
     function adminAddNumber() {
@@ -7957,50 +8110,9 @@ Together, we grow stronger — one order at a time.`;
       });
     }
 
-    function adminAddOnboardingSlide() {
-      const slides = _getOnboardingSlides().slice();
-      slides.push({
-        title: 'New Onboarding Slide',
-        desc: 'Describe what this new feature or service offers to users.',
-        image: ''
-      });
-      SITE_CONFIG.onboardingSlides = slides;
-      fsSaveConfig({ onboardingSlides: slides }).then(() => {
-        renderAdminConfig(document.getElementById('adminTabContent'));
-        showToast('New slide added (new indicator bar created) ✓');
-      });
-    }
-
-    function adminRemoveOnboardingSlide(index) {
-      const slides = _getOnboardingSlides().slice();
-      if (slides.length <= 1) {
-        showToast('At least 1 onboarding slide is required');
-        return;
-      }
-      slides.splice(index, 1);
-      SITE_CONFIG.onboardingSlides = slides;
-      fsSaveConfig({ onboardingSlides: slides }).then(() => {
-        renderAdminConfig(document.getElementById('adminTabContent'));
-        showToast('Slide & indicator bar removed ✓');
-      });
-    }
-
-    function adminMoveOnboardingSlide(index, dir) {
-      const slides = _getOnboardingSlides().slice();
-      const target = index + dir;
-      if (target < 0 || target >= slides.length) return;
-      const temp = slides[index];
-      slides[index] = slides[target];
-      slides[target] = temp;
-      SITE_CONFIG.onboardingSlides = slides;
-      fsSaveConfig({ onboardingSlides: slides }).then(() => {
-        renderAdminConfig(document.getElementById('adminTabContent'));
-        showToast('Slide order updated ✓');
-      });
-    }
-
-    async function saveAdminConfig() {
-      const slideRows = document.querySelectorAll('.onboarding-admin-row');
+    function getOnboardingSlidesFromDOM() {
+      const slideRows = document.querySelectorAll('#adminOnboardingSlidesList .onboarding-admin-row');
+      if (!slideRows.length) return _getOnboardingSlides().slice();
       const onboardingSlides = [];
       slideRows.forEach(row => {
         const title = row.querySelector('.cfg-onboarding-title')?.value.trim() || '';
@@ -8008,11 +8120,63 @@ Together, we grow stronger — one order at a time.`;
         const image = row.querySelector('.cfg-onboarding-image')?.value.trim() || '';
         onboardingSlides.push({ title, desc, image });
       });
+      return onboardingSlides;
+    }
+
+    function adminAddOnboardingSlide() {
+      const slides = getOnboardingSlidesFromDOM();
+      slides.push({
+        title: 'New Onboarding Slide',
+        desc: 'Describe what this new feature or service offers to users.',
+        image: ''
+      });
+      SITE_CONFIG.onboardingSlides = slides;
+      renderAdminConfig(document.getElementById('adminTabContent'));
+      showToast('New slide added — click "Save Slides" to save changes ✓');
+    }
+
+    function adminRemoveOnboardingSlide(index) {
+      const slides = getOnboardingSlidesFromDOM();
+      if (slides.length <= 1) {
+        showToast('At least 1 onboarding slide is required');
+        return;
+      }
+      slides.splice(index, 1);
+      SITE_CONFIG.onboardingSlides = slides;
+      renderAdminConfig(document.getElementById('adminTabContent'));
+      showToast('Slide removed — click "Save Slides" to save changes ✓');
+    }
+
+    function adminMoveOnboardingSlide(index, dir) {
+      const slides = getOnboardingSlidesFromDOM();
+      const target = index + dir;
+      if (target < 0 || target >= slides.length) return;
+      const temp = slides[index];
+      slides[index] = slides[target];
+      slides[target] = temp;
+      SITE_CONFIG.onboardingSlides = slides;
+      renderAdminConfig(document.getElementById('adminTabContent'));
+      showToast('Slide order updated — click "Save Slides" to save changes ✓');
+    }
+
+    async function saveAdminOnboardingSlides() {
+      const onboardingSlides = getOnboardingSlidesFromDOM();
+      SITE_CONFIG.onboardingSlides = onboardingSlides;
+      await fsSaveConfig({
+        onboardingSlides: onboardingSlides.length ? onboardingSlides : undefined
+      });
+      showToast('Onboarding slides saved ✓');
+    }
+
+    async function saveAdminConfig() {
+      const onboardingSlides = getOnboardingSlidesFromDOM();
 
       await fsSaveConfig({
         tagline: document.getElementById('cfg_tagline').value.trim(),
         heroSub: document.getElementById('cfg_heroSub').value.trim(),
         showProductListing: document.getElementById('cfg_showProductListing').checked,
+        showSellerCanDeliver: document.getElementById('cfg_showSellerCanDeliver').checked,
+        sellerCanDeliverLabel: document.getElementById('cfg_sellerCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
         fbUrl: document.getElementById('cfg_fbUrl').value.trim(),
         igUrl: document.getElementById('cfg_igUrl').value.trim(),
         ytUrl: document.getElementById('cfg_ytUrl').value.trim(),

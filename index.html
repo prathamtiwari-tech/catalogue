@@ -16,6 +16,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Cropper.js for image crop & zoom -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
     rel="stylesheet">
@@ -1710,7 +1713,7 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      z-index: 999;
+      z-index: 999999;
       background: var(--green-dark);
       color: #fff;
       padding: 12px 20px;
@@ -2947,15 +2950,24 @@
       </div>
 
       <!-- Warning Callout Box (Saffron Accent) -->
-      <div id="confirmModalWarning" style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:14px;padding:12px 16px;font-size:0.84rem;color:#e65100;font-weight:600;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+      <div id="confirmModalWarning" style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:14px;padding:12px 16px;font-size:0.84rem;color:#e65100;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:10px">
         <i class="fa fa-triangle-exclamation" style="font-size:1.05rem;color:#ff9933"></i>
         <span>This action cannot be undone.</span>
+      </div>
+
+      <!-- Optional Input Group -->
+      <div id="confirmModalInputGroup" style="display:none;margin-bottom:20px">
+        <label id="confirmModalInputLabel" style="font-size:0.82rem;font-weight:600;color:#5b6b7a;display:block;margin-bottom:6px">Reason (optional):</label>
+        <textarea id="confirmModalInput" placeholder="Enter reason..." style="width:100%;border-radius:12px;border:1.5px solid #e1e8f0;padding:10px 14px;font-size:0.86rem;font-family:inherit;resize:vertical;min-height:64px;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='#ff9933'" onblur="this.style.borderColor='#e1e8f0'"></textarea>
+        <div id="confirmModalInputError" style="display:none;color:#c62828;background:#ffebee;border:1px solid #ffcdd2;border-radius:10px;padding:8px 12px;font-size:0.82rem;font-weight:700;margin-top:8px;align-items:center;gap:6px">
+          <i class="fa fa-circle-exclamation"></i> <span>Deletion reason is compulsory. Please enter a reason.</span>
+        </div>
       </div>
 
       <!-- Action Buttons Row -->
       <div class="modal-actions" style="display:flex;justify-content:flex-end;gap:12px;margin-top:0">
         <button type="button" class="btn" id="confirmModalCancelBtn" style="border-radius:12px;font-weight:600;padding:10px 20px;background:#ffffff;border:1px solid #e1e8f0;color:#5b6b7a;box-shadow:0 1px 2px rgba(0,0,0,0.05);transition:all 0.2s ease">Cancel</button>
-        <button type="button" class="btn" id="confirmModalConfirmBtn" style="border-radius:12px;font-weight:700;padding:10px 22px;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#ffffff;border:none;box-shadow:0 4px 16px rgba(255,153,51,0.35);transition:all 0.2s ease">Yes, Delete</button>
+        <button type="button" class="btn" id="confirmModalConfirmBtn" style="border-radius:12px;font-weight:700;padding:10px 22px;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#ffffff;border:none;box-shadow:0 4px 16px rgba(255,153,51,0.35);transition:all 0.2s ease">Confirm</button>
       </div>
     </div>
   </div>
@@ -3273,6 +3285,24 @@
         </div>
 
         <div class="form-group">
+          <label>Address Proof Type *</label>
+          <select id="sr_addressProofType" onchange="srToggleAddressProofFile()">
+            <option value="">Select Address Proof Type</option>
+            <option value="Aadhaar Card">Aadhaar Card</option>
+            <option value="Passport">Passport</option>
+            <option value="Voter ID card">Voter ID card</option>
+            <option value="Driving Licence">Driving Licence</option>
+            <option value="Recent utility bills (electricity, water, or gas not older than three months)">Recent utility bills (electricity, water, or gas not older than three months)</option>
+            <option value="Bank account statements or passbooks">Bank account statements or passbooks</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Address Proof Document (photo/scan) *</label>
+          <input type="file" id="sr_addressProofFile" accept="image/*,.pdf" disabled onchange="srHandleDocFile(this,'addressProof')">
+          <div id="sr_addressProofFileName" style="font-size:.74rem;color:var(--text-muted);margin-top:4px"></div>
+        </div>
+
+        <div class="form-group">
           <label>PAN Card (photo/scan) *</label>
           <input type="file" id="sr_panFile" accept="image/*,.pdf" onchange="srHandleDocFile(this,'pan')">
           <div id="sr_panFileName" style="font-size:.74rem;color:var(--text-muted);margin-top:4px"></div>
@@ -3340,6 +3370,87 @@
         <button class="btn btn-ghost" onclick="closeModal('sellerRegModal')">Cancel</button>
         <button class="btn btn-primary" id="sr_submitBtn" onclick="srSubmit()"><i class="fa fa-paper-plane"></i> Submit
           Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── IMAGE CROPPER MODAL ── -->
+  <div class="modal-overlay" id="imageCropModal" style="z-index:999999">
+    <div class="modal" style="max-width:560px;width:95%">
+      <div class="modal-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span><i class="fa fa-crop-simple" style="color:var(--green)"></i> Crop &amp; Adjust Photo</span>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="closeImageCropper()" style="padding:4px 8px;font-size:1rem"><i class="fa fa-xmark"></i></button>
+      </div>
+      <div style="width:100%;max-height:360px;height:320px;overflow:hidden;background:#111;border-radius:12px;margin:12px 0 16px;display:flex;align-items:center;justify-content:center">
+        <img id="cropperTargetImage" style="max-width:100%;max-height:100%;display:block">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <button type="button" class="btn btn-sm btn-ghost" onclick="cropperZoom(0.1)" title="Zoom In" style="border:1px solid var(--border)"><i class="fa fa-magnifying-glass-plus" style="color:var(--green)"></i> Zoom In</button>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="cropperZoom(-0.1)" title="Zoom Out" style="border:1px solid var(--border)"><i class="fa fa-magnifying-glass-minus" style="color:var(--green)"></i> Zoom Out</button>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="cropperRotate(-90)" title="Rotate Left" style="border:1px solid var(--border)"><i class="fa fa-rotate-left"></i> Rotate Left</button>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="cropperRotate(90)" title="Rotate Right" style="border:1px solid var(--border)"><i class="fa fa-rotate-right"></i> Rotate Right</button>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="cropperReset()" title="Reset" style="border:1px solid var(--border)"><i class="fa fa-arrows-rotate"></i> Reset</button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeImageCropper()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="applyCroppedImage()"><i class="fa fa-check"></i> Crop &amp; Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DAY SCHEDULE MODAL (Specific day schedule or close today) ── -->
+  <div class="modal-overlay" id="dayScheduleModal" style="z-index:999999">
+    <div class="modal" style="max-width:500px;width:95%">
+      <div class="modal-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span><i class="fa fa-calendar-day" style="color:var(--green)"></i> Configure Schedule for <span id="dayModalDayName">Tuesday</span></span>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="closeModal('dayScheduleModal')" style="padding:4px 8px;font-size:1rem"><i class="fa fa-xmark"></i></button>
+      </div>
+
+      <div style="margin:16px 0;display:flex;flex-direction:column;gap:14px">
+        <!-- Option 1: Custom Hours -->
+        <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e1e8f0);border-radius:14px;padding:14px" id="dayModalOptionHoursBox">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:0.9rem;color:var(--text)">
+            <input type="radio" name="dayScheduleMode" id="dayModeCustomHours" value="custom" onchange="onDayModalModeChange()" style="accent-color:var(--green)">
+            <span>1. Schedule specific open &amp; close time for this day</span>
+          </label>
+          <div id="dayModalCustomHoursInputs" style="margin-top:12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px;padding-left:26px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-muted)">Opening Time</label>
+              <input type="time" id="dayModalOpenTime" class="time-picker-input" value="10:00">
+            </div>
+            <div style="padding-bottom:10px;color:var(--green);font-size:1rem;font-weight:700;text-align:center">
+              <i class="fa fa-arrow-right"></i>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-muted)">Closing Time</label>
+              <input type="time" id="dayModalCloseTime" class="time-picker-input" value="21:00">
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 2: Closed Day -->
+        <div style="background:#fff5f5;border:1.5px solid #feb2b2;border-radius:14px;padding:14px" id="dayModalOptionClosedBox">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:0.9rem;color:#c53030">
+            <input type="radio" name="dayScheduleMode" id="dayModeClosed" value="closed" onchange="onDayModalModeChange()" style="accent-color:#e53e3e">
+            <span><i class="fa fa-circle-xmark" style="color:#e53e3e"></i> 2. Close shop on <span class="dayModalDayText">Tuesday</span> (Mark as Closed)</span>
+          </label>
+          <div style="margin-top:6px;font-size:0.78rem;color:#9b2c2c;padding-left:26px">
+            If shop is closed, this day will display in red as <strong>CLOSED</strong> on your schedule.
+          </div>
+        </div>
+
+        <!-- Option 3: Default Week Hours -->
+        <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e1e8f0);border-radius:14px;padding:14px" id="dayModalOptionDefaultBox">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:0.86rem;color:var(--text-muted)">
+            <input type="radio" name="dayScheduleMode" id="dayModeDefault" value="default" onchange="onDayModalModeChange()" style="accent-color:var(--green)">
+            <span>3. Use standard daily week hours (<span id="dayModalDefaultHoursLabel">10:00 AM - 09:00 PM</span>)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('dayScheduleModal')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveDayModalSchedule()"><i class="fa fa-check"></i> Save Day Schedule</button>
       </div>
     </div>
   </div>
@@ -3739,6 +3850,8 @@
         <button class="admin-tab-btn" data-tab="reviews" onclick="switchAdminTab('reviews')" id="reviewsTabBtn"><i
             class="fa fa-star"></i> Reviews <span id="pendingReviewsBadge"
             style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:2px"></span></button>
+        <button class="admin-tab-btn" data-tab="deletions" onclick="switchAdminTab('deletions')"><i
+            class="fa fa-history"></i> Deletion Logs</button>
       </div>
       <div id="adminTabContent"></div>
     </div>
@@ -5297,6 +5410,7 @@
 
       function _docLinks(r) {
         const links = [];
+        if (r.addressProofDocUrl) links.push(`<a href="${r.addressProofDocUrl}" target="_blank" class="btn btn-sm btn-ghost" title="${esc(r.addressProofType || 'Address Proof')}"><i class="fa fa-file-contract"></i> Address Proof${r.addressProofType ? ' (' + esc(r.addressProofType) + ')' : ''}</a>`);
         if (r.panDocUrl) links.push(`<a href="${r.panDocUrl}" target="_blank" class="btn btn-sm btn-ghost"><i class="fa fa-id-card"></i> PAN</a>`);
         if (r.aadhaarDocUrl) links.push(`<a href="${r.aadhaarDocUrl}" target="_blank" class="btn btn-sm btn-ghost"><i class="fa fa-id-badge"></i> Aadhaar</a>`);
         if (r.fssaiDocUrl) links.push(`<a href="${r.fssaiDocUrl}" target="_blank" class="btn btn-sm btn-ghost"><i class="fa fa-certificate"></i> FSSAI</a>`);
@@ -5372,7 +5486,15 @@
 
     async function approveSellerRequest(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId); if (!req) return;
-      if (!confirm(`Approve "${req.venture}" (${req.society || 'no society set'})?\n\nThis creates a live listing and a seller login for ${req.email}.`)) return;
+      const confirmed = await confirmAction({
+        title: `Approve "${req.venture}"?`,
+        message: `This creates a live listing in ${req.society || 'the selected society'} and a seller login for ${req.email}.`,
+        warning: 'The applicant will receive an email confirmation with their login credentials.',
+        confirmText: 'Approve Business',
+        cancelText: 'Cancel',
+        danger: false
+      });
+      if (!confirmed) return;
       if (!secondaryAuth || !secondaryDb) { showToast('Firebase not configured'); return; }
       try {
         showToast('Approving…');
@@ -5407,11 +5529,15 @@
 
         // Write accounts doc using secondaryDb if secondaryAuth is authenticated as uid
         // (so request.auth.uid == uid in Firestore Security Rules passes), or fallback to db.
-        if (secondaryAuth.currentUser && secondaryAuth.currentUser.uid === uid) {
-          await secondaryDb.collection('accounts').doc(uid).set(accountData, { merge: true });
-          try { await secondaryAuth.signOut(); } catch(e){}
-        } else {
-          await db.collection('accounts').doc(uid).set(accountData, { merge: true });
+        try {
+          if (secondaryAuth.currentUser && secondaryAuth.currentUser.uid === uid) {
+            await secondaryDb.collection('accounts').doc(uid).set(accountData, { merge: true });
+            try { await secondaryAuth.signOut(); } catch(e){}
+          } else if (uid) {
+            await db.collection('accounts').doc(uid).set(accountData, { merge: true });
+          }
+        } catch (accErr) {
+          console.warn('Accounts doc write skipped or disallowed by security rules:', accErr);
         }
 
         // Clean up any old vendor listings for this email before creating new one
@@ -5458,7 +5584,19 @@
 
     async function rejectSellerRequest(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId); if (!req) return;
-      const reason = prompt(`Reason for rejecting "${req.venture}"? (optional, shown to applicant)`) || '';
+      const res = await confirmAction({
+        title: `Reject "${req.venture}"?`,
+        message: `Are you sure you want to reject the seller application for ${req.email}?`,
+        warning: 'The applicant will be notified of the rejection.',
+        showInput: true,
+        inputLabel: 'Reason for rejection (optional, shown to applicant):',
+        inputPlaceholder: 'e.g. Incomplete address proof or invalid documents',
+        confirmText: 'Reject Application',
+        cancelText: 'Cancel',
+        danger: true
+      });
+      if (!res) return; // Closed or cancelled — DO NOT REJECT OR REMOVE DATA
+      const reason = (typeof res === 'object' && res.value !== undefined) ? res.value : '';
       try {
         await db.collection('seller_requests').doc(requestId).set({
           status: 'rejected', rejectionReason: reason, password: firebase.firestore.FieldValue.delete(),
@@ -5474,14 +5612,69 @@
     async function deleteSellerRequest(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId);
       if (!req) return;
-      if (!confirm(`Are you sure you want to permanently delete the seller request for "${req.venture}"?`)) return;
+
+      const res = await confirmAction({
+        title: 'Delete Seller Request?',
+        message: `Are you sure you want to permanently delete the seller request for "${req.venture}" (${req.email})?`,
+        warning: 'This action will permanently remove this registration request.',
+        confirmText: 'Delete Request',
+        cancelText: 'Cancel',
+        danger: true,
+        showInput: true,
+        inputRequired: true,
+        inputLabel: 'Reason for Deletion * (Compulsory):',
+        inputPlaceholder: 'Enter compulsory reason why this seller request is being removed…'
+      });
+
+      if (!res || typeof res !== 'object' || !res.confirmed) return;
+      const deletionReason = (res.value || '').trim();
+
+      if (!deletionReason) {
+        showToast('Deletion reason is compulsory.');
+        return;
+      }
+
       try {
+        const adminEmail = auth.currentUser ? auth.currentUser.email : 'Admin';
+        const adminUid = auth.currentUser ? auth.currentUser.uid : 'admin';
+        const adminMobile = localStorage.getItem('hb_admin_verified_mobile')
+          || (auth.currentUser ? auth.currentUser.phoneNumber : '')
+          || (_adminNumbers && _adminNumbers()[0])
+          || 'Not provided';
+
+        const logData = {
+          type: 'seller_request_deletion',
+          requestId: requestId,
+          targetName: req.venture || req.name,
+          targetEmail: req.email,
+          targetPhone: req.phone || req.mobile,
+          reason: deletionReason,
+          deletedByAdminEmail: adminEmail,
+          deletedByAdminUid: adminUid,
+          deletedByAdminMobile: adminMobile,
+          performedBy: adminEmail,
+          adminMobile: adminMobile,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: new Date().toISOString()
+        };
+
         if (db) {
-          await db.collection('seller_requests').doc(requestId).delete();
+          try {
+            await db.collection('deletion_history').add(logData);
+            await db.collection('admin_deletion_logs').add(logData);
+            await db.collection('seller_requests').doc(requestId).delete();
+          } catch (e) {
+            console.warn('Error recording deletion log:', e);
+          }
         }
+
+        const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
+        localLogs.unshift(logData);
+        localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
+
         _srqAll = _srqAll.filter(r => r.requestId !== requestId);
         renderAdminTab('sellerreq');
-        showToast(`Seller request for "${req.venture}" deleted ✓`);
+        showToast(`Seller request for "${req.venture}" deleted & logged in history ✓`);
       } catch (e) {
         showToast('Error deleting request: ' + e.message);
       }
@@ -6052,8 +6245,8 @@
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:1.2rem;line-height:1">🔴</span>
             <div>
-              <strong style="color:#c62828;font-size:0.92rem;display:block">Currently Not Available</strong>
-              <span style="font-size:0.8rem;color:#e65100">${esc(statusInfo.subtext)}</span>
+              <strong style="color:#c62828;font-size:0.92rem;display:block">Shop Currently Closed</strong>
+              <span style="font-size:0.8rem;color:#e65100">${esc(statusInfo.customerText || statusInfo.subtext)}</span>
             </div>
           </div>
           <button type="button" class="btn btn-sm ${isSubscribed ? 'btn-success' : 'btn-outline'}" style="${isSubscribed ? 'background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7' : 'border-color:#e65100;color:#e65100'};white-space:nowrap;font-weight:700;padding:6px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px" onclick="toggleNotifyMeWhenOpen('${_menuVendor.id}', this)">
@@ -6138,7 +6331,7 @@
       } else {
         if (_catCfg.useQty) {
           list.innerHTML = modalInfoBannerHTML + menu.map(it => `
-        <div class="menu-item-row">
+        <div class="menu-item-row" style="${isShopClosed ? 'opacity:0.75' : ''}">
           <div style="flex:1;min-width:0">
             <div class="menu-item-name">${it.name}</div>
             ${it.desc ? `<div class="menu-item-desc">${it.desc}</div>` : ''}
@@ -6146,17 +6339,17 @@
           <div style="display:flex;align-items:center;flex-shrink:0;gap:4px">
             ${it.price > 0 ? `<div class="menu-item-price">₹${it.price}</div>` : '<div class="menu-item-price" style="font-size:.72rem;color:var(--text-muted)">Enquiry</div>'}
             <div class="qty-ctrl">
-              <button class="qty-btn" onclick="chQty('${it.id}',${it.price},-1)">−</button>
+              <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},-1)"`}>−</button>
               <span class="qty-num" id="qn_${it.id}">0</span>
-              <button class="qty-btn" onclick="chQty('${it.id}',${it.price},1)">+</button>
+              <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},1)"`}>+</button>
             </div>
           </div>
         </div>`).join('');
         } else {
           list.innerHTML = modalInfoBannerHTML + menu.map(it => `
-        <div class="menu-item-row" style="cursor:pointer" onclick="document.getElementById('chk_${it.id}').click()">
-          <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:pointer" onclick="event.stopPropagation()">
-            <input type="checkbox" id="chk_${it.id}" onchange="_updMenuTotal()" style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px">
+        <div class="menu-item-row" style="${isShopClosed ? 'cursor:default;opacity:0.75' : 'cursor:pointer'}" ${isShopClosed ? '' : `onclick="document.getElementById('chk_${it.id}').click()"`}>
+          <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:${isShopClosed ? 'default' : 'pointer'}" onclick="event.stopPropagation()">
+            <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : 'onchange="_updMenuTotal()"'} style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px;${isShopClosed ? 'cursor:not-allowed' : ''}">
             <div style="flex:1">
               <div class="menu-item-name">${it.name}</div>
               ${it.desc ? `<div class="menu-item-desc">${it.desc}</div>` : ''}
@@ -6166,14 +6359,32 @@
         </div>`).join('');
         }
         const orderBtn = document.getElementById('menuOrderBtn');
+        const callBtn = document.getElementById('menuCallBtn');
+        const waBtn = document.getElementById('menuWaBtn');
+
         if (isShopClosed) {
           orderBtn.style.display = 'flex';
           orderBtn.disabled = true;
-          orderBtn.style.opacity = '0.6';
+          orderBtn.style.opacity = '0.5';
           orderBtn.style.cursor = 'not-allowed';
-          orderBtn.onclick = null;
+          orderBtn.onclick = function() { showToast('Shop is currently closed. Orders can only be placed when shop opens.'); };
           orderBtn.innerHTML = '<i class="fa fa-moon"></i> Shop Currently Closed';
           document.getElementById('menuFlatRow').style.display = 'none';
+
+          if (callBtn) {
+            callBtn.disabled = true;
+            callBtn.style.opacity = '0.5';
+            callBtn.style.cursor = 'not-allowed';
+            callBtn.title = 'Shop is currently closed';
+            callBtn.onclick = function() { showToast('Shop is currently closed. Contacting vendor is available when shop opens.'); };
+          }
+          if (waBtn) {
+            waBtn.disabled = true;
+            waBtn.style.opacity = '0.5';
+            waBtn.style.cursor = 'not-allowed';
+            waBtn.title = 'Shop is currently closed';
+            waBtn.onclick = function() { showToast('Shop is currently closed. Contacting vendor is available when shop opens.'); };
+          }
         } else {
           orderBtn.disabled = false;
           orderBtn.style.opacity = '1';
@@ -6186,6 +6397,19 @@
             document.getElementById('menuFlatRow').style.display = 'none';
             orderBtn.onclick = openCustomerAuthModal;
             orderBtn.innerHTML = '<i class="fa fa-right-to-bracket"></i> Login to Order';
+          }
+
+          if (callBtn) {
+            callBtn.disabled = false;
+            callBtn.style.opacity = '1';
+            callBtn.style.cursor = 'pointer';
+            callBtn.onclick = function() { showVendorContact('call'); };
+          }
+          if (waBtn) {
+            waBtn.disabled = false;
+            waBtn.style.opacity = '1';
+            waBtn.style.cursor = 'pointer';
+            waBtn.onclick = function() { showVendorContact('wa'); };
           }
         }
       }
@@ -6299,6 +6523,11 @@
 
     function placeOrder() {
       if (!_menuVendor || !_catCfg) return;
+      const statusInfo = getVendorStatusInfo(_menuVendor);
+      if (statusInfo.isClosed) {
+        showToast('Shop is currently closed. Orders can only be placed when shop opens.');
+        return;
+      }
       if (!currentCustomer) { openCustomerAuthModal(); return; }
       const menu = (_menuVendor.menu || []).filter(it => it.available !== false);
       const wa = _menuVendor.whatsapp || _menuVendor.phone;
@@ -6384,6 +6613,11 @@
 
     function showVendorContact(type) {
       if (!_menuVendor) return;
+      const statusInfo = getVendorStatusInfo(_menuVendor);
+      if (statusInfo.isClosed) {
+        showToast('Shop is currently closed. Contacting vendor is available when shop opens.');
+        return;
+      }
       const mobileEl = document.getElementById('menuCustomerMobile');
       const addressEl = document.getElementById('menuCustomerAddress');
       const mobile = (mobileEl?.value || '').trim();
@@ -6505,7 +6739,8 @@
     function goUser() { if (isAdmin) exitAdmin(); }
 
     /* ═══════════ MODAL ═══════════ */
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('open'); }
+    function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('open'); }
     document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
 
     function openPolicyModal(type) {
@@ -6825,7 +7060,7 @@ Together, we grow stronger — one order at a time.`;
       if (q) items = items.filter(d => itemMatchesQuery(d, q));
       grid.innerHTML = items.length
         ? items.map(item => makeBizBox(item)).join('')
-        : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses found here yet.</p></div>`;
+        : renderNoServiceProtocolHTML(_browseSubCategory || _browseCategory || 'this category');
     }
 
     /* ═══════════ GLOBAL CATEGORY / PRODUCT BOXES (Home, below the society boxes) ═══════════ */
@@ -6938,7 +7173,7 @@ Together, we grow stronger — one order at a time.`;
           <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:20px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.5">
             If you want your service to be present here, notify us here.
           </p>
-          <button type="button" class="btn btn-primary" id="noServiceNotifyBtn" onclick="triggerServiceExpansionRequest('${esc(serviceName.replace(/'/g, "\\'"))}', '${cleanLocName.replace(/'/g, "\\'")}')" style="border-radius:12px;padding:12px 24px;font-weight:700;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;border:none;box-shadow:0 4px 14px rgba(255,153,51,0.35)">
+          <button type="button" class="btn btn-primary" id="noServiceNotifyBtn" onclick="triggerServiceExpansionRequest('${esc((serviceName || 'Service').replace(/'/g, "\\'"))}', '${cleanLocName.replace(/'/g, "\\'")}')" style="border-radius:12px;padding:12px 24px;font-weight:700;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;border:none;box-shadow:0 4px 14px rgba(255,153,51,0.35)">
             <i class="fa fa-bell"></i> Notify Me
           </button>
         </div>
@@ -6953,8 +7188,9 @@ Together, we grow stronger — one order at a time.`;
       }
 
       const coords = getCurrentUserCoords();
-      const userEmail = currentCustomer ? currentCustomer.email : (auth && auth.currentUser ? auth.currentUser.email : 'Customer');
-      const userMobile = currentCustomer ? currentCustomer.mobile : '';
+      const userName = currentCustomer ? (currentCustomer.name || 'Customer') : 'Customer User';
+      const userEmail = currentCustomer ? currentCustomer.email : (auth && auth.currentUser ? auth.currentUser.email : '');
+      const userMobile = currentCustomer ? (currentCustomer.mobile || currentCustomer.phone || '') : '';
 
       try {
         if (db) {
@@ -6963,10 +7199,40 @@ Together, we grow stronger — one order at a time.`;
             locationName: locationName || 'Current Location',
             lat: coords.lat,
             lng: coords.lng,
+            userName: userName,
             userEmail: userEmail,
             userMobile: userMobile,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
+        }
+
+        const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
+        const ejsService = SITE_CONFIG.ejsServiceId || '';
+        const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId || SITE_CONFIG.ejsTemplateId || '';
+        const adminEmail = SITE_CONFIG.contactEmail || 'admin@tyntron.co.in';
+
+        if (ejsPubKey && ejsService && ejsTemplate) {
+          try {
+            await emailjs.init({ publicKey: ejsPubKey });
+            await emailjs.send(ejsService, ejsTemplate, {
+              from_name: userName || 'TynTron Customer',
+              from_email: userEmail || 'noreply@tyntron.co.in',
+              mobile: userMobile || 'Not provided',
+              subject: `📍 Service Expansion Request: ${serviceName} in ${locationName}`,
+              message: `Service Expansion Alert!\n\nA user requested service expansion on TynTron:\n\n`
+                + `• Requested Service: ${serviceName}\n`
+                + `• Location Area: ${locationName}\n`
+                + `• GPS Coordinates: Lat ${coords.lat}, Lng ${coords.lng}\n`
+                + `• Customer Name: ${userName}\n`
+                + `• Customer Email: ${userEmail || 'Not provided'}\n`
+                + `• Customer Mobile: ${userMobile || 'Not provided'}\n`
+                + `• Timestamp: ${new Date().toLocaleString()}\n\n`
+                + `Please review this area for seller onboarding and business expansion planning.`,
+              to_email: adminEmail
+            });
+          } catch (eErr) {
+            console.warn('Failed to send expansion request email:', eErr);
+          }
         }
 
         if (btn) {
@@ -6976,7 +7242,7 @@ Together, we grow stronger — one order at a time.`;
           btn.style.boxShadow = '0 4px 14px rgba(46, 125, 50, 0.35)';
           btn.innerHTML = `<i class="fa fa-circle-check"></i> We've notified admin for service expansion`;
         }
-        showToast(`✓ Expansion notification sent to admin for ${locationName}!`);
+        showToast(`✓ Expansion notification & email sent to admin for ${locationName}!`);
       } catch (e) {
         showToast(`✓ Expansion notification sent to admin for ${locationName}!`);
         if (btn) {
@@ -7992,13 +8258,97 @@ Together, we grow stronger — one order at a time.`;
         if (removeBtn) removeBtn.style.display = 'none';
       }
     }
+    /* ── Image Cropper Controller ── */
+    let _cropperInstance = null;
+    let _cropperCallback = null;
+    let _cropperFileInput = null;
+
+    function openImageCropper(file, callback, fileInput) {
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) { showToast('Image must be under 8 MB'); return; }
+      _cropperCallback = callback;
+      _cropperFileInput = fileInput || null;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.getElementById('cropperTargetImage');
+        if (!img) return;
+
+        if (_cropperInstance) {
+          _cropperInstance.destroy();
+          _cropperInstance = null;
+        }
+
+        img.src = e.target.result;
+        openModal('imageCropModal');
+
+        setTimeout(() => {
+          _cropperInstance = new Cropper(img, {
+            aspectRatio: 4 / 3,
+            viewMode: 1,
+            autoCropArea: 0.9,
+            responsive: true,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+          });
+        }, 150);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function cropperZoom(ratio) {
+      if (_cropperInstance) _cropperInstance.zoom(ratio);
+    }
+
+    function cropperRotate(degree) {
+      if (_cropperInstance) _cropperInstance.rotate(degree);
+    }
+
+    function cropperReset() {
+      if (_cropperInstance) _cropperInstance.reset();
+    }
+
+    function closeImageCropper() {
+      closeModal('imageCropModal');
+      if (_cropperInstance) {
+        _cropperInstance.destroy();
+        _cropperInstance = null;
+      }
+      if (_cropperFileInput) {
+        _cropperFileInput.value = '';
+        _cropperFileInput = null;
+      }
+      _cropperCallback = null;
+    }
+
+    function applyCroppedImage() {
+      if (!_cropperInstance) return;
+      const canvas = _cropperInstance.getCroppedCanvas({
+        width: 800,
+        height: 600,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high',
+      });
+      if (!canvas) { showToast('Could not crop image'); return; }
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+      if (typeof _cropperCallback === 'function') {
+        _cropperCallback(dataUrl);
+      }
+      closeImageCropper();
+    }
+
     function handleImageUpload(input) {
       const file = input.files[0]; if (!file) return;
-      if (file.size > 4 * 1024 * 1024) { showToast('Image must be under 4 MB'); return; }
-      const reader = new FileReader();
-      reader.onload = e => { pendingImg = e.target.result; setPreview(pendingImg); };
-      reader.readAsDataURL(file);
-      input.value = '';
+      openImageCropper(file, function(croppedDataUrl) {
+        pendingImg = croppedDataUrl;
+        setPreview(pendingImg);
+      }, input);
     }
     function removeImage() {
       pendingImg = '__remove__'; setPreview(null);
@@ -8129,7 +8479,7 @@ Together, we grow stronger — one order at a time.`;
     let _srMobileVerified = false;
     let _srPendingImg = null;
     let _srDetailsImg = null;
-    let _srDocFiles = { pan: null, aadhaar: null, fssai: null };
+    let _srDocFiles = { pan: null, aadhaar: null, fssai: null, addressProof: null };
     let _srMenuItems = [];
 
     function srCopyCurrentAddress(isChecked) {
@@ -8150,6 +8500,20 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
+    function srToggleAddressProofFile() {
+      const typeEl = document.getElementById('sr_addressProofType');
+      const fileEl = document.getElementById('sr_addressProofFile');
+      if (!typeEl || !fileEl) return;
+      const hasType = !!typeEl.value;
+      fileEl.disabled = !hasType;
+      if (!hasType) {
+        fileEl.value = '';
+        _srDocFiles.addressProof = null;
+        const nameEl = document.getElementById('sr_addressProofFileName');
+        if (nameEl) nameEl.textContent = '';
+      }
+    }
+
     function openSellerRegModal() {
       closeModal('loginModal');
       initCustomSelect('sr_category');
@@ -8158,13 +8522,14 @@ Together, we grow stronger — one order at a time.`;
       _srMobileVerified = false;
       _srPendingImg = null;
       _srDetailsImg = null;
-      _srDocFiles = { pan: null, aadhaar: null, fssai: null };
+      _srDocFiles = { pan: null, aadhaar: null, fssai: null, addressProof: null };
       _srMenuItems = [];
       ['sr_email', 'sr_emailCode', 'sr_mobile', 'sr_mobileCode', 'sr_password', 'sr_password2', 'sr_venture', 'sr_speciality',
         'sr_desc', 'sr_contact', 'sr_flat', 'sr_phone', 'sr_instagram', 'sr_video', 'sr_url', 'sr_permAddress',
-        'sr_currAddress', 'sr_gstNumber', 'sr_detailsText', 'sr_category_custom', 'sr_subcategory_custom'].forEach(id => {
+        'sr_currAddress', 'sr_addressProofType', 'sr_gstNumber', 'sr_detailsText', 'sr_category_custom', 'sr_subcategory_custom'].forEach(id => {
           const el = document.getElementById(id); if (el) el.value = '';
         });
+      srToggleAddressProofFile();
       const elDetailsPreview = document.getElementById('sr_detailsImgPreviewBox');
       if (elDetailsPreview) elDetailsPreview.innerHTML = '<i class="fa fa-image img-ph"></i>';
       const elSelectedChips = document.getElementById('sr_selected_subcategories_list');
@@ -8192,7 +8557,7 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('sr_emailSendBtn').disabled = false;
       document.getElementById('sr_mobileSendBtn').disabled = false;
       srRemoveImage();
-      ['sr_panFileName', 'sr_aadhaarFileName', 'sr_fssaiFileName'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+      ['sr_panFileName', 'sr_aadhaarFileName', 'sr_fssaiFileName', 'sr_addressProofFileName'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
       const addItemsChk = document.getElementById('sr_addItemsNow');
       if (addItemsChk) addItemsChk.checked = false;
       const sameAddrChk = document.getElementById('sr_sameAddress');
@@ -8455,10 +8820,8 @@ Together, we grow stronger — one order at a time.`;
 
     function srHandleImageUpload(input) {
       const file = input.files[0]; if (!file) return;
-      if (file.size > 4 * 1024 * 1024) { showToast('Image must be under 4 MB'); return; }
-      const reader = new FileReader();
-      reader.onload = e => {
-        _srPendingImg = e.target.result;
+      openImageCropper(file, function (croppedDataUrl) {
+        _srPendingImg = croppedDataUrl;
         document.getElementById('sr_imgPreviewBox').innerHTML = `<img src="${_srPendingImg}" style="width:100%;height:100%;object-fit:cover">`;
         const zone = document.getElementById('sr_imgZone');
         if (zone) zone.classList.add('has-image');
@@ -8468,9 +8831,7 @@ Together, we grow stronger — one order at a time.`;
         if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-arrows-rotate"></i> Change Image`;
         const removeBtn = document.getElementById('sr_removeImgBtn');
         if (removeBtn) removeBtn.style.display = 'inline-flex';
-      };
-      reader.readAsDataURL(file);
-      input.value = '';
+      }, input);
     }
 
     function srRemoveImage() {
@@ -8589,8 +8950,11 @@ Together, we grow stronger — one order at a time.`;
       if (!contact) { errEl.textContent = 'Contact Person is required.'; errEl.style.display = 'block'; return; }
       if (!flat) { errEl.textContent = 'Flat No. / House No. / Office No. is required.'; errEl.style.display = 'block'; return; }
       if (!phone) { errEl.textContent = 'Mobile / WhatsApp Number is required.'; errEl.style.display = 'block'; return; }
+      const addressProofType = document.getElementById('sr_addressProofType')?.value || '';
       if (!currAddress) { errEl.textContent = 'Current Address is required.'; errEl.style.display = 'block'; return; }
       if (!permAddress) { errEl.textContent = 'Permanent Address is required.'; errEl.style.display = 'block'; return; }
+      if (!addressProofType) { errEl.textContent = 'Please select Address Proof Type.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.addressProof) { errEl.textContent = 'Address Proof document upload is required.'; errEl.style.display = 'block'; return; }
       if (!_srDocFiles.pan) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
       if (!_srDocFiles.aadhaar) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
       if (!storage) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
@@ -8608,7 +8972,8 @@ Together, we grow stronger — one order at a time.`;
           await ref.put(file);
           return await ref.getDownloadURL();
         }
-        const [panUrl, aadhaarUrl, fssaiUrl] = await Promise.all([
+        const [addressProofUrl, panUrl, aadhaarUrl, fssaiUrl] = await Promise.all([
+          uploadDoc(_srDocFiles.addressProof, 'addressProof_' + _srDocFiles.addressProof.name),
           uploadDoc(_srDocFiles.pan, 'pan_' + _srDocFiles.pan.name),
           uploadDoc(_srDocFiles.aadhaar, 'aadhaar_' + _srDocFiles.aadhaar.name),
           _srDocFiles.fssai ? uploadDoc(_srDocFiles.fssai, 'fssai_' + _srDocFiles.fssai.name) : Promise.resolve(''),
@@ -8632,6 +8997,8 @@ Together, we grow stronger — one order at a time.`;
           mobile: _vnMobile,
           password, // stored only until admin approval creates the real account, then cleared
           permAddress, currAddress,
+          addressProofType,
+          addressProofDocUrl: addressProofUrl,
           canDeliverInSociety: (document.getElementById('sr_canDeliver')?.value || 'yes') === 'yes',
           cat: finalSrCat,
           subCat: finalSrSubCat,
@@ -9130,6 +9497,7 @@ Together, we grow stronger — one order at a time.`;
         case 'ads': renderAdminAds(c); break;
         case 'stats': renderAdminStats(c); break;
         case 'reviews': renderAdminReviews(c); break;
+        case 'deletions': renderAdminDeletionHistory(c); break;
       }
     }
 
@@ -9165,8 +9533,18 @@ Together, we grow stronger — one order at a time.`;
           </div>
         </div>` : '';
 
-      document.getElementById('sellerContent').innerHTML = deactivatedBanner + _sellerBusinessHTML(vendor) + _sellerOrdersPlaceholderHTML() + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
+      document.getElementById('sellerContent').innerHTML = deactivatedBanner + _sellerBusinessHTML(vendor) + _sellerNotifyRequestsPlaceholderHTML() + _sellerOrdersPlaceholderHTML() + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
+      renderWeeklyDayPills();
+      renderSellerNotifyRequests(vendor.id);
       renderSellerOrders(vendor.id);
+    }
+
+    function _sellerNotifyRequestsPlaceholderHTML() {
+      return `
+        <div class="s-card" style="margin-bottom:20px" id="sellerNotifyRequestsCard">
+          <div class="s-card-title"><i class="fa fa-bell" style="color:var(--green)"></i> Customer Reopen Requests ("Notify Me" List)</div>
+          <div id="sellerNotifyRequestsBody"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading reopen requests…</p></div>
+        </div>`;
     }
 
     function _sellerOrdersPlaceholderHTML() {
@@ -9217,9 +9595,183 @@ Together, we grow stronger — one order at a time.`;
       }
 
       showToast(isOpen ? 'Your shop is now OPEN ✓' : 'Your shop is now CLOSED');
+      if (isOpen) {
+        sendReopenEmailsToSubscribers(vendorId);
+      }
       checkVendorReopenTransitions();
       renderSellerPanel();
       renderAll();
+    }
+
+    async function fsLoadVendorNotifyRequests(vendorId) {
+      let requests = [];
+      if (FB_READY && db) {
+        try {
+          const snap = await db.collection('notify_requests').where('vendorId', '==', vendorId).get();
+          requests = snap.docs.map(doc => doc.data());
+        } catch (e) {
+          console.warn('Error loading notify requests from Firestore:', e);
+        }
+      }
+      // Merge local storage subscriptions if present
+      const subs = JSON.parse(localStorage.getItem('hb_reopen_subscriptions') || '{}');
+      if (subs[vendorId]) {
+        const localSub = subs[vendorId];
+        if (localSub.customerEmail && !requests.find(r => r.customerEmail === localSub.customerEmail)) {
+          requests.push({
+            vendorId: vendorId,
+            customerName: localSub.customerName || 'Customer',
+            customerEmail: localSub.customerEmail,
+            customerMobile: localSub.customerMobile || '-',
+            createdAt: new Date(localSub.timestamp || Date.now()).toLocaleDateString(),
+            notified: !!localSub.notified
+          });
+        }
+      }
+      return requests;
+    }
+
+    async function renderSellerNotifyRequests(vendorId) {
+      const body = document.getElementById('sellerNotifyRequestsBody');
+      if (!body) return;
+      const requests = await fsLoadVendorNotifyRequests(vendorId);
+      const vendor = DATA.find(d => d.id === vendorId);
+      const statusInfo = getVendorStatusInfo(vendor);
+      const isShopOpen = vendor && !statusInfo.isClosed;
+
+      if (!requests.length) {
+        body.innerHTML = `
+          <div style="text-align:center;padding:16px 0;color:var(--text-muted)">
+            <i class="fa fa-bell-slash" style="font-size:1.5rem;opacity:0.4;margin-bottom:8px;display:block"></i>
+            <p style="font-size:0.86rem;margin:0">No customer notify requests yet. When customers click "Notify Me" while your shop is closed, they will appear here.</p>
+          </div>`;
+        return;
+      }
+
+      const pendingReqs = requests.filter(r => !r.notified);
+      const notifiedReqs = requests.filter(r => r.notified);
+
+      const sendBtnHTML = isShopOpen ? `
+        <button type="button" class="btn btn-sm" onclick="sendReopenEmailsToSubscribers('${vendorId}')" style="background:var(--green,#28a745);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;box-shadow:0 2px 8px rgba(40,167,69,0.25);display:inline-flex;align-items:center;gap:6px">
+          <i class="fa fa-paper-plane"></i> Send Reopening Email to All (${requests.length})
+        </button>` : `
+        <span style="font-size:0.78rem;color:#e65100;background:#fff3e0;border:1px solid #ffe0b2;padding:6px 12px;border-radius:10px;font-weight:600;display:inline-flex;align-items:center;gap:6px">
+          <i class="fa fa-lock"></i> Turn shop OPEN to send reopening emails
+        </span>`;
+
+      body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="background:#e8f5e9;color:#2e7d32;font-size:0.78rem;font-weight:700;padding:4px 10px;border-radius:12px">Total Requests: ${requests.length}</span>
+            <span style="background:#fff3e0;color:#e65100;font-size:0.78rem;font-weight:700;padding:4px 10px;border-radius:12px">Pending: ${pendingReqs.length}</span>
+            <span style="background:#e3f2fd;color:#1565c0;font-size:0.78rem;font-weight:700;padding:4px 10px;border-radius:12px">Notified: ${notifiedReqs.length}</span>
+          </div>
+          ${sendBtnHTML}
+        </div>
+
+        <div style="overflow-x:auto">
+          <table class="menu-table" style="width:100%">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Email Address</th>
+                <th>Mobile Number</th>
+                <th>Requested Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${requests.map(r => `
+                <tr>
+                  <td style="font-weight:700;color:var(--text)"><i class="fa fa-user" style="color:var(--green);margin-right:6px"></i>${esc(r.customerName || 'Customer')}</td>
+                  <td style="color:var(--text)"><a href="mailto:${esc(r.customerEmail)}" style="color:var(--green-dark);font-weight:600">${esc(r.customerEmail)}</a></td>
+                  <td style="color:var(--text-muted);font-size:0.82rem">${esc(r.customerMobile || '-')}</td>
+                  <td style="color:var(--text-muted);font-size:0.8rem">${esc(r.createdAt || 'Recently')}</td>
+                  <td>
+                    ${r.notified 
+                      ? `<span class="badge" style="background:#e8f5e9;color:#2e7d32;padding:4px 8px;border-radius:8px;font-size:0.75rem;font-weight:700"><i class="fa fa-check"></i> Notified</span>` 
+                      : `<span class="badge" style="background:#fff3e0;color:#e65100;padding:4px 8px;border-radius:8px;font-size:0.75rem;font-weight:700"><i class="fa fa-clock"></i> Pending</span>`}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    async function sendReopenEmailsToSubscribers(vendorId) {
+      const vendor = DATA.find(d => d.id === vendorId);
+      if (!vendor) return;
+
+      const statusInfo = getVendorStatusInfo(vendor);
+      if (statusInfo.isClosed) {
+        showToast('Your shop is currently CLOSED. Please turn your shop OPEN before sending reopening emails.');
+        return;
+      }
+
+      const requests = await fsLoadVendorNotifyRequests(vendorId);
+      if (!requests.length) {
+        showToast('No customer notify requests found for your shop.');
+        return;
+      }
+
+      const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
+      const ejsService = SITE_CONFIG.ejsServiceId || '';
+      const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId || SITE_CONFIG.ejsTemplateId || '';
+
+      if (!ejsPubKey || !ejsService || !ejsTemplate) {
+        showToast('EmailJS configuration missing. Please ask admin to configure EmailJS in Site Config.');
+      }
+
+      let sentCount = 0;
+      showToast(`Sending reopening emails to ${requests.length} customer(s)...`);
+
+      for (const req of requests) {
+        if (!req.customerEmail) continue;
+
+        const subject = `🎉 Good News! ${vendor.venture} is Now OPEN & Accepting Orders!`;
+        const message = `Dear ${req.customerName || 'Valued Customer'},\n\n`
+          + `Great news! 🥳 ${vendor.venture} has officially REOPENED and is now ready to accept your orders on TynTron!\n\n`
+          + `✨ Business Details:\n`
+          + `• Venture: ${vendor.venture}\n`
+          + `• Speciality: ${vendor.speciality || 'Quality Community Services'}\n`
+          + `• Location: ${vendor.society || 'Community'}${vendor.flat ? ' (Flat ' + vendor.flat + ')' : ''}\n\n`
+          + `👉 Order Now on TynTron:\n`
+          + `https://tyntron.co.in\n\n`
+          + `Thank you for supporting home businesses! We look forward to serving you.\n\n`
+          + `Best regards,\n`
+          + `${vendor.venture} & Team TynTron\n`
+          + `For the Residents, By the Residents`;
+
+        if (ejsPubKey && ejsService && ejsTemplate) {
+          try {
+            await emailjs.init({ publicKey: ejsPubKey });
+            await emailjs.send(ejsService, ejsTemplate, {
+              from_name: vendor.venture || 'TynTron',
+              from_email: 'noreply@tyntron.co.in',
+              mobile: req.customerMobile || '',
+              subject: subject,
+              message: message,
+              to_email: req.customerEmail
+            });
+            sentCount++;
+          } catch (e) {
+            console.warn('Failed to send email to ' + req.customerEmail, e);
+          }
+        }
+
+        // Mark as notified in Firestore & Local Storage
+        req.notified = true;
+        if (FB_READY && db && req.customerEmail) {
+          try {
+            const reqId = `${vendorId}_${req.customerEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            await db.collection('notify_requests').doc(reqId).set({ notified: true, notifiedAt: new Date().toISOString() }, { merge: true });
+          } catch (e) { }
+        }
+      }
+
+      showToast(`Reopening notification email sent to ${sentCount || requests.length} customer(s)! 📧`);
+      renderSellerNotifyRequests(vendorId);
     }
 
     let _vendorPrevClosedState = {};
@@ -9287,10 +9839,19 @@ Together, we grow stronger — one order at a time.`;
       }, 8000);
     }
 
-    function toggleNotifyMeWhenOpen(vendorId, btnElement) {
+    async function toggleNotifyMeWhenOpen(vendorId, btnElement) {
+      if (!currentCustomer) {
+        showToast('Please log in to receive reopening notifications');
+        openCustomerAuthModal();
+        return;
+      }
+
       const subs = JSON.parse(localStorage.getItem('hb_reopen_subscriptions') || '{}');
       const vendor = DATA.find(v => v.id === vendorId);
       const ventureName = vendor ? vendor.venture : 'this shop';
+      const custName = currentCustomer.name || 'Customer';
+      const custEmail = currentCustomer.email || '';
+      const custMobile = currentCustomer.mobile || currentCustomer.phone || '';
 
       if (subs[vendorId]) {
         delete subs[vendorId];
@@ -9301,15 +9862,42 @@ Together, we grow stronger — one order at a time.`;
           btnElement.innerHTML = `<i class="fa fa-bell"></i> Notify Me`;
         }
         showToast(`Notification request removed for ${ventureName}`);
+
+        if (FB_READY && db && custEmail) {
+          try {
+            const reqId = `${vendorId}_${custEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            await db.collection('notify_requests').doc(reqId).delete();
+          } catch (e) { }
+        }
       } else {
-        subs[vendorId] = { timestamp: Date.now() };
+        const subData = {
+          vendorId: vendorId,
+          vendorName: ventureName,
+          customerName: custName,
+          customerEmail: custEmail,
+          customerMobile: custMobile,
+          timestamp: Date.now(),
+          createdAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+          notified: false
+        };
+        subs[vendorId] = subData;
         localStorage.setItem('hb_reopen_subscriptions', JSON.stringify(subs));
+
         if (btnElement) {
           btnElement.className = 'btn btn-sm btn-success';
           btnElement.style.cssText = 'background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;white-space:nowrap;font-weight:700;padding:6px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px';
           btnElement.innerHTML = `<i class="fa fa-check"></i> ✓ We'll notify you`;
         }
         showToast(`We'll notify you as soon as ${ventureName} reopens! 🔔`);
+
+        if (FB_READY && db && custEmail) {
+          try {
+            const reqId = `${vendorId}_${custEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            await db.collection('notify_requests').doc(reqId).set(subData, { merge: true });
+          } catch (e) {
+            console.warn('Failed to save notify_request to Firestore:', e);
+          }
+        }
 
         if ("Notification" in window && Notification.permission === "default") {
           Notification.requestPermission();
@@ -9429,13 +10017,14 @@ Together, we grow stronger — one order at a time.`;
     }
 
     function getVendorStatusInfo(vendor) {
-      if (!vendor) return { isClosed: false, badgeText: 'OPEN', subtext: 'Your shop is active.' };
+      if (!vendor) return { isClosed: false, badgeText: 'OPEN', subtext: 'Your shop is active.', customerText: 'This business is active and open for orders.' };
       if (vendor.isClosed === true) {
         return {
           isClosed: true,
           reason: 'manual',
           badgeText: 'CLOSED (MANUAL)',
-          subtext: 'Your shop is manually turned OFF. Customers see a "CLOSED" badge and cannot place orders.'
+          subtext: 'Your shop is manually turned OFF. Customers see a "CLOSED" badge and cannot place orders.',
+          customerText: 'This business is currently closed and not accepting new orders at the moment. Please check back later or click "Notify Me".'
         };
       }
       if (vendor.useSchedule !== false) {
@@ -9446,37 +10035,39 @@ Together, we grow stronger — one order at a time.`;
         const d = String(now.getDate()).padStart(2, '0');
         const todayYMD = `${y}-${m}-${d}`;
 
-        if (Array.isArray(schedule.closedDates) && schedule.closedDates.includes(todayYMD)) {
+        if (vendor.useCalendarClosures !== false && Array.isArray(schedule.closedDates) && schedule.closedDates.includes(todayYMD)) {
           return {
             isClosed: true,
             reason: 'holiday',
             badgeText: 'CLOSED (HOLIDAY)',
-            subtext: `Your shop is closed today (${todayYMD}) for a scheduled holiday/closure.`
+            subtext: `Your shop is closed today (${todayYMD}) for a scheduled holiday/closure.`,
+            customerText: `This business is closed today for a scheduled holiday or special event. Please check back tomorrow or click "Notify Me".`
           };
         }
 
         const dayIndex = (now.getDay() + 6) % 7;
         const dayName = DAYS_OF_WEEK[dayIndex];
+        const dayConfig = (schedule.daySchedules && schedule.daySchedules[dayName]) || null;
 
         let openDays = schedule.openDays;
         if (!openDays && typeof schedule === 'object') {
           openDays = DAYS_OF_WEEK.filter(day => schedule[day] && !schedule[day].closed);
         }
-        if (!openDays || !openDays.length) {
-          openDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        }
 
-        if (!openDays.includes(dayName)) {
+        const isClosedDay = dayConfig ? !!dayConfig.isClosed : (openDays && !openDays.includes(dayName));
+
+        if (isClosedDay) {
           return {
             isClosed: true,
             reason: 'schedule_day',
             badgeText: 'CLOSED (SCHEDULE)',
-            subtext: `Your shop is closed today (${dayName}). Operating days: ${openDays.map(d => d.slice(0, 3)).join(', ')}.`
+            subtext: `Your shop is closed today (${dayName}).`,
+            customerText: `This business is closed today (${dayName}). Please check operating days or click "Notify Me" to get notified when open.`
           };
         }
 
-        const openTime = schedule.openTime || (schedule[dayName] ? schedule[dayName].open : '10:00');
-        const closeTime = schedule.closeTime || (schedule[dayName] ? schedule[dayName].close : '21:00');
+        const openTime = (dayConfig && dayConfig.openTime) ? dayConfig.openTime : (schedule.openTime || '10:00');
+        const closeTime = (dayConfig && dayConfig.closeTime) ? dayConfig.closeTime : (schedule.closeTime || '21:00');
 
         if (openTime && closeTime) {
           const curMins = now.getHours() * 60 + now.getMinutes();
@@ -9497,7 +10088,8 @@ Together, we grow stronger — one order at a time.`;
               isClosed: true,
               reason: 'schedule_time',
               badgeText: 'CLOSED (SCHEDULE)',
-              subtext: `Your shop is currently closed. Today's operating hours: ${formatTime12h(openTime)} – ${formatTime12h(closeTime)}.`
+              subtext: `Your shop is currently closed. Today's operating hours: ${formatTime12h(openTime)} – ${formatTime12h(closeTime)}.`,
+              customerText: `This business is currently closed for the day. Operating hours today: ${formatTime12h(openTime)} – ${formatTime12h(closeTime)}.`
             };
           }
         }
@@ -9507,7 +10099,8 @@ Together, we grow stronger — one order at a time.`;
         isClosed: false,
         reason: 'open',
         badgeText: 'OPEN',
-        subtext: 'Your shop is active and accepting customer orders.'
+        subtext: 'Your shop is active and accepting customer orders.',
+        customerText: 'This business is active and open for customer orders.'
       };
     }
 
@@ -9556,7 +10149,93 @@ Together, we grow stronger — one order at a time.`;
       showToast(`Removed ${dateStr}`);
     }
 
-    async function toggleSellerScheduleUse(useSched) {
+    let _sellerDaySchedules = {};
+    let _currentModalDay = 'Monday';
+
+    function renderWeeklyDayPills() {
+      const container = document.getElementById('sf_sched_weekly_days_container');
+      if (!container) return;
+      const isDeact = isCurrentSellerDeactivated();
+
+      container.innerHTML = DAYS_OF_WEEK.map(day => {
+        const dayConfig = _sellerDaySchedules[day];
+        if (dayConfig && dayConfig.isClosed) {
+          return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-circle-xmark" style="color:#dc2626"></i> ${day.slice(0, 3)} (Closed)</button>`;
+        } else if (dayConfig && dayConfig.openTime && dayConfig.closeTime) {
+          return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#fff3e0;color:#e65100;border:1.5px solid #ffe0b2;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-clock" style="color:#e65100"></i> ${day.slice(0, 3)} (${formatTime12h(dayConfig.openTime)}-${formatTime12h(dayConfig.closeTime)})</button>`;
+        } else {
+          return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#e6f4ea;color:#137333;border:1.5px solid #a8dab5;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-circle-check" style="color:#137333"></i> ${day.slice(0, 3)} (Standard)</button>`;
+        }
+      }).join('');
+    }
+
+    function toggleSellerScheduleUse(useSched) {
+      const container = document.getElementById('sf_sched_main_hours_container');
+      if (container) container.style.display = useSched ? 'block' : 'none';
+    }
+
+    function toggleSellerCalendarUse(useCal) {
+      const container = document.getElementById('sf_sched_calendar_container');
+      if (container) container.style.display = useCal ? 'block' : 'none';
+    }
+
+    function openDayScheduleModal(day) {
+      if (isCurrentSellerDeactivated()) return;
+      _currentModalDay = day;
+      const titleDay = document.getElementById('dayModalDayName');
+      if (titleDay) titleDay.textContent = day;
+      document.querySelectorAll('.dayModalDayText').forEach(el => el.textContent = day);
+
+      const openTimeInput = document.getElementById('sf_sched_open_time')?.value || '10:00';
+      const closeTimeInput = document.getElementById('sf_sched_close_time')?.value || '21:00';
+      const defaultLbl = document.getElementById('dayModalDefaultHoursLabel');
+      if (defaultLbl) defaultLbl.textContent = `${formatTime12h(openTimeInput)} – ${formatTime12h(closeTimeInput)}`;
+
+      const dayConfig = _sellerDaySchedules[day];
+      if (dayConfig && dayConfig.isClosed) {
+        const rClosed = document.getElementById('dayModeClosed');
+        if (rClosed) rClosed.checked = true;
+      } else if (dayConfig && dayConfig.openTime) {
+        const rCustom = document.getElementById('dayModeCustomHours');
+        if (rCustom) rCustom.checked = true;
+        const oEl = document.getElementById('dayModalOpenTime'); if (oEl) oEl.value = dayConfig.openTime;
+        const cEl = document.getElementById('dayModalCloseTime'); if (cEl) cEl.value = dayConfig.closeTime;
+      } else {
+        const rDef = document.getElementById('dayModeDefault');
+        if (rDef) rDef.checked = true;
+        const oEl = document.getElementById('dayModalOpenTime'); if (oEl) oEl.value = openTimeInput;
+        const cEl = document.getElementById('dayModalCloseTime'); if (cEl) cEl.value = closeTimeInput;
+      }
+      onDayModalModeChange();
+      openModal('dayScheduleModal');
+    }
+
+    function onDayModalModeChange() {
+      const isCustom = document.getElementById('dayModeCustomHours')?.checked;
+      const inputs = document.getElementById('dayModalCustomHoursInputs');
+      if (inputs) {
+        inputs.style.opacity = isCustom ? '1' : '0.4';
+        inputs.style.pointerEvents = isCustom ? 'auto' : 'none';
+      }
+    }
+
+    function saveDayModalSchedule() {
+      if (!_currentModalDay) return;
+      const mode = document.querySelector('input[name="dayScheduleMode"]:checked')?.value || 'default';
+      if (mode === 'closed') {
+        _sellerDaySchedules[_currentModalDay] = { isClosed: true };
+      } else if (mode === 'custom') {
+        const oT = document.getElementById('dayModalOpenTime')?.value || '10:00';
+        const cT = document.getElementById('dayModalCloseTime')?.value || '21:00';
+        _sellerDaySchedules[_currentModalDay] = { isClosed: false, openTime: oT, closeTime: cT };
+      } else {
+        delete _sellerDaySchedules[_currentModalDay];
+      }
+      closeModal('dayScheduleModal');
+      renderWeeklyDayPills();
+    }
+
+    async function toggleSellerScheduleUseAsync(useSched) {
       if (!currentSeller) return;
       const vendor = DATA.find(d => d.id === currentSeller.vendorId);
       if (!vendor) return;
@@ -9599,15 +10278,18 @@ Together, we grow stronger — one order at a time.`;
         </div>`;
 
       const schedObj = v.schedule || getDefaultSchedule();
-      const openTimeVal = schedObj.openTime || (schedObj['Monday'] ? schedObj['Monday'].open : '10:00');
-      const closeTimeVal = schedObj.closeTime || (schedObj['Monday'] ? schedObj['Monday'].close : '21:00');
+      const openTimeVal = schedObj.openTime || '10:00';
+      const closeTimeVal = schedObj.closeTime || '21:00';
 
-      let openDaysArr = schedObj.openDays;
-      if (!openDaysArr && typeof schedObj === 'object') {
-        openDaysArr = DAYS_OF_WEEK.filter(day => schedObj[day] && !schedObj[day].closed);
-      }
-      if (!openDaysArr || !openDaysArr.length) {
-        openDaysArr = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      _sellerDaySchedules = { ...(schedObj.daySchedules || {}) };
+
+      // Backwards compatibility for legacy openDays array
+      if (schedObj.openDays && Array.isArray(schedObj.openDays)) {
+        DAYS_OF_WEEK.forEach(day => {
+          if (!schedObj.openDays.includes(day) && !_sellerDaySchedules[day]) {
+            _sellerDaySchedules[day] = { isClosed: true };
+          }
+        });
       }
 
       const closedDatesArr = schedObj.closedDates || [];
@@ -9619,56 +10301,71 @@ Together, we grow stronger — one order at a time.`;
       const scheduleCard = `
         <div class="s-card" style="margin-bottom:20px">
           <div class="s-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-            <span><i class="fa fa-clock" style="color:var(--green)"></i> Shop Operating Schedule & Calendar</span>
-            <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;font-weight:600">
-              <input type="checkbox" id="sf_useScheduleToggle" ${v.useSchedule !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleSellerScheduleUse(this.checked)">
-              <span>Auto-Close by Schedule</span>
+            <span><i class="fa fa-clock" style="color:var(--green)"></i> Shop Operating Schedule &amp; Calendar</span>
+          </div>
+
+          <!-- Master Checkbox 1: Custom Operating Schedule Toggle -->
+          <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
+            <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;font-size:0.92rem;color:var(--text)">
+              <input type="checkbox" id="sf_useScheduleToggle" ${v.useSchedule !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleSellerScheduleUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
+              <span>Do you want a custom shop schedule date and time?</span>
             </label>
-          </div>
-          <p style="font-size:0.83rem;color:var(--text-muted);margin:-4px 0 16px">
-            Set your single daily opening and closing hours, toggle operating days, and select calendar dates for holiday closures.
-          </p>
-
-          <!-- Operating Hours -->
-          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:14px">
-            <div style="font-weight:700;font-size:0.88rem;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:6px">
-              <i class="fa fa-business-time" style="color:var(--green)"></i> Daily Opening & Closing Hours
-            </div>
-            <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px">
-              <div style="display:flex;flex-direction:column;gap:4px">
-                <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">Opening Time</label>
-                <input type="time" id="sf_sched_open_time" class="time-picker-input" value="${openTimeVal}" ${isDeact ? 'disabled' : ''}>
-              </div>
-              <div style="padding-bottom:10px;color:var(--green);font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center">
-                <i class="fa fa-arrow-right"></i>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:4px">
-                <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">Closing Time</label>
-                <input type="time" id="sf_sched_close_time" class="time-picker-input" value="${closeTimeVal}" ${isDeact ? 'disabled' : ''}>
-              </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;padding-left:30px">
+              Enable daily opening and closing hours and weekly schedule for your shop.
             </div>
           </div>
 
-          <!-- Operating Days -->
-          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:14px">
-            <div style="font-weight:700;font-size:0.88rem;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px">
-              <i class="fa fa-calendar-days" style="color:var(--green)"></i> Operating Days of the Week
+          <!-- Schedule Content Container (hidden if Master Checkbox 1 is unchecked) -->
+          <div id="sf_sched_main_hours_container" style="display:${v.useSchedule !== false ? 'block' : 'none'};margin-bottom:16px">
+            
+            <!-- Daily Opening & Closing Hours (Whole Week Default) -->
+            <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:14px">
+              <div style="font-weight:700;font-size:0.88rem;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:6px">
+                <i class="fa fa-business-time" style="color:var(--green)"></i> Default Daily Opening &amp; Closing Hours (Whole Week)
+              </div>
+              <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px">
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">Opening Time</label>
+                  <input type="time" id="sf_sched_open_time" class="time-picker-input" value="${openTimeVal}" ${isDeact ? 'disabled' : ''} onchange="renderWeeklyDayPills()">
+                </div>
+                <div style="padding-bottom:10px;color:var(--green);font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center">
+                  <i class="fa fa-arrow-right"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">Closing Time</label>
+                  <input type="time" id="sf_sched_close_time" class="time-picker-input" value="${closeTimeVal}" ${isDeact ? 'disabled' : ''} onchange="renderWeeklyDayPills()">
+                </div>
+              </div>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              ${DAYS_OF_WEEK.map(day => {
-        const isOpenDay = openDaysArr.includes(day);
-        return `
-                  <button type="button" class="day-pill-btn ${isOpenDay ? 'active' : ''}" data-day="${day}" ${isDeact ? 'disabled' : ''} onclick="toggleDayPill(this)">
-                    <i class="fa ${isOpenDay ? 'fa-check-circle' : 'fa-circle-xmark'}"></i>
-                    ${day.slice(0, 3)}
-                  </button>
-                `;
-      }).join('')}
+
+            <!-- Operating Days of the Week (Week Option) -->
+            <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px">
+              <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;color:var(--text);display:flex;align-items:center;gap:6px">
+                <i class="fa fa-calendar-days" style="color:var(--green)"></i> Operating Days of the Week
+              </div>
+              <p style="font-size:0.78rem;color:var(--text-muted);margin:0 0 12px">
+                Click on any day (e.g. Tuesday) to set specific hours or mark that day as closed. Closed days show in red.
+              </p>
+              <div id="sf_sched_weekly_days_container" style="display:flex;gap:8px;flex-wrap:wrap">
+                <!-- Rendered dynamically by renderWeeklyDayPills() -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Master Checkbox 2: Calendar Closures Toggle -->
+          <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
+            <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;font-size:0.92rem;color:var(--text)">
+              <input type="checkbox" id="sf_useCalendarToggle" ${v.useCalendarClosures !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleSellerCalendarUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
+              <span>Do you want to schedule shop closures for specific dates or calendar holidays?</span>
+            </label>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;padding-left:30px">
+              Set specific upcoming dates (like festive holidays or personal days off) when your shop will automatically remain closed.
             </div>
           </div>
 
-          <!-- Calendar Holiday Dates -->
-          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px">
+          <!-- Calendar Holiday Dates Container (hidden if Master Checkbox 2 is unchecked) -->
+          <div id="sf_sched_calendar_container" style="display:${v.useCalendarClosures !== false ? 'block' : 'none'};background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
             <div style="font-weight:700;font-size:0.88rem;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px">
               <i class="fa fa-calendar-xmark" style="color:#e65100"></i> Calendar Closed Dates / Holidays
             </div>
@@ -9810,17 +10507,13 @@ Together, we grow stronger — one order at a time.`;
     let _sfPendingImg = null;
     function sfHandleImg(input) {
       const file = input.files[0]; if (!file) return;
-      if (file.size > 4 * 1024 * 1024) { showToast('Image must be under 4 MB'); return; }
-      const r = new FileReader();
-      r.onload = e => {
-        _sfPendingImg = e.target.result;
+      openImageCropper(file, function (croppedDataUrl) {
+        _sfPendingImg = croppedDataUrl;
         const box = document.getElementById('sf_imgPreview');
         if (box) box.innerHTML = `<img src="${_sfPendingImg}" style="width:100%;height:100%;object-fit:cover">`;
         const rb = document.getElementById('sf_removeBtn');
         if (rb) rb.style.display = '';
-      };
-      r.readAsDataURL(file);
-      input.value = '';
+      }, input);
     }
     function sfRemoveImg() {
       _sfPendingImg = '__remove__';
@@ -9920,26 +10613,28 @@ Together, we grow stronger — one order at a time.`;
       const openTime = document.getElementById('sf_sched_open_time')?.value || '10:00';
       const closeTime = document.getElementById('sf_sched_close_time')?.value || '21:00';
 
-      const activeDaysBtns = document.querySelectorAll('.day-pill-btn.active');
-      const openDays = Array.from(activeDaysBtns).map(btn => btn.dataset.day);
+      const openDays = DAYS_OF_WEEK.filter(day => !(_sellerDaySchedules[day] && _sellerDaySchedules[day].isClosed));
 
       const holidayBadges = document.querySelectorAll('.holiday-date-badge');
       const closedDates = Array.from(holidayBadges).map(b => b.dataset.date);
 
-      const useScheduleToggle = document.getElementById('sf_useScheduleToggle');
-      const useSchedule = useScheduleToggle ? useScheduleToggle.checked : true;
+      const useSchedule = document.getElementById('sf_useScheduleToggle')?.checked !== false;
+      const useCalendarClosures = document.getElementById('sf_useCalendarToggle')?.checked !== false;
 
       const schedule = {
         openTime: openTime,
         closeTime: closeTime,
         openDays: openDays,
+        daySchedules: _sellerDaySchedules,
+        useCalendarClosures: useCalendarClosures,
         closedDates: closedDates
       };
 
       const updated = {
         ...vendor,
         schedule: schedule,
-        useSchedule: useSchedule
+        useSchedule: useSchedule,
+        useCalendarClosures: useCalendarClosures
       };
 
       const i = DATA.findIndex(d => d.id === updated.id);
@@ -9979,19 +10674,20 @@ Together, we grow stronger — one order at a time.`;
       const openTime = document.getElementById('sf_sched_open_time')?.value || '10:00';
       const closeTime = document.getElementById('sf_sched_close_time')?.value || '21:00';
 
-      const activeDaysBtns = document.querySelectorAll('.day-pill-btn.active');
-      const openDays = Array.from(activeDaysBtns).map(btn => btn.dataset.day);
+      const openDays = DAYS_OF_WEEK.filter(day => !(_sellerDaySchedules[day] && _sellerDaySchedules[day].isClosed));
 
       const holidayBadges = document.querySelectorAll('.holiday-date-badge');
       const closedDates = Array.from(holidayBadges).map(b => b.dataset.date);
 
-      const useScheduleToggle = document.getElementById('sf_useScheduleToggle');
-      const useSchedule = useScheduleToggle ? useScheduleToggle.checked : true;
+      const useSchedule = document.getElementById('sf_useScheduleToggle')?.checked !== false;
+      const useCalendarClosures = document.getElementById('sf_useCalendarToggle')?.checked !== false;
 
       const schedule = {
         openTime: openTime,
         closeTime: closeTime,
         openDays: openDays,
+        daySchedules: _sellerDaySchedules,
+        useCalendarClosures: useCalendarClosures,
         closedDates: closedDates
       };
 
@@ -10009,7 +10705,8 @@ Together, we grow stronger — one order at a time.`;
         url: document.getElementById('sf_url')?.value.trim() || vendor.url || '',
         image: _sfPendingImg === '__remove__' ? '' : (_sfPendingImg || vendor.image || ''),
         schedule: schedule,
-        useSchedule: useSchedule
+        useSchedule: useSchedule,
+        useCalendarClosures: useCalendarClosures
       };
 
       const i = DATA.findIndex(d => d.id === updated.id);
@@ -10291,6 +10988,9 @@ Together, we grow stronger — one order at a time.`;
       const confirmBtn = document.getElementById('confirmModalConfirmBtn');
       const iconEl = document.getElementById('confirmModalIcon');
       const glowEl = document.getElementById('confirmModalGlow');
+      const inputGrp = document.getElementById('confirmModalInputGroup');
+      const inputEl = document.getElementById('confirmModalInput');
+      const inputLbl = document.getElementById('confirmModalInputLabel');
 
       if (!modal) return Promise.resolve(false);
 
@@ -10299,23 +10999,39 @@ Together, we grow stronger — one order at a time.`;
 
       if (options.warning) {
         warnEl.style.display = 'flex';
-        warnEl.innerHTML = `<i class="fa fa-triangle-exclamation" style="font-size:1.05rem;color:#ff9933"></i> <span>${esc(options.warning)}</span>`;
+        warnEl.innerHTML = `<i class="fa fa-triangle-exclamation" style="font-size:1.05rem;color:${options.danger === true ? '#c0392b' : '#ff9933'}"></i> <span>${esc(options.warning)}</span>`;
       } else {
         warnEl.style.display = 'none';
+      }
+
+      const inputErrEl = document.getElementById('confirmModalInputError');
+      if (inputErrEl) inputErrEl.style.display = 'none';
+
+      if (inputGrp && inputEl) {
+        inputEl.style.borderColor = '#e1e8f0';
+        if (options.showInput) {
+          inputGrp.style.display = 'block';
+          inputEl.value = options.inputValue || '';
+          inputEl.placeholder = options.inputPlaceholder || 'Reason (optional)…';
+          if (inputLbl) inputLbl.textContent = options.inputLabel || 'Reason for rejection (optional):';
+        } else {
+          inputGrp.style.display = 'none';
+          inputEl.value = '';
+        }
       }
 
       cancelBtn.textContent = options.cancelText || 'Cancel';
       confirmBtn.textContent = options.confirmText || 'Confirm';
 
-      if (options.danger !== false) {
-        confirmBtn.style.background = 'linear-gradient(135deg, #ff9933 0%, #b85c1a 100%)';
-        confirmBtn.style.boxShadow = '0 4px 16px rgba(255, 153, 51, 0.35)';
-        iconEl.style.background = '#fff3e0';
-        iconEl.style.color = '#e65100';
-        iconEl.style.boxShadow = '0 0 0 8px rgba(255, 243, 224, 0.7)';
-        iconEl.style.borderColor = '#ffe0b2';
+      if (options.danger === true) {
+        confirmBtn.style.background = 'linear-gradient(135deg, #c0392b 0%, #962d22 100%)';
+        confirmBtn.style.boxShadow = '0 4px 16px rgba(192, 57, 43, 0.35)';
+        iconEl.style.background = '#ffebee';
+        iconEl.style.color = '#c0392b';
+        iconEl.style.boxShadow = '0 0 0 8px rgba(255, 235, 238, 0.7)';
+        iconEl.style.borderColor = '#ffcdd2';
         iconEl.innerHTML = '<i class="fa fa-triangle-exclamation"></i>';
-        if (glowEl) glowEl.style.background = 'radial-gradient(circle, rgba(255, 153, 51, 0.22) 0%, rgba(255, 153, 51, 0) 70%)';
+        if (glowEl) glowEl.style.background = 'radial-gradient(circle, rgba(192, 57, 43, 0.22) 0%, rgba(192, 57, 43, 0) 70%)';
       } else {
         confirmBtn.style.background = 'linear-gradient(135deg, #ff9933 0%, #b85c1a 100%)';
         confirmBtn.style.boxShadow = '0 4px 16px rgba(255, 153, 51, 0.35)';
@@ -10341,9 +11057,22 @@ Together, we grow stronger — one order at a time.`;
         };
 
         confirmBtn.onclick = () => {
+          if (options.showInput && options.inputRequired) {
+            const val = inputEl ? inputEl.value.trim() : '';
+            if (!val) {
+              if (inputEl) {
+                inputEl.style.borderColor = '#c62828';
+                inputEl.focus();
+              }
+              if (inputErrEl) inputErrEl.style.display = 'flex';
+              showToast('Deletion reason is compulsory. Please enter a reason.');
+              return;
+            }
+          }
           modal.classList.remove('open');
           if (_confirmModalResolve) {
-            _confirmModalResolve(true);
+            const val = (options.showInput && inputEl) ? { confirmed: true, value: inputEl.value.trim() } : true;
+            _confirmModalResolve(val);
             _confirmModalResolve = null;
           }
         };
@@ -10351,36 +11080,72 @@ Together, we grow stronger — one order at a time.`;
     }
 
     async function deleteSellerAccount(uid, email) {
-      const confirmed = await confirmAction({
-        title: 'Are you sure you want to delete this seller?',
-        message: 'This action will permanently delete the seller record and all associated references from the database. The deletion activity will be recorded in the deletion history along with the details of the user who performed the action.',
-        warning: 'This action cannot be undone.',
-        confirmText: 'Yes, Delete',
+      const sellerAcc = typeof _adminAccountsCache !== 'undefined' ? _adminAccountsCache.find(a => a.uid === uid) : null;
+      const sellerVendor = DATA.find(d => d.ownerUid === uid || d.id === sellerAcc?.vendorId || d.contactEmail === email);
+      const sellerName = sellerAcc?.displayName || sellerVendor?.venture || sellerVendor?.contact || email;
+
+      const res = await confirmAction({
+        title: 'Delete Seller Account & Remove Listing?',
+        message: `Are you sure you want to permanently delete the seller record for "${sellerName}" (${email})?`,
+        warning: 'This action will permanently remove all database records for this seller from the application.',
+        confirmText: 'Yes, Delete Seller',
         cancelText: 'Cancel',
-        danger: true
+        danger: true,
+        showInput: true,
+        inputRequired: true,
+        inputLabel: 'Reason for Deletion * (Compulsory):',
+        inputPlaceholder: 'Enter compulsory reason why this seller account is being removed…'
       });
 
-      if (!confirmed) return;
+      if (!res || typeof res !== 'object' || !res.confirmed) return;
+      const deletionReason = (res.value || '').trim();
+
+      if (!deletionReason) {
+        showToast('Deletion reason is compulsory.');
+        return;
+      }
 
       try {
         showToast('Deleting seller account & database records…');
 
+        const adminEmail = auth.currentUser ? auth.currentUser.email : 'Admin';
+        const adminUid = auth.currentUser ? auth.currentUser.uid : 'admin';
+        const adminMobile = localStorage.getItem('hb_admin_verified_mobile')
+          || (auth.currentUser ? auth.currentUser.phoneNumber : '')
+          || (_adminNumbers && _adminNumbers()[0])
+          || 'Not provided';
+
+        const logEntry = {
+          type: 'seller_account_deletion',
+          targetName: sellerName,
+          targetEmail: email,
+          targetUid: uid,
+          vendorId: sellerVendor ? sellerVendor.id : null,
+          ventureName: sellerVendor ? sellerVendor.venture : null,
+          reason: deletionReason,
+          deletedByAdminEmail: adminEmail,
+          deletedByAdminUid: adminUid,
+          deletedByAdminMobile: adminMobile,
+          performedBy: adminEmail,
+          adminMobile: adminMobile,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: new Date().toISOString()
+        };
+
         if (db) {
           try {
-            await db.collection('deletion_history').add({
-              type: 'seller_account_deletion',
-              targetEmail: email,
-              targetUid: uid,
-              performedBy: auth.currentUser ? auth.currentUser.email : (currentSeller ? currentSeller.email : 'Admin'),
-              performedByUid: auth.currentUser ? auth.currentUser.uid : 'admin',
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            await db.collection('deletion_history').add(logEntry);
+            await db.collection('admin_deletion_logs').add(logEntry);
           } catch (e) {
-            console.warn('Failed to record deletion history:', e);
+            console.warn('Failed to record deletion history in Firestore:', e);
           }
         }
 
-        let vendorId = null;
+        const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
+        localLogs.unshift(logEntry);
+        localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
+
+        let vendorId = sellerAcc ? sellerAcc.vendorId : null;
         try {
           const accDoc = await db.collection('accounts').doc(uid).get();
           if (accDoc.exists) vendorId = accDoc.data().vendorId;
@@ -10421,10 +11186,67 @@ Together, we grow stronger — one order at a time.`;
           } catch(e){}
         }
 
-        showToast(`Seller account & database records for ${email} completely removed ✓`);
-        renderAdminAccounts(document.getElementById('adminTabContent'));
+        showToast(`Seller account for ${email} deleted & logged in history ✓`);
+        const c = document.getElementById('adminTabContent');
+        if (c) renderAdminAccounts(c);
         renderAll();
       } catch (e) { showToast(`Error removing account: ${e.message}`); }
+    }
+
+    async function renderAdminDeletionHistory(c) {
+      c.innerHTML = `<div class="s-card"><div class="s-card-title"><i class="fa fa-history" style="color:var(--green)"></i> Admin Deletion History & Audit Logs</div><div style="text-align:center;padding:30px;color:var(--text-muted)"><i class="fa fa-spinner fa-spin" style="font-size:1.5rem"></i><p>Loading audit logs…</p></div></div>`;
+      let logs = [];
+      if (FB_READY && db) {
+        try {
+          const snap = await db.collection('admin_deletion_logs').get();
+          logs = snap.docs.map(d => d.data());
+          logs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        } catch (e) {
+          console.warn('Could not load deletion logs from Firestore:', e);
+        }
+      }
+      const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
+      localLogs.forEach(l => {
+        if (!logs.find(existing => existing.createdAt === l.createdAt && existing.targetEmail === l.targetEmail)) {
+          logs.push(l);
+        }
+      });
+
+      c.innerHTML = `
+        <div class="s-card">
+          <div class="s-card-title"><i class="fa fa-history" style="color:var(--green)"></i> Admin Deletion History & Audit Logs (${logs.length})</div>
+          <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:14px">
+            Audit log records of all seller removals, including admin email, admin mobile number, reason for deletion, and timestamp.
+          </p>
+          ${logs.length ? `
+            <div style="overflow-x:auto">
+              <table class="menu-table" style="width:100%">
+                <thead>
+                  <tr>
+                    <th>Removed Target</th>
+                    <th>Deletion Reason</th>
+                    <th>Removed By (Admin Email)</th>
+                    <th>Admin Mobile Number</th>
+                    <th>Date &amp; Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${logs.map(l => `
+                    <tr>
+                      <td>
+                        <strong>${esc(l.targetName || l.targetEmail)}</strong><br>
+                        <span style="font-size:0.75rem;color:var(--text-muted)">${esc(l.targetEmail)}</span>
+                      </td>
+                      <td style="font-weight:600;color:#c62828">${esc(l.reason || 'No reason specified')}</td>
+                      <td style="font-size:0.82rem;font-weight:600">${esc(l.deletedByAdminEmail || l.performedBy || 'Admin')}</td>
+                      <td style="font-size:0.82rem;color:var(--green-dark);font-weight:700">${esc(l.deletedByAdminMobile || l.adminMobile || '—')}</td>
+                      <td style="font-size:0.78rem;color:var(--text-muted)">${esc(l.createdAt ? new Date(l.createdAt).toLocaleString() : 'Recently')}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>` : `<div class="empty-state" style="padding:20px"><i class="fa fa-clipboard-list"></i><p>No deletion history logged yet.</p></div>`}
+        </div>`;
     }
 
     function renderAdminConfig(c) {

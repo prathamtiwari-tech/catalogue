@@ -1491,20 +1491,26 @@
     }
 
     .time-picker-input {
-      padding: 6px 12px;
+      padding: 10px 14px;
       border: 1.5px solid var(--border, #d1d5db);
-      border-radius: 8px;
-      font-size: 0.85rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
       font-family: inherit;
-      background: var(--white);
-      color: var(--text);
+      background-color: #ffffff !important;
+      color: #1c2733 !important;
+      -webkit-text-fill-color: #1c2733 !important;
+      color-scheme: light !important;
       outline: none;
       cursor: pointer;
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 44px;
     }
 
     .time-picker-input:focus {
-      border-color: var(--green, #28a745);
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+      border-color: var(--green, #ff9933);
+      box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.18);
     }
 
     /* Closed Store Banner on Customer View */
@@ -1560,47 +1566,118 @@
     .img-upload-zone {
       grid-column: 1/-1;
       border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 14px 18px;
       display: flex;
       gap: 16px;
       align-items: center;
       background: var(--cream);
-      transition: border var(--tr);
-      cursor: pointer
+      transition: all 0.2s ease;
+      cursor: pointer;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
     }
 
     .img-upload-zone:hover {
       border-color: var(--green);
-      background: var(--green-pale)
+      background: var(--green-pale);
+    }
+
+    .img-upload-zone.has-image {
+      border-style: solid;
+      border-color: var(--green);
+      background: #f4fbf6;
     }
 
     .img-preview {
-      width: 88px;
-      height: 72px;
-      border-radius: 9px;
+      width: 104px;
+      height: 80px;
+      border-radius: 10px;
       overflow: hidden;
       flex-shrink: 0;
-      background: var(--green-dark);
+      background: #f0f3f6;
       display: flex;
       align-items: center;
-      justify-content: center
+      justify-content: center;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .img-upload-zone:hover .img-preview {
+      transform: scale(1.02);
     }
 
     .img-preview img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block
+      display: block;
     }
 
     .img-preview .img-ph {
-      color: rgba(255, 255, 255, .5);
-      font-size: 1.4rem
+      color: #94a3b8;
+      font-size: 1.8rem;
     }
 
     .img-upload-info {
-      flex: 1
+      flex: 1;
+    }
+
+    .img-upload-info p {
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+
+    /* Multi-select options in dropdown */
+    .custom-select-option.multiselect-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+    .custom-select-option.multiselect-option:hover {
+      background: var(--green-pale, #e8f5e9);
+    }
+    .custom-select-option.multiselect-option.selected {
+      background: rgba(46, 125, 50, 0.08);
+      font-weight: 600;
+      color: var(--green-dark, #1b5e20);
+    }
+    .custom-select-option .cs-checkbox {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--green, #2e7d32);
+      cursor: pointer;
+      pointer-events: none;
+    }
+
+    /* Selected sub-category chips rendered below input */
+    .subcat-chip {
+      background: var(--green-pale, #e8f5e9);
+      border: 1px solid rgba(46, 125, 50, 0.25);
+      color: var(--green-dark, #1b5e20);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .subcat-chip .remove-chip-btn {
+      cursor: pointer;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      margin-left: 2px;
+      transition: color 0.15s ease;
+    }
+    .subcat-chip .remove-chip-btn:hover {
+      color: #e53935;
     }
 
     .img-upload-info p {
@@ -2665,7 +2742,7 @@
   <div class="modal-overlay" id="loginModal" style="z-index:300">
     <div class="modal" style="max-width:380px;text-align:center">
       <div style="font-size:2.2rem;margin-bottom:8px">🔐</div>
-      <div class="modal-title" style="justify-content:center;margin-bottom:16px" id="loginModalTitle">Seller Login</div>
+      <div class="modal-title" style="justify-content:center;margin-bottom:16px" id="loginModalTitle">Business Login</div>
 
       <!-- Seller fields -->
       <div id="loginSellerFields" style="text-align:left">
@@ -2757,10 +2834,11 @@
             id="ca_addrLandmark" placeholder="e.g. Gate 2"></div>
         <div class="form-group" style="margin-bottom:8px">
           <label>Email (optional)</label>
-          <div style="display:flex;gap:8px">
-            <input type="email" id="ca_email" placeholder="you@email.com" style="flex:1">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="email" id="ca_email" placeholder="you@email.com" style="flex:1" oninput="caCheckEmailStatus()">
             <button type="button" class="btn btn-ghost btn-sm" id="caEmailVerifyBtn"
-              onclick="caSendEmailVerifyOtp()">Verify</button>
+              onclick="caSendEmailVerifyOtp()" style="display:none">Verify</button>
+            <span id="caEmailVerifiedBadge" style="display:none;align-items:center;gap:4px;color:var(--green-dark);background:var(--green-pale);border:1px solid var(--green);padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;white-space:nowrap"><i class="fa fa-circle-check"></i> Verified</span>
           </div>
         </div>
         <div id="caEmailOtpRow" style="display:none;gap:8px;margin-bottom:8px">
@@ -2892,18 +2970,15 @@
         <!-- Image upload -->
         <div class="form-section-label"><i class="fa fa-image"></i> Business Photo</div>
         <div class="form-group full">
-          <div class="img-upload-zone" onclick="document.getElementById('f_imgFile').click()">
+          <div class="img-upload-zone" id="f_imgZone" onclick="document.getElementById('f_imgFile').click()">
             <div class="img-preview" id="imgPreviewBox">
               <i class="fa fa-image img-ph"></i>
             </div>
-            <div class="img-upload-info">
-              <p><strong>Click to upload photo</strong><br>JPG, PNG, WEBP · Max 4 MB<br>Recommended: 600×400 px or wider
-              </p>
+            <div class="img-upload-info" id="f_imgInfo">
+              <p id="f_imgTitle"><strong>Click to upload photo</strong><br><span style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Max 4 MB (Recommended: 600×400 px)</span></p>
               <div class="img-upload-btns" onclick="event.stopPropagation()">
-                <button class="btn btn-sm btn-primary" onclick="document.getElementById('f_imgFile').click()"><i
-                    class="fa fa-upload"></i> Choose Image</button>
-                <button class="btn btn-sm btn-danger" id="removeImgBtn" onclick="removeImage()" style="display:none"><i
-                    class="fa fa-trash"></i> Remove</button>
+                <button type="button" class="btn btn-sm btn-primary" id="f_chooseImgBtn" onclick="document.getElementById('f_imgFile').click()"><i class="fa fa-upload"></i> Choose Image</button>
+                <button type="button" class="btn btn-sm btn-danger" id="removeImgBtn" onclick="removeImage()" style="display:none"><i class="fa fa-trash"></i> Remove</button>
               </div>
             </div>
           </div>
@@ -2921,7 +2996,7 @@
           <input type="text" id="f_speciality" placeholder="e.g. Premium Assam Tea &amp; Beverages">
         </div>
         <div class="form-group full">
-          <label>Business Description</label>
+          <label>Business Description *</label>
           <textarea id="f_desc"
             placeholder="Describe your business — what you offer, your story, why customers love it..."></textarea>
         </div>
@@ -3070,13 +3145,13 @@
 
         <div class="form-section-label"><i class="fa fa-image"></i> Business Photo</div>
         <div class="form-group full">
-          <div class="img-upload-zone" onclick="document.getElementById('sr_imgFile').click()">
+          <div class="img-upload-zone" id="sr_imgZone" onclick="document.getElementById('sr_imgFile').click()">
             <div class="img-preview" id="sr_imgPreviewBox"><i class="fa fa-image img-ph"></i></div>
-            <div class="img-upload-info">
-              <p><strong>Click to upload photo</strong><br>JPG, PNG, WEBP · Max 4 MB</p>
+            <div class="img-upload-info" id="sr_imgInfo">
+              <p id="sr_imgTitle"><strong>Click to upload photo</strong><br><span style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Max 4 MB</span></p>
               <div class="img-upload-btns" onclick="event.stopPropagation()">
-                <button class="btn btn-sm btn-primary" onclick="document.getElementById('sr_imgFile').click()"><i
-                    class="fa fa-upload"></i> Choose Image</button>
+                <button type="button" class="btn btn-sm btn-primary" id="sr_chooseImgBtn" onclick="document.getElementById('sr_imgFile').click()"><i class="fa fa-upload"></i> Choose Image</button>
+                <button type="button" class="btn btn-sm btn-danger" id="sr_removeImgBtn" onclick="srRemoveImage()" style="display:none"><i class="fa fa-trash"></i> Remove</button>
               </div>
             </div>
           </div>
@@ -3093,11 +3168,11 @@
           <input type="text" id="sr_speciality" placeholder="e.g. Premium Assam Tea &amp; Beverages">
         </div>
         <div class="form-group full">
-          <label>Business Description</label>
+          <label>Business Description *</label>
           <textarea id="sr_desc"
             placeholder="Describe your business — what you offer, your story, why customers love it..."></textarea>
         </div>
-        <div class="form-group">
+        <div class="form-group full">
           <label>Category *</label>
           <select id="sr_category"
             onchange="srUpdateAddSection();updateSubCategoryDropdown('sr_category', 'sr_subcategory'); handleCategoryCustomToggle('sr_category', 'sr_category_custom_group')">
@@ -3112,12 +3187,16 @@
             <option value="Other">✨ Other (Write your own)</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Sub Category</label>
+        <div class="form-group full">
+          <label style="display:flex;justify-content:space-between;align-items:center">
+            <span>Sub Category</span>
+            <span id="sr_subCatLimitNotice" style="font-size:0.75rem;color:var(--text-muted);font-weight:400">Select up to <strong id="sr_maxSubCatBadge">3</strong></span>
+          </label>
           <select id="sr_subcategory"
             onchange="handleSubCategoryCustomToggle('sr_subcategory', 'sr_subcategory_custom_group')">
             <option value="">— Select Sub Category —</option>
           </select>
+          <div id="sr_selected_subcategories_list" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
         </div>
         <div class="form-group full" id="sr_category_custom_group" style="display:none">
           <label>Custom Category Name *</label>
@@ -3170,7 +3249,7 @@
         <div class="form-section-label"><i class="fa fa-address-card"></i> Address &amp; KYC Verification</div>
 
         <div class="form-group full">
-          <label>Flat No. / House No. / Office No.</label>
+          <label>Flat No. / House No. / Office No. *</label>
           <input type="text" id="sr_flat" placeholder="e.g. A-101">
         </div>
 
@@ -4629,7 +4708,7 @@
     function _accountSellerLinkHTML() {
       return `
     <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px">
-      <a onclick="openLoginModal()" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;font-size:.88rem"><i class="fa fa-store" style="color:var(--green);width:18px"></i>Become a Seller</a>
+      <a onclick="openLoginModal()" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;font-size:.88rem"><i class="fa fa-store" style="color:var(--green);width:18px"></i>Register your Business</a>
     </div>`;
     }
 
@@ -4655,6 +4734,7 @@
       document.getElementById('caStep2').style.display = 'none';
       document.getElementById('caStep3').style.display = 'none';
       document.getElementById('caStepAdmin').style.display = 'none';
+      caCheckEmailStatus();
       document.getElementById('customerAuthModal').classList.add('open');
       setTimeout(() => document.getElementById('ca_mobile').focus(), 120);
     }
@@ -4716,6 +4796,32 @@
     }
 
     let _caEmailVerified = null;
+    function caCheckEmailStatus() {
+      const inputEmail = (document.getElementById('ca_email')?.value || '').trim().toLowerCase();
+      const verifyBtn = document.getElementById('caEmailVerifyBtn');
+      const badge = document.getElementById('caEmailVerifiedBadge');
+      const otpRow = document.getElementById('caEmailOtpRow');
+      const statusMsg = document.getElementById('caEmailStatus');
+      if (!inputEmail) {
+        if (verifyBtn) verifyBtn.style.display = 'none';
+        if (badge) badge.style.display = 'none';
+        if (otpRow) otpRow.style.display = 'none';
+        if (statusMsg) statusMsg.style.display = 'none';
+        return;
+      }
+      const isVerified = !!(_caEmailVerified && inputEmail === _caEmailVerified);
+      if (isVerified) {
+        if (verifyBtn) verifyBtn.style.display = 'none';
+        if (badge) badge.style.display = 'inline-flex';
+        if (otpRow) otpRow.style.display = 'none';
+        if (statusMsg) statusMsg.style.display = 'none';
+      } else {
+        if (verifyBtn) verifyBtn.style.display = 'inline-block';
+        if (badge) badge.style.display = 'none';
+        if (statusMsg) statusMsg.style.display = 'none';
+      }
+    }
+
     async function caSendEmailVerifyOtp() {
       const emailEl = document.getElementById('ca_email');
       const email = (emailEl.value || '').trim().toLowerCase();
@@ -4736,7 +4842,7 @@
       if (!verifyCustomerOtpCode(code)) { showToast('Invalid or expired code'); return; }
       _caEmailVerified = _custOtp.email;
       document.getElementById('caEmailOtpRow').style.display = 'none';
-      document.getElementById('caEmailStatus').style.display = 'block';
+      caCheckEmailStatus();
       showToast('Email verified ✓');
     }
 
@@ -4788,14 +4894,17 @@
       const addresses = currentCustomer.addresses || [];
       if (_caEditMode) {
         _caEditEmailVerified = null;
+        const currentEmailVal = (currentCustomer.email || '').trim().toLowerCase();
+        const isVerified = !!(currentCustomer.emailVerified && currentEmailVal);
         body.innerHTML = `
       <div class="form-group" style="margin-bottom:10px"><label>Full Name</label><input id="caEdit_name" value="${esc(currentCustomer.name)}"></div>
       <div class="form-group" style="margin-bottom:10px"><label>Mobile Number</label><input value="${esc(currentCustomer.mobile)}" disabled style="opacity:.6"></div>
       <div class="form-group" style="margin-bottom:8px">
         <label>Email (optional)</label>
-        <div style="display:flex;gap:8px">
-          <input id="caEdit_email" value="${esc(currentCustomer.email)}" placeholder="you@email.com" style="flex:1">
-          <button type="button" class="btn btn-ghost btn-sm" id="caEditEmailVerifyBtn" onclick="caEditSendEmailVerifyOtp()">Verify</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="caEdit_email" value="${esc(currentCustomer.email || '')}" placeholder="you@email.com" style="flex:1" oninput="caEditCheckEmailStatus()">
+          <button type="button" class="btn btn-ghost btn-sm" id="caEditEmailVerifyBtn" onclick="caEditSendEmailVerifyOtp()" style="${isVerified || !currentCustomer.email ? 'display:none;' : ''}">Verify</button>
+          <span id="caEditEmailVerifiedBadge" style="${isVerified ? 'display:inline-flex;' : 'display:none;'}align-items:center;gap:4px;color:var(--green-dark);background:var(--green-pale);border:1px solid var(--green);padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;white-space:nowrap"><i class="fa fa-circle-check"></i> Verified</span>
         </div>
       </div>
       <div id="caEditEmailOtpRow" style="display:none;gap:8px;margin-bottom:10px">
@@ -4814,7 +4923,7 @@
         <div>
           <div style="font-weight:700;color:var(--green-dark);margin-bottom:4px">${esc(currentCustomer.name)}</div>
           <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-phone" style="width:14px"></i> ${esc(currentCustomer.mobile)}</div>
-          <div style="font-size:.82rem;color:var(--text-muted)"><i class="fa fa-envelope" style="width:14px"></i> ${currentCustomer.email ? esc(currentCustomer.email) + (currentCustomer.emailVerified ? ' <i class="fa fa-circle-check" style="color:var(--green-dark)"></i>' : ' <span style="color:var(--danger);font-size:.72rem">(unverified)</span>') : '<span style="font-style:italic">Not added</span>'}</div>
+          <div style="font-size:.82rem;color:var(--text-muted);display:flex;align-items:center;gap:4px;margin-top:2px"><i class="fa fa-envelope" style="width:14px"></i> ${currentCustomer.email ? esc(currentCustomer.email) + (currentCustomer.emailVerified ? ' <span style="display:inline-flex;align-items:center;gap:3px;color:var(--green-dark);background:rgba(46,125,50,0.12);border:1px solid var(--green);padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:600;margin-left:4px"><i class="fa fa-circle-check"></i> Verified</span>' : ' <span style="color:var(--danger);font-size:.72rem;margin-left:4px">(unverified)</span>') : '<span style="font-style:italic">Not added</span>'}</div>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="_caEditMode=true;renderCustomerAccountBody()"><i class="fa fa-pen"></i></button>
       </div>
@@ -4920,6 +5029,28 @@
     }
 
     let _caEditEmailVerified = null;
+    function caEditCheckEmailStatus() {
+      const inputEmail = (document.getElementById('caEdit_email')?.value || '').trim().toLowerCase();
+      const verifyBtn = document.getElementById('caEditEmailVerifyBtn');
+      const badge = document.getElementById('caEditEmailVerifiedBadge');
+      const otpRow = document.getElementById('caEditEmailOtpRow');
+      if (!inputEmail) {
+        if (verifyBtn) verifyBtn.style.display = 'none';
+        if (badge) badge.style.display = 'none';
+        if (otpRow) otpRow.style.display = 'none';
+        return;
+      }
+      const isVerified = (currentCustomer?.emailVerified && inputEmail === (currentCustomer?.email || '').toLowerCase()) || (_caEditEmailVerified && inputEmail === _caEditEmailVerified);
+      if (isVerified) {
+        if (verifyBtn) verifyBtn.style.display = 'none';
+        if (badge) badge.style.display = 'inline-flex';
+        if (otpRow) otpRow.style.display = 'none';
+      } else {
+        if (verifyBtn) verifyBtn.style.display = 'inline-block';
+        if (badge) badge.style.display = 'none';
+      }
+    }
+
     async function caEditSendEmailVerifyOtp() {
       const emailEl = document.getElementById('caEdit_email');
       const email = (emailEl.value || '').trim().toLowerCase();
@@ -4940,6 +5071,7 @@
       if (!verifyCustomerOtpCode(code)) { showToast('Invalid or expired code'); return; }
       _caEditEmailVerified = _custOtp.email;
       document.getElementById('caEditEmailOtpRow').style.display = 'none';
+      caEditCheckEmailStatus();
       showToast('Email verified ✓');
     }
 
@@ -6412,6 +6544,46 @@ When you order from a TynTron vendor, your money stays in the community. You sup
 Together, we grow stronger — one order at a time.`;
 
     /* ═══════════ SOCIETY ═══════════ */
+    let _currentLocationCoords = null; // { lat, lng }
+
+    function getCurrentUserCoords() {
+      if (_currentLocationCoords && _currentLocationCoords.lat && _currentLocationCoords.lng) {
+        return _currentLocationCoords;
+      }
+      if (selectedSociety) {
+        const s = _societyList().find(x => (x.name || '').toLowerCase() === selectedSociety.toLowerCase());
+        if (s && s.lat && s.lng) return { lat: +s.lat, lng: +s.lng };
+      }
+      const defaultSoc = _societyList()[0];
+      if (defaultSoc && defaultSoc.lat && defaultSoc.lng) {
+        return { lat: +defaultSoc.lat, lng: +defaultSoc.lng };
+      }
+      return { lat: 28.5900, lng: 77.3610 };
+    }
+
+    function isVendorWithin5km(vendor) {
+      const userCoords = getCurrentUserCoords();
+      if (!userCoords || !userCoords.lat || !userCoords.lng) return true;
+
+      let vLat = vendor.lat ? +vendor.lat : null;
+      let vLng = vendor.lng ? +vendor.lng : null;
+
+      if (!vLat || !vLng) {
+        const vSocName = vendor.society || 'Prateek Laurel';
+        const s = _societyList().find(x => (x.name || '').toLowerCase() === vSocName.toLowerCase());
+        if (s && s.lat && s.lng) {
+          vLat = +s.lat;
+          vLng = +s.lng;
+        }
+      }
+
+      if (vLat && vLng) {
+        const dist = _haversineDist(userCoords.lat, userCoords.lng, vLat, vLng);
+        return dist <= 5000; // 5 km radius
+      }
+      return true;
+    }
+
     function _societyList() { return SITE_CONFIG.societies || DEFAULT_SOCIETIES; }
     function _haversineDist(lat1, lon1, lat2, lon2) {
       const R = 6371000, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
@@ -6714,26 +6886,27 @@ Together, we grow stronger — one order at a time.`;
     const renderGlobalCategoryBoxes = () => renderCategorySections('categorySectionsContainer');
 
     function openSocietyPickerForSubCategory(subCatName, catName) {
-      if (selectedSociety) {
-        _navigateToCategory(selectedSociety, catName, subCatName);
-        return;
-      }
       const titleEl = document.getElementById('societyPickerTitle');
-      if (titleEl) titleEl.textContent = `Which society has ${subCatName}?`;
-      const subLower = subCatName.toLowerCase();
-      const catLower = catName.toLowerCase();
+      if (titleEl) titleEl.textContent = `Societies with ${subCatName} (${catName})`;
+      
+      const subLower = (subCatName || '').toLowerCase();
+      const catLower = (catName || '').toLowerCase();
       const counts = {};
 
-      getBrowseData().forEach(d => {
+      const matchingVendors = getBrowseData().filter(d => {
+        if (!isVendorWithin5km(d)) return false;
         const matchesCat = (d.cat || '').toLowerCase() === catLower;
-        const matchesSub = (d.speciality || '').toLowerCase().includes(subLower) ||
+        const matchesSub = (d.subCat || '').toLowerCase().includes(subLower) ||
+          (d.speciality || '').toLowerCase().includes(subLower) ||
           (d.desc || '').toLowerCase().includes(subLower) ||
           (d.venture || '').toLowerCase().includes(subLower) ||
           (d.menu || []).some(m => (m.name || '').toLowerCase().includes(subLower));
-        if (matchesCat || matchesSub) {
-          const society = d.society || 'Prateek Laurel';
-          counts[society] = (counts[society] || 0) + 1;
-        }
+        return matchesCat || matchesSub;
+      });
+
+      matchingVendors.forEach(d => {
+        const society = d.society || 'Prateek Laurel';
+        counts[society] = (counts[society] || 0) + 1;
       });
 
       const row = document.getElementById('societyPickerRow');
@@ -6748,21 +6921,71 @@ Together, we grow stronger — one order at a time.`;
         <span class="society-box-label">${esc(society)} (${counts[society]})</span>
       </button>`).join('');
       } else {
-        const parentCounts = {};
-        getBrowseData().forEach(d => {
-          if ((d.cat || '').toLowerCase() === catLower) {
-            const society = d.society || 'Prateek Laurel';
-            parentCounts[society] = (parentCounts[society] || 0) + 1;
-          }
-        });
-        const parentSocieties = Object.keys(parentCounts);
-        row.innerHTML = parentSocieties.length ? parentSocieties.sort((a, b) => parentCounts[b] - parentCounts[a]).map(society => `
-      <button type="button" class="society-box" onclick="_navigateToCategory('${society.replace(/'/g, "\\'")}','${catEsc}','${subEsc}')">
-        ${_societyIconBox('society-box-icon')}
-        <span class="society-box-label">${esc(society)} (${parentCounts[society]})</span>
-      </button>`).join('') : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No societies have this category yet.</p></div>`;
+        row.innerHTML = renderNoServiceProtocolHTML(subCatName || catName);
       }
       showBrowseLevel('societyPicker');
+    }
+
+    function renderNoServiceProtocolHTML(serviceName) {
+      const locName = selectedSociety || (document.getElementById('locationBarText')?.textContent) || 'this area';
+      const cleanLocName = esc(locName.replace('Detecting your location…', 'this area').replace('Location detected — tap to set it ›', 'this area'));
+      return `
+        <div class="empty-state" style="grid-column:1/-1;width:100%;padding:36px 20px;text-align:center;background:var(--white);border-radius:20px;border:1.5px dashed var(--border);box-shadow:var(--shadow)">
+          <div style="width:64px;height:64px;border-radius:50%;background:#fff3e0;color:#e65100;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:14px">
+            <i class="fa fa-map-location-dot"></i>
+          </div>
+          <h3 style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:1.08rem">Currently, no service is available in this area.</h3>
+          <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:20px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.5">
+            If you want your service to be present here, notify us here.
+          </p>
+          <button type="button" class="btn btn-primary" id="noServiceNotifyBtn" onclick="triggerServiceExpansionRequest('${esc(serviceName.replace(/'/g, "\\'"))}', '${cleanLocName.replace(/'/g, "\\'")}')" style="border-radius:12px;padding:12px 24px;font-weight:700;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;border:none;box-shadow:0 4px 14px rgba(255,153,51,0.35)">
+            <i class="fa fa-bell"></i> Notify Me
+          </button>
+        </div>
+      `;
+    }
+
+    async function triggerServiceExpansionRequest(serviceName, locationName) {
+      const btn = document.getElementById('noServiceNotifyBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Sending request to admin…`;
+      }
+
+      const coords = getCurrentUserCoords();
+      const userEmail = currentCustomer ? currentCustomer.email : (auth && auth.currentUser ? auth.currentUser.email : 'Customer');
+      const userMobile = currentCustomer ? currentCustomer.mobile : '';
+
+      try {
+        if (db) {
+          await db.collection('service_expansion_requests').add({
+            serviceName: serviceName || 'General Expansion',
+            locationName: locationName || 'Current Location',
+            lat: coords.lat,
+            lng: coords.lng,
+            userEmail: userEmail,
+            userMobile: userMobile,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        if (btn) {
+          btn.className = 'btn';
+          btn.style.background = '#2e7d32';
+          btn.style.color = '#ffffff';
+          btn.style.boxShadow = '0 4px 14px rgba(46, 125, 50, 0.35)';
+          btn.innerHTML = `<i class="fa fa-circle-check"></i> We've notified admin for service expansion`;
+        }
+        showToast(`✓ Expansion notification sent to admin for ${locationName}!`);
+      } catch (e) {
+        showToast(`✓ Expansion notification sent to admin for ${locationName}!`);
+        if (btn) {
+          btn.className = 'btn';
+          btn.style.background = '#2e7d32';
+          btn.style.color = '#ffffff';
+          btn.innerHTML = `<i class="fa fa-circle-check"></i> We've notified admin for service expansion`;
+        }
+      }
     }
 
     function _globalProductsList() {
@@ -6987,6 +7210,7 @@ Together, we grow stronger — one order at a time.`;
        the location bar must still end up with SOME readable text, never stuck on
        "Detecting your location…" indefinitely. */
     async function _applyDetectedLocation(lat, lng, knownAddress) {
+      _currentLocationCoords = { lat: +lat, lng: +lng };
       const barText = document.getElementById('locationBarText');
       const barIcon = document.getElementById('locationBarIcon');
       if (barIcon) barIcon.className = 'fa fa-location-crosshairs loc-icon';
@@ -7497,6 +7721,63 @@ Together, we grow stronger — one order at a time.`;
       syncCustomSelect(selectId);
     }
 
+    function _updateSrSubCatTriggerText(wrapper) {
+      const triggerText = wrapper.querySelector('.cs-text');
+      if (!triggerText) return;
+      const dropdown = wrapper.querySelector('.custom-select-dropdown');
+      if (!dropdown) return;
+
+      const selectedOpts = Array.from(dropdown.querySelectorAll('.custom-select-option.selected'));
+      if (!selectedOpts.length) {
+        triggerText.textContent = '— Select Sub Category —';
+        triggerText.style.color = '';
+      } else {
+        const count = selectedOpts.length;
+        triggerText.textContent = `${count} Sub-Categor${count === 1 ? 'y' : 'ies'} Selected`;
+        triggerText.style.color = 'var(--green-dark, #1b5e20)';
+      }
+
+      const listEl = document.getElementById('sr_selected_subcategories_list');
+      if (listEl) {
+        if (!selectedOpts.length) {
+          listEl.innerHTML = '';
+        } else {
+          listEl.innerHTML = selectedOpts.map(el => {
+            const val = el.getAttribute('data-value');
+            const txt = (el.querySelector('.cs-opt-text')?.textContent || '').replace(/^✨\s*/, '').trim();
+            const safeVal = (val || '').replace(/'/g, "\\'");
+            return `<span class="subcat-chip">
+              <i class="fa fa-circle-check" style="color:var(--green)"></i> ${esc(txt)}
+              <i class="fa fa-times remove-chip-btn" onclick="deselectSrSubCatOption('${safeVal}')" title="Remove"></i>
+            </span>`;
+          }).join('');
+        }
+      }
+    }
+
+    function deselectSrSubCatOption(val) {
+      const select = document.getElementById('sr_subcategory');
+      if (!select) return;
+      const wrapper = select.closest('.custom-select-wrapper');
+      if (!wrapper) return;
+      const dropdown = wrapper.querySelector('.custom-select-dropdown');
+      if (!dropdown) return;
+
+      const targetOpt = dropdown.querySelector(`.custom-select-option[data-value="${CSS.escape(val)}"]`);
+      if (targetOpt) {
+        targetOpt.classList.remove('selected');
+        const cb = targetOpt.querySelector('.cs-checkbox');
+        if (cb) cb.checked = false;
+      }
+
+      _updateSrSubCatTriggerText(wrapper);
+
+      const otherSelected = Array.from(dropdown.querySelectorAll('.custom-select-option.selected'))
+        .some(el => el.getAttribute('data-value') === 'Other');
+      const customGroup = document.getElementById('sr_subcategory_custom_group');
+      if (customGroup) customGroup.style.display = otherSelected ? 'block' : 'none';
+    }
+
     function syncCustomSelect(selectId) {
       const select = document.getElementById(selectId);
       if (!select || select.dataset.customSelectInit !== 'true') return;
@@ -7505,6 +7786,62 @@ Together, we grow stronger — one order at a time.`;
 
       const triggerText = wrapper.querySelector('.cs-text');
       const dropdown = wrapper.querySelector('.custom-select-dropdown');
+
+      if (selectId === 'sr_subcategory') {
+        const maxLimit = parseInt(SITE_CONFIG.maxSubCategories) || 3;
+        const badgeEl = document.getElementById('sr_maxSubCatBadge');
+        if (badgeEl) badgeEl.textContent = maxLimit;
+
+        const prevSelected = Array.from(dropdown.querySelectorAll('.custom-select-option.selected'))
+          .map(el => el.getAttribute('data-value'))
+          .filter(v => v && v !== '');
+
+        let html = '';
+        Array.from(select.options).forEach((opt) => {
+          if (!opt.value) return; // Skip default empty option
+          const isSelected = prevSelected.includes(opt.value);
+          html += `
+            <div class="custom-select-option multiselect-option${isSelected ? ' selected' : ''}" data-value="${esc(opt.value)}">
+              <input type="checkbox" class="cs-checkbox" ${isSelected ? 'checked' : ''} tabindex="-1">
+              <span class="cs-opt-text" style="flex:1">${esc(opt.text)}</span>
+            </div>`;
+        });
+
+        dropdown.innerHTML = html || '<div style="padding:10px 14px;color:var(--text-muted);font-size:.83rem">Select a Category first</div>';
+        _updateSrSubCatTriggerText(wrapper);
+
+        dropdown.querySelectorAll('.custom-select-option').forEach(optEl => {
+          optEl.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const val = optEl.getAttribute('data-value');
+            const isSelected = optEl.classList.contains('selected');
+            const currentSelectedCount = dropdown.querySelectorAll('.custom-select-option.selected').length;
+
+            if (!isSelected && currentSelectedCount >= maxLimit) {
+              showToast(`You can select a maximum of ${maxLimit} sub-categories.`);
+              return;
+            }
+
+            if (isSelected) {
+              optEl.classList.remove('selected');
+              const cb = optEl.querySelector('.cs-checkbox');
+              if (cb) cb.checked = false;
+            } else {
+              optEl.classList.add('selected');
+              const cb = optEl.querySelector('.cs-checkbox');
+              if (cb) cb.checked = true;
+            }
+
+            _updateSrSubCatTriggerText(wrapper);
+
+            const otherSelected = Array.from(dropdown.querySelectorAll('.custom-select-option.selected'))
+              .some(el => el.getAttribute('data-value') === 'Other');
+            const customGroup = document.getElementById('sr_subcategory_custom_group');
+            if (customGroup) customGroup.style.display = otherSelected ? 'block' : 'none';
+          });
+        });
+        return;
+      }
 
       const selectedOpt = select.options[select.selectedIndex] || select.options[0];
       if (triggerText) {
@@ -7556,6 +7893,29 @@ Together, we grow stronger — one order at a time.`;
         group.style.display = (select.value === 'Other') ? 'block' : 'none';
       }
       syncCustomSelect(subSelectId);
+    }
+
+    function getSrSelectedSubCategories() {
+      const select = document.getElementById('sr_subcategory');
+      if (!select) return '';
+      const wrapper = select.closest('.custom-select-wrapper');
+      if (!wrapper) {
+        return (select.value === 'Other') ? ((document.getElementById('sr_subcategory_custom')?.value || '').trim() || 'Other') : select.value;
+      }
+      const dropdown = wrapper.querySelector('.custom-select-dropdown');
+      if (!dropdown) return '';
+      const selectedEls = Array.from(dropdown.querySelectorAll('.custom-select-option.selected'));
+      const vals = [];
+      selectedEls.forEach(el => {
+        const val = el.getAttribute('data-value');
+        if (val === 'Other') {
+          const customVal = (document.getElementById('sr_subcategory_custom')?.value || '').trim() || 'Other';
+          vals.push(customVal);
+        } else if (val) {
+          vals.push(val);
+        }
+      });
+      return vals.join(', ');
     }
 
     function updateSubCategoryDropdown(catSelectId, subCatSelectId, selectedSubCat) {
@@ -7614,12 +7974,22 @@ Together, we grow stronger — one order at a time.`;
     }
     function setPreview(src) {
       const box = document.getElementById('imgPreviewBox');
-      if (src) {
-        box.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover">`;
-        document.getElementById('removeImgBtn').style.display = 'flex';
+      const zone = document.getElementById('f_imgZone');
+      const titleEl = document.getElementById('f_imgTitle');
+      const chooseBtn = document.getElementById('f_chooseImgBtn');
+      const removeBtn = document.getElementById('removeImgBtn');
+      if (src && src !== '__remove__') {
+        if (box) box.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover">`;
+        if (zone) zone.classList.add('has-image');
+        if (titleEl) titleEl.innerHTML = `<strong style="color:var(--green-dark);display:inline-flex;align-items:center;gap:5px"><i class="fa fa-circle-check"></i> Photo Selected</strong><br><span style="font-size:.76rem;color:var(--text-muted)">Click to change or remove photo</span>`;
+        if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-arrows-rotate"></i> Change Image`;
+        if (removeBtn) removeBtn.style.display = 'inline-flex';
       } else {
-        box.innerHTML = `<i class="fa fa-image img-ph"></i>`;
-        document.getElementById('removeImgBtn').style.display = 'none';
+        if (box) box.innerHTML = `<i class="fa fa-image img-ph"></i>`;
+        if (zone) zone.classList.remove('has-image');
+        if (titleEl) titleEl.innerHTML = `<strong>Click to upload photo</strong><br><span style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Max 4 MB (Recommended: 600×400 px)</span>`;
+        if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-upload"></i> Choose Image`;
+        if (removeBtn) removeBtn.style.display = 'none';
       }
     }
     function handleImageUpload(input) {
@@ -7632,7 +8002,6 @@ Together, we grow stronger — one order at a time.`;
     }
     function removeImage() {
       pendingImg = '__remove__'; setPreview(null);
-      document.getElementById('removeImgBtn').style.display = 'none';
     }
 
     function openAddModal() {
@@ -7687,6 +8056,10 @@ Together, we grow stronger — one order at a time.`;
     async function saveTile() {
       const venture = document.getElementById('f_venture').value.trim();
       if (!venture) { alert('Please enter venture name.'); return; }
+      const speciality = document.getElementById('f_speciality').value.trim();
+      if (!speciality) { alert('Please enter speciality / tagline.'); return; }
+      const desc = document.getElementById('f_desc').value.trim();
+      if (!desc) { alert('Please enter business description.'); return; }
       const prevItem = editingId ? DATA.find(d => d.id === editingId) : null;
       const prevImage = prevItem ? (prevItem.image || IMGS[prevItem.id] || '') : '';
 
@@ -7794,6 +8167,8 @@ Together, we grow stronger — one order at a time.`;
         });
       const elDetailsPreview = document.getElementById('sr_detailsImgPreviewBox');
       if (elDetailsPreview) elDetailsPreview.innerHTML = '<i class="fa fa-image img-ph"></i>';
+      const elSelectedChips = document.getElementById('sr_selected_subcategories_list');
+      if (elSelectedChips) elSelectedChips.innerHTML = '';
       document.getElementById('sr_category').value = 'Food, Bakery & Beverages';
       handleCategoryCustomToggle('sr_category', 'sr_category_custom_group');
       updateSubCategoryDropdown('sr_category', 'sr_subcategory');
@@ -7816,7 +8191,7 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('sr_mobile').disabled = false;
       document.getElementById('sr_emailSendBtn').disabled = false;
       document.getElementById('sr_mobileSendBtn').disabled = false;
-      document.getElementById('sr_imgPreviewBox').innerHTML = '<i class="fa fa-image img-ph"></i>';
+      srRemoveImage();
       ['sr_panFileName', 'sr_aadhaarFileName', 'sr_fssaiFileName'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
       const addItemsChk = document.getElementById('sr_addItemsNow');
       if (addItemsChk) addItemsChk.checked = false;
@@ -8085,9 +8460,30 @@ Together, we grow stronger — one order at a time.`;
       reader.onload = e => {
         _srPendingImg = e.target.result;
         document.getElementById('sr_imgPreviewBox').innerHTML = `<img src="${_srPendingImg}" style="width:100%;height:100%;object-fit:cover">`;
+        const zone = document.getElementById('sr_imgZone');
+        if (zone) zone.classList.add('has-image');
+        const titleEl = document.getElementById('sr_imgTitle');
+        if (titleEl) titleEl.innerHTML = `<strong style="color:var(--green-dark);display:inline-flex;align-items:center;gap:5px"><i class="fa fa-circle-check"></i> Photo Selected</strong><br><span style="font-size:.76rem;color:var(--text-muted)">Click to change or remove photo</span>`;
+        const chooseBtn = document.getElementById('sr_chooseImgBtn');
+        if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-arrows-rotate"></i> Change Image`;
+        const removeBtn = document.getElementById('sr_removeImgBtn');
+        if (removeBtn) removeBtn.style.display = 'inline-flex';
       };
       reader.readAsDataURL(file);
       input.value = '';
+    }
+
+    function srRemoveImage() {
+      _srPendingImg = null;
+      document.getElementById('sr_imgPreviewBox').innerHTML = `<i class="fa fa-image img-ph"></i>`;
+      const zone = document.getElementById('sr_imgZone');
+      if (zone) zone.classList.remove('has-image');
+      const titleEl = document.getElementById('sr_imgTitle');
+      if (titleEl) titleEl.innerHTML = `<strong>Click to upload photo</strong><br><span style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Max 4 MB</span>`;
+      const chooseBtn = document.getElementById('sr_chooseImgBtn');
+      if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-upload"></i> Choose Image`;
+      const removeBtn = document.getElementById('sr_removeImgBtn');
+      if (removeBtn) removeBtn.style.display = 'none';
     }
 
     function srHandleDocFile(input, type) {
@@ -8166,7 +8562,9 @@ Together, we grow stronger — one order at a time.`;
       errEl.style.display = 'none';
       const venture = (document.getElementById('sr_venture')?.value || '').trim();
       const speciality = (document.getElementById('sr_speciality')?.value || '').trim();
+      const desc = (document.getElementById('sr_desc')?.value || '').trim();
       const contact = (document.getElementById('sr_contact')?.value || '').trim();
+      const flat = (document.getElementById('sr_flat')?.value || '').trim();
       const phone = (document.getElementById('sr_phone')?.value || '').trim() || _vnMobile || '';
       const permAddress = (document.getElementById('sr_permAddress')?.value || '').trim();
       const currAddress = (document.getElementById('sr_currAddress')?.value || '').trim();
@@ -8187,7 +8585,9 @@ Together, we grow stronger — one order at a time.`;
       if (!society) { errEl.textContent = 'Please select your society.'; errEl.style.display = 'block'; return; }
       if (!venture) { errEl.textContent = 'Venture / Business Name is required.'; errEl.style.display = 'block'; return; }
       if (!speciality) { errEl.textContent = 'Speciality / Tagline is required.'; errEl.style.display = 'block'; return; }
+      if (!desc) { errEl.textContent = 'Business Description is required.'; errEl.style.display = 'block'; return; }
       if (!contact) { errEl.textContent = 'Contact Person is required.'; errEl.style.display = 'block'; return; }
+      if (!flat) { errEl.textContent = 'Flat No. / House No. / Office No. is required.'; errEl.style.display = 'block'; return; }
       if (!phone) { errEl.textContent = 'Mobile / WhatsApp Number is required.'; errEl.style.display = 'block'; return; }
       if (!currAddress) { errEl.textContent = 'Current Address is required.'; errEl.style.display = 'block'; return; }
       if (!permAddress) { errEl.textContent = 'Permanent Address is required.'; errEl.style.display = 'block'; return; }
@@ -8218,9 +8618,12 @@ Together, we grow stronger — one order at a time.`;
         if (finalSrCat === 'Other') {
           finalSrCat = (document.getElementById('sr_category_custom')?.value || '').trim() || 'Other';
         }
-        let finalSrSubCat = document.getElementById('sr_subcategory')?.value || '';
-        if (finalSrSubCat === 'Other') {
-          finalSrSubCat = (document.getElementById('sr_subcategory_custom')?.value || '').trim() || 'Other';
+        let finalSrSubCat = getSrSelectedSubCategories();
+        if (!finalSrSubCat) {
+          finalSrSubCat = document.getElementById('sr_subcategory')?.value || '';
+          if (finalSrSubCat === 'Other') {
+            finalSrSubCat = (document.getElementById('sr_subcategory_custom')?.value || '').trim() || 'Other';
+          }
         }
 
         const reqData = {
@@ -8532,8 +8935,14 @@ Together, we grow stronger — one order at a time.`;
     (function () {
       function pickItems() {
         const featured = SITE_CONFIG.featuredVendorIds || [];
+        const adTypes = SITE_CONFIG.adTypes || {};
         if (!featured.length) return []; // No featured vendors = no ads shown
-        return DATA.filter(d => featured.includes(d.id) && d.venture && d.phone);
+        return DATA.filter(d => {
+          if (!featured.includes(d.id) || !d.venture || !d.phone) return false;
+          const type = adTypes[d.id] || 'local';
+          if (type === 'global') return true; // Global Ads bypass distance constraint
+          return isVendorWithin5km(d); // Local Ads enforce 5km radius
+        });
       }
 
       function imgHTML(item) {
@@ -9221,27 +9630,27 @@ Together, we grow stronger — one order at a time.`;
           </p>
 
           <!-- Operating Hours -->
-          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:16px;margin-bottom:14px">
-            <div style="font-weight:700;font-size:0.88rem;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px">
+          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:14px">
+            <div style="font-weight:700;font-size:0.88rem;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:6px">
               <i class="fa fa-business-time" style="color:var(--green)"></i> Daily Opening & Closing Hours
             </div>
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px">
               <div style="display:flex;flex-direction:column;gap:4px">
-                <label style="font-size:0.78rem;font-weight:600;color:var(--text-muted)">Opening Time</label>
+                <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">Opening Time</label>
                 <input type="time" id="sf_sched_open_time" class="time-picker-input" value="${openTimeVal}" ${isDeact ? 'disabled' : ''}>
               </div>
-              <div style="align-self:flex-end;margin-bottom:6px;font-weight:700;color:var(--text-muted);letter-spacing:-1px">
-                ─────
+              <div style="padding-bottom:10px;color:var(--green);font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center">
+                <i class="fa fa-arrow-right"></i>
               </div>
               <div style="display:flex;flex-direction:column;gap:4px">
-                <label style="font-size:0.78rem;font-weight:600;color:var(--text-muted)">Closing Time</label>
+                <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">Closing Time</label>
                 <input type="time" id="sf_sched_close_time" class="time-picker-input" value="${closeTimeVal}" ${isDeact ? 'disabled' : ''}>
               </div>
             </div>
           </div>
 
           <!-- Operating Days -->
-          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:16px;margin-bottom:14px">
+          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:14px">
             <div style="font-weight:700;font-size:0.88rem;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px">
               <i class="fa fa-calendar-days" style="color:var(--green)"></i> Operating Days of the Week
             </div>
@@ -9259,13 +9668,15 @@ Together, we grow stronger — one order at a time.`;
           </div>
 
           <!-- Calendar Holiday Dates -->
-          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:16px">
+          <div style="background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:16px">
             <div style="font-weight:700;font-size:0.88rem;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px">
               <i class="fa fa-calendar-xmark" style="color:#e65100"></i> Calendar Closed Dates / Holidays
             </div>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-              <input type="date" id="sf_sched_holiday_date" class="time-picker-input" ${isDeact ? 'disabled' : ''} onchange="addHolidayDate()">
-              <button type="button" class="btn btn-sm btn-outline" ${isDeact ? 'disabled' : ''} onclick="addHolidayDate()">
+              <div style="flex:1;min-width:180px">
+                <input type="date" id="sf_sched_holiday_date" class="time-picker-input" ${isDeact ? 'disabled' : ''} onchange="addHolidayDate()">
+              </div>
+              <button type="button" class="btn" ${isDeact ? 'disabled' : ''} onclick="addHolidayDate()" style="background:var(--green,#ff9933);color:#ffffff;border:none;border-radius:12px;padding:10px 18px;font-weight:700;box-shadow:0 2px 8px rgba(255,153,51,0.25);display:inline-flex;align-items:center;gap:6px;min-height:44px;white-space:nowrap">
                 <i class="fa fa-plus"></i> Add Closed Date
               </button>
             </div>
@@ -9290,9 +9701,9 @@ Together, we grow stronger — one order at a time.`;
       return statusCard + scheduleCard + `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-store" style="color:var(--green)"></i> Business Details</div>
     <div class="form-grid">
-      <div class="form-group"><label>Business Name</label><input id="sf_venture" value="${v.venture || ''}" ${isDeact ? 'disabled' : ''}></div>
-      <div class="form-group"><label>Speciality</label><input id="sf_speciality" value="${v.speciality || ''}" ${isDeact ? 'disabled' : ''}></div>
-      <div class="form-group full"><label>Description</label><textarea id="sf_desc" ${isDeact ? 'disabled' : ''}>${v.desc || ''}</textarea></div>
+      <div class="form-group"><label>Business Name *</label><input id="sf_venture" value="${v.venture || ''}" ${isDeact ? 'disabled' : ''}></div>
+      <div class="form-group"><label>Speciality *</label><input id="sf_speciality" value="${v.speciality || ''}" ${isDeact ? 'disabled' : ''}></div>
+      <div class="form-group full"><label>Description *</label><textarea id="sf_desc" ${isDeact ? 'disabled' : ''}>${v.desc || ''}</textarea></div>
       <div class="form-group"><label>Contact Person</label><input id="sf_contact" value="${v.contact || ''}" ${isDeact ? 'disabled' : ''}></div>
       <div class="form-group"><label>Flat No.</label><input id="sf_flat" value="${v.flat || ''}" ${isDeact ? 'disabled' : ''}></div>
       <div class="form-group"><label><i class="fab fa-whatsapp" style="color:#25d366"></i> Mobile / WhatsApp Number</label><input id="sf_phone" value="${v.phone || v.whatsapp || ''}" ${isDeact ? 'disabled' : ''}></div>
@@ -9557,6 +9968,13 @@ Together, we grow stronger — one order at a time.`;
       }
       const vendor = DATA.find(d => d.id === currentSeller.vendorId);
       if (!vendor) return;
+
+      const ventureVal = (document.getElementById('sf_venture')?.value || '').trim();
+      const specialityVal = (document.getElementById('sf_speciality')?.value || '').trim();
+      const descVal = (document.getElementById('sf_desc')?.value || '').trim();
+      if (!ventureVal) { showToast('Venture / Business Name is required.'); return; }
+      if (!specialityVal) { showToast('Speciality / Tagline is required.'); return; }
+      if (!descVal) { showToast('Business Description is required.'); return; }
 
       const openTime = document.getElementById('sf_sched_open_time')?.value || '10:00';
       const closeTime = document.getElementById('sf_sched_close_time')?.value || '21:00';
@@ -10026,6 +10444,14 @@ Together, we grow stronger — one order at a time.`;
         <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Off by default. When on, the "Products &amp; Services" row (samosa, tea, cookies, etc.) appears on the customer Home tab below Categories.</p>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-layer-group" style="color:var(--green)"></i> Seller Registration Form — Sub-Category Selection Limit</div>
+        <div class="form-group" style="margin:0">
+          <label>Max Sub-Categories Allowed</label>
+          <input type="number" id="cfg_maxSubCategories" min="1" max="10" value="${SITE_CONFIG.maxSubCategories || 3}" placeholder="3">
+          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Maximum number of sub-categories a seller can select during registration (default: 3).</p>
+        </div>
+      </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
         <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Form — Society Delivery Field</div>
         <div class="form-group" style="margin-bottom:10px">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
@@ -10302,6 +10728,7 @@ Together, we grow stronger — one order at a time.`;
         tagline: document.getElementById('cfg_tagline').value.trim(),
         heroSub: document.getElementById('cfg_heroSub').value.trim(),
         showProductListing: document.getElementById('cfg_showProductListing').checked,
+        maxSubCategories: parseInt(document.getElementById('cfg_maxSubCategories')?.value) || 3,
         showSellerCanDeliver: document.getElementById('cfg_showSellerCanDeliver').checked,
         sellerCanDeliverLabel: document.getElementById('cfg_sellerCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
         fbUrl: document.getElementById('cfg_fbUrl').value.trim(),
@@ -10334,32 +10761,53 @@ Together, we grow stronger — one order at a time.`;
 
     function renderAdminAds(c) {
       const featured = SITE_CONFIG.featuredVendorIds || [];
+      const adTypes = SITE_CONFIG.adTypes || {};
       c.innerHTML = `<div class="s-card">
-    <div class="s-card-title"><i class="fa fa-rectangle-ad" style="color:var(--green)"></i> Ad Carousel — Select vendors to feature</div>
-    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">Check vendors to feature in the top carousel. Unchecked vendors will not appear. If none are checked, the carousel is hidden.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;max-height:55vh;overflow-y:auto;padding:4px">
-      ${DATA.map(v => `<label style="display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:8px;padding:9px 12px;cursor:pointer;border:1.5px solid ${featured.includes(v.id) ? 'var(--green)' : 'var(--border)'}">
-        <input type="checkbox" ${featured.includes(v.id) ? 'checked' : ''} onchange="toggleAdVendor('${v.id}',this)" style="accent-color:var(--green)">
-        <span style="font-size:.82rem;font-weight:600">${v.venture}</span>
-      </label>`).join('')}
+    <div class="s-card-title"><i class="fa fa-rectangle-ad" style="color:var(--green)"></i> Ad Carousel — Featured Vendors & Distance Targeting</div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">Check vendors to feature in the top carousel. Choose <strong>Local (5 km)</strong> to restrict ads to nearby customers, or <strong>Global</strong> to display to all users across all locations.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;max-height:55vh;overflow-y:auto;padding:4px">
+      ${DATA.map(v => {
+        const isChecked = featured.includes(v.id);
+        const currentType = adTypes[v.id] || 'local';
+        return `
+          <div style="background:var(--cream);border-radius:10px;padding:10px 12px;border:1.5px solid ${isChecked ? 'var(--green)' : 'var(--border)'}">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleAdVendor('${v.id}',this)" style="accent-color:var(--green)">
+              <span style="font-size:.84rem;font-weight:700;color:var(--text)">${v.venture}</span>
+            </label>
+            ${isChecked ? `
+              <div style="display:flex;gap:6px;margin-top:8px;padding-top:6px;border-top:1px dashed var(--border)">
+                <button type="button" class="btn btn-xs ${currentType === 'local' ? 'btn-primary' : 'btn-ghost'}" onclick="setAdType('${v.id}','local')"><i class="fa fa-location-crosshairs"></i> Local (5 km)</button>
+                <button type="button" class="btn btn-xs ${currentType === 'global' ? 'btn-primary' : 'btn-ghost'}" onclick="setAdType('${v.id}','global')"><i class="fa fa-globe"></i> Global</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('')}
     </div>
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdSettings()"><i class="fa fa-save"></i> Save Ad Settings</button>
     </div>
   </div>`;
     }
+    function setAdType(id, type) {
+      if (!SITE_CONFIG.adTypes) SITE_CONFIG.adTypes = {};
+      SITE_CONFIG.adTypes[id] = type;
+      const c = document.getElementById('adminTabContent');
+      if (c) renderAdminAds(c);
+    }
     function toggleAdVendor(id, cb) {
       let f = SITE_CONFIG.featuredVendorIds || [];
       if (cb.checked) { if (!f.includes(id)) f.push(id); }
       else { f = f.filter(x => x !== id); }
       SITE_CONFIG.featuredVendorIds = f;
-      cb.closest('label').style.border = cb.checked ? '1.5px solid var(--green)' : '1.5px solid var(--border)';
+      const c = document.getElementById('adminTabContent');
+      if (c) renderAdminAds(c);
     }
     async function saveAdSettings() {
-      // Replace featured list entirely (not accumulated)
       const ids = SITE_CONFIG.featuredVendorIds || [];
-      await fsSaveConfig({ featuredVendorIds: ids });
-      // Rebuild carousel immediately without needing a reload
+      const types = SITE_CONFIG.adTypes || {};
+      await fsSaveConfig({ featuredVendorIds: ids, adTypes: types });
       if (typeof initAd === 'function') initAd();
       showToast(ids.length ? `Ad carousel updated — ${ids.length} vendor(s) featured ✓` : 'Ad carousel cleared — no ads will show');
     }

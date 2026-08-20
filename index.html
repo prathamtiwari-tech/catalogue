@@ -115,6 +115,203 @@
       color: var(--green)
     }
 
+    /* ═══ ASK TYNTRON (AI chat assistant) ═══ */
+    .ask-fab {
+      position: fixed;
+      right: 16px;
+      bottom: calc(76px + env(safe-area-inset-bottom));
+      z-index: 160;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      box-shadow: 0 8px 20px rgba(184, 92, 26, .35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .15s ease;
+    }
+
+    .ask-fab:active {
+      transform: scale(.92)
+    }
+
+    .ask-modal {
+      max-width: 420px;
+      width: 100%;
+      height: min(640px, 86vh);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ask-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      background: var(--green);
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .ask-header-title {
+      font-weight: 700;
+      font-size: 1.02rem;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .ask-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      opacity: .9
+    }
+
+    .ask-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--cream, #FFF8F0);
+    }
+
+    .ask-bubble {
+      max-width: 82%;
+      padding: 10px 13px;
+      border-radius: 16px;
+      font-size: .88rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .ask-bubble.bot {
+      align-self: flex-start;
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .ask-bubble.user {
+      align-self: flex-end;
+      background: var(--green);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .ask-bubble.typing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 13px 16px;
+    }
+
+    .ask-bubble.typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: askTyping 1s infinite ease-in-out;
+    }
+
+    .ask-bubble.typing span:nth-child(2) {
+      animation-delay: .15s
+    }
+
+    .ask-bubble.typing span:nth-child(3) {
+      animation-delay: .3s
+    }
+
+    @keyframes askTyping {
+
+      0%,
+      60%,
+      100% {
+        opacity: .3
+      }
+
+      30% {
+        opacity: 1
+      }
+    }
+
+    .ask-quickchips {
+      display: flex;
+      gap: 8px;
+      padding: 0 14px 10px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .ask-chip {
+      background: var(--cream, #FFF3E0);
+      border: 1px solid var(--border);
+      color: var(--green-dark);
+      border-radius: 20px;
+      padding: 6px 13px;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .ask-chip:active {
+      background: var(--green);
+      color: #fff
+    }
+
+    .ask-inputrow {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+      flex-shrink: 0;
+    }
+
+    .ask-inputrow input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: .88rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .ask-inputrow input:focus {
+      border-color: var(--green)
+    }
+
+    .ask-send {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ask-send:disabled {
+      opacity: .5
+    }
+
     /* HEADER — white, clean, saffron used only as accent (logo/icons/active states) */
     header {
       background: var(--white);
@@ -3809,6 +4006,26 @@
         class="fa fa-circle-question"></i><span>Help</span></button>
   </nav>
 
+  <!-- ══ ASK TYNTRON — persistent chat entry point ══ -->
+  <button class="ask-fab" id="askTynTronFab" onclick="openAskTynTron()" aria-label="Ask TynTron">
+    <i class="fa fa-comment-dots"></i>
+  </button>
+
+  <div class="modal-overlay" id="askTynTronModal" style="z-index:500">
+    <div class="modal ask-modal">
+      <div class="ask-header">
+        <div class="ask-header-title"><i class="fa fa-comment-dots"></i> Ask TynTron</div>
+        <button class="ask-close" onclick="closeAskTynTron()" aria-label="Close"><i class="fa fa-xmark"></i></button>
+      </div>
+      <div class="ask-messages" id="askMessages"></div>
+      <div class="ask-quickchips" id="askQuickChips"></div>
+      <form class="ask-inputrow" onsubmit="event.preventDefault(); askSendFromInput();">
+        <input type="text" id="askInput" placeholder="Ask about a business, place an order…" autocomplete="off">
+        <button type="submit" class="ask-send" id="askSendBtn" aria-label="Send"><i class="fa fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+
   <!-- ══════════════════════════════════════════ -->
   <!--  SELLER PANEL                            -->
   <!-- ══════════════════════════════════════════ -->
@@ -4326,6 +4543,13 @@
       appId: "1:912207487650:web:465cc586ece9183d232dfb"
     };
 
+    // Ask TynTron backend (app/functions/askAssistant) — a plain HTTPS endpoint, not the
+    // Firebase Functions client SDK, so no extra script tag is needed and this stays
+    // consistent with how the rest of this file already calls third-party APIs directly
+    // (see VerifyNow in sendMobileOtp below). See app/functions/README.md for deploy steps —
+    // until that function is deployed, the chat will show a friendly "not available yet" reply.
+    const ASK_ASSISTANT_URL = 'https://asia-south1-homebiz-480e5.cloudfunctions.net/askAssistant';
+
     /* ═══════════ FIREBASE INIT ═══════════ */
     let db = null, auth = null, storage = null, secondaryAuth = null, secondaryDb = null, secondaryStorage = null;
     const FB_READY = !FIREBASE_CONFIG.apiKey.includes('YOUR_');
@@ -4718,6 +4942,13 @@
       // Same staleness issue if they logged in via "Login to Order" from an open vendor
       // detail view — refresh it so the prefilled order form replaces the login prompt.
       if (_menuVendor) openMenuModal(_menuVendor.id);
+      // If login happened because Ask TynTron needed a verified mobile number mid-conversation
+      // (request_login action), pick the chat back up right where it left off.
+      if (_askPendingResume) {
+        const resumeMsg = _askPendingResume;
+        _askPendingResume = null;
+        setTimeout(() => { openAskTynTron(); askSend(resumeMsg, { silent: true }); }, 300);
+      }
     }
 
     async function customerLogout() {
@@ -4728,6 +4959,134 @@
       if (_customerPage === 'account') renderAccountPage();
       if (_customerPage === 'orders') renderOrdersPage();
       showToast('Logged out');
+    }
+
+    /* ═══════════ ASK TYNTRON (AI chat assistant) ═══════════
+       Client side is deliberately thin: it renders whatever text the backend returns and
+       carries out a small, fixed set of "actions" the backend can ask for. All catalog
+       search, order building, address storage and rating writes happen server-side in
+       app/functions/index.js — nothing here talks to Firestore directly except reusing the
+       existing login flow (openCustomerAuthModal/customerLogin), so there's exactly one
+       OTP implementation in the whole app, not a second chat-only copy of it. */
+    let _askHistory = [];       // [{role:'user'|'assistant', content:string}, …] sent back each turn
+    let _askPendingResume = null; // message text to resend once a mid-chat login completes
+    let _askSending = false;
+    let _askOpenedOnce = false;
+
+    const ASK_QUICK_CHIPS = ['Best rated near me', 'Track my order', 'How do I reorder?'];
+
+    function openAskTynTron() {
+      document.getElementById('askTynTronModal').classList.add('open');
+      if (!_askOpenedOnce) {
+        _askOpenedOnce = true;
+        askAppendBubble('bot', "Hi! I'm Ask TynTron 👋 I can help you find a business, place an order, or check a past one. What are you looking for?");
+        renderAskChips(ASK_QUICK_CHIPS);
+      }
+      setTimeout(() => document.getElementById('askInput')?.focus(), 150);
+    }
+
+    function closeAskTynTron() {
+      document.getElementById('askTynTronModal').classList.remove('open');
+    }
+
+    function renderAskChips(chips) {
+      const box = document.getElementById('askQuickChips');
+      if (!box) return;
+      box.innerHTML = (chips || []).map(c => `<button type="button" class="ask-chip" onclick="askSend(${JSON.stringify(c)})">${esc(c)}</button>`).join('');
+    }
+
+    function askAppendBubble(role, text) {
+      const box = document.getElementById('askMessages');
+      if (!box) return;
+      const el = document.createElement('div');
+      el.className = 'ask-bubble ' + (role === 'user' ? 'user' : 'bot');
+      el.textContent = text; // textContent, not innerHTML — this is model/user text, never markup
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+      return el;
+    }
+
+    function askShowTyping() {
+      const box = document.getElementById('askMessages');
+      if (!box) return;
+      const el = document.createElement('div');
+      el.className = 'ask-bubble bot typing';
+      el.id = 'askTypingBubble';
+      el.innerHTML = '<span></span><span></span><span></span>';
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function askHideTyping() {
+      document.getElementById('askTypingBubble')?.remove();
+    }
+
+    function askSendFromInput() {
+      const input = document.getElementById('askInput');
+      const text = (input.value || '').trim();
+      if (!text) return;
+      input.value = '';
+      askSend(text);
+    }
+
+    async function askSend(text, opts) {
+      if (_askSending) return;
+      const silent = !!(opts && opts.silent);
+      renderAskChips([]);
+      if (!silent) askAppendBubble('user', text);
+
+      if (!ASK_ASSISTANT_URL || ASK_ASSISTANT_URL.includes('REGION-PROJECT')) {
+        askAppendBubble('bot', "Ask TynTron isn't set up on this server yet — see app/functions/README.md.");
+        return;
+      }
+
+      _askSending = true;
+      const sendBtn = document.getElementById('askSendBtn');
+      if (sendBtn) sendBtn.disabled = true;
+      askShowTyping();
+
+      try {
+        const res = await fetch(ASK_ASSISTANT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            history: _askHistory,
+            mobile: currentCustomer?.mobile || null
+          })
+        });
+        const data = await res.json().catch(() => null);
+        askHideTyping();
+
+        if (!res.ok || !data) {
+          askAppendBubble('bot', (data && data.reply) || "Sorry, I couldn't reach the assistant just now — please try again.");
+          return;
+        }
+
+        _askHistory.push({ role: 'user', content: text });
+        _askHistory.push({ role: 'assistant', content: data.reply });
+        if (_askHistory.length > 40) _askHistory = _askHistory.slice(-40);
+
+        askAppendBubble('bot', data.reply);
+
+        for (const action of (data.actions || [])) {
+          if (action.type === 'open_whatsapp' && action.url) {
+            // Opened right after the reply that led here, same as the existing "Order Now"
+            // button, so popup blockers don't step in.
+            window.open(action.url, '_blank');
+          } else if (action.type === 'request_login') {
+            _askPendingResume = text;
+            closeAskTynTron();
+            openCustomerAuthModal();
+          }
+        }
+      } catch (e) {
+        askHideTyping();
+        askAppendBubble('bot', "Sorry, something went wrong reaching the assistant. Please try again.");
+      } finally {
+        _askSending = false;
+        if (sendBtn) sendBtn.disabled = false;
+      }
     }
 
     /* ═══════════ BOTTOM NAV (Home / Orders / Account app-shell) ═══════════ */
@@ -9349,6 +9708,10 @@ Together, we grow stronger — one order at a time.`;
       });
       const bottomNav = document.getElementById('bottomNav');
       if (bottomNav) bottomNav.style.display = panel === 'customer' ? 'flex' : 'none';
+      // Ask TynTron is a customer-facing assistant only — no seller/admin back-office access.
+      const askFab = document.getElementById('askTynTronFab');
+      if (askFab) askFab.style.display = panel === 'customer' ? 'flex' : 'none';
+      if (panel !== 'customer') closeAskTynTron();
       if (panel === 'seller') renderSellerPanel();
       if (panel === 'admin') renderAdminPanel();
     }

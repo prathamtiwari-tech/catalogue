@@ -2695,6 +2695,254 @@
     .btn-onboarding-next:active {
       transform: scale(0.98);
     }
+    /* ── SUBSCRIPTION UI SYSTEM (SAFFRON ORANGE BRAND THEME) ── */
+    .subs-card-banner {
+      background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);
+      border: 1.5px solid #ffe0b2;
+      border-radius: 18px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(255, 153, 51, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .subs-card-glow {
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 153, 51, 0.25) 0%, rgba(255, 153, 51, 0) 70%);
+      pointer-events: none;
+    }
+    .subs-usage-meter {
+      margin-top: 14px;
+    }
+    .subs-meter-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #5b6b7a;
+      margin-bottom: 6px;
+    }
+    .subs-meter-bar {
+      height: 8px;
+      background: #e1e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .subs-meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff9933 0%, #e65100 100%);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+    .subs-modal-body {
+      max-width: 960px;
+      width: 94%;
+      max-height: 90vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: 24px;
+      padding: 32px 24px;
+      background: #ffffff;
+      box-shadow: 0 25px 60px -12px rgba(184, 92, 26, 0.25);
+      border: 1px solid #e1e8f0;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .subs-toggle-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 24px 0 28px;
+      background: #f8fafc;
+      padding: 6px;
+      border-radius: 30px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid #e1e8f0;
+    }
+    .subs-toggle-btn {
+      padding: 8px 20px;
+      border-radius: 24px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #5b6b7a;
+      transition: all 0.2s ease;
+    }
+    .subs-toggle-btn.active {
+      background: linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+    }
+    .subs-save-badge {
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #a5d6a7;
+    }
+    .subs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    @media (max-width: 860px) {
+      .subs-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+    .plan-card {
+      background: #ffffff;
+      border: 1.5px solid #e1e8f0;
+      border-radius: 20px;
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .plan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      border-color: #ff9933;
+    }
+    .plan-card.popular {
+      border: 2px solid #ff9933;
+      box-shadow: 0 10px 30px rgba(255, 153, 51, 0.18);
+      background: linear-gradient(180deg, #fffbf7 0%, #ffffff 100%);
+    }
+    .plan-badge-popular {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #ff9933 0%, #e65100 100%);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 14px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(255, 153, 51, 0.4);
+    }
+    .plan-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #fff3e0;
+      color: #e65100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+    }
+    .plan-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1c2733;
+      margin-bottom: 4px;
+    }
+    .plan-desc {
+      font-size: 0.8rem;
+      color: #5b6b7a;
+      margin-bottom: 16px;
+      min-height: 38px;
+      line-height: 1.4;
+    }
+    .plan-price {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #1c2733;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .plan-price span {
+      font-size: 0.8rem;
+      color: #5b6b7a;
+      font-weight: 500;
+    }
+    .plan-features-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+      flex-grow: 1;
+    }
+    .plan-features-list li {
+      font-size: 0.82rem;
+      color: #2c3e50;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .plan-features-list li i.fa-check {
+      color: #2e7d32;
+      font-size: 0.85rem;
+    }
+    .plan-features-list li i.fa-xmark {
+      color: #b0bec5;
+      font-size: 0.85rem;
+    }
+    .btn-plan-select {
+      width: 100%;
+      padding: 11px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-plan-select.btn-orange {
+      background: linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(255, 153, 51, 0.35);
+    }
+    .btn-plan-select.btn-orange:hover {
+      box-shadow: 0 6px 20px rgba(255, 153, 51, 0.45);
+      transform: translateY(-1px);
+    }
+    .btn-plan-select.btn-outline-plan {
+      background: #ffffff;
+      border: 1.5px solid #e1e8f0;
+      color: #1c2733;
+    }
+    .btn-plan-select.btn-outline-plan:hover {
+      border-color: #ff9933;
+      color: #ff9933;
+    }
+    .btn-plan-select.btn-current-plan {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+      cursor: default;
+    }
   </style>
 </head>
 
@@ -2959,7 +3207,7 @@
       <div id="confirmModalInputGroup" style="display:none;margin-bottom:20px">
         <label id="confirmModalInputLabel" style="font-size:0.82rem;font-weight:600;color:#5b6b7a;display:block;margin-bottom:6px">Reason (optional):</label>
         <textarea id="confirmModalInput" placeholder="Enter reason..." style="width:100%;border-radius:12px;border:1.5px solid #e1e8f0;padding:10px 14px;font-size:0.86rem;font-family:inherit;resize:vertical;min-height:64px;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='#ff9933'" onblur="this.style.borderColor='#e1e8f0'"></textarea>
-        <div id="confirmModalInputError" style="display:none;color:#c62828;background:#ffebee;border:1px solid #ffcdd2;border-radius:10px;padding:8px 12px;font-size:0.82rem;font-weight:700;margin-top:8px;align-items:center;gap:6px">
+        <div id="confirmModalInputError" style="display:none;color:#e65100;background:#fff3e0;border:1px solid #ffe0b2;border-radius:10px;padding:8px 12px;font-size:0.82rem;font-weight:700;margin-top:8px;align-items:center;gap:6px">
           <i class="fa fa-circle-exclamation"></i> <span>Deletion reason is compulsory. Please enter a reason.</span>
         </div>
       </div>
@@ -2969,6 +3217,148 @@
         <button type="button" class="btn" id="confirmModalCancelBtn" style="border-radius:12px;font-weight:600;padding:10px 20px;background:#ffffff;border:1px solid #e1e8f0;color:#5b6b7a;box-shadow:0 1px 2px rgba(0,0,0,0.05);transition:all 0.2s ease">Cancel</button>
         <button type="button" class="btn" id="confirmModalConfirmBtn" style="border-radius:12px;font-weight:700;padding:10px 22px;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#ffffff;border:none;box-shadow:0 4px 16px rgba(255,153,51,0.35);transition:all 0.2s ease">Confirm</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ── BUSINESS SUBSCRIPTION & PRICING MODAL (SAFFRON ORANGE BRAND THEME) ── -->
+  <div class="modal-overlay" id="subscriptionModal" style="z-index:99999;backdrop-filter:blur(8px);background:rgba(28,39,51,0.65)">
+    <div class="modal subs-modal-body">
+      <!-- Ambient Top Glow Accent -->
+      <div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(255,153,51,0.25) 0%, rgba(255,153,51,0) 70%);pointer-events:none"></div>
+
+      <!-- Close Icon Button -->
+      <button type="button" style="position:absolute;top:20px;right:20px;background:none;border:none;color:#5b6b7a;font-size:1.3rem;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.2s" onmouseover="this.style.background='#fff3e0';this.style.color='#ff9933'" onmouseout="this.style.background='none';this.style.color='#5b6b7a'" onclick="closeSubscriptionModal()">
+        <i class="fa fa-xmark"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div style="text-align:center;max-width:600px;margin:0 auto 20px">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff3e0;border:1px solid #ffe0b2;color:#e65100;font-size:0.78rem;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:12px">
+          <i class="fa fa-crown" style="color:#ff9933"></i> TynTron Business Membership
+        </div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;color:#1c2733;margin-bottom:8px;line-height:1.2">
+          Choose the Right Plan for Your Business
+        </h2>
+        <p style="font-size:0.88rem;color:#5b6b7a;margin:0">
+          Scale your venture with priority customer reach, unlimited catalog listings, and exclusive promotional tools.
+        </p>
+      </div>
+
+      <!-- Billing Toggle Switch -->
+      <div class="subs-toggle-wrapper">
+        <button type="button" class="subs-toggle-btn active" id="subsBillingMonthlyBtn" onclick="setSubscriptionBillingCycle('monthly')">
+          Monthly Billing
+        </button>
+        <button type="button" class="subs-toggle-btn" id="subsBillingAnnualBtn" onclick="setSubscriptionBillingCycle('annual')">
+          Annual Billing <span class="subs-save-badge">SAVE 20%</span>
+        </button>
+      </div>
+
+      <!-- Dynamic Plans Grid -->
+      <div class="subs-grid" id="subscriptionPlansGrid">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- Guarantee Footer Note -->
+      <div style="text-align:center;padding-top:16px;border-top:1px solid #e1e8f0;font-size:0.8rem;color:#5b6b7a;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+        <span><i class="fa fa-shield-halved" style="color:#2e7d32;margin-right:6px"></i> 100% Zero Hidden Commission</span>
+        <span><i class="fa fa-rotate-left" style="color:#ff9933;margin-right:6px"></i> Change or Cancel Anytime</span>
+        <span><i class="fa fa-headset" style="color:#1976d2;margin-right:6px"></i> Instant 24/7 Support</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADMIN EDIT/ADD SUBSCRIPTION PLAN MODAL ── -->
+  <div class="modal-overlay" id="adminPlanModal" style="z-index:999999;backdrop-filter:blur(8px);background:rgba(28,39,51,0.65)">
+    <div class="modal" style="max-width:620px;border-radius:24px;padding:28px;background:#ffffff;box-shadow:0 25px 60px -12px rgba(184,92,26,0.25);border:1px solid #e1e8f0;position:relative;max-height:90vh;overflow-y:auto">
+      
+      <button type="button" style="position:absolute;top:18px;right:18px;background:none;border:none;color:#5b6b7a;font-size:1.2rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center" onclick="closeAdminPlanModal()">
+        <i class="fa fa-xmark"></i>
+      </button>
+
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#1c2733;margin-bottom:6px" id="adminPlanModalTitle">
+        Add New Subscription Plan
+      </div>
+      <p style="font-size:0.84rem;color:#5b6b7a;margin-bottom:20px">Configure pricing, badge labels, listings capacity, and features checklist.</p>
+
+      <form onsubmit="saveAdminPlan(event)">
+        <input type="hidden" id="ap_isEdit" value="0">
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Plan ID (Unique Key) *</label>
+            <input type="text" id="ap_id" required placeholder="e.g. starter, pro, vip, gold" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Plan Title *</label>
+            <input type="text" id="ap_name" required placeholder="e.g. Pro Business" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Badge Label</label>
+            <input type="text" id="ap_badge" placeholder="e.g. MOST POPULAR" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Icon (FA Class)</label>
+            <input type="text" id="ap_icon" placeholder="fa-rocket" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Max Items Limit *</label>
+            <input type="number" id="ap_maxItems" required min="1" placeholder="999 for unlimited" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Monthly Price (₹) *</label>
+            <input type="number" id="ap_monthlyPrice" required min="0" placeholder="0" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+          <div class="form-group">
+            <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Annual Total Price (₹) *</label>
+            <input type="number" id="ap_annualPrice" required min="0" placeholder="0" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Short Description</label>
+          <input type="text" id="ap_desc" placeholder="Maximum growth for active vendors seeking high sales." style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+        </div>
+
+        <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="ap_popular" style="width:18px;height:18px;cursor:pointer">
+          <label for="ap_popular" style="font-size:0.86rem;font-weight:700;color:#1c2733;cursor:pointer">Highlight as Most Popular Card (Saffron Border Accent)</label>
+        </div>
+
+        <!-- Features Checklist Editor -->
+        <div style="border-top:1.5px solid #e1e8f0;padding-top:16px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div>
+              <label style="font-size:0.9rem;font-weight:800;color:#1c2733;display:block">Plan Feature List Items</label>
+              <span style="font-size:0.78rem;color:#5b6b7a">Add, edit, or remove feature bullet points shown on the plan card.</span>
+            </div>
+            <button type="button" class="btn btn-sm" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer" onclick="addAdminPlanFeatureInput()">
+              <i class="fa fa-plus" style="margin-right:4px"></i> Add Item
+            </button>
+          </div>
+
+          <div id="ap_features_container" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">
+            <!-- Dynamic Feature Rows -->
+          </div>
+
+          <button type="button" style="width:100%;padding:10px;border:2px dashed #cbd5e1;background:#f8fafc;border-radius:12px;color:#e65100;font-weight:700;font-size:0.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s" onmouseover="this.style.borderColor='#ff9933';this.style.background='#fff3e0'" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'" onclick="addAdminPlanFeatureInput()">
+            <i class="fa fa-plus-circle" style="font-size:1.05rem"></i> Click to Add Another Feature Item
+          </button>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:12px">
+          <button type="button" class="btn btn-ghost" onclick="closeAdminPlanModal()">Cancel</button>
+          <button type="submit" class="btn" style="background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;font-weight:700;padding:10px 22px;border-radius:12px;border:none">
+            <i class="fa fa-floppy-disk" style="margin-right:6px"></i> Save Subscription Plan
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -3761,6 +4151,7 @@
       <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:20px"
         onclick="openContactModal()"><i class="fa fa-envelope"></i> Contact Us</button>
 
+
       <div style="font-weight:700;color:var(--green-dark);margin-bottom:10px"><i class="fa fa-scale-balanced"></i> Legal
         &amp; Policies</div>
       <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px">
@@ -3852,6 +4243,8 @@
             style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:2px"></span></button>
         <button class="admin-tab-btn" data-tab="deletions" onclick="switchAdminTab('deletions')"><i
             class="fa fa-history"></i> Deletion Logs</button>
+        <button class="admin-tab-btn" data-tab="subscriptions" onclick="switchAdminTab('subscriptions')"><i
+            class="fa fa-crown" style="color:#ff9933"></i> Subscriptions</button>
       </div>
       <div id="adminTabContent"></div>
     </div>
@@ -9498,6 +9891,7 @@ Together, we grow stronger — one order at a time.`;
         case 'stats': renderAdminStats(c); break;
         case 'reviews': renderAdminReviews(c); break;
         case 'deletions': renderAdminDeletionHistory(c); break;
+        case 'subscriptions': renderAdminSubscriptions(c); break;
       }
     }
 
@@ -9533,10 +9927,673 @@ Together, we grow stronger — one order at a time.`;
           </div>
         </div>` : '';
 
-      document.getElementById('sellerContent').innerHTML = deactivatedBanner + _sellerBusinessHTML(vendor) + _sellerNotifyRequestsPlaceholderHTML() + _sellerOrdersPlaceholderHTML() + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
+      document.getElementById('sellerContent').innerHTML = deactivatedBanner + _sellerBusinessHTML(vendor) + _sellerSubscriptionCardHTML(vendor) + _sellerNotifyRequestsPlaceholderHTML() + _sellerOrdersPlaceholderHTML() + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
       renderWeeklyDayPills();
       renderSellerNotifyRequests(vendor.id);
       renderSellerOrders(vendor.id);
+    }
+
+    /* ── SUBSCRIPTION SYSTEM CONFIG & DYNAMIC PLAN CRUD ── */
+    let _activeSubscriptionVendorId = null;
+    let _activeSubscriptionCycle = 'monthly';
+    let _adminSubsSubTab = 'memberships'; // 'memberships' | 'plans'
+
+    const DEFAULT_SUBSCRIPTION_CONFIG = {
+      billingMode: 'both', // 'both', 'monthly', 'annual'
+      annualDiscountText: 'SAVE 20%'
+    };
+
+    const DEFAULT_SUBSCRIPTION_PLANS = {
+      starter: {
+        id: 'starter',
+        name: 'Starter Plan',
+        badge: 'BASIC',
+        icon: 'fa-seedling',
+        monthlyPrice: 0,
+        annualPrice: 0,
+        desc: 'Essential features for new home businesses starting out.',
+        maxItems: 5,
+        features: [
+          { text: 'Up to 5 Menu Listings', active: true },
+          { text: 'Basic Business Profile', active: true },
+          { text: 'Direct WhatsApp Orders', active: true },
+          { text: 'Standard Search Ranking', active: true },
+          { text: 'Customer Reopen Alerts', active: false },
+          { text: 'Priority Search Ranking', active: false },
+          { text: 'Featured Carousel Placement', active: false }
+        ]
+      },
+      pro: {
+        id: 'pro',
+        name: 'Pro Business',
+        badge: 'MOST POPULAR',
+        popular: true,
+        icon: 'fa-rocket',
+        monthlyPrice: 499,
+        annualPrice: 4790,
+        desc: 'Maximum growth for active vendors seeking high sales.',
+        maxItems: 25,
+        features: [
+          { text: 'Up to 25 Menu Listings', active: true },
+          { text: 'Enhanced Verified Profile', active: true },
+          { text: 'Direct WhatsApp & Call Orders', active: true },
+          { text: 'Priority Search Ranking Boost', active: true },
+          { text: 'Customer Reopen Notifications', active: true },
+          { text: 'Zero Hidden Commissions', active: true },
+          { text: 'Featured Carousel Placement', active: false }
+        ]
+      },
+      vip: {
+        id: 'vip',
+        name: 'Enterprise VIP',
+        badge: 'MAX VISIBILITY',
+        icon: 'fa-crown',
+        monthlyPrice: 999,
+        annualPrice: 9590,
+        desc: 'Top category ranking, carousel ads & dedicated account manager.',
+        maxItems: 999,
+        features: [
+          { text: 'Unlimited Menu Listings', active: true },
+          { text: 'Gold Verified VIP Badge', active: true },
+          { text: 'Direct WhatsApp & Call Orders', active: true },
+          { text: 'Top Category Pin & Search Boost', active: true },
+          { text: 'Instant Customer Reopen Blast', active: true },
+          { text: 'Homepage Carousel Ad Spot', active: true },
+          { text: '24/7 Dedicated Account Manager', active: true }
+        ]
+      }
+    };
+
+    function getSubscriptionConfig() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('hb_subscription_config') || '{}');
+        return { ...DEFAULT_SUBSCRIPTION_CONFIG, ...saved };
+      } catch (e) {
+        return { ...DEFAULT_SUBSCRIPTION_CONFIG };
+      }
+    }
+
+    function saveSubscriptionConfig(cfg) {
+      localStorage.setItem('hb_subscription_config', JSON.stringify(cfg));
+    }
+
+    function getSubscriptionPlans() {
+      try {
+        const custom = JSON.parse(localStorage.getItem('hb_subscription_plans_custom') || 'null');
+        return custom && Object.keys(custom).length ? custom : DEFAULT_SUBSCRIPTION_PLANS;
+      } catch (e) {
+        return DEFAULT_SUBSCRIPTION_PLANS;
+      }
+    }
+
+    function saveSubscriptionPlans(plans) {
+      localStorage.setItem('hb_subscription_plans_custom', JSON.stringify(plans));
+    }
+
+    function getVendorSubscription(vendorId) {
+      try {
+        const subsMap = JSON.parse(localStorage.getItem('hb_seller_subscriptions') || '{}');
+        const defaultPlan = Object.keys(getSubscriptionPlans())[0] || 'starter';
+        return subsMap[vendorId] || { planId: defaultPlan, cycle: 'monthly', renewedAt: new Date().toISOString() };
+      } catch (e) {
+        return { planId: 'starter', cycle: 'monthly', renewedAt: new Date().toISOString() };
+      }
+    }
+
+    function _sellerSubscriptionCardHTML(vendor) {
+      const plans = getSubscriptionPlans();
+      const sub = getVendorSubscription(vendor.id);
+      const plan = plans[sub.planId] || plans[Object.keys(plans)[0]] || DEFAULT_SUBSCRIPTION_PLANS.starter;
+      const itemCount = (vendor.items || []).length;
+      const maxItems = plan.maxItems || 5;
+      const pct = maxItems >= 999 ? 15 : Math.min(100, Math.round((itemCount / maxItems) * 100));
+
+      return `
+        <div class="s-card subs-card-banner">
+          <div class="subs-card-glow"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:42px;height:42px;border-radius:12px;background:#fff3e0;color:#e65100;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
+                <i class="fa ${plan.icon || 'fa-box'}"></i>
+              </div>
+              <div>
+                <div style="font-size:0.75rem;font-weight:700;color:#e65100;text-transform:uppercase;letter-spacing:0.06em">Current Membership</div>
+                <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#1c2733">${esc(plan.name)}</div>
+              </div>
+            </div>
+            <button class="btn" onclick="openSubscriptionModal('${vendor.id}')" style="background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;border-radius:12px;padding:9px 18px;font-weight:700;font-size:0.84rem;box-shadow:0 4px 14px rgba(255,153,51,0.35);border:none;cursor:pointer">
+              <i class="fa fa-crown" style="margin-right:6px"></i> Manage / Upgrade Plan
+            </button>
+          </div>
+
+          <div class="subs-usage-meter">
+            <div class="subs-meter-label">
+              <span>Catalog Listings Capacity</span>
+              <span><strong>${itemCount}</strong> / ${maxItems >= 999 ? 'Unlimited' : maxItems} Items Listed (${pct}%)</span>
+            </div>
+            <div class="subs-meter-bar">
+              <div class="subs-meter-fill" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function openSubscriptionModal(vendorId) {
+      _activeSubscriptionVendorId = vendorId || (currentSeller ? currentSeller.vendorId : null);
+      const modal = document.getElementById('subscriptionModal');
+      if (!modal) return;
+      renderSubscriptionModalGrid();
+      modal.classList.add('open');
+    }
+
+    function closeSubscriptionModal() {
+      const modal = document.getElementById('subscriptionModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function setSubscriptionBillingCycle(cycle) {
+      _activeSubscriptionCycle = cycle;
+      const mBtn = document.getElementById('subsBillingMonthlyBtn');
+      const aBtn = document.getElementById('subsBillingAnnualBtn');
+      if (mBtn && aBtn) {
+        mBtn.classList.toggle('active', cycle === 'monthly');
+        aBtn.classList.toggle('active', cycle === 'annual');
+      }
+      renderSubscriptionModalGrid();
+    }
+
+    function renderSubscriptionModalGrid() {
+      const grid = document.getElementById('subscriptionPlansGrid');
+      if (!grid) return;
+
+      const config = getSubscriptionConfig();
+      const plans = getSubscriptionPlans();
+      const toggleWrapper = document.querySelector('.subs-toggle-wrapper');
+
+      if (config.billingMode === 'monthly') {
+        _activeSubscriptionCycle = 'monthly';
+        if (toggleWrapper) toggleWrapper.style.display = 'none';
+      } else if (config.billingMode === 'annual') {
+        _activeSubscriptionCycle = 'annual';
+        if (toggleWrapper) toggleWrapper.style.display = 'none';
+      } else {
+        if (toggleWrapper) {
+          toggleWrapper.style.display = 'flex';
+          const discountBadge = toggleWrapper.querySelector('.subs-save-badge');
+          if (discountBadge && config.annualDiscountText) {
+            discountBadge.textContent = config.annualDiscountText;
+          }
+        }
+      }
+
+      const currentSub = _activeSubscriptionVendorId ? getVendorSubscription(_activeSubscriptionVendorId) : { planId: 'starter' };
+
+      let html = '';
+      Object.keys(plans).forEach(key => {
+        const p = plans[key];
+        const isCurrent = currentSub.planId === p.id;
+        const isAnnual = _activeSubscriptionCycle === 'annual';
+        const price = isAnnual ? Math.round(p.annualPrice / 12) : p.monthlyPrice;
+        const subtext = isAnnual ? (p.annualPrice > 0 ? `Billed ₹${p.annualPrice.toLocaleString()}/yr` : 'Free Forever') : (p.monthlyPrice > 0 ? 'Billed Monthly' : 'Free Forever');
+
+        html += `
+          <div class="plan-card ${p.popular ? 'popular' : ''}">
+            ${p.popular ? `<div class="plan-badge-popular">${esc(p.badge || 'POPULAR')}</div>` : ''}
+            <div class="plan-icon">
+              <i class="fa ${p.icon || 'fa-box'}"></i>
+            </div>
+            <div class="plan-title">${esc(p.name)}</div>
+            <div class="plan-desc">${esc(p.desc || '')}</div>
+
+            <div class="plan-price">
+              ${price === 0 ? '₹0' : `₹${price}`}
+              <span>/ month</span>
+            </div>
+            <div style="font-size:0.75rem;color:#78909c;margin-top:-10px;margin-bottom:16px;font-weight:600">${subtext}</div>
+
+            <ul class="plan-features-list">
+              ${(p.features || []).map(f => `
+                <li>
+                  <i class="fa ${f.active ? 'fa-check' : 'fa-xmark'}"></i>
+                  <span style="${!f.active ? 'opacity:0.5;text-decoration:line-through' : ''}">${esc(f.text)}</span>
+                </li>
+              `).join('')}
+            </ul>
+
+            ${isCurrent ? `
+              <button type="button" class="btn-plan-select btn-current-plan">
+                <i class="fa fa-circle-check"></i> Current Plan
+              </button>
+            ` : `
+              <button type="button" class="btn-plan-select ${p.popular ? 'btn-orange' : 'btn-outline-plan'}" onclick="selectSubscriptionPlan('${p.id}')">
+                Upgrade to ${esc(p.name)}
+              </button>
+            `}
+          </div>`;
+      });
+
+      grid.innerHTML = html;
+    }
+
+    function selectSubscriptionPlan(planId) {
+      if (!_activeSubscriptionVendorId && currentSeller) {
+        _activeSubscriptionVendorId = currentSeller.vendorId;
+      }
+      if (!_activeSubscriptionVendorId) {
+        showToast('Please log in to upgrade your subscription.');
+        closeSubscriptionModal();
+        openLoginModal();
+        return;
+      }
+
+      const plans = getSubscriptionPlans();
+      const plan = plans[planId];
+      if (!plan) return;
+
+      try {
+        const subsMap = JSON.parse(localStorage.getItem('hb_seller_subscriptions') || '{}');
+        subsMap[_activeSubscriptionVendorId] = {
+          planId: planId,
+          cycle: _activeSubscriptionCycle,
+          renewedAt: new Date().toISOString()
+        };
+        localStorage.setItem('hb_seller_subscriptions', JSON.stringify(subsMap));
+
+        showToast(`🎉 Subscribed to ${plan.name} (${_activeSubscriptionCycle})!`);
+        closeSubscriptionModal();
+        if (currentSeller && currentSeller.vendorId === _activeSubscriptionVendorId) {
+          renderSellerPanel();
+        }
+      } catch (e) {
+        showToast('Error updating subscription plan.');
+      }
+    }
+
+    /* ── ADMIN PLAN CRUD & BILLING MODE LOGIC ── */
+    function openAdminPlanModal(planId = null) {
+      const modal = document.getElementById('adminPlanModal');
+      const titleEl = document.getElementById('adminPlanModalTitle');
+      const isEditInput = document.getElementById('ap_isEdit');
+      const idInput = document.getElementById('ap_id');
+      const nameInput = document.getElementById('ap_name');
+      const badgeInput = document.getElementById('ap_badge');
+      const iconInput = document.getElementById('ap_icon');
+      const maxItemsInput = document.getElementById('ap_maxItems');
+      const monthlyInput = document.getElementById('ap_monthlyPrice');
+      const annualInput = document.getElementById('ap_annualPrice');
+      const descInput = document.getElementById('ap_desc');
+      const popularInput = document.getElementById('ap_popular');
+      const container = document.getElementById('ap_features_container');
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (planId) {
+        const plans = getSubscriptionPlans();
+        const plan = plans[planId];
+        if (!plan) return;
+
+        titleEl.textContent = `Edit Subscription Plan (${plan.name})`;
+        isEditInput.value = '1';
+        idInput.value = plan.id;
+        idInput.readOnly = true;
+        nameInput.value = plan.name || '';
+        badgeInput.value = plan.badge || '';
+        iconInput.value = plan.icon || 'fa-box';
+        maxItemsInput.value = plan.maxItems || 5;
+        monthlyInput.value = plan.monthlyPrice || 0;
+        annualInput.value = plan.annualPrice || 0;
+        descInput.value = plan.desc || '';
+        popularInput.checked = !!plan.popular;
+
+        (plan.features || []).forEach(f => addAdminPlanFeatureInput(f.text, f.active));
+      } else {
+        titleEl.textContent = 'Add New Subscription Plan';
+        isEditInput.value = '0';
+        idInput.value = '';
+        idInput.readOnly = false;
+        nameInput.value = '';
+        badgeInput.value = '';
+        iconInput.value = 'fa-rocket';
+        maxItemsInput.value = 10;
+        monthlyInput.value = 299;
+        annualInput.value = 2890;
+        descInput.value = '';
+        popularInput.checked = false;
+
+        addAdminPlanFeatureInput('Menu Listings Capacity', true);
+        addAdminPlanFeatureInput('Verified Business Profile', true);
+        addAdminPlanFeatureInput('Priority Support', false);
+      }
+
+      modal.classList.add('open');
+    }
+
+    function closeAdminPlanModal() {
+      const modal = document.getElementById('adminPlanModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function addAdminPlanFeatureInput(text = '', active = true) {
+      const container = document.getElementById('ap_features_container');
+      if (!container) return;
+
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;background:#f8fafc;padding:8px 12px;border-radius:10px;border:1px solid #e1e8f0';
+      row.innerHTML = `
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:700;color:${active ? '#2e7d32' : '#78909c'};cursor:pointer;white-space:nowrap" onclick="this.style.color=this.querySelector('input').checked?'#2e7d32':'#78909c'">
+          <input type="checkbox" ${active ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer" title="Check if feature is included in this plan">
+          Included
+        </label>
+        <input type="text" value="${esc(text)}" placeholder="e.g. Priority Search Boost, 24/7 Support..." style="flex-grow:1;padding:8px 12px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.86rem;outline:none" onfocus="this.style.borderColor='#ff9933'" onblur="this.style.borderColor='#cbd5e1'">
+        <button type="button" class="btn btn-sm btn-danger" style="padding:6px 10px;border-radius:8px;font-size:0.78rem;cursor:pointer" onclick="this.parentElement.remove()" title="Delete Item">
+          <i class="fa fa-trash"></i> Delete
+        </button>
+      `;
+      container.appendChild(row);
+    }
+
+    function saveAdminPlan(event) {
+      event.preventDefault();
+
+      const id = document.getElementById('ap_id').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      const name = document.getElementById('ap_name').value.trim();
+      const badge = document.getElementById('ap_badge').value.trim();
+      const icon = document.getElementById('ap_icon').value.trim() || 'fa-box';
+      const maxItems = parseInt(document.getElementById('ap_maxItems').value) || 5;
+      const monthlyPrice = parseInt(document.getElementById('ap_monthlyPrice').value) || 0;
+      const annualPrice = parseInt(document.getElementById('ap_annualPrice').value) || 0;
+      const desc = document.getElementById('ap_desc').value.trim();
+      const popular = document.getElementById('ap_popular').checked;
+
+      if (!id || !name) {
+        showToast('Plan ID and Name are required.');
+        return;
+      }
+
+      const featureRows = document.querySelectorAll('#ap_features_container > div');
+      const features = [];
+      featureRows.forEach(r => {
+        const chk = r.querySelector('input[type="checkbox"]');
+        const txt = r.querySelector('input[type="text"]');
+        if (txt && txt.value.trim()) {
+          features.push({ text: txt.value.trim(), active: chk ? chk.checked : true });
+        }
+      });
+
+      const plans = getSubscriptionPlans();
+      plans[id] = { id, name, badge, icon, maxItems, monthlyPrice, annualPrice, desc, popular, features };
+
+      saveSubscriptionPlans(plans);
+      showToast(`Subscription Plan "${name}" saved!`);
+      closeAdminPlanModal();
+
+      const adminTabContent = document.getElementById('adminTabContent');
+      if (adminTabContent) renderAdminSubscriptions(adminTabContent);
+    }
+
+    async function deleteAdminPlan(planId) {
+      const plans = getSubscriptionPlans();
+      if (!plans[planId]) return;
+
+      if (Object.keys(plans).length <= 1) {
+        showToast('Cannot delete the only remaining plan.');
+        return;
+      }
+
+      const planName = plans[planId].name;
+      const res = await confirmAction({
+        title: 'Delete Subscription Plan?',
+        message: `Are you sure you want to permanently delete subscription plan "${planName}"?`,
+        warning: 'This plan will no longer be available for sellers to select.',
+        confirmText: 'Delete Plan',
+        cancelText: 'Cancel',
+        danger: true
+      });
+
+      if (!res) return;
+
+      delete plans[planId];
+      saveSubscriptionPlans(plans);
+      showToast(`Subscription plan "${planName}" deleted.`);
+
+      const adminTabContent = document.getElementById('adminTabContent');
+      if (adminTabContent) renderAdminSubscriptions(adminTabContent);
+    }
+
+    function saveAdminBillingConfig() {
+      const mode = document.querySelector('input[name="adminBillingMode"]:checked')?.value || 'both';
+      const disc = (document.getElementById('adminAnnualDiscountText')?.value || '').trim() || 'SAVE 20%';
+
+      saveSubscriptionConfig({ billingMode: mode, annualDiscountText: disc });
+      showToast('Subscription billing mode settings updated ✓');
+
+      const adminTabContent = document.getElementById('adminTabContent');
+      if (adminTabContent) renderAdminSubscriptions(adminTabContent);
+    }
+
+    function setAdminSubsSubTab(tab) {
+      _adminSubsSubTab = tab;
+      const adminTabContent = document.getElementById('adminTabContent');
+      if (adminTabContent) renderAdminSubscriptions(adminTabContent);
+    }
+
+    function adminChangeVendorPlan(vendorId, planId) {
+      const plans = getSubscriptionPlans();
+      const plan = plans[planId];
+      if (!plan) return;
+
+      try {
+        const subsMap = JSON.parse(localStorage.getItem('hb_seller_subscriptions') || '{}');
+        const currentSub = subsMap[vendorId] || { cycle: 'monthly' };
+        subsMap[vendorId] = {
+          planId: planId,
+          cycle: currentSub.cycle || 'monthly',
+          renewedAt: new Date().toISOString()
+        };
+        localStorage.setItem('hb_seller_subscriptions', JSON.stringify(subsMap));
+
+        const vendor = (DATA || []).find(v => v.id === vendorId);
+        const name = vendor ? vendor.venture : 'Vendor';
+        showToast(`Updated ${name} to ${plan.name} ✓`);
+
+        const adminTabContent = document.getElementById('adminTabContent');
+        if (adminTabContent) renderAdminSubscriptions(adminTabContent);
+      } catch (e) {
+        showToast('Error updating vendor subscription.');
+      }
+    }
+
+    function renderAdminSubscriptions(container) {
+      const config = getSubscriptionConfig();
+      const plans = getSubscriptionPlans();
+      const subsMap = JSON.parse(localStorage.getItem('hb_seller_subscriptions') || '{}');
+      const allVendors = DATA || [];
+
+      let counts = {};
+      Object.keys(plans).forEach(k => counts[k] = 0);
+
+      allVendors.forEach(v => {
+        const sub = subsMap[v.id] || { planId: Object.keys(plans)[0] || 'starter' };
+        counts[sub.planId] = (counts[sub.planId] || 0) + 1;
+      });
+
+      let estRev = 0;
+      Object.keys(plans).forEach(k => {
+        estRev += (counts[k] || 0) * (plans[k].monthlyPrice || 0);
+      });
+
+      const navTabsHTML = `
+        <div style="display:flex;gap:12px;margin-bottom:20px;border-bottom:1px solid #e1e8f0;padding-bottom:10px">
+          <button type="button" class="btn btn-sm ${!_adminSubsSubTab || _adminSubsSubTab === 'memberships' ? 'btn-primary' : 'btn-ghost'}" onclick="setAdminSubsSubTab('memberships')">
+            <i class="fa fa-users"></i> Vendor Memberships &amp; MRR
+          </button>
+          <button type="button" class="btn btn-sm ${_adminSubsSubTab === 'plans' ? 'btn-primary' : 'btn-ghost'}" onclick="setAdminSubsSubTab('plans')">
+            <i class="fa fa-sliders"></i> Manage Plans &amp; Billing Mode
+          </button>
+        </div>`;
+
+      if (_adminSubsSubTab === 'plans') {
+        let planCardsHTML = '';
+        Object.keys(plans).forEach(k => {
+          const p = plans[k];
+          planCardsHTML += `
+            <div class="s-card" style="position:relative;margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between;border:1.5px solid #e1e8f0;border-radius:16px;padding:20px">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px">
+                  <span style="font-weight:800;font-size:1.15rem;color:#1c2733;display:flex;align-items:center;gap:8px">
+                    <i class="fa ${p.icon || 'fa-box'}" style="color:#ff9933"></i>${esc(p.name)}
+                  </span>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:700;border:1px solid #ffe0b2">${esc(p.badge || 'PLAN')}</span>
+                    <button type="button" class="btn btn-sm" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;padding:4px 10px;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer" onclick="openAdminPlanModal('${p.id}')" title="Edit Plan Details">
+                      <i class="fa fa-pen"></i> Edit
+                    </button>
+                  </div>
+                </div>
+                <p style="font-size:0.82rem;color:#5b6b7a;margin-bottom:14px;line-height:1.4">${esc(p.desc || '')}</p>
+                <div style="font-size:1.3rem;font-weight:800;color:#1c2733;margin-bottom:6px">
+                  ₹${p.monthlyPrice} <span style="font-size:0.78rem;font-weight:500;color:#78909c">/ mo</span> &nbsp;·&nbsp; ₹${p.annualPrice} <span style="font-size:0.78rem;font-weight:500;color:#78909c">/ yr</span>
+                </div>
+                <div style="font-size:0.8rem;color:#5b6b7a;margin-bottom:14px">
+                  Max Listings Limit: <strong style="color:#1c2733">${p.maxItems >= 999 ? 'Unlimited' : p.maxItems} Items</strong>
+                </div>
+                <ul style="font-size:0.8rem;padding-left:18px;color:#37474f;margin-bottom:18px;line-height:1.6">
+                  ${(p.features || []).map(f => `<li style="${!f.active ? 'text-decoration:line-through;opacity:0.4' : ''}">${esc(f.text)}</li>`).join('')}
+                </ul>
+              </div>
+              <div style="display:flex;gap:10px;border-top:1px solid #e1e8f0;padding-top:14px;margin-top:10px">
+                <button type="button" class="btn btn-sm" style="flex:1;background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;font-weight:700;border:none;border-radius:10px;padding:9px;justify-content:center;box-shadow:0 3px 10px rgba(255,153,51,0.25);cursor:pointer" onclick="openAdminPlanModal('${p.id}')">
+                  <i class="fa fa-pen" style="margin-right:6px"></i> Edit Plan Details
+                </button>
+                <button type="button" class="btn btn-sm btn-danger" style="padding:9px 14px;border-radius:10px;cursor:pointer" onclick="deleteAdminPlan('${p.id}')" title="Delete Plan">
+                  <i class="fa fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>`;
+        });
+
+        container.innerHTML = `
+          ${navTabsHTML}
+
+          <!-- Billing Mode Settings Card -->
+          <div class="s-card" style="margin-bottom:24px;background:#fff3e0;border:1px solid #ffe0b2">
+            <h4 style="font-size:1.05rem;color:#e65100;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+              <i class="fa fa-sliders"></i> Subscription Billing Mode Control
+            </h4>
+            <p style="font-size:0.84rem;color:#5b6b7a;margin-bottom:16px">Control which billing cycle buttons are visible to sellers in the Subscription Pricing Modal.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin-bottom:16px">
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:700;color:#1c2733;cursor:pointer">
+                <input type="radio" name="adminBillingMode" value="both" ${config.billingMode === 'both' ? 'checked' : ''}> Both Monthly &amp; Annual (With Toggle Switch)
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:700;color:#1c2733;cursor:pointer">
+                <input type="radio" name="adminBillingMode" value="monthly" ${config.billingMode === 'monthly' ? 'checked' : ''}> Monthly Billing Only
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:700;color:#1c2733;cursor:pointer">
+                <input type="radio" name="adminBillingMode" value="annual" ${config.billingMode === 'annual' ? 'checked' : ''}> Annual Billing Only
+              </label>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px;max-width:400px;margin-bottom:16px">
+              <label style="font-size:0.82rem;font-weight:700;color:#1c2733;white-space:nowrap">Annual Savings Tag:</label>
+              <input type="text" id="adminAnnualDiscountText" value="${esc(config.annualDiscountText || 'SAVE 20%')}" style="padding:6px 12px;border-radius:8px;border:1px solid #ffe0b2;font-size:0.84rem;width:100%">
+            </div>
+
+            <button type="button" class="btn btn-sm" style="background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;font-weight:700;padding:8px 16px;border:none;border-radius:8px" onclick="saveAdminBillingConfig()">
+              <i class="fa fa-check"></i> Save Billing Mode Settings
+            </button>
+          </div>
+
+          <!-- Subscription Plans Management Grid -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <h4 style="font-size:1.1rem;color:#1c2733;margin:0">Active Subscription Tier Plans (${Object.keys(plans).length})</h4>
+            <button type="button" class="btn btn-sm btn-primary" onclick="openAdminPlanModal()"><i class="fa fa-plus"></i> + Add New Subscription Plan</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px">
+            ${planCardsHTML}
+          </div>`;
+        return;
+      }
+
+      // Default Sub-Tab: Memberships overview
+      let tableRows = allVendors.map(v => {
+        const sub = subsMap[v.id] || { planId: Object.keys(plans)[0] || 'starter', cycle: 'monthly' };
+        const plan = plans[sub.planId] || plans[Object.keys(plans)[0]] || DEFAULT_SUBSCRIPTION_PLANS.starter;
+        
+        const planOptionsHTML = Object.keys(plans).map(pKey => {
+          const p = plans[pKey];
+          const isSelected = sub.planId === pKey ? 'selected' : '';
+          return `<option value="${p.id}" ${isSelected}>${esc(p.name)} (${p.monthlyPrice === 0 ? 'Free' : '₹' + p.monthlyPrice + '/mo'})</option>`;
+        }).join('');
+
+        return `
+          <tr>
+            <td><strong>${esc(v.venture)}</strong><br><span style="font-size:0.75rem;color:#78909c">${esc(v.contactEmail || v.contact || '')}</span></td>
+            <td>${esc(v.societyName || 'General')}</td>
+            <td>
+              <span style="background:${sub.planId === 'vip' ? '#fff8e1' : sub.planId === 'pro' ? '#fff3e0' : '#f1f8e9'};color:${sub.planId === 'vip' ? '#b78103' : sub.planId === 'pro' ? '#e65100' : '#33691e'};border:1px solid ${sub.planId === 'vip' ? '#ffe082' : sub.planId === 'pro' ? '#ffe0b2' : '#c5e1a5'};padding:4px 10px;border-radius:12px;font-size:0.75rem;font-weight:700;display:inline-flex;align-items:center;gap:6px">
+                <i class="fa ${plan.icon || 'fa-box'}"></i> ${esc(plan.name.toUpperCase())}
+              </span>
+            </td>
+            <td><span style="font-size:0.8rem;text-transform:capitalize">${sub.cycle || 'monthly'}</span></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <select onchange="adminChangeVendorPlan('${v.id}', this.value)" style="padding:5px 10px;border-radius:8px;border:1px solid #ffe0b2;font-size:0.78rem;font-weight:700;background:#fff3e0;color:#e65100;cursor:pointer;outline:none">
+                  ${planOptionsHTML}
+                </select>
+                <button type="button" class="btn btn-sm" style="background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;font-weight:700;font-size:0.76rem;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap" onclick="openSubscriptionModal('${v.id}')" title="View Full Pricing Modal">
+                  <i class="fa fa-crown" style="margin-right:4px"></i> Upgrade Modal
+                </button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      container.innerHTML = `
+        ${navTabsHTML}
+
+        <div style="margin-bottom:20px">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#1c2733;margin-bottom:6px">
+            <i class="fa fa-crown" style="color:#ff9933"></i> Vendor Subscriptions &amp; Membership Breakdown
+          </h3>
+          <p style="font-size:0.84rem;color:#5b6b7a;margin:0">Overview of all active vendor tiers, plan upgrades, and recurring revenue estimates.</p>
+        </div>
+
+        <div class="stat-cards-row" style="margin-bottom:24px">
+          <div class="stat-card">
+            <div class="sc-num">${allVendors.length}</div>
+            <div class="sc-lbl">Total Vendors</div>
+          </div>
+          ${Object.keys(plans).map(k => `
+            <div class="stat-card">
+              <div class="sc-num" style="color:#e65100">${counts[k] || 0}</div>
+              <div class="sc-lbl">${esc(plans[k].name)}</div>
+            </div>
+          `).join('')}
+          <div class="stat-card">
+            <div class="sc-num" style="color:#ff9933">₹${estRev.toLocaleString()}</div>
+            <div class="sc-lbl">Est. Monthly MRR</div>
+          </div>
+        </div>
+
+        <div class="s-card" style="padding:0;overflow:hidden">
+          <table class="menu-table" style="width:100%">
+            <thead>
+              <tr>
+                <th>Vendor / Business</th>
+                <th>Society</th>
+                <th>Active Plan</th>
+                <th>Billing</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows.length ? tableRows : '<tr><td colspan="5" style="text-align:center;padding:20px">No vendors found.</td></tr>'}
+            </tbody>
+          </table>
+        </div>`;
     }
 
     function _sellerNotifyRequestsPlaceholderHTML() {
@@ -10999,7 +12056,7 @@ Together, we grow stronger — one order at a time.`;
 
       if (options.warning) {
         warnEl.style.display = 'flex';
-        warnEl.innerHTML = `<i class="fa fa-triangle-exclamation" style="font-size:1.05rem;color:${options.danger === true ? '#c0392b' : '#ff9933'}"></i> <span>${esc(options.warning)}</span>`;
+        warnEl.innerHTML = `<i class="fa fa-triangle-exclamation" style="font-size:1.05rem;color:#ff9933"></i> <span>${esc(options.warning)}</span>`;
       } else {
         warnEl.style.display = 'none';
       }
@@ -11023,25 +12080,14 @@ Together, we grow stronger — one order at a time.`;
       cancelBtn.textContent = options.cancelText || 'Cancel';
       confirmBtn.textContent = options.confirmText || 'Confirm';
 
-      if (options.danger === true) {
-        confirmBtn.style.background = 'linear-gradient(135deg, #c0392b 0%, #962d22 100%)';
-        confirmBtn.style.boxShadow = '0 4px 16px rgba(192, 57, 43, 0.35)';
-        iconEl.style.background = '#ffebee';
-        iconEl.style.color = '#c0392b';
-        iconEl.style.boxShadow = '0 0 0 8px rgba(255, 235, 238, 0.7)';
-        iconEl.style.borderColor = '#ffcdd2';
-        iconEl.innerHTML = '<i class="fa fa-triangle-exclamation"></i>';
-        if (glowEl) glowEl.style.background = 'radial-gradient(circle, rgba(192, 57, 43, 0.22) 0%, rgba(192, 57, 43, 0) 70%)';
-      } else {
-        confirmBtn.style.background = 'linear-gradient(135deg, #ff9933 0%, #b85c1a 100%)';
-        confirmBtn.style.boxShadow = '0 4px 16px rgba(255, 153, 51, 0.35)';
-        iconEl.style.background = '#fff3e0';
-        iconEl.style.color = '#e65100';
-        iconEl.style.boxShadow = '0 0 0 8px rgba(255, 243, 224, 0.7)';
-        iconEl.style.borderColor = '#ffe0b2';
-        iconEl.innerHTML = '<i class="fa fa-circle-question"></i>';
-        if (glowEl) glowEl.style.background = 'radial-gradient(circle, rgba(255, 153, 51, 0.22) 0%, rgba(255, 153, 51, 0) 70%)';
-      }
+      confirmBtn.style.background = 'linear-gradient(135deg, #ff9933 0%, #b85c1a 100%)';
+      confirmBtn.style.boxShadow = '0 4px 16px rgba(255, 153, 51, 0.35)';
+      iconEl.style.background = '#fff3e0';
+      iconEl.style.color = '#e65100';
+      iconEl.style.boxShadow = '0 0 0 8px rgba(255, 243, 224, 0.7)';
+      iconEl.style.borderColor = '#ffe0b2';
+      iconEl.innerHTML = (options.danger === true || options.warning) ? '<i class="fa fa-triangle-exclamation"></i>' : '<i class="fa fa-circle-question"></i>';
+      if (glowEl) glowEl.style.background = 'radial-gradient(circle, rgba(255, 153, 51, 0.22) 0%, rgba(255, 153, 51, 0) 70%)';
 
       modal.classList.add('open');
 
@@ -11061,7 +12107,7 @@ Together, we grow stronger — one order at a time.`;
             const val = inputEl ? inputEl.value.trim() : '';
             if (!val) {
               if (inputEl) {
-                inputEl.style.borderColor = '#c62828';
+                inputEl.style.borderColor = '#ff9933';
                 inputEl.focus();
               }
               if (inputErrEl) inputErrEl.style.display = 'flex';

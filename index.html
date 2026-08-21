@@ -312,6 +312,91 @@
       opacity: .5
     }
 
+    /* Inline widget bubbles — seller registration's OTP/password/file-attach steps render
+       one of these instead of a plain text bubble. Structure is always hardcoded here, never
+       built from model or file-name text via innerHTML, matching the rest of the chat UI. */
+    .ask-bubble.widget {
+      align-self: flex-start;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+      max-width: 88%;
+      padding: 12px 13px;
+    }
+
+    .ask-bubble.widget.done {
+      background: var(--cream, #FFF3E0);
+      border-color: var(--green-light, var(--green));
+      color: var(--green-dark);
+      font-weight: 600;
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .ask-widget-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ask-widget-row input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: .86rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .ask-widget-row input:focus {
+      border-color: var(--green)
+    }
+
+    .ask-widget-btn {
+      border: none;
+      border-radius: 10px;
+      background: var(--green);
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 700;
+      padding: 0 16px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .ask-widget-btn:disabled {
+      opacity: .5
+    }
+
+    .ask-widget-attach {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .ask-widget-attach:disabled {
+      opacity: .6
+    }
+
+    .ask-widget-err {
+      color: var(--danger, #d32f2f);
+      font-size: .76rem;
+      margin-top: 6px;
+    }
+
     /* HEADER — white, clean, saffron used only as accent (logo/icons/active states) */
     header {
       background: var(--white);
@@ -4026,6 +4111,11 @@
     </div>
   </div>
 
+  <!-- Hidden file input reused by the in-chat seller-registration document/photo uploads
+       (askHandleSellerRegFilePicked) — accept/multiple never change, only which doc_type
+       the current pick is for (tracked in _askSellerReg._pendingDocType). -->
+  <input type="file" id="askDocFile" style="display:none" onchange="askHandleSellerRegFilePicked(this)">
+
   <!-- ══════════════════════════════════════════ -->
   <!--  SELLER PANEL                            -->
   <!-- ══════════════════════════════════════════ -->
@@ -4973,6 +5063,44 @@
     let _askSending = false;
     let _askOpenedOnce = false;
 
+    /* Seller registration via chat reuses the exact same OTP/upload/submit primitives as the
+       pre-existing sellerRegModal (sendMobileOtp/verifyMobileOtp, EmailJS OTP, Storage doc
+       upload, the seller_requests write) — see askHandleSellerReg* below. _askSellerReg is
+       null until the assistant's first seller_reg_* action arrives; nothing here is sent to
+       the backend except this small state summary (see askSend's sellerReg body field) —
+       the password and file bytes never leave the client except straight to Storage/Firestore. */
+    let _askSellerReg = null;
+    let _askSellerEmailOtp = null; // {code, expiresAt} — mirrors _srEmailOtp from the modal flow
+
+    function askSellerRegEnsureActive() {
+      if (_askSellerReg) return _askSellerReg;
+      _askSellerReg = {
+        requestId: 'req' + Date.now() + Math.random().toString(36).slice(2, 8),
+        draft: {},
+        password: '',
+        passwordSet: false,
+        mobileVerified: false,
+        emailVerified: false,
+        documentsUploaded: { businessPhoto: false, addressProof: false, pan: false, aadhaar: false, fssai: false },
+        uploads: { businessPhoto: '', addressProofUrl: '', panUrl: '', aadhaarUrl: '', fssaiUrl: '' },
+        _pendingDocType: null
+      };
+      return _askSellerReg;
+    }
+
+    // What askSend actually sends the backend for sellerReg — no password, no file URLs, just
+    // enough for the model to know what's already done and never re-ask for it.
+    function askSellerRegContext() {
+      if (!_askSellerReg) return null;
+      return {
+        draft: _askSellerReg.draft,
+        mobileVerified: _askSellerReg.mobileVerified,
+        emailVerified: _askSellerReg.emailVerified,
+        passwordSet: _askSellerReg.passwordSet,
+        documentsUploaded: _askSellerReg.documentsUploaded
+      };
+    }
+
     const ASK_QUICK_CHIPS = ['Best rated near me', 'Track my order', 'How do I reorder?'];
 
     function openAskTynTron() {
@@ -5052,7 +5180,8 @@
           body: JSON.stringify({
             message: text,
             history: _askHistory,
-            mobile: currentCustomer?.mobile || null
+            mobile: currentCustomer?.mobile || null,
+            sellerReg: askSellerRegContext()
           })
         });
         const data = await res.json().catch(() => null);
@@ -5078,6 +5207,16 @@
             _askPendingResume = text;
             closeAskTynTron();
             openCustomerAuthModal();
+          } else if (action.type === 'seller_reg_update') {
+            askHandleSellerRegUpdate(action.fields);
+          } else if (action.type === 'seller_reg_send_otp') {
+            askHandleSellerRegSendOtp(action.channel);
+          } else if (action.type === 'seller_reg_request_password') {
+            askRenderSellerPasswordWidget();
+          } else if (action.type === 'seller_reg_request_upload') {
+            askRenderSellerUploadWidget(action.doc_type);
+          } else if (action.type === 'seller_reg_submit') {
+            askHandleSellerRegSubmit();
           }
         }
       } catch (e) {
@@ -5086,6 +5225,285 @@
       } finally {
         _askSending = false;
         if (sendBtn) sendBtn.disabled = false;
+      }
+    }
+
+    /* ═══════════ ASK TYNTRON — SELLER REGISTRATION IN CHAT ═══════════
+       These render small interactive "widget" bubbles instead of plain text, but every
+       widget's markup is hardcoded here (never built from model output or a file name via
+       innerHTML — file names go through esc()). Actual side effects — sending an OTP,
+       verifying it, uploading a document, writing the seller_requests doc — call the exact
+       same functions/paths the pre-existing sellerRegModal form already used, so there is
+       still only one implementation of each of those, not a second chat-only copy. */
+
+    function askAppendWidgetBubble(html) {
+      const box = document.getElementById('askMessages');
+      if (!box) return null;
+      const el = document.createElement('div');
+      el.className = 'ask-bubble widget';
+      el.innerHTML = html;
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+      return el;
+    }
+
+    function askMarkWidgetDone(el, iconClass, label) {
+      if (!el) return;
+      el.className = 'ask-bubble widget done';
+      el.innerHTML = `<i class="fa ${iconClass}"></i> ${esc(label)}`;
+    }
+
+    function askHandleSellerRegUpdate(fields) {
+      const reg = askSellerRegEnsureActive();
+      Object.assign(reg.draft, fields || {});
+    }
+
+    async function askSellerSendEmailOtpCode(email) {
+      const code = genOtpCode();
+      const expiresAt = Date.now() + 15 * 60 * 1000;
+      const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
+      const ejsService = SITE_CONFIG.ejsServiceId || '';
+      const ejsTemplate = SITE_CONFIG.ejsOtpTemplateId || SITE_CONFIG.ejsTemplateId || '';
+      if (!(ejsPubKey && ejsService && ejsTemplate)) return { ok: false, reason: 'Email service is not configured — ask an admin to set up EmailJS in Site Config.' };
+      try {
+        await emailjs.init({ publicKey: ejsPubKey });
+        await emailjs.send(ejsService, ejsTemplate, {
+          from_name: 'TynTron', from_email: 'noreply@tyntron.co.in',
+          mobile: '', subject: 'Your TynTron Seller Registration Code',
+          message: `Your verification code is ${code}. It expires in 15 minutes.`,
+          passcode: code, time: new Date(expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), otp_code: code, to_email: email
+        });
+        _askSellerEmailOtp = { email, code, expiresAt };
+        return { ok: true };
+      } catch (e) { return { ok: false, reason: e.text || e.message || 'Could not send the email code.' }; }
+    }
+
+    async function askHandleSellerRegSendOtp(channel) {
+      const reg = askSellerRegEnsureActive();
+      if (channel === 'mobile') {
+        const mobile = reg.draft.seller_mobile;
+        if (!mobile) { askAppendBubble('bot', "I don't have your mobile number yet — what is it?"); return; }
+        const sentOk = await sendMobileOtp(mobile);
+        if (!sentOk) { askAppendBubble('bot', "Couldn't send the OTP — mind trying that mobile number again?"); return; }
+        askRenderSellerOtpWidget('mobile', mobile);
+      } else if (channel === 'email') {
+        const email = reg.draft.email;
+        if (!email) { askAppendBubble('bot', "I don't have your email address yet — what is it?"); return; }
+        const result = await askSellerSendEmailOtpCode(email);
+        if (!result.ok) { askAppendBubble('bot', result.reason || "Couldn't send the email code — please try again."); return; }
+        askRenderSellerOtpWidget('email', email);
+      }
+    }
+
+    function askRenderSellerOtpWidget(channel, value) {
+      const label = channel === 'mobile' ? `mobile ${esc(value)}` : `email ${esc(value)}`;
+      const el = askAppendWidgetBubble(`
+        <div style="font-size:.82rem;margin-bottom:8px;color:var(--text-muted)">Enter the code sent to your ${label}</div>
+        <div class="ask-widget-row">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" class="askOtpInput">
+          <button type="button" class="ask-widget-btn askOtpVerifyBtn">Verify</button>
+        </div>
+        <div class="ask-widget-err" style="display:none"></div>`);
+      if (!el) return;
+      const input = el.querySelector('.askOtpInput');
+      const btn = el.querySelector('.askOtpVerifyBtn');
+      const err = el.querySelector('.ask-widget-err');
+      const submit = () => askVerifySellerOtp(channel, value, el, input, btn, err);
+      btn.addEventListener('click', submit);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+      setTimeout(() => input.focus(), 100);
+    }
+
+    async function askVerifySellerOtp(channel, value, widgetEl, inputEl, btnEl, errEl) {
+      const code = (inputEl.value || '').trim();
+      if (!code) return;
+      btnEl.disabled = true; inputEl.disabled = true;
+      errEl.style.display = 'none';
+      let ok = false;
+      if (channel === 'mobile') {
+        ok = await verifyMobileOtp(code);
+      } else {
+        ok = !!(_askSellerEmailOtp && _askSellerEmailOtp.email === value && _askSellerEmailOtp.code === code && Date.now() <= _askSellerEmailOtp.expiresAt);
+      }
+      if (!ok) {
+        errEl.textContent = 'Incorrect or expired code — try again.';
+        errEl.style.display = 'block';
+        btnEl.disabled = false; inputEl.disabled = false; inputEl.focus();
+        return;
+      }
+      const reg = askSellerRegEnsureActive();
+      if (channel === 'mobile') reg.mobileVerified = true; else reg.emailVerified = true;
+      askMarkWidgetDone(widgetEl, 'fa-circle-check', `${channel === 'mobile' ? 'Mobile' : 'Email'} verified`);
+      askSend(`(${channel} verified)`, { silent: true });
+    }
+
+    function askRenderSellerPasswordWidget() {
+      const el = askAppendWidgetBubble(`
+        <div style="font-size:.82rem;margin-bottom:8px;color:var(--text-muted)">Choose a password for your seller account (at least 6 characters)</div>
+        <div class="ask-widget-row">
+          <input type="password" placeholder="Password" class="askPwInput" autocomplete="new-password">
+          <button type="button" class="ask-widget-btn askPwSubmitBtn">Set</button>
+        </div>
+        <div class="ask-widget-err" style="display:none"></div>`);
+      if (!el) return;
+      const input = el.querySelector('.askPwInput');
+      const btn = el.querySelector('.askPwSubmitBtn');
+      const err = el.querySelector('.ask-widget-err');
+      const submit = () => askSubmitSellerPassword(el, input, err);
+      btn.addEventListener('click', submit);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function askSubmitSellerPassword(widgetEl, inputEl, errEl) {
+      const pw = inputEl.value || '';
+      if (pw.length < 6) {
+        errEl.textContent = 'Password must be at least 6 characters.';
+        errEl.style.display = 'block';
+        return;
+      }
+      const reg = askSellerRegEnsureActive();
+      reg.password = pw;
+      reg.passwordSet = true;
+      askMarkWidgetDone(widgetEl, 'fa-circle-check', 'Password set');
+      askSend('(password set)', { silent: true });
+    }
+
+    const ASK_DOC_LABELS = {
+      businessPhoto: 'a photo of your business',
+      addressProof: 'your address proof document',
+      pan: 'your PAN card',
+      aadhaar: 'your Aadhaar card',
+      fssai: 'your FSSAI certificate'
+    };
+
+    function askRenderSellerUploadWidget(docType) {
+      const label = ASK_DOC_LABELS[docType] || 'this document';
+      const el = askAppendWidgetBubble(`
+        <button type="button" class="ask-widget-attach askAttachBtn"><i class="fa fa-paperclip"></i> Attach ${esc(label)}</button>
+        <div class="ask-widget-err" style="display:none"></div>`);
+      if (!el) return;
+      el.querySelector('.askAttachBtn').addEventListener('click', () => {
+        // Bound at click time, not render time — only one native file dialog can be open at
+        // once, so whichever button was just clicked is the authoritative pending upload,
+        // even if an earlier widget from a prior step is still sitting un-clicked above it.
+        const reg = askSellerRegEnsureActive();
+        reg._pendingDocType = docType;
+        reg._pendingUploadEl = el;
+        const fileInput = document.getElementById('askDocFile');
+        fileInput.accept = docType === 'businessPhoto' ? 'image/*' : 'image/*,.pdf';
+        fileInput.value = '';
+        fileInput.click();
+      });
+    }
+
+    async function askHandleSellerRegFilePicked(inputEl) {
+      const reg = _askSellerReg;
+      const file = inputEl.files[0];
+      const docType = reg && reg._pendingDocType;
+      if (!file || !reg || !docType) return;
+      const widgetEl = reg._pendingUploadEl;
+      const err = widgetEl ? widgetEl.querySelector('.ask-widget-err') : null;
+      const showErr = msg => { if (err) { err.textContent = msg; err.style.display = 'block'; } else { showToast(msg); } };
+
+      if (file.size > 8 * 1024 * 1024) { showErr('File must be under 8 MB.'); return; }
+
+      if (docType === 'businessPhoto') {
+        openImageCropper(file, function (croppedDataUrl) {
+          reg.uploads.businessPhoto = croppedDataUrl;
+          reg.documentsUploaded.businessPhoto = true;
+          askMarkWidgetDone(widgetEl, 'fa-circle-check', 'Business photo added');
+          askSend('(business photo uploaded)', { silent: true });
+        });
+        return;
+      }
+
+      if (widgetEl) {
+        const btn = widgetEl.querySelector('.askAttachBtn');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Uploading…'; }
+      }
+      try {
+        if (!storage) throw new Error('Document storage is not available right now.');
+        if (auth && !auth.currentUser) await auth.signInAnonymously();
+        const ref = storage.ref(`seller_requests/${reg.requestId}/${docType}_${file.name}`);
+        await ref.put(file);
+        const url = await ref.getDownloadURL();
+        reg.uploads[docType + 'Url'] = url;
+        reg.documentsUploaded[docType] = true;
+        askMarkWidgetDone(widgetEl, 'fa-circle-check', `${esc(file.name)} uploaded`);
+        askSend(`(${docType} uploaded)`, { silent: true });
+      } catch (e) {
+        showErr('Upload failed: ' + e.message);
+        if (widgetEl) {
+          const btn = widgetEl.querySelector('.askAttachBtn');
+          if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa fa-paperclip"></i> Attach ${esc(ASK_DOC_LABELS[docType] || 'this document')}`; }
+        }
+      }
+    }
+
+    async function askHandleSellerRegSubmit() {
+      const reg = _askSellerReg;
+      if (!reg) return;
+      const d = reg.draft;
+      const missing = [];
+      if (!reg.mobileVerified || !d.seller_mobile) missing.push('mobile verification');
+      if (!reg.emailVerified || !d.email) missing.push('email verification');
+      if (!reg.passwordSet) missing.push('a password');
+      if (!d.venture) missing.push('business name');
+      if (!d.speciality) missing.push('tagline');
+      if (!d.desc) missing.push('business description');
+      if (!d.category) missing.push('category');
+      if (!d.society) missing.push('society');
+      if (!d.contact_name) missing.push('contact person');
+      if (!d.flat) missing.push('flat/house number');
+      if (!d.current_address) missing.push('current address');
+      if (!d.permanent_address) missing.push('permanent address');
+      if (!d.address_proof_type) missing.push('address proof type');
+      if (!reg.documentsUploaded.addressProof) missing.push('address proof upload');
+      if (!reg.documentsUploaded.pan) missing.push('PAN card upload');
+      if (!reg.documentsUploaded.aadhaar) missing.push('Aadhaar card upload');
+      if (missing.length) {
+        askAppendBubble('bot', `A couple of things are still missing before I can submit: ${missing.join(', ')}.`);
+        return;
+      }
+
+      try {
+        if (!auth.currentUser) await auth.signInAnonymously();
+        const finalCat = d.category === 'Other' ? (d.category_custom || 'Other') : d.category;
+        const reqData = {
+          requestId: reg.requestId,
+          email: d.email,
+          mobile: d.seller_mobile,
+          password: reg.password, // stored only until admin approval creates the real account, then cleared
+          permAddress: d.permanent_address, currAddress: d.current_address,
+          addressProofType: d.address_proof_type,
+          addressProofDocUrl: reg.uploads.addressProofUrl,
+          canDeliverInSociety: d.can_deliver !== false,
+          cat: finalCat,
+          subCat: d.subcategory || '',
+          society: d.society,
+          venture: d.venture, speciality: d.speciality,
+          desc: d.desc,
+          contact: d.contact_name, flat: d.flat, phone: d.seller_mobile,
+          whatsapp: d.seller_mobile,
+          instagram: d.instagram || '',
+          video: d.video_url || '',
+          url: d.website_url || '',
+          image: reg.uploads.businessPhoto || '',
+          panDocUrl: reg.uploads.panUrl, aadhaarDocUrl: reg.uploads.aadhaarUrl, fssaiDocUrl: reg.uploads.fssaiUrl || '',
+          gstNumber: d.gst_number || '',
+          menu: [],
+          detailsText: '', detailsImage: '',
+          status: 'pending',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          source: 'ask_tyntron'
+        };
+        await db.collection('seller_requests').doc(reg.requestId).set(reqData);
+        askAppendBubble('bot', "Application submitted! 🎉 You'll get an email once an admin reviews it.");
+        _askSellerReg = null;
+        _askSellerEmailOtp = null;
+      } catch (e) {
+        askAppendBubble('bot', 'Submission failed: ' + e.message + ' — want to try again?');
       }
     }
 

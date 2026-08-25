@@ -358,13 +358,13 @@
         auth = firebase.auth(app);
         storage = firebase.storage(app);
         db.enablePersistence({ synchronizeTabs: true }).catch(() => { });
-        // Secondary app instance so admin can create seller accounts without
+        // Secondary app instance so admin can create business accounts without
         // signing themselves out of their own Firebase session.
         let secApp;
         try { secApp = firebase.app('sec'); } catch (e) { secApp = firebase.initializeApp(FIREBASE_CONFIG, 'sec'); }
         secondaryAuth = firebase.auth(secApp);
         secondaryDb = firebase.firestore(secApp); // write account doc as the new user
-        secondaryStorage = firebase.storage(secApp); // upload seller registration documents
+        secondaryStorage = firebase.storage(secApp); // upload business registration documents
       } catch (e) { console.warn('Firebase init failed:', e.message); }
     }
 
@@ -372,7 +372,7 @@
     let githubToken = '';
     // Restore admin session from sessionStorage (survives page refresh, cleared on logout/tab close)
     const _restoredAdminUid = sessionStorage.getItem('hb_adminUid');
-    let isAdmin = !!_restoredAdminUid, currentSeller = null;
+    let isAdmin = !!_restoredAdminUid, currentBusiness = null;
     if (_restoredAdminUid) window._adminUid = _restoredAdminUid;
     let editingId = null, pendingImg = null;
     let _browseLevel = 'societies'; // 'societies' | 'societyPicker' | 'society' | 'category' — drill-down nav state
@@ -422,31 +422,31 @@
       await db.collection('stats').doc(id).delete().catch(() => { });
     }
 
-    async function fsLoadSellerRequests() {
+    async function fsLoadBusinessRequests() {
       if (!db) return [];
       try {
-        const snap = await db.collection('seller_requests').get();
+        const snap = await db.collection('business_requests').get();
         return snap.docs.map(d => ({ ...d.data(), requestId: d.id }));
-      } catch (e) { console.warn('Could not load seller requests:', e.message); return []; }
+      } catch (e) { console.warn('Could not load business requests:', e.message); return []; }
     }
 
     /* Returns {ok:true} on success or {ok:false, reason} on failure, instead of
        swallowing errors silently — callers surface the failure to the admin so a
-       broken/misconfigured EmailJS setup doesn't silently leave sellers unnotified. */
-    async function _sendSellerStatusEmail(email, venture, status, reason) {
+       broken/misconfigured EmailJS setup doesn't silently leave businesses unnotified. */
+    async function _sendBusinessStatusEmail(email, venture, status, reason) {
       const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
       const ejsService = SITE_CONFIG.ejsServiceId || '';
       // Reuses the Contact Us template by default (free EmailJS plans cap the template
       // count) — this only works once that template's "To Email" setting on EmailJS's
       // dashboard is the dynamic {{to_email}} placeholder rather than a hardcoded address;
-      // otherwise every seller email silently misdelivers to the contact inbox instead of
-      // the seller. A separate ejsSellerTemplateId can still be set later to override this.
-      const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId || SITE_CONFIG.ejsTemplateId || '';
+      // otherwise every business email silently misdelivers to the contact inbox instead of
+      // the business. A separate ejsBusinessTemplateId can still be set later to override this.
+      const ejsTemplate = SITE_CONFIG.ejsBusinessTemplateId || SITE_CONFIG.ejsTemplateId || '';
       if (!(ejsPubKey && ejsService && ejsTemplate)) return { ok: false, reason: 'Email service not configured — set up EmailJS in Site Config.' };
-      const subject = status === 'approved' ? 'Your TynTron Seller Account Has Been Approved!' : 'Update on Your TynTron Seller Application';
+      const subject = status === 'approved' ? 'Your TynTron Business Account Has Been Approved!' : 'Update on Your TynTron Business Application';
       const message = status === 'approved'
-        ? `Congratulations! Your seller application for "${venture}" has been approved. Please log in to TynTron using your registered email and password, and start listing your products/services.`
-        : `Your seller application for "${venture}" was not approved.${reason ? ' Reason: ' + reason : ''} Feel free to reach out if you have questions.`;
+        ? `Congratulations! Your business application for "${venture}" has been approved. Please log in to TynTron using your registered email and password, and start listing your products/services.`
+        : `Your business application for "${venture}" was not approved.${reason ? ' Reason: ' + reason : ''} Feel free to reach out if you have questions.`;
       try {
         await emailjs.init({ publicKey: ejsPubKey });
         await emailjs.send(ejsService, ejsTemplate, {
@@ -828,7 +828,7 @@
       if (!currentCustomer) {
         target.innerHTML = `<div class="empty-state"><i class="fa fa-circle-user"></i><p>You're not logged in.</p>
       <button class="btn btn-primary" style="margin-top:12px" onclick="openCustomerAuthModal()"><i class="fa fa-right-to-bracket"></i> Login / Sign Up</button></div>
-      ${_accountSellerLinkHTML()}
+      ${_accountBusinessLinkHTML()}
       ${_accountAboutLinksHTML()}`;
         return;
       }
@@ -836,10 +836,10 @@
       _caTargetId = 'customerAccountPageBody';
       await renderCustomerAccountBody();
       target.insertAdjacentHTML('beforeend', `<button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:16px" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>
-    ${_accountSellerLinkHTML()}
+    ${_accountBusinessLinkHTML()}
     ${_accountAboutLinksHTML()}`);
     }
-    function _accountSellerLinkHTML() {
+    function _accountBusinessLinkHTML() {
       return `
     <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px">
       <a onclick="openLoginModal()" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;font-size:.88rem"><i class="fa fa-store" style="color:var(--green);width:18px"></i>Register your Business</a>
@@ -1420,11 +1420,11 @@
       _renderTable();
     }
 
-    /* ═══════════ ADMIN: SELLER REGISTRATION REQUESTS ═══════════ */
+    /* ═══════════ ADMIN: BUSINESS REGISTRATION REQUESTS ═══════════ */
     let _srqAll = [];
-    async function renderAdminSellerRequests(c) {
-      c.innerHTML = `<div class="s-card"><div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Requests</div><div style="text-align:center;padding:30px;color:var(--text-muted)"><i class="fa fa-spinner fa-spin" style="font-size:1.5rem"></i><p>Loading requests…</p></div></div>`;
-      _srqAll = await fsLoadSellerRequests();
+    async function renderAdminBusinessRequests(c) {
+      c.innerHTML = `<div class="s-card"><div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Business Registration Requests</div><div style="text-align:center;padding:30px;color:var(--text-muted)"><i class="fa fa-spinner fa-spin" style="font-size:1.5rem"></i><p>Loading requests…</p></div></div>`;
+      _srqAll = await fsLoadBusinessRequests();
       let _filter = 'pending';
 
       function _fmtDate(ts) { return ts?.seconds ? new Date(ts.seconds * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'; }
@@ -1450,13 +1450,13 @@
 
           const isActive = r.active !== false;
           const toggleActiveBtn = isActive
-            ? `<button class="btn btn-sm" onclick="toggleSellerActive('${r.requestId}')" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-weight:600;white-space:nowrap;padding:4px 10px;cursor:pointer" title="Click to Deactivate"><i class="fa fa-toggle-on" style="font-size:1.05rem"></i> Active</button>`
-            : `<button class="btn btn-sm" onclick="toggleSellerActive('${r.requestId}')" style="background:#ffebee;color:#c62828;border:1px solid #ef9a9a;font-weight:600;white-space:nowrap;padding:4px 10px;cursor:pointer" title="Click to Activate"><i class="fa fa-toggle-off" style="font-size:1.05rem"></i> Deactivated</button>`;
+            ? `<button class="btn btn-sm" onclick="toggleBusinessActive('${r.requestId}')" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-weight:600;white-space:nowrap;padding:4px 10px;cursor:pointer" title="Click to Deactivate"><i class="fa fa-toggle-on" style="font-size:1.05rem"></i> Active</button>`
+            : `<button class="btn btn-sm" onclick="toggleBusinessActive('${r.requestId}')" style="background:#ffebee;color:#c62828;border:1px solid #ef9a9a;font-weight:600;white-space:nowrap;padding:4px 10px;cursor:pointer" title="Click to Activate"><i class="fa fa-toggle-off" style="font-size:1.05rem"></i> Deactivated</button>`;
 
-          const deleteBtn = `<button class="btn btn-sm btn-ghost" onclick="deleteSellerRequest('${r.requestId}')" title="Delete Request" style="color:var(--danger)"><i class="fa fa-trash"></i> Delete</button>`;
-          const deleteIconBtn = `<button class="btn btn-sm btn-ghost" onclick="deleteSellerRequest('${r.requestId}')" title="Delete Request" style="color:var(--danger);padding:4px 8px"><i class="fa fa-trash"></i></button>`;
+          const deleteBtn = `<button class="btn btn-sm btn-ghost" onclick="deleteBusinessRequest('${r.requestId}')" title="Delete Request" style="color:var(--danger)"><i class="fa fa-trash"></i> Delete</button>`;
+          const deleteIconBtn = `<button class="btn btn-sm btn-ghost" onclick="deleteBusinessRequest('${r.requestId}')" title="Delete Request" style="color:var(--danger);padding:4px 8px"><i class="fa fa-trash"></i></button>`;
           const actions = r.status === 'pending'
-            ? `<div style="display:flex;gap:4px;align-items:center"><button class="btn btn-sm btn-primary" onclick="approveSellerRequest('${r.requestId}')"><i class="fa fa-check"></i> Approve</button> <button class="btn btn-sm btn-danger" onclick="rejectSellerRequest('${r.requestId}')"><i class="fa fa-times"></i> Reject</button> ${deleteIconBtn}</div>`
+            ? `<div style="display:flex;gap:4px;align-items:center"><button class="btn btn-sm btn-primary" onclick="approveBusinessRequest('${r.requestId}')"><i class="fa fa-check"></i> Approve</button> <button class="btn btn-sm btn-danger" onclick="rejectBusinessRequest('${r.requestId}')"><i class="fa fa-times"></i> Reject</button> ${deleteIconBtn}</div>`
             : (r.status === 'rejected'
               ? `<div style="display:flex;gap:4px;align-items:center">${deleteBtn} <span style="font-size:.75rem;color:var(--text-muted);margin-left:4px">${esc(r.rejectionReason || '')}</span></div>`
               : deleteBtn);
@@ -1478,7 +1478,7 @@
       </tr>`;
         }).join('') : `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:20px">No ${_filter} requests</td></tr>`;
         const pending = _srqAll.filter(r => r.status === 'pending').length;
-        const badge = document.getElementById('pendingSellerReqBadge');
+        const badge = document.getElementById('pendingBusinessReqBadge');
         if (badge) { badge.textContent = pending || ''; badge.style.display = pending ? '' : 'none'; }
       }
 
@@ -1486,8 +1486,8 @@
       const approved = _srqAll.filter(r => r.status === 'approved').length;
       const rejected = _srqAll.filter(r => r.status === 'rejected').length;
       c.innerHTML = `<div class="s-card">
-    <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Requests</div>
-    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:12px">Review KYC documents (click to view/download) before approving. Approving creates a live vendor listing and a seller login account, then emails the applicant.</p>
+    <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Business Registration Requests</div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:12px">Review KYC documents (click to view/download) before approving. Approving creates a live vendor listing and a business login account, then emails the applicant.</p>
     <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
       <button class="btn btn-sm btn-primary srq-filter" onclick="_srqSetFilter('pending',this)">Pending (${pending})</button>
       <button class="btn btn-sm btn-ghost srq-filter" onclick="_srqSetFilter('approved',this)">Approved (${approved})</button>
@@ -1510,11 +1510,11 @@
       _renderTable();
     }
 
-    async function approveSellerRequest(requestId) {
+    async function approveBusinessRequest(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId); if (!req) return;
       const confirmed = await confirmAction({
         title: `Approve "${req.venture}"?`,
-        message: `This creates a live listing in ${req.society || 'the selected society'} and a seller login for ${req.email}.`,
+        message: `This creates a live listing in ${req.society || 'the selected society'} and a business login for ${req.email}.`,
         warning: 'The applicant will receive an email confirmation with their login credentials.',
         confirmText: 'Approve Business',
         cancelText: 'Cancel',
@@ -1549,7 +1549,7 @@
         const uid = (cred && cred.user) ? cred.user.uid : (req.assignedUid || ('u_' + Date.now()));
 
         const accountData = {
-          email: req.email, displayName: req.venture, vendorId, role: 'seller',
+          email: req.email, displayName: req.venture, vendorId, role: 'business',
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
@@ -1599,30 +1599,30 @@
         saveData(DATA);
 
         // Mark the request approved and clear the temporarily-stored password.
-        await db.collection('seller_requests').doc(requestId).set({
+        await db.collection('business_requests').doc(requestId).set({
           status: 'approved', password: firebase.firestore.FieldValue.delete(),
           assignedVendorId: vendorId, assignedUid: uid,
           reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         req.status = 'approved';
 
-        const emailResult = await _sendSellerStatusEmail(req.email, req.venture, 'approved');
+        const emailResult = await _sendBusinessStatusEmail(req.email, req.venture, 'approved');
         renderAll();
-        renderAdminTab('sellerreq');
+        renderAdminTab('businessreq');
         showToast(emailResult.ok
-          ? `${req.venture} approved — listing is live ✓ Seller notified by email.`
-          : `${req.venture} approved — listing is live ✓ ⚠️ Seller email failed to send: ${emailResult.reason}`);
+          ? `${req.venture} approved — listing is live ✓ Business notified by email.`
+          : `${req.venture} approved — listing is live ✓ ⚠️ Business email failed to send: ${emailResult.reason}`);
       } catch (e) {
         console.error('Approval failed:', e);
         showToast('Approval failed: ' + e.message);
       }
     }
 
-    async function rejectSellerRequest(requestId) {
+    async function rejectBusinessRequest(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId); if (!req) return;
       const res = await confirmAction({
         title: `Reject "${req.venture}"?`,
-        message: `Are you sure you want to reject the seller application for ${req.email}?`,
+        message: `Are you sure you want to reject the business application for ${req.email}?`,
         warning: 'The applicant will be notified of the rejection.',
         showInput: true,
         inputLabel: 'Reason for rejection (optional, shown to applicant):',
@@ -1634,24 +1634,24 @@
       if (!res) return; // Closed or cancelled — DO NOT REJECT OR REMOVE DATA
       const reason = (typeof res === 'object' && res.value !== undefined) ? res.value : '';
       try {
-        await db.collection('seller_requests').doc(requestId).set({
+        await db.collection('business_requests').doc(requestId).set({
           status: 'rejected', rejectionReason: reason, password: firebase.firestore.FieldValue.delete(),
           reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         req.status = 'rejected'; req.rejectionReason = reason;
-        const emailResult = await _sendSellerStatusEmail(req.email, req.venture, 'rejected', reason);
-        renderAdminTab('sellerreq');
+        const emailResult = await _sendBusinessStatusEmail(req.email, req.venture, 'rejected', reason);
+        renderAdminTab('businessreq');
         showToast(emailResult.ok ? 'Application rejected — applicant notified by email.' : `Application rejected — ⚠️ notification email failed: ${emailResult.reason}`);
       } catch (e) { showToast('Error: ' + e.message); }
     }
 
-    async function deleteSellerRequest(requestId) {
+    async function deleteBusinessRequest(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId);
       if (!req) return;
 
       const res = await confirmAction({
-        title: 'Delete Seller Request?',
-        message: `Are you sure you want to permanently delete the seller request for "${req.venture}" (${req.email})?`,
+        title: 'Delete Business Request?',
+        message: `Are you sure you want to permanently delete the business request for "${req.venture}" (${req.email})?`,
         warning: 'This action will permanently remove this registration request.',
         confirmText: 'Delete Request',
         cancelText: 'Cancel',
@@ -1659,7 +1659,7 @@
         showInput: true,
         inputRequired: true,
         inputLabel: 'Reason for Deletion * (Compulsory):',
-        inputPlaceholder: 'Enter compulsory reason why this seller request is being removed…'
+        inputPlaceholder: 'Enter compulsory reason why this business request is being removed…'
       });
 
       if (!res || typeof res !== 'object' || !res.confirmed) return;
@@ -1679,7 +1679,7 @@
           || 'Not provided';
 
         const logData = {
-          type: 'seller_request_deletion',
+          type: 'business_request_deletion',
           requestId: requestId,
           targetName: req.venture || req.name,
           targetEmail: req.email,
@@ -1698,7 +1698,7 @@
           try {
             await db.collection('deletion_history').add(logData);
             await db.collection('admin_deletion_logs').add(logData);
-            await db.collection('seller_requests').doc(requestId).delete();
+            await db.collection('business_requests').doc(requestId).delete();
           } catch (e) {
             console.warn('Error recording deletion log:', e);
           }
@@ -1709,14 +1709,14 @@
         localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
 
         _srqAll = _srqAll.filter(r => r.requestId !== requestId);
-        renderAdminTab('sellerreq');
-        showToast(`Seller request for "${req.venture}" deleted & logged in history ✓`);
+        renderAdminTab('businessreq');
+        showToast(`Business request for "${req.venture}" deleted & logged in history ✓`);
       } catch (e) {
         showToast('Error deleting request: ' + e.message);
       }
     }
 
-    async function toggleSellerActive(requestId) {
+    async function toggleBusinessActive(requestId) {
       const req = _srqAll.find(r => r.requestId === requestId);
       if (!req) return;
       const newActive = req.active === false ? true : false;
@@ -1725,7 +1725,7 @@
       try {
         showToast('Updating status…');
         if (db) {
-          await db.collection('seller_requests').doc(requestId).set({ active: newActive }, { merge: true });
+          await db.collection('business_requests').doc(requestId).set({ active: newActive }, { merge: true });
         }
 
         let uid = req.assignedUid;
@@ -1763,8 +1763,8 @@
           if (v) { v.active = newActive; saveData(DATA); }
         }
 
-        if (currentSeller && ((uid && currentSeller.uid === uid) || currentSeller.email === req.email)) {
-          currentSeller.active = newActive;
+        if (currentBusiness && ((uid && currentBusiness.uid === uid) || currentBusiness.email === req.email)) {
+          currentBusiness.active = newActive;
         }
 
         renderAll();
@@ -1791,7 +1791,7 @@
     let DATA = loadData();
     let IMGS = loadImages();
     /* Categories with zero real (Firestore-backed) vendors fall back to the built-in
-       demo listings so customer browsing doesn't look empty before local sellers sign
+       demo listings so customer browsing doesn't look empty before local businesses sign
        up; any category with at least one real vendor shows only real ones (no mixing). */
     function getBrowseData() {
     function isVendorPubliclyVisible(v) {
@@ -1817,39 +1817,39 @@
       return activeData.concat(SEED.filter(s => !realCats.has(s.cat)));
     }
 
-    /* ═══════════ SELLER AUTH ═══════════ */
-    function setupSellerAuth() {
+    /* ═══════════ BUSINESS AUTH ═══════════ */
+    function setupBusinessAuth() {
       if (!auth) return;
       auth.onAuthStateChanged(async user => {
         if (user) {
-          // Admin signs into Firebase Auth too — don't treat them as a seller
+          // Admin signs into Firebase Auth too — don't treat them as a business
           if (isAdmin) return;
           try {
             const doc = await db.collection('accounts').doc(user.uid).get();
             if (doc.exists) {
-              currentSeller = { uid: user.uid, ...doc.data() };
-              // Reload vendors so seller panel has fresh DATA before rendering
+              currentBusiness = { uid: user.uid, ...doc.data() };
+              // Reload vendors so business panel has fresh DATA before rendering
               if (FB_READY && db) {
                 try {
                   const vendors = await fsLoadVendors();
                   if (vendors && vendors.length) { DATA = vendors; saveData(DATA); }
                 } catch (e) { }
               }
-              showToast(`Welcome, ${currentSeller.displayName}!`);
+              showToast(`Welcome, ${currentBusiness.displayName}!`);
               updatePanelTabs();
-              switchPanel('seller');
+              switchPanel('business');
             } else {
               // No account doc — could be admin. Never sign out silently.
               // Admin session is protected by isAdmin flag restored from sessionStorage.
             }
           } catch (e) { console.warn('Auth state error:', e); }
         } else {
-          if (currentSeller) { currentSeller = null; updatePanelTabs(); }
+          if (currentBusiness) { currentBusiness = null; updatePanelTabs(); }
         }
       });
     }
 
-    async function sellerLogin(email, password) {
+    async function businessLogin(email, password) {
       if (!auth) { showToast('Firebase not configured yet'); return; }
       const errEl = document.getElementById('loginErr');
       try {
@@ -1858,7 +1858,7 @@
           const doc = await db.collection('accounts').doc(cred.user.uid).get();
           if (!doc.exists && !isAdmin) {
             await auth.signOut();
-            currentSeller = null;
+            currentBusiness = null;
             if (errEl) {
               errEl.textContent = 'Invalid email or password';
               errEl.style.display = 'block';
@@ -1876,13 +1876,13 @@
       }
     }
 
-    async function sellerForgotPassword() {
+    async function businessForgotPassword() {
       if (!auth) { showToast('Firebase not configured yet'); return; }
-      const email = (document.getElementById('sellerEmailInput').value || '').trim();
+      const email = (document.getElementById('businessEmailInput').value || '').trim();
       if (!email || !email.includes('@')) {
         document.getElementById('loginErr').textContent = 'Enter your email above first, then tap "Forgot password?"';
         document.getElementById('loginErr').style.display = 'block';
-        document.getElementById('sellerEmailInput').focus();
+        document.getElementById('businessEmailInput').focus();
         return;
       }
       try {
@@ -1895,22 +1895,22 @@
       }
     }
 
-    async function sellerLogout() {
+    async function businessLogout() {
       if (auth) await auth.signOut();
-      currentSeller = null;
+      currentBusiness = null;
       updatePanelTabs();
       switchPanel('customer');
       showToast('Logged out');
     }
 
     function updatePanelTabs() {
-      const sellerTab = document.getElementById('sellerPanelTab');
+      const businessTab = document.getElementById('businessPanelTab');
       const adminTab = document.getElementById('adminPanelTab');
       const hdrRight = document.getElementById('hdrRight');
-      if (sellerTab) sellerTab.style.display = currentSeller ? 'inline-flex' : 'none';
+      if (businessTab) businessTab.style.display = currentBusiness ? 'inline-flex' : 'none';
       if (adminTab) adminTab.style.display = isAdmin ? 'inline-flex' : 'none';
       // Show Browse tab and the whole tab bar only when other tabs are visible
-      const hasOtherTabs = currentSeller || isAdmin;
+      const hasOtherTabs = currentBusiness || isAdmin;
       const browseTab = document.getElementById('browseTab');
       const panelTabs = document.getElementById('panelTabs');
       if (browseTab) browseTab.style.display = hasOtherTabs ? 'inline-flex' : 'none';
@@ -1919,9 +1919,9 @@
         ? `<button class="btn btn-header-outline btn-sm" onclick="openCustomerAccountModal()"><i class="fa fa-circle-user"></i><span class="hdr-label"> ${(currentCustomer.name || 'My Account').split(' ')[0]}</span></button>`
         : `<button class="btn btn-header-outline btn-sm" onclick="openCustomerAuthModal()"><i class="fa fa-user"></i><span class="hdr-label"> Login / Sign Up</span></button>`;
       if (hdrRight) {
-        if (currentSeller) {
-          hdrRight.innerHTML = `${customerBtn}<span class="hdr-label" style="font-size:.78rem;color:var(--text-muted)">${currentSeller.displayName}</span>
-        <button class="btn btn-sm btn-header-outline" onclick="sellerLogout()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Logout</span></button>`;
+        if (currentBusiness) {
+          hdrRight.innerHTML = `${customerBtn}<span class="hdr-label" style="font-size:.78rem;color:var(--text-muted)">${currentBusiness.displayName}</span>
+        <button class="btn btn-sm btn-header-outline" onclick="businessLogout()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Logout</span></button>`;
         } else if (isAdmin) {
           hdrRight.innerHTML = `${customerBtn}<span class="admin-badge hdr-label">Admin</span>
         <button class="btn btn-sm btn-header-outline" onclick="exitAdmin()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Exit Admin</span></button>`;
@@ -2186,7 +2186,7 @@
       div.style.cursor = 'pointer';
       div.addEventListener('click', () => openMenuModal(item.id));
       // Real vendor photo if uploaded; otherwise a cartoon-style category icon instead of a
-      // flat placeholder logo, so the feed reads as live/colorful even before sellers add photos.
+      // flat placeholder logo, so the feed reads as live/colorful even before businesses add photos.
       const imgSrc = item.image || IMGS[item.id] || '';
       const imgInner = imgSrc ? `<img src="${imgSrc}" alt="${item.venture}" loading="lazy">` : _categoryFallbackFill(item.cat);
 
@@ -2243,9 +2243,9 @@
     function getCatConfig(cat) {
       const c = (cat || '').toLowerCase();
       if (c.includes('food') || c.includes('baker') || c.includes('beverage'))
-        return { tileBtnIcon: 'fa-utensils', tileBtnText: 'View Menu & Order', modalTerm: 'Menu', useQty: true, actionText: 'Order via WhatsApp', emptyIcon: 'fa-utensils', emptyText: 'No menu added yet — contact seller directly.', waIntro: "Hi! I'd like to place an order 🛒", waTotal: (t, a) => `\n\n💰 *Total: ₹${t}*${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm. Thank you!` };
+        return { tileBtnIcon: 'fa-utensils', tileBtnText: 'View Menu & Order', modalTerm: 'Menu', useQty: true, actionText: 'Order via WhatsApp', emptyIcon: 'fa-utensils', emptyText: 'No menu added yet — contact business directly.', waIntro: "Hi! I'd like to place an order 🛒", waTotal: (t, a) => `\n\n💰 *Total: ₹${t}*${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm. Thank you!` };
       if (c.includes('fashion') || c.includes('gift') || c.includes('lifestyle'))
-        return { tileBtnIcon: 'fa-bag-shopping', tileBtnText: 'Browse & Order', modalTerm: 'Products', useQty: true, actionText: 'Order via WhatsApp', emptyIcon: 'fa-bag-shopping', emptyText: 'No products listed yet — contact seller directly.', waIntro: "Hi! I'd like to order 🛍️", waTotal: (t, a) => `\n\n💰 *Total: ₹${t}*${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm. Thank you!` };
+        return { tileBtnIcon: 'fa-bag-shopping', tileBtnText: 'Browse & Order', modalTerm: 'Products', useQty: true, actionText: 'Order via WhatsApp', emptyIcon: 'fa-bag-shopping', emptyText: 'No products listed yet — contact business directly.', waIntro: "Hi! I'd like to order 🛍️", waTotal: (t, a) => `\n\n💰 *Total: ₹${t}*${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm. Thank you!` };
       if (c.includes('education') || c.includes('coaching'))
         return { tileBtnIcon: 'fa-graduation-cap', tileBtnText: 'View Details', modalTerm: 'Courses & Sessions', useQty: false, actionText: "I'm Interested — WhatsApp", emptyIcon: 'fa-graduation-cap', emptyText: 'Contact the educator directly for course details.', waIntro: "Hi! I'm interested in enrolling 🎓", waTotal: (t, a) => `${t > 0 ? '\n💰 *Reference Fees: ₹' + t + ' (subject to confirmation)*' : ''}\n\nCould you please share schedule and batch details? Thank you!` };
       if (c.includes('camp') || c.includes('music') || c.includes('kids'))
@@ -2254,7 +2254,7 @@
         return { tileBtnIcon: 'fa-briefcase-medical', tileBtnText: 'View Details & Consult', modalTerm: 'Services', useQty: false, actionText: 'Consult Now — WhatsApp', emptyIcon: 'fa-briefcase-medical', emptyText: 'Contact the professional directly to book a session.', waIntro: "Hi! I'd like to book a consultation 🏥", waTotal: (t, a) => `${t > 0 ? '\n💰 *Service Fees: ₹' + t + ' (subject to consultation)*' : ''}\n\nPlease share your availability. Thank you!` };
       if (c.includes('home') || c.includes('print') || c.includes('tech'))
         return { tileBtnIcon: 'fa-print', tileBtnText: 'View Details & Book', modalTerm: 'Services & Products', useQty: false, actionText: 'Book Now — WhatsApp', emptyIcon: 'fa-print', emptyText: 'Contact the service provider directly.', waIntro: "Hi! I'd like to enquire about your services 🛠️", waTotal: (t, a) => `${t > 0 ? '\n💰 *Estimated Cost: ₹' + t + ' (subject to discussion)*' : ''}${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm availability. Thank you!` };
-      return { tileBtnIcon: 'fa-store', tileBtnText: 'View Details & Order', modalTerm: 'Menu', useQty: true, actionText: 'Order via WhatsApp', emptyIcon: 'fa-store', emptyText: 'No items listed yet — contact seller directly.', waIntro: "Hi! I'd like to place an order", waTotal: (t, a) => `\n\n💰 *Total: ₹${t}*${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm. Thank you!` };
+      return { tileBtnIcon: 'fa-store', tileBtnText: 'View Details & Order', modalTerm: 'Menu', useQty: true, actionText: 'Order via WhatsApp', emptyIcon: 'fa-store', emptyText: 'No items listed yet — contact business directly.', waIntro: "Hi! I'd like to place an order", waTotal: (t, a) => `\n\n💰 *Total: ₹${t}*${a ? '\n🏠 Address: ' + a : ''}\n\nPlease confirm. Thank you!` };
     }
 
     /* ═══════════ MENU MODAL + ORDERING ═══════════ */
@@ -2778,7 +2778,7 @@
       showToast(window._adminUid ? 'Admin mode activated — Firebase connected ✓' : 'Admin mode activated ✓');
     }
     async function exitAdmin() {
-      if (auth && auth.currentUser && !currentSeller) {
+      if (auth && auth.currentUser && !currentBusiness) {
         await auth.signOut().catch(() => { });
       }
       isAdmin = false;
@@ -3262,7 +3262,7 @@ Together, we grow stronger — one order at a time.`;
 
         const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
         const ejsService = SITE_CONFIG.ejsServiceId || '';
-        const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId || SITE_CONFIG.ejsTemplateId || '';
+        const ejsTemplate = SITE_CONFIG.ejsBusinessTemplateId || SITE_CONFIG.ejsTemplateId || '';
         const adminEmail = SITE_CONFIG.contactEmail || 'admin@tyntron.co.in';
 
         if (ejsPubKey && ejsService && ejsTemplate) {
@@ -3281,7 +3281,7 @@ Together, we grow stronger — one order at a time.`;
                 + `• Customer Email: ${userEmail || 'Not provided'}\n`
                 + `• Customer Mobile: ${userMobile || 'Not provided'}\n`
                 + `• Timestamp: ${new Date().toLocaleString()}\n\n`
-                + `Please review this area for seller onboarding and business expansion planning.`,
+                + `Please review this area for business onboarding and business expansion planning.`,
               to_email: adminEmail
             });
           } catch (eErr) {
@@ -3649,7 +3649,7 @@ Together, we grow stronger — one order at a time.`;
       },
       {
         title: "Hassle-Free Direct Ordering via WhatsApp",
-        desc: "Chat directly with verified sellers, track order logs, and get fast doorstep deliveries with zero middlemen.",
+        desc: "Chat directly with verified businesses, track order logs, and get fast doorstep deliveries with zero middlemen.",
         image: "",
         svg: ONBOARDING_SVG_3
       }
@@ -4528,7 +4528,7 @@ Together, we grow stronger — one order at a time.`;
       if (db) { db.collection('vendors').doc(id).delete().catch(e => console.warn('Firestore delete failed:', e.message)); }
     }
 
-    /* ═══════════ SELLER SELF-REGISTRATION ═══════════ */
+    /* ═══════════ BUSINESS SELF-REGISTRATION ═══════════ */
     let _srEmailOtp = { email: null, code: null, expiresAt: 0, verified: false };
     let _srMobileVerified = false;
     let _srPendingImg = null;
@@ -4568,7 +4568,7 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    function openSellerRegModal() {
+    function openBusinessRegModal() {
       closeModal('loginModal');
       initCustomSelect('sr_category');
       initCustomSelect('sr_subcategory');
@@ -4595,10 +4595,10 @@ Together, we grow stronger — one order at a time.`;
       const canDeliverGroup = document.getElementById('sr_canDeliverGroup');
       const canDeliverLabel = document.getElementById('sr_canDeliverLabel');
       if (canDeliverLabel) {
-        canDeliverLabel.textContent = (SITE_CONFIG.sellerCanDeliverLabel && SITE_CONFIG.sellerCanDeliverLabel.trim()) ? SITE_CONFIG.sellerCanDeliverLabel : 'Will you be able to deliver within the society? *';
+        canDeliverLabel.textContent = (SITE_CONFIG.businessCanDeliverLabel && SITE_CONFIG.businessCanDeliverLabel.trim()) ? SITE_CONFIG.businessCanDeliverLabel : 'Will you be able to deliver within the society? *';
       }
       if (canDeliverGroup) {
-        canDeliverGroup.style.display = (SITE_CONFIG.showSellerCanDeliver !== false) ? '' : 'none';
+        canDeliverGroup.style.display = (SITE_CONFIG.showBusinessCanDeliver !== false) ? '' : 'none';
       }
       document.getElementById('sr_emailCodeRow').style.display = 'none';
       document.getElementById('sr_emailVerifiedBadge').style.display = 'none';
@@ -4635,10 +4635,10 @@ Together, we grow stronger — one order at a time.`;
           srSocietyInput.value = selectedSociety || '';
         }
       }
-      document.getElementById('sellerRegModal').classList.add('open');
+      document.getElementById('businessRegModal').classList.add('open');
     }
 
-    async function checkSellerEmailStatus(email) {
+    async function checkBusinessEmailStatus(email) {
       if (!email || !email.includes('@')) return { exists: false };
       const cleanEmail = email.trim().toLowerCase();
 
@@ -4651,7 +4651,7 @@ Together, we grow stronger — one order at a time.`;
               return {
                 exists: true,
                 status: 'approved',
-                message: 'Your email address is already registered with an approved seller account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
+                message: 'Your email address is already registered with an approved business account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
               };
             } else if (st === 'pending') {
               return {
@@ -4673,7 +4673,7 @@ Together, we grow stronger — one order at a time.`;
         let isPending = false;
         let isApproved = false;
 
-        const snap = await db.collection('seller_requests').get();
+        const snap = await db.collection('business_requests').get();
         snap.docs.forEach(doc => {
           const data = doc.data();
           const docEmail = (data.email || '').trim().toLowerCase();
@@ -4691,7 +4691,7 @@ Together, we grow stronger — one order at a time.`;
           return {
             exists: true,
             status: 'approved',
-            message: 'Your email address is already registered with an approved seller account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
+            message: 'Your email address is already registered with an approved business account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
           };
         }
 
@@ -4702,7 +4702,7 @@ Together, we grow stronger — one order at a time.`;
             return {
               exists: true,
               status: 'approved',
-              message: 'Your email address is already registered with an approved seller account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
+              message: 'Your email address is already registered with an approved business account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
             };
           }
         } catch (e) { }
@@ -4717,7 +4717,7 @@ Together, we grow stronger — one order at a time.`;
 
         return { exists: false };
       } catch (e) {
-        console.warn('Error checking seller email status:', e.message);
+        console.warn('Error checking business email status:', e.message);
         return { exists: false };
       }
     }
@@ -4731,7 +4731,7 @@ Together, we grow stronger — one order at a time.`;
         statusMsgEl.innerHTML = '';
         return null;
       }
-      const check = await checkSellerEmailStatus(email);
+      const check = await checkBusinessEmailStatus(email);
       if (check.exists) {
         if (check.status === 'pending') {
           statusMsgEl.innerHTML = `
@@ -4748,7 +4748,7 @@ Together, we grow stronger — one order at a time.`;
               <i class="fa fa-circle-check" style="margin-top:2px;font-size:1.1rem;color:#2e7d32"></i>
               <div>
                 <strong style="color:#1b5e20">Account Already Registered &amp; Approved</strong><br>
-                Your email address (<strong>${esc(email)}</strong>) is already registered with an approved seller account. You can <a href="#" onclick="openLoginModalWithEmail('${esc(email)}');return false;" style="color:#1b5e20;font-weight:bold;text-decoration:underline">Login here</a> or use <a href="#" onclick="openForgotPasswordModalWithEmail('${esc(email)}');return false;" style="color:#1b5e20;font-weight:bold;text-decoration:underline">Forgot Password</a> to reset your password.
+                Your email address (<strong>${esc(email)}</strong>) is already registered with an approved business account. You can <a href="#" onclick="openLoginModalWithEmail('${esc(email)}');return false;" style="color:#1b5e20;font-weight:bold;text-decoration:underline">Login here</a> or use <a href="#" onclick="openForgotPasswordModalWithEmail('${esc(email)}');return false;" style="color:#1b5e20;font-weight:bold;text-decoration:underline">Forgot Password</a> to reset your password.
               </div>
             </div>`;
         }
@@ -4761,24 +4761,24 @@ Together, we grow stronger — one order at a time.`;
     }
 
     function openLoginModalWithEmail(email) {
-      closeModal('sellerRegModal');
+      closeModal('businessRegModal');
       openLoginModal();
       if (email) {
-        const el = document.getElementById('sellerEmailInput');
+        const el = document.getElementById('businessEmailInput');
         if (el) el.value = email;
-        const pwEl = document.getElementById('sellerPwInput');
+        const pwEl = document.getElementById('businessPwInput');
         if (pwEl) setTimeout(() => pwEl.focus(), 150);
       }
     }
 
     function openForgotPasswordModalWithEmail(email) {
-      closeModal('sellerRegModal');
+      closeModal('businessRegModal');
       openLoginModal();
       if (email) {
-        const el = document.getElementById('sellerEmailInput');
+        const el = document.getElementById('businessEmailInput');
         if (el) el.value = email;
       }
-      sellerForgotPassword();
+      businessForgotPassword();
     }
 
     async function srSendEmailOtp() {
@@ -4790,7 +4790,7 @@ Together, we grow stronger — one order at a time.`;
       const origText = btn.innerHTML;
       btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Checking…';
 
-      const emailCheck = await checkSellerEmailStatus(email);
+      const emailCheck = await checkBusinessEmailStatus(email);
       if (emailCheck.exists) {
         btn.disabled = false;
         btn.innerHTML = origText;
@@ -4816,7 +4816,7 @@ Together, we grow stronger — one order at a time.`;
         await emailjs.init({ publicKey: ejsPubKey });
         await emailjs.send(ejsService, ejsTemplate, {
           from_name: 'TynTron', from_email: 'noreply@tyntron.co.in',
-          mobile: '', subject: 'Your TynTron Seller Registration Code',
+          mobile: '', subject: 'Your TynTron Business Registration Code',
           message: `Your verification code is ${code}. It expires in 15 minutes.`,
           passcode: code, time: new Date(expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), otp_code: code, to_email: email
         });
@@ -4908,11 +4908,11 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('sr_' + type + 'FileName').innerHTML = `<i class="fa fa-check" style="color:var(--green)"></i> ${esc(file.name)}`;
     }
 
-    /* Seller "add items" section is category-driven: Food gets a priced menu,
+    /* Business "add items" section is category-driven: Food gets a priced menu,
        Fashion/Gift gets a priced item list (same mechanic, different label), and
        Education/Camps/Health/Professional/Home-Print-Tech get a free-text details
        block + optional photo instead of forcing an artificial priced item list. */
-    function getSellerAddMode(cat) {
+    function getBusinessAddMode(cat) {
       const c = (cat || '').toLowerCase();
       if (c.includes('food') || c.includes('baker') || c.includes('beverage')) return 'menu';
       if (c.includes('fashion') || c.includes('gift') || c.includes('lifestyle')) return 'item';
@@ -4921,7 +4921,7 @@ Together, we grow stronger — one order at a time.`;
     function srUpdateAddSection() {
       const catEl = document.getElementById('sr_category');
       if (!catEl) return;
-      const mode = getSellerAddMode(catEl.value);
+      const mode = getBusinessAddMode(catEl.value);
       const addItemsChk = document.getElementById('sr_addItemsNow');
       const checked = addItemsChk ? addItemsChk.checked : false;
       const labelEl = document.getElementById('sr_itemSectionLabel');
@@ -4988,7 +4988,7 @@ Together, we grow stronger — one order at a time.`;
       const society = document.getElementById('sr_society')?.value || '';
 
       if (!_srEmailOtp.verified) { errEl.textContent = 'Please verify your email first.'; errEl.style.display = 'block'; return; }
-      const emailCheck = await checkSellerEmailStatus(_srEmailOtp.email || (document.getElementById('sr_email')?.value || '').trim());
+      const emailCheck = await checkBusinessEmailStatus(_srEmailOtp.email || (document.getElementById('sr_email')?.value || '').trim());
       if (emailCheck.exists) {
         errEl.textContent = emailCheck.message;
         errEl.style.display = 'block';
@@ -5022,7 +5022,7 @@ Together, we grow stronger — one order at a time.`;
 
         async function uploadDoc(file, name) {
           if (!file) return '';
-          const ref = storage.ref(`seller_requests/${requestId}/${name}`);
+          const ref = storage.ref(`business_requests/${requestId}/${name}`);
           await ref.put(file);
           return await ref.getDownloadURL();
         }
@@ -5073,8 +5073,8 @@ Together, we grow stronger — one order at a time.`;
           status: 'pending',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         };
-        await db.collection('seller_requests').doc(requestId).set(reqData);
-        closeModal('sellerRegModal');
+        await db.collection('business_requests').doc(requestId).set(reqData);
+        closeModal('businessRegModal');
         showToast('Application submitted! You will be emailed once approved. ✓');
       } catch (e) {
         errEl.textContent = 'Submission failed: ' + e.message;
@@ -5394,7 +5394,7 @@ Together, we grow stronger — one order at a time.`;
 
     /* ═══════════ PANEL SWITCHING ═══════════ */
     function switchPanel(panel) {
-      ['customer', 'seller', 'admin'].forEach(p => {
+      ['customer', 'business', 'admin'].forEach(p => {
         const el = document.getElementById('panel-' + p);
         if (el) el.style.display = p === panel ? 'block' : 'none';
       });
@@ -5403,12 +5403,12 @@ Together, we grow stronger — one order at a time.`;
       });
       const bottomNav = document.getElementById('bottomNav');
       if (bottomNav) bottomNav.style.display = panel === 'customer' ? 'flex' : 'none';
-      if (panel === 'seller') renderSellerPanel();
+      if (panel === 'business') renderBusinessPanel();
       if (panel === 'admin') renderAdminPanel();
     }
 
     /* ═══════════ HARDWARE BACK BUTTON (Android) ═══════════
-       Amazon-style: unwind whatever's on top (modal, vendor detail, seller/admin
+       Amazon-style: unwind whatever's on top (modal, vendor detail, business/admin
        panel, non-home tab, drill-down level) one step at a time; once at the Home
        tab's root, a second back press within 2s exits the app, otherwise shows a
        "press back again" toast and re-arms. Only registers on native Android —
@@ -5431,7 +5431,7 @@ Together, we grow stronger — one order at a time.`;
       if (_menuVendor) { closeVendorDetail(); return; }
 
       const activePanel = document.querySelector('.panel-tab-btn.active')?.dataset.panel || 'customer';
-      if (activePanel === 'seller' || activePanel === 'admin') { switchCustomerPage('home'); return; }
+      if (activePanel === 'business' || activePanel === 'admin') { switchCustomerPage('home'); return; }
 
       if (_customerPage !== 'home') { switchCustomerPage('home'); return; }
 
@@ -5528,7 +5528,7 @@ Together, we grow stronger — one order at a time.`;
     function openLoginModal() {
       document.getElementById('loginErr').style.display = 'none';
       document.getElementById('loginModal').classList.add('open');
-      setTimeout(() => { document.getElementById('sellerEmailInput').focus(); }, 120);
+      setTimeout(() => { document.getElementById('businessEmailInput').focus(); }, 120);
     }
 
     /* ── Admin tab switcher ── */
@@ -5544,7 +5544,7 @@ Together, we grow stronger — one order at a time.`;
       switch (tab) {
         case 'overview': renderAdminOverview(c); break;
         case 'vendors': renderAdminVendors(c); break;
-        case 'sellerreq': renderAdminSellerRequests(c); break;
+        case 'businessreq': renderAdminBusinessRequests(c); break;
         case 'accounts': renderAdminAccounts(c); break;
         case 'customers': renderAdminCustomers(c); break;
         case 'config': renderAdminConfig(c); break;
@@ -5555,29 +5555,29 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    function isCurrentSellerDeactivated() {
-      if (!currentSeller) return false;
-      if (currentSeller.active === false) return true;
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
+    function isCurrentBusinessDeactivated() {
+      if (!currentBusiness) return false;
+      if (currentBusiness.active === false) return true;
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
       if (vendor && vendor.active === false) return true;
       if (typeof _srqAll !== 'undefined' && Array.isArray(_srqAll) && _srqAll.length) {
-        const req = _srqAll.find(r => r.email === currentSeller.email || (r.assignedUid && r.assignedUid === currentSeller.uid) || (r.assignedVendorId && r.assignedVendorId === currentSeller.vendorId));
+        const req = _srqAll.find(r => r.email === currentBusiness.email || (r.assignedUid && r.assignedUid === currentBusiness.uid) || (r.assignedVendorId && r.assignedVendorId === currentBusiness.vendorId));
         if (req && req.active === false) return true;
       }
       return false;
     }
 
-    /* ── Seller panel (Phase 4) ── */
-    function renderSellerPanel() {
-      if (!currentSeller) { document.getElementById('sellerContent').innerHTML = '<div class="empty-state"><i class="fa fa-lock"></i><p>Not logged in.</p></div>'; return; }
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
-      document.getElementById('sellerPanelTitle').textContent = vendor ? vendor.venture : 'My Business';
+    /* ── Business panel (Phase 4) ── */
+    function renderBusinessPanel() {
+      if (!currentBusiness) { document.getElementById('businessContent').innerHTML = '<div class="empty-state"><i class="fa fa-lock"></i><p>Not logged in.</p></div>'; return; }
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      document.getElementById('businessPanelTitle').textContent = vendor ? vendor.venture : 'My Business';
       if (!vendor) {
-        document.getElementById('sellerContent').innerHTML = `<div class="empty-state"><i class="fa fa-store"></i><p>No vendor assigned. Contact admin.</p></div>`;
+        document.getElementById('businessContent').innerHTML = `<div class="empty-state"><i class="fa fa-store"></i><p>No vendor assigned. Contact admin.</p></div>`;
         return;
       }
 
-      const isDeact = isCurrentSellerDeactivated();
+      const isDeact = isCurrentBusinessDeactivated();
       const deactivatedBanner = isDeact ? `
         <div style="background:#fff3e0;border:1.5px solid #ffe0b2;border-radius:10px;padding:16px 20px;margin-bottom:20px;color:#e65100;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,0.05)">
           <i class="fa fa-triangle-exclamation" style="font-size:1.8rem;color:#f57c00;flex-shrink:0"></i>
@@ -5587,19 +5587,19 @@ Together, we grow stronger — one order at a time.`;
           </div>
         </div>` : '';
 
-      document.getElementById('sellerContent').innerHTML = deactivatedBanner + _sellerSubscriptionHTML(vendor, currentSeller) + _sellerBusinessHTML(vendor) + _sellerNotifyRequestsPlaceholderHTML() + _sellerOrdersPlaceholderHTML() + _sellerMenuHTML(vendor) + _sellerChangePasswordHTML();
+      document.getElementById('businessContent').innerHTML = deactivatedBanner + _businessSubscriptionHTML(vendor, currentBusiness) + _businessBusinessHTML(vendor) + _businessNotifyRequestsPlaceholderHTML() + _businessOrdersPlaceholderHTML() + _businessMenuHTML(vendor) + _businessChangePasswordHTML();
       renderWeeklyDayPills();
-      renderSellerNotifyRequests(vendor.id);
-      renderSellerOrders(vendor.id);
+      renderBusinessNotifyRequests(vendor.id);
+      renderBusinessOrders(vendor.id);
     }
 
-    /* ── SELLER SUBSCRIPTION & RAZORPAY INTEGRATION ── */
-    function _sellerSubscriptionHTML(v, seller) {
-      const status = v.subscriptionStatus || (seller && seller.subscriptionStatus) || 'none';
-      const plan = v.subscriptionPlan || (seller && seller.subscriptionPlan) || 'monthly';
-      const expiry = v.subscriptionExpiry || (seller && seller.subscriptionExpiry) || null;
-      const lastPaymentId = v.lastPaymentId || (seller && seller.lastPaymentId) || '';
-      const lastPaymentDate = v.lastPaymentDate || (seller && seller.lastPaymentDate) || '';
+    /* ── BUSINESS SUBSCRIPTION & RAZORPAY INTEGRATION ── */
+    function _businessSubscriptionHTML(v, business) {
+      const status = v.subscriptionStatus || (business && business.subscriptionStatus) || 'none';
+      const plan = v.subscriptionPlan || (business && business.subscriptionPlan) || 'monthly';
+      const expiry = v.subscriptionExpiry || (business && business.subscriptionExpiry) || null;
+      const lastPaymentId = v.lastPaymentId || (business && business.lastPaymentId) || '';
+      const lastPaymentDate = v.lastPaymentDate || (business && business.lastPaymentDate) || '';
 
       const monthlyPrice = SITE_CONFIG.subMonthlyPrice || 499;
       const annualPrice = SITE_CONFIG.subAnnualPrice || 3999;
@@ -5622,7 +5622,7 @@ Together, we grow stronger — one order at a time.`;
             </div>
             <div style="display:flex;gap:8px">
               <button class="btn btn-sm btn-primary" onclick="toggleSubPlanSelector()"><i class="fa fa-rotate-right"></i> Renew / Change</button>
-              <button class="btn btn-sm btn-danger" onclick="sellerCancelSubscription()"><i class="fa fa-ban"></i> Cancel</button>
+              <button class="btn btn-sm btn-danger" onclick="businessCancelSubscription()"><i class="fa fa-ban"></i> Cancel</button>
             </div>
           </div>`;
       } else if (effectiveStatus === 'expired' || effectiveStatus === 'FETCH_FAILED') {
@@ -5649,7 +5649,7 @@ Together, we grow stronger — one order at a time.`;
         badgeHTML = `<span style="background:#fff3e0;color:#e65100;font-size:.75rem;padding:4px 10px;border-radius:12px;font-weight:700"><i class="fa fa-bolt"></i> PENDING / INACTIVE</span>`;
         statusBanner = `
           <div style="background:#fff8f1;border:1.5px solid #ffedd5;border-radius:10px;padding:14px 18px;margin-bottom:16px">
-            <div style="font-weight:700;color:#9a3412;font-size:.92rem"><i class="fa fa-crown" style="color:var(--gold)"></i> Upgrade to TynTron Seller Pro</div>
+            <div style="font-weight:700;color:#9a3412;font-size:.92rem"><i class="fa fa-crown" style="color:var(--gold)"></i> Upgrade to TynTron Business Pro</div>
             <div style="font-size:.8rem;color:#c2410c;margin-top:2px">Subscribe to unlock premium listing features, order management, and customer reach across the society.</div>
           </div>`;
       }
@@ -5657,9 +5657,9 @@ Together, we grow stronger — one order at a time.`;
       const showPlansDefault = effectiveStatus !== 'active';
 
       return `
-        <div class="s-card" style="margin-bottom:20px" id="sellerSubscriptionCard">
+        <div class="s-card" style="margin-bottom:20px" id="businessSubscriptionCard">
           <div class="s-card-title" style="display:flex;justify-content:space-between;align-items:center">
-            <span><i class="fa fa-crown" style="color:var(--gold)"></i> Seller Subscription &amp; Billing</span>
+            <span><i class="fa fa-crown" style="color:var(--gold)"></i> Business Subscription &amp; Billing</span>
             ${badgeHTML}
           </div>
 
@@ -5688,7 +5688,7 @@ Together, we grow stronger — one order at a time.`;
 
             </div>
 
-            <button class="btn btn-primary btn-block" style="padding:12px;font-size:.95rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px" onclick="startRazorpaySellerSubscription()">
+            <button class="btn btn-primary btn-block" style="padding:12px;font-size:.95rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px" onclick="startRazorpayBusinessSubscription()">
               <i class="fa fa-shield-halved"></i> Pay &amp; Activate Subscription via Razorpay
             </button>
 
@@ -5733,12 +5733,12 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    async function startRazorpaySellerSubscription() {
-      if (!currentSeller) {
-        showToast('Please log in as a seller first.');
+    async function startRazorpayBusinessSubscription() {
+      if (!currentBusiness) {
+        showToast('Please log in as a business first.');
         return;
       }
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
       if (!vendor) {
         alert('No vendor profile found for your account. Please contact admin.');
         return;
@@ -5768,26 +5768,26 @@ Together, we grow stronger — one order at a time.`;
         key: rzpKeyId,
         amount: planAmount * 100,
         currency: "INR",
-        name: "TynTron Seller Subscription",
+        name: "TynTron Business Subscription",
         description: `${planKey.toUpperCase()} Subscription for ${vendor.venture}`,
         image: "newlogo.png.jpeg",
         prefill: {
-          name: currentSeller.name || vendor.contact || '',
-          email: currentSeller.email || '',
+          name: currentBusiness.name || vendor.contact || '',
+          email: currentBusiness.email || '',
           contact: vendor.phone || ''
         },
         notes: {
           vendorId: vendor.id,
           vendorName: vendor.venture,
           plan: planKey,
-          sellerEmail: currentSeller.email
+          businessEmail: currentBusiness.email
         },
         theme: {
           color: "#FF9933"
         },
         handler: async function (response) {
           console.log('Razorpay payment successful:', response);
-          await processSellerPaymentSuccess(response, vendor, currentSeller, planKey, planAmount);
+          await processBusinessPaymentSuccess(response, vendor, currentBusiness, planKey, planAmount);
         },
         modal: {
           ondismiss: function () {
@@ -5809,7 +5809,7 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    async function processSellerPaymentSuccess(response, vendor, seller, planKey, planAmount) {
+    async function processBusinessPaymentSuccess(response, vendor, business, planKey, planAmount) {
       try {
         showToast('Payment received! Updating subscription…');
 
@@ -5830,9 +5830,9 @@ Together, we grow stronger — one order at a time.`;
         if (FB_READY && db) {
           await fsSaveVendor(vendor);
 
-          if (seller && seller.uid) {
+          if (business && business.uid) {
             try {
-              await db.collection('accounts').doc(seller.uid).set({
+              await db.collection('accounts').doc(business.uid).set({
                 subscriptionStatus: 'active',
                 subscriptionPlan: planKey,
                 subscriptionExpiry: expiryDate.toISOString(),
@@ -5841,16 +5841,16 @@ Together, we grow stronger — one order at a time.`;
                 lastPaymentAmount: planAmount
               }, { merge: true });
             } catch (e) {
-              console.warn('Failed to update seller account doc:', e);
+              console.warn('Failed to update business account doc:', e);
             }
           }
 
           try {
             await db.collection('order_logs').add({
-              type: 'seller_subscription',
+              type: 'business_subscription',
               vendorId: vendor.id,
               vendorName: vendor.venture,
-              sellerEmail: seller ? seller.email : '',
+              businessEmail: business ? business.email : '',
               paymentId: paymentId,
               plan: planKey,
               amount: planAmount,
@@ -5863,13 +5863,13 @@ Together, we grow stronger — one order at a time.`;
         try {
           const ejsPubKey = SITE_CONFIG.ejsPubKey;
           const ejsService = SITE_CONFIG.ejsServiceId;
-          const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId || SITE_CONFIG.ejsTemplateId;
-          if (ejsPubKey && ejsService && ejsTemplate && seller.email) {
+          const ejsTemplate = SITE_CONFIG.ejsBusinessTemplateId || SITE_CONFIG.ejsTemplateId;
+          if (ejsPubKey && ejsService && ejsTemplate && business.email) {
             emailjs.send(ejsService, ejsTemplate, {
-              to_email: seller.email,
-              to_name: seller.name || vendor.contact || 'Seller',
-              subject: 'TynTron Seller Subscription Confirmed!',
-              message: `Thank you for subscribing to TynTron Seller Pro (${planKey.toUpperCase()} Plan). Payment ID: ${paymentId}. Your subscription is active until ${expiryDate.toLocaleDateString()}.`
+              to_email: business.email,
+              to_name: business.name || vendor.contact || 'Business',
+              subject: 'TynTron Business Subscription Confirmed!',
+              message: `Thank you for subscribing to TynTron Business Pro (${planKey.toUpperCase()} Plan). Payment ID: ${paymentId}. Your subscription is active until ${expiryDate.toLocaleDateString()}.`
             }, ejsPubKey);
           }
         } catch (e) {
@@ -5878,7 +5878,7 @@ Together, we grow stronger — one order at a time.`;
 
         alert(`🎉 Subscription Activated!\n\nThank you! Your ${planKey.toUpperCase()} subscription is active until ${expiryDate.toLocaleDateString()}.\nPayment ID: ${paymentId}`);
         showToast('Subscription active ✓');
-        renderSellerPanel();
+        renderBusinessPanel();
 
       } catch (err) {
         console.error('Error processing payment success:', err);
@@ -5916,9 +5916,9 @@ Together, we grow stronger — one order at a time.`;
       renderAdminAccounts(document.getElementById('adminTabContent'));
     }
 
-    async function sellerCancelSubscription() {
-      if (!currentSeller) return;
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
+    async function businessCancelSubscription() {
+      if (!currentBusiness) return;
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
       if (!vendor) return;
 
       const confirmed = await confirmAction({
@@ -5937,9 +5937,9 @@ Together, we grow stronger — one order at a time.`;
 
       if (FB_READY && db) {
         await fsSaveVendor(vendor);
-        if (currentSeller.uid) {
+        if (currentBusiness.uid) {
           try {
-            await db.collection('accounts').doc(currentSeller.uid).set({
+            await db.collection('accounts').doc(currentBusiness.uid).set({
               subscriptionStatus: 'CANCELLED_BY_VENDOR',
               active: false
             }, { merge: true });
@@ -5948,13 +5948,13 @@ Together, we grow stronger — one order at a time.`;
       }
 
       showToast('Subscription cancelled');
-      renderSellerPanel();
+      renderBusinessPanel();
     }
 
     async function adminCancelSubscription(uid, vendorId) {
       const vendor = DATA.find(d => d.id === vendorId);
       const confirmed = await confirmAction({
-        title: `Cancel Subscription for ${vendor ? vendor.venture : 'Seller'}?`,
+        title: `Cancel Subscription for ${vendor ? vendor.venture : 'Business'}?`,
         message: 'This will set the subscription status to CANCELLED_BY_ADMIN and hide their vendor listing from public visitors.',
         confirmText: 'Cancel Subscription',
         cancelText: 'Close',
@@ -6014,7 +6014,7 @@ Together, we grow stronger — one order at a time.`;
       const society = document.getElementById('sr_society')?.value || '';
 
       if (!_srEmailOtp.verified) { errEl.textContent = 'Please verify your email first.'; errEl.style.display = 'block'; return; }
-      const emailCheck = await checkSellerEmailStatus(_srEmailOtp.email || (document.getElementById('sr_email')?.value || '').trim());
+      const emailCheck = await checkBusinessEmailStatus(_srEmailOtp.email || (document.getElementById('sr_email')?.value || '').trim());
       if (emailCheck.exists) { errEl.textContent = emailCheck.message; errEl.style.display = 'block'; return; }
       if (!_srMobileVerified || !_vnMobile) { errEl.textContent = 'Please verify your mobile number first.'; errEl.style.display = 'block'; return; }
       if (!password || password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
@@ -6035,7 +6035,7 @@ Together, we grow stronger — one order at a time.`;
 
       const rzpKeyId = (SITE_CONFIG.rzpKeyId || '').trim();
       if (!rzpKeyId) {
-        alert('Razorpay Key ID is not configured in Admin Site Config!\n\nPlease contact Admin to set up Razorpay Key ID before seller registration.');
+        alert('Razorpay Key ID is not configured in Admin Site Config!\n\nPlease contact Admin to set up Razorpay Key ID before business registration.');
         errEl.textContent = 'Razorpay Key ID is missing in Admin Config.';
         errEl.style.display = 'block';
         return;
@@ -6057,7 +6057,7 @@ Together, we grow stronger — one order at a time.`;
         key: rzpKeyId,
         amount: planAmount * 100,
         currency: "INR",
-        name: "TynTron Seller Registration",
+        name: "TynTron Business Registration",
         description: `${planKey.toUpperCase()} Mandate Authorization for ${venture}`,
         image: "newlogo.png.jpeg",
         prefill: {
@@ -6101,7 +6101,7 @@ Together, we grow stronger — one order at a time.`;
 
         async function uploadDoc(file, name) {
           if (!file) return '';
-          const ref = storage.ref(`seller_requests/${requestId}/${name}`);
+          const ref = storage.ref(`business_requests/${requestId}/${name}`);
           await ref.put(file);
           return await ref.getDownloadURL();
         }
@@ -6157,7 +6157,7 @@ Together, we grow stronger — one order at a time.`;
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        await db.collection('seller_requests').doc(requestId).set(reqData);
+        await db.collection('business_requests').doc(requestId).set(reqData);
 
         try {
           const ejsPubKey = SITE_CONFIG.ejsPublicKey;
@@ -6167,14 +6167,14 @@ Together, we grow stronger — one order at a time.`;
             emailjs.send(ejsService, ejsTemplate, {
               to_email: SITE_CONFIG.vnEmail || 'admin@tyntron.com',
               to_name: 'Admin',
-              subject: 'New Seller Registration & Payment Received!',
-              message: `New seller application from ${reqData.venture} (${reqData.email}) with ${planKey.toUpperCase()} plan payment (${reqData.paymentId}). Pending admin approval.`
+              subject: 'New Business Registration & Payment Received!',
+              message: `New business application from ${reqData.venture} (${reqData.email}) with ${planKey.toUpperCase()} plan payment (${reqData.paymentId}). Pending admin approval.`
             }, ejsPubKey);
           }
         } catch (e) { }
 
-        closeModal('sellerRegModal');
-        alert(`🎉 Registration & Payment Received!\n\nThank you! Your seller application and ${planKey.toUpperCase()} subscription authorization (Payment ID: ${reqData.paymentId}) have been submitted.\n\nYour account is now pending admin approval. You will receive an email once approved.`);
+        closeModal('businessRegModal');
+        alert(`🎉 Registration & Payment Received!\n\nThank you! Your business application and ${planKey.toUpperCase()} subscription authorization (Payment ID: ${reqData.paymentId}) have been submitted.\n\nYour account is now pending admin approval. You will receive an email once approved.`);
         showToast('Registration application submitted ✓');
 
       } catch (e) {
@@ -6187,23 +6187,23 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    function _sellerNotifyRequestsPlaceholderHTML() {
+    function _businessNotifyRequestsPlaceholderHTML() {
       return `
-        <div class="s-card" style="margin-bottom:20px" id="sellerNotifyRequestsCard">
+        <div class="s-card" style="margin-bottom:20px" id="businessNotifyRequestsCard">
           <div class="s-card-title"><i class="fa fa-bell" style="color:var(--green)"></i> Customer Reopen Requests ("Notify Me" List)</div>
-          <div id="sellerNotifyRequestsBody"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading reopen requests…</p></div>
+          <div id="businessNotifyRequestsBody"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading reopen requests…</p></div>
         </div>`;
     }
 
-    function _sellerOrdersPlaceholderHTML() {
+    function _businessOrdersPlaceholderHTML() {
       return `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-receipt" style="color:var(--green)"></i> Orders Received</div>
-    <div id="sellerOrdersBody"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading orders…</p></div>
+    <div id="businessOrdersBody"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading orders…</p></div>
   </div>`;
     }
 
-    async function renderSellerOrders(vendorId) {
-      const body = document.getElementById('sellerOrdersBody');
+    async function renderBusinessOrders(vendorId) {
+      const body = document.getElementById('businessOrdersBody');
       if (!body) return;
       const orders = await fsLoadVendorOrders(vendorId);
       if (!orders.length) {
@@ -6222,11 +6222,11 @@ Together, we grow stronger — one order at a time.`;
   </table></div>`;
     }
 
-    async function toggleSellerShopStatus(vendorId, isOpen) {
-      if (isCurrentSellerDeactivated()) {
+    async function toggleBusinessShopStatus(vendorId, isOpen) {
+      if (isCurrentBusinessDeactivated()) {
         alert('Your account is deactivated. Please contact admin.');
         showToast('Your account is deactivated. Please contact admin.');
-        renderSellerPanel();
+        renderBusinessPanel();
         return;
       }
       const vendor = DATA.find(d => d.id === vendorId);
@@ -6247,7 +6247,7 @@ Together, we grow stronger — one order at a time.`;
         sendReopenEmailsToSubscribers(vendorId);
       }
       checkVendorReopenTransitions();
-      renderSellerPanel();
+      renderBusinessPanel();
       renderAll();
     }
 
@@ -6279,8 +6279,8 @@ Together, we grow stronger — one order at a time.`;
       return requests;
     }
 
-    async function renderSellerNotifyRequests(vendorId) {
-      const body = document.getElementById('sellerNotifyRequestsBody');
+    async function renderBusinessNotifyRequests(vendorId) {
+      const body = document.getElementById('businessNotifyRequestsBody');
       if (!body) return;
       const requests = await fsLoadVendorNotifyRequests(vendorId);
       const vendor = DATA.find(d => d.id === vendorId);
@@ -6365,7 +6365,7 @@ Together, we grow stronger — one order at a time.`;
 
       const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
       const ejsService = SITE_CONFIG.ejsServiceId || '';
-      const ejsTemplate = SITE_CONFIG.ejsSellerTemplateId || SITE_CONFIG.ejsTemplateId || '';
+      const ejsTemplate = SITE_CONFIG.ejsBusinessTemplateId || SITE_CONFIG.ejsTemplateId || '';
 
       if (!ejsPubKey || !ejsService || !ejsTemplate) {
         showToast('EmailJS configuration missing. Please ask admin to configure EmailJS in Site Config.');
@@ -6419,7 +6419,7 @@ Together, we grow stronger — one order at a time.`;
       }
 
       showToast(`Reopening notification email sent to ${sentCount || requests.length} customer(s)! 📧`);
-      renderSellerNotifyRequests(vendorId);
+      renderBusinessNotifyRequests(vendorId);
     }
 
     let _vendorPrevClosedState = {};
@@ -6797,16 +6797,16 @@ Together, we grow stronger — one order at a time.`;
       showToast(`Removed ${dateStr}`);
     }
 
-    let _sellerDaySchedules = {};
+    let _businessDaySchedules = {};
     let _currentModalDay = 'Monday';
 
     function renderWeeklyDayPills() {
       const container = document.getElementById('sf_sched_weekly_days_container');
       if (!container) return;
-      const isDeact = isCurrentSellerDeactivated();
+      const isDeact = isCurrentBusinessDeactivated();
 
       container.innerHTML = DAYS_OF_WEEK.map(day => {
-        const dayConfig = _sellerDaySchedules[day];
+        const dayConfig = _businessDaySchedules[day];
         if (dayConfig && dayConfig.isClosed) {
           return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-circle-xmark" style="color:#dc2626"></i> ${day.slice(0, 3)} (Closed)</button>`;
         } else if (dayConfig && dayConfig.openTime && dayConfig.closeTime) {
@@ -6817,18 +6817,18 @@ Together, we grow stronger — one order at a time.`;
       }).join('');
     }
 
-    function toggleSellerScheduleUse(useSched) {
+    function toggleBusinessScheduleUse(useSched) {
       const container = document.getElementById('sf_sched_main_hours_container');
       if (container) container.style.display = useSched ? 'block' : 'none';
     }
 
-    function toggleSellerCalendarUse(useCal) {
+    function toggleBusinessCalendarUse(useCal) {
       const container = document.getElementById('sf_sched_calendar_container');
       if (container) container.style.display = useCal ? 'block' : 'none';
     }
 
     function openDayScheduleModal(day) {
-      if (isCurrentSellerDeactivated()) return;
+      if (isCurrentBusinessDeactivated()) return;
       _currentModalDay = day;
       const titleDay = document.getElementById('dayModalDayName');
       if (titleDay) titleDay.textContent = day;
@@ -6839,7 +6839,7 @@ Together, we grow stronger — one order at a time.`;
       const defaultLbl = document.getElementById('dayModalDefaultHoursLabel');
       if (defaultLbl) defaultLbl.textContent = `${formatTime12h(openTimeInput)} – ${formatTime12h(closeTimeInput)}`;
 
-      const dayConfig = _sellerDaySchedules[day];
+      const dayConfig = _businessDaySchedules[day];
       if (dayConfig && dayConfig.isClosed) {
         const rClosed = document.getElementById('dayModeClosed');
         if (rClosed) rClosed.checked = true;
@@ -6871,21 +6871,21 @@ Together, we grow stronger — one order at a time.`;
       if (!_currentModalDay) return;
       const mode = document.querySelector('input[name="dayScheduleMode"]:checked')?.value || 'default';
       if (mode === 'closed') {
-        _sellerDaySchedules[_currentModalDay] = { isClosed: true };
+        _businessDaySchedules[_currentModalDay] = { isClosed: true };
       } else if (mode === 'custom') {
         const oT = document.getElementById('dayModalOpenTime')?.value || '10:00';
         const cT = document.getElementById('dayModalCloseTime')?.value || '21:00';
-        _sellerDaySchedules[_currentModalDay] = { isClosed: false, openTime: oT, closeTime: cT };
+        _businessDaySchedules[_currentModalDay] = { isClosed: false, openTime: oT, closeTime: cT };
       } else {
-        delete _sellerDaySchedules[_currentModalDay];
+        delete _businessDaySchedules[_currentModalDay];
       }
       closeModal('dayScheduleModal');
       renderWeeklyDayPills();
     }
 
-    async function toggleSellerScheduleUseAsync(useSched) {
-      if (!currentSeller) return;
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
+    async function toggleBusinessScheduleUseAsync(useSched) {
+      if (!currentBusiness) return;
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
       if (!vendor) return;
       vendor.useSchedule = useSched;
       saveData(DATA);
@@ -6893,12 +6893,12 @@ Together, we grow stronger — one order at a time.`;
         try { await fsSaveVendor(vendor); } catch (e) { }
       }
       showToast(useSched ? 'Schedule auto-close enabled ✓' : 'Schedule auto-close disabled');
-      renderSellerPanel();
+      renderBusinessPanel();
       renderAll();
     }
 
-    function _sellerBusinessHTML(v) {
-      const isDeact = isCurrentSellerDeactivated();
+    function _businessBusinessHTML(v) {
+      const isDeact = isCurrentBusinessDeactivated();
       const statusInfo = getVendorStatusInfo(v);
       const isClosed = statusInfo.isClosed;
       const isManualClosed = v.isClosed === true;
@@ -6919,7 +6919,7 @@ Together, we grow stronger — one order at a time.`;
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
             <span style="font-size:.72rem;font-weight:700;color:var(--text-muted)">Manual Override</span>
             <label class="shop-toggle-switch">
-              <input type="checkbox" id="sf_shopStatusToggle" ${!isManualClosed ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleSellerShopStatus('${v.id}', this.checked)">
+              <input type="checkbox" id="sf_shopStatusToggle" ${!isManualClosed ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessShopStatus('${v.id}', this.checked)">
               <span class="shop-toggle-slider"></span>
             </label>
           </div>
@@ -6929,13 +6929,13 @@ Together, we grow stronger — one order at a time.`;
       const openTimeVal = schedObj.openTime || '10:00';
       const closeTimeVal = schedObj.closeTime || '21:00';
 
-      _sellerDaySchedules = { ...(schedObj.daySchedules || {}) };
+      _businessDaySchedules = { ...(schedObj.daySchedules || {}) };
 
       // Backwards compatibility for legacy openDays array
       if (schedObj.openDays && Array.isArray(schedObj.openDays)) {
         DAYS_OF_WEEK.forEach(day => {
-          if (!schedObj.openDays.includes(day) && !_sellerDaySchedules[day]) {
-            _sellerDaySchedules[day] = { isClosed: true };
+          if (!schedObj.openDays.includes(day) && !_businessDaySchedules[day]) {
+            _businessDaySchedules[day] = { isClosed: true };
           }
         });
       }
@@ -6944,7 +6944,7 @@ Together, we grow stronger — one order at a time.`;
 
       const saveSchedBtn = isDeact
         ? `<button class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed"><i class="fa fa-ban"></i> Account Deactivated</button>`
-        : `<button type="button" class="btn btn-primary" onclick="saveSellerSchedule()"><i class="fa fa-floppy-disk"></i> Save Schedule</button>`;
+        : `<button type="button" class="btn btn-primary" onclick="saveBusinessSchedule()"><i class="fa fa-floppy-disk"></i> Save Schedule</button>`;
 
       const scheduleCard = `
         <div class="s-card" style="margin-bottom:20px">
@@ -6955,7 +6955,7 @@ Together, we grow stronger — one order at a time.`;
           <!-- Master Checkbox 1: Custom Operating Schedule Toggle -->
           <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
             <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;font-size:0.92rem;color:var(--text)">
-              <input type="checkbox" id="sf_useScheduleToggle" ${v.useSchedule !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleSellerScheduleUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
+              <input type="checkbox" id="sf_useScheduleToggle" ${v.useSchedule !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessScheduleUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
               <span>Do you want a custom shop schedule date and time?</span>
             </label>
             <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;padding-left:30px">
@@ -7004,7 +7004,7 @@ Together, we grow stronger — one order at a time.`;
           <!-- Master Checkbox 2: Calendar Closures Toggle -->
           <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
             <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;font-size:0.92rem;color:var(--text)">
-              <input type="checkbox" id="sf_useCalendarToggle" ${v.useCalendarClosures !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleSellerCalendarUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
+              <input type="checkbox" id="sf_useCalendarToggle" ${v.useCalendarClosures !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessCalendarUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
               <span>Do you want to schedule shop closures for specific dates or calendar holidays?</span>
             </label>
             <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;padding-left:30px">
@@ -7042,7 +7042,7 @@ Together, we grow stronger — one order at a time.`;
 
       const saveBtn = isDeact
         ? `<button class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed" onclick="alert('Your account is deactivated. Please contact admin.');showToast('Your account is deactivated. Please contact admin.');"><i class="fa fa-ban"></i> Account Deactivated</button>`
-        : `<button class="btn btn-primary" onclick="saveSellerBusiness()"><i class="fa fa-save"></i> Save Details & Schedule</button>`;
+        : `<button class="btn btn-primary" onclick="saveBusinessBusiness()"><i class="fa fa-save"></i> Save Details & Schedule</button>`;
       return statusCard + scheduleCard + `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-store" style="color:var(--green)"></i> Business Details</div>
     <div class="form-grid">
@@ -7075,10 +7075,10 @@ Together, we grow stronger — one order at a time.`;
   </div>`;
     }
 
-    function _sellerMenuHTML(v) {
-      const isDeact = isCurrentSellerDeactivated();
-      const mode = getSellerAddMode(v.cat);
-      if (mode === 'details') return _sellerDetailsHTML(v);
+    function _businessMenuHTML(v) {
+      const isDeact = isCurrentBusinessDeactivated();
+      const mode = getBusinessAddMode(v.cat);
+      if (mode === 'details') return _businessDetailsHTML(v);
       const label = mode === 'item' ? 'Items' : 'Menu Items';
       const icon = mode === 'item' ? 'fa-bag-shopping' : 'fa-utensils';
       const menu = v.menu || [];
@@ -7106,7 +7106,7 @@ Together, we grow stronger — one order at a time.`;
   </div>`;
     }
 
-    function _sellerDetailsHTML(v) {
+    function _businessDetailsHTML(v) {
       return `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-align-left" style="color:var(--green)"></i> Business / Service Details</div>
     <div class="form-grid">
@@ -7170,7 +7170,7 @@ Together, we grow stronger — one order at a time.`;
       const rb = document.getElementById('sf_removeBtn');
       if (rb) rb.style.display = 'none';
     }
-    function _sellerChangePasswordHTML() {
+    function _businessChangePasswordHTML() {
       return `<div class="s-card" style="margin-top:18px">
     <div class="s-card-title"><i class="fa fa-lock" style="color:var(--green)"></i> Change Password</div>
     <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:16px">Enter your current password to verify, then set a new one.</p>
@@ -7199,7 +7199,7 @@ Together, we grow stronger — one order at a time.`;
     </div>
     <div id="cp_status" style="display:none;margin-bottom:10px;font-size:.84rem;padding:10px 14px;border-radius:8px"></div>
     <div class="modal-actions">
-      <button class="btn btn-primary" onclick="changeSellerPassword()"><i class="fa fa-key"></i> Update Password</button>
+      <button class="btn btn-primary" onclick="changeBusinessPassword()"><i class="fa fa-key"></i> Update Password</button>
     </div>
   </div>`;
     }
@@ -7211,7 +7211,7 @@ Together, we grow stronger — one order at a time.`;
       else { el.type = 'password'; btn.textContent = 'Show'; }
     }
 
-    async function changeSellerPassword() {
+    async function changeBusinessPassword() {
       const curEl = document.getElementById('cp_current');
       const newEl = document.getElementById('cp_new');
       const confEl = document.getElementById('cp_confirm');
@@ -7231,7 +7231,7 @@ Together, we grow stronger — one order at a time.`;
       if (!auth || !auth.currentUser) { setStatus('Not logged in. Please refresh and try again.', false); return; }
       try {
         // Re-authenticate to satisfy Firebase's recent-login requirement
-        const credential = firebase.auth.EmailAuthProvider.credential(currentSeller.email, curPw);
+        const credential = firebase.auth.EmailAuthProvider.credential(currentBusiness.email, curPw);
         await auth.currentUser.reauthenticateWithCredential(credential);
         // Now update the password
         await auth.currentUser.updatePassword(newPw);
@@ -7248,20 +7248,20 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    async function saveSellerSchedule() {
-      if (!currentSeller) return;
-      if (isCurrentSellerDeactivated()) {
+    async function saveBusinessSchedule() {
+      if (!currentBusiness) return;
+      if (isCurrentBusinessDeactivated()) {
         alert('Your account is deactivated. Please contact admin.');
         showToast('Your account is deactivated. Please contact admin.');
         return;
       }
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
       if (!vendor) return;
 
       const openTime = document.getElementById('sf_sched_open_time')?.value || '10:00';
       const closeTime = document.getElementById('sf_sched_close_time')?.value || '21:00';
 
-      const openDays = DAYS_OF_WEEK.filter(day => !(_sellerDaySchedules[day] && _sellerDaySchedules[day].isClosed));
+      const openDays = DAYS_OF_WEEK.filter(day => !(_businessDaySchedules[day] && _businessDaySchedules[day].isClosed));
 
       const holidayBadges = document.querySelectorAll('.holiday-date-badge');
       const closedDates = Array.from(holidayBadges).map(b => b.dataset.date);
@@ -7273,7 +7273,7 @@ Together, we grow stronger — one order at a time.`;
         openTime: openTime,
         closeTime: closeTime,
         openDays: openDays,
-        daySchedules: _sellerDaySchedules,
+        daySchedules: _businessDaySchedules,
         useCalendarClosures: useCalendarClosures,
         closedDates: closedDates
       };
@@ -7298,18 +7298,18 @@ Together, we grow stronger — one order at a time.`;
       }
 
       showToast('Shop Schedule saved successfully ✓');
-      renderSellerPanel();
+      renderBusinessPanel();
       renderAll();
     }
 
-    async function saveSellerBusiness() {
-      if (!currentSeller) return;
-      if (isCurrentSellerDeactivated()) {
+    async function saveBusinessBusiness() {
+      if (!currentBusiness) return;
+      if (isCurrentBusinessDeactivated()) {
         alert('Your account is deactivated. Please contact admin.');
         showToast('Your account is deactivated. Please contact admin.');
         return;
       }
-      const vendor = DATA.find(d => d.id === currentSeller.vendorId);
+      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
       if (!vendor) return;
 
       const ventureVal = (document.getElementById('sf_venture')?.value || '').trim();
@@ -7322,7 +7322,7 @@ Together, we grow stronger — one order at a time.`;
       const openTime = document.getElementById('sf_sched_open_time')?.value || '10:00';
       const closeTime = document.getElementById('sf_sched_close_time')?.value || '21:00';
 
-      const openDays = DAYS_OF_WEEK.filter(day => !(_sellerDaySchedules[day] && _sellerDaySchedules[day].isClosed));
+      const openDays = DAYS_OF_WEEK.filter(day => !(_businessDaySchedules[day] && _businessDaySchedules[day].isClosed));
 
       const holidayBadges = document.querySelectorAll('.holiday-date-badge');
       const closedDates = Array.from(holidayBadges).map(b => b.dataset.date);
@@ -7334,7 +7334,7 @@ Together, we grow stronger — one order at a time.`;
         openTime: openTime,
         closeTime: closeTime,
         openDays: openDays,
-        daySchedules: _sellerDaySchedules,
+        daySchedules: _businessDaySchedules,
         useCalendarClosures: useCalendarClosures,
         closedDates: closedDates
       };
@@ -7371,11 +7371,11 @@ Together, we grow stronger — one order at a time.`;
 
       _sfPendingImg = null;
       showToast('Business details & schedule saved ✓');
-      renderSellerPanel();
+      renderBusinessPanel();
       renderAll();
     }
 
-    /* ── Menu item modal (seller + admin) ── */
+    /* ── Menu item modal (business + admin) ── */
     let _editMenuVendorId = null, _editMenuItemId = null;
     function openMenuItemModal(vendorId, itemId) {
       _editMenuVendorId = vendorId; _editMenuItemId = itemId;
@@ -7412,7 +7412,7 @@ Together, we grow stronger — one order at a time.`;
       saveData(DATA);
       closeModal('menuItemModal');
       showToast(_editMenuItemId ? 'Item updated ✓' : 'Item added ✓');
-      if (currentSeller && currentSeller.vendorId === _editMenuVendorId) renderSellerPanel();
+      if (currentBusiness && currentBusiness.vendorId === _editMenuVendorId) renderBusinessPanel();
       if (isAdmin) renderAdminTab(_adminTab);
     }
     async function deleteMenuItem(vendorId, itemId) {
@@ -7423,7 +7423,7 @@ Together, we grow stronger — one order at a time.`;
       await fsSaveVendor(vendor);
       saveData(DATA);
       showToast('Item deleted');
-      if (currentSeller) renderSellerPanel();
+      if (currentBusiness) renderBusinessPanel();
       if (isAdmin) renderAdminTab(_adminTab);
     }
 
@@ -7525,7 +7525,7 @@ Together, we grow stronger — one order at a time.`;
 
     async function renderAdminAccounts(c) {
       if (!FB_READY) {
-        c.innerHTML = `<div class="s-card"><p style="color:var(--text-muted)">Firebase not configured. Seller accounts require Firebase Auth.</p></div>`;
+        c.innerHTML = `<div class="s-card"><p style="color:var(--text-muted)">Firebase not configured. Business accounts require Firebase Auth.</p></div>`;
         return;
       }
       // Reload vendors from Firestore so newly-created vendors show correctly
@@ -7548,10 +7548,10 @@ Together, we grow stronger — one order at a time.`;
         }
       }
       c.innerHTML = `<div class="s-card">
-    <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Create Seller Account</div>
+    <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Create Business Account</div>
     <div class="form-grid">
-      <div class="form-group"><label>Full Name</label><input id="na_name" placeholder="Seller's name"></div>
-      <div class="form-group"><label>Email</label><input type="email" id="na_email" placeholder="seller@email.com"></div>
+      <div class="form-group"><label>Full Name</label><input id="na_name" placeholder="Business's name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="na_email" placeholder="business@email.com"></div>
       <div class="form-group"><label>Password</label><input type="password" id="na_pw" placeholder="Temporary password"></div>
       <div class="form-group"><label>Assign Vendor</label>
         <select id="na_vendor">
@@ -7561,11 +7561,11 @@ Together, we grow stronger — one order at a time.`;
       </div>
     </div>
     <div class="modal-actions" style="margin-top:14px">
-      <button class="btn btn-primary" onclick="createSellerAccount()"><i class="fa fa-user-plus"></i> Create Account</button>
+      <button class="btn btn-primary" onclick="createBusinessAccount()"><i class="fa fa-user-plus"></i> Create Account</button>
     </div>
   </div>
   <div class="s-card">
-    <div class="s-card-title"><i class="fa fa-users" style="color:var(--green)"></i> Seller Accounts (${accounts.length})</div>
+    <div class="s-card-title"><i class="fa fa-users" style="color:var(--green)"></i> Business Accounts (${accounts.length})</div>
     ${accountsErr ? `<div style="color:var(--danger);font-size:.82rem;padding:8px 0"><i class="fa fa-exclamation-triangle"></i> ${accountsErr}</div>` : ''}
     ${accounts.length ? `<table class="menu-table">
       <thead><tr><th>Name</th><th>Email</th><th>Vendor</th><th>Subscription</th><th>Actions</th></tr></thead>
@@ -7589,16 +7589,16 @@ Together, we grow stronger — one order at a time.`;
               <button class="btn btn-sm btn-outline" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 30)" title="Grant 30-day subscription"><i class="fa fa-crown" style="color:var(--gold)"></i> +30d</button>
               <button class="btn btn-sm btn-outline" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 365)" title="Grant 1-year subscription"><i class="fa fa-crown" style="color:var(--gold)"></i> +1y</button>
               <button class="btn btn-sm btn-outline" onclick="adminCancelSubscription('${a.uid}', '${a.vendorId}')" title="Cancel Subscription" style="color:var(--danger)"><i class="fa fa-ban"></i> Cancel</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteSellerAccount('${a.uid}','${a.email}')"><i class="fa fa-trash"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${a.uid}','${a.email}')"><i class="fa fa-trash"></i></button>
             </div>
           </td>
         </tr>`;
       }).join('')}</tbody>
-    </table>`: `<div class="empty-state" style="padding:20px"><i class="fa fa-users"></i><p>No seller accounts yet.</p></div>`}
+    </table>`: `<div class="empty-state" style="padding:20px"><i class="fa fa-users"></i><p>No business accounts yet.</p></div>`}
   </div>`;
     }
 
-    async function createSellerAccount() {
+    async function createBusinessAccount() {
       const name = document.getElementById('na_name').value.trim();
       const email = document.getElementById('na_email').value.trim();
       const pw = document.getElementById('na_pw').value;
@@ -7612,7 +7612,7 @@ Together, we grow stronger — one order at a time.`;
         // Write account doc using secondaryDb — request.auth.uid matches cred.user.uid,
         // satisfying the isOwner(uid) rule in Firestore security rules.
         await secondaryDb.collection('accounts').doc(cred.user.uid).set({
-          email, displayName: name, vendorId: vendorId || null, role: 'seller',
+          email, displayName: name, vendorId: vendorId || null, role: 'business',
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         await secondaryAuth.signOut();
@@ -7626,7 +7626,7 @@ Together, we grow stronger — one order at a time.`;
         if (tbody) {
           const v = DATA.find(d => d.id === vendorId);
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td><strong>${name}</strong></td><td style="font-size:.78rem">${email}</td><td style="font-size:.78rem">${v ? v.venture : '(unassigned)'}</td><td><button class="btn btn-sm btn-danger" onclick="deleteSellerAccount('${cred.user.uid}','${email}')"><i class="fa fa-trash"></i> Remove</button></td>`;
+          tr.innerHTML = `<td><strong>${name}</strong></td><td style="font-size:.78rem">${email}</td><td style="font-size:.78rem">${v ? v.venture : '(unassigned)'}</td><td><button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${cred.user.uid}','${email}')"><i class="fa fa-trash"></i> Remove</button></td>`;
           tbody.appendChild(tr);
         } else {
           // No table yet (was empty) — re-render after a safe delay
@@ -7743,22 +7743,22 @@ Together, we grow stronger — one order at a time.`;
       });
     }
 
-    async function deleteSellerAccount(uid, email) {
-      const sellerAcc = typeof _adminAccountsCache !== 'undefined' ? _adminAccountsCache.find(a => a.uid === uid) : null;
-      const sellerVendor = DATA.find(d => d.ownerUid === uid || d.id === sellerAcc?.vendorId || d.contactEmail === email);
-      const sellerName = sellerAcc?.displayName || sellerVendor?.venture || sellerVendor?.contact || email;
+    async function deleteBusinessAccount(uid, email) {
+      const businessAcc = typeof _adminAccountsCache !== 'undefined' ? _adminAccountsCache.find(a => a.uid === uid) : null;
+      const businessVendor = DATA.find(d => d.ownerUid === uid || d.id === businessAcc?.vendorId || d.contactEmail === email);
+      const businessName = businessAcc?.displayName || businessVendor?.venture || businessVendor?.contact || email;
 
       const res = await confirmAction({
-        title: 'Delete Seller Account & Remove Listing?',
-        message: `Are you sure you want to permanently delete the seller record for "${sellerName}" (${email})?`,
-        warning: 'This action will permanently remove all database records for this seller from the application.',
-        confirmText: 'Yes, Delete Seller',
+        title: 'Delete Business Account & Remove Listing?',
+        message: `Are you sure you want to permanently delete the business record for "${businessName}" (${email})?`,
+        warning: 'This action will permanently remove all database records for this business from the application.',
+        confirmText: 'Yes, Delete Business',
         cancelText: 'Cancel',
         danger: true,
         showInput: true,
         inputRequired: true,
         inputLabel: 'Reason for Deletion * (Compulsory):',
-        inputPlaceholder: 'Enter compulsory reason why this seller account is being removed…'
+        inputPlaceholder: 'Enter compulsory reason why this business account is being removed…'
       });
 
       if (!res || typeof res !== 'object' || !res.confirmed) return;
@@ -7770,7 +7770,7 @@ Together, we grow stronger — one order at a time.`;
       }
 
       try {
-        showToast('Deleting seller account & database records…');
+        showToast('Deleting business account & database records…');
 
         const adminEmail = auth.currentUser ? auth.currentUser.email : 'Admin';
         const adminUid = auth.currentUser ? auth.currentUser.uid : 'admin';
@@ -7780,12 +7780,12 @@ Together, we grow stronger — one order at a time.`;
           || 'Not provided';
 
         const logEntry = {
-          type: 'seller_account_deletion',
-          targetName: sellerName,
+          type: 'business_account_deletion',
+          targetName: businessName,
           targetEmail: email,
           targetUid: uid,
-          vendorId: sellerVendor ? sellerVendor.id : null,
-          ventureName: sellerVendor ? sellerVendor.venture : null,
+          vendorId: businessVendor ? businessVendor.id : null,
+          ventureName: businessVendor ? businessVendor.venture : null,
           reason: deletionReason,
           deletedByAdminEmail: adminEmail,
           deletedByAdminUid: adminUid,
@@ -7809,7 +7809,7 @@ Together, we grow stronger — one order at a time.`;
         localLogs.unshift(logEntry);
         localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
 
-        let vendorId = sellerAcc ? sellerAcc.vendorId : null;
+        let vendorId = businessAcc ? businessAcc.vendorId : null;
         try {
           const accDoc = await db.collection('accounts').doc(uid).get();
           if (accDoc.exists) vendorId = accDoc.data().vendorId;
@@ -7830,7 +7830,7 @@ Together, we grow stronger — one order at a time.`;
         saveData(DATA);
 
         try {
-          const reqSnap = await db.collection('seller_requests').where('email', '==', email).get();
+          const reqSnap = await db.collection('business_requests').where('email', '==', email).get();
           reqSnap.forEach(doc => doc.ref.delete());
         } catch(e){}
         try {
@@ -7850,7 +7850,7 @@ Together, we grow stronger — one order at a time.`;
           } catch(e){}
         }
 
-        showToast(`Seller account for ${email} deleted & logged in history ✓`);
+        showToast(`Business account for ${email} deleted & logged in history ✓`);
         const c = document.getElementById('adminTabContent');
         if (c) renderAdminAccounts(c);
         renderAll();
@@ -7880,7 +7880,7 @@ Together, we grow stronger — one order at a time.`;
         <div class="s-card">
           <div class="s-card-title"><i class="fa fa-history" style="color:var(--green)"></i> Admin Deletion History & Audit Logs (${logs.length})</div>
           <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:14px">
-            Audit log records of all seller removals, including admin email, admin mobile number, reason for deletion, and timestamp.
+            Audit log records of all business removals, including admin email, admin mobile number, reason for deletion, and timestamp.
           </p>
           ${logs.length ? `
             <div style="overflow-x:auto">
@@ -7930,25 +7930,25 @@ Together, we grow stronger — one order at a time.`;
         <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Off by default. When on, the "Products &amp; Services" row (samosa, tea, cookies, etc.) appears on the customer Home tab below Categories.</p>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
-        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-layer-group" style="color:var(--green)"></i> Seller Registration Form — Sub-Category Selection Limit</div>
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-layer-group" style="color:var(--green)"></i> Business Registration Form — Sub-Category Selection Limit</div>
         <div class="form-group" style="margin:0">
           <label>Max Sub-Categories Allowed</label>
           <input type="number" id="cfg_maxSubCategories" min="1" max="10" value="${SITE_CONFIG.maxSubCategories || 3}" placeholder="3">
-          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Maximum number of sub-categories a seller can select during registration (default: 3).</p>
+          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Maximum number of sub-categories a business can select during registration (default: 3).</p>
         </div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
-        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-user-plus" style="color:var(--green)"></i> Seller Registration Form — Society Delivery Field</div>
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-user-plus" style="color:var(--green)"></i> Business Registration Form — Society Delivery Field</div>
         <div class="form-group" style="margin-bottom:10px">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" id="cfg_showSellerCanDeliver" ${SITE_CONFIG.showSellerCanDeliver !== false ? 'checked' : ''} style="accent-color:var(--green);width:auto">
-            Show Society Delivery Field in Seller Registration Modal
+            <input type="checkbox" id="cfg_showBusinessCanDeliver" ${SITE_CONFIG.showBusinessCanDeliver !== false ? 'checked' : ''} style="accent-color:var(--green);width:auto">
+            Show Society Delivery Field in Business Registration Modal
           </label>
-          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">If checked, the delivery dropdown field will be shown to sellers during registration. If unchecked, it will be hidden.</p>
+          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">If checked, the delivery dropdown field will be shown to businesses during registration. If unchecked, it will be hidden.</p>
         </div>
         <div class="form-group" style="margin:0">
           <label>Society Delivery Field Label Text</label>
-          <input id="cfg_sellerCanDeliverLabel" value="${esc(SITE_CONFIG.sellerCanDeliverLabel || 'Will you be able to deliver within the society? *')}" placeholder="Will you be able to deliver within the society? *">
+          <input id="cfg_businessCanDeliverLabel" value="${esc(SITE_CONFIG.businessCanDeliverLabel || 'Will you be able to deliver within the society? *')}" placeholder="Will you be able to deliver within the society? *">
         </div>
       </div>
       <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook URL</label>
@@ -7989,13 +7989,13 @@ Together, we grow stronger — one order at a time.`;
         <p style="font-size:.78rem;color:var(--text-muted);margin:14px 0 8px">Optional: a separate template for customer OTP emails (include variable: <code>message</code> or <code>otp_code</code>). Leave blank to reuse the Template ID above.</p>
         <div class="form-group" style="margin:0 0 14px;max-width:260px"><label style="font-size:.75rem">OTP Template ID</label>
           <input id="cfg_ejsOtpTemplateId" placeholder="template_xxxxxxx" value="${esc(SITE_CONFIG.ejsOtpTemplateId)}"></div>
-        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:8px">Seller approval/rejection emails reuse the Template ID above by default. <strong>Important:</strong> that template's "To Email" setting on EmailJS.com must be the dynamic <code>{{to_email}}</code> placeholder, not a fixed address — if it's hardcoded to your contact address (common default), seller emails will silently misdeliver to you instead of the seller. Only fill in the field below if you have a spare template on a paid EmailJS plan and want seller emails to use a separate one instead.</p>
-        <div class="form-group" style="margin:0;max-width:260px"><label style="font-size:.75rem">Seller Status Template ID (optional override)</label>
-          <input id="cfg_ejsSellerTemplateId" placeholder="Leave blank to reuse Template ID above" value="${esc(SITE_CONFIG.ejsSellerTemplateId)}"></div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:8px">Business approval/rejection emails reuse the Template ID above by default. <strong>Important:</strong> that template's "To Email" setting on EmailJS.com must be the dynamic <code>{{to_email}}</code> placeholder, not a fixed address — if it's hardcoded to your contact address (common default), business emails will silently misdeliver to you instead of the business. Only fill in the field below if you have a spare template on a paid EmailJS plan and want business emails to use a separate one instead.</p>
+        <div class="form-group" style="margin:0;max-width:260px"><label style="font-size:.75rem">Business Status Template ID (optional override)</label>
+          <input id="cfg_ejsBusinessTemplateId" placeholder="Leave blank to reuse Template ID above" value="${esc(SITE_CONFIG.ejsBusinessTemplateId)}"></div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
         <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-mobile-screen" style="color:var(--green)"></i> Mobile OTP — VerifyNow (Message Central) Setup</div>
-        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Create a free account at <strong>messagecentral.com</strong> (VerifyNow product). Paste your Customer ID, account email and password below. Used to verify sellers' mobile numbers during registration.</p>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Create a free account at <strong>messagecentral.com</strong> (VerifyNow product). Paste your Customer ID, account email and password below. Used to verify businesses' mobile numbers during registration.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
           <div class="form-group" style="margin:0"><label style="font-size:.75rem">Customer ID</label>
             <input id="cfg_vnCustomerId" placeholder="C-xxxxxxxxxxxx" value="${esc(SITE_CONFIG.vnCustomerId)}"></div>
@@ -8006,8 +8006,8 @@ Together, we grow stronger — one order at a time.`;
         </div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
-        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-credit-card" style="color:var(--green)"></i> Razorpay Payment Gateway &amp; Seller Subscription Config</div>
-        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Enter your Razorpay Key ID and Secret to enable seller subscription payments via Razorpay Checkout (UPI, Cards, NetBanking, Wallets).</p>
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-credit-card" style="color:var(--green)"></i> Razorpay Payment Gateway &amp; Business Subscription Config</div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Enter your Razorpay Key ID and Secret to enable business subscription payments via Razorpay Checkout (UPI, Cards, NetBanking, Wallets).</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div class="form-group" style="margin:0"><label style="font-size:.75rem">Razorpay Key ID *</label>
             <input id="cfg_rzpKeyId" placeholder="rzp_test_..." value="${esc(SITE_CONFIG.rzpKeyId || '')}"></div>
@@ -8231,8 +8231,8 @@ Together, we grow stronger — one order at a time.`;
         heroSub: document.getElementById('cfg_heroSub').value.trim(),
         showProductListing: document.getElementById('cfg_showProductListing').checked,
         maxSubCategories: parseInt(document.getElementById('cfg_maxSubCategories')?.value) || 3,
-        showSellerCanDeliver: document.getElementById('cfg_showSellerCanDeliver').checked,
-        sellerCanDeliverLabel: document.getElementById('cfg_sellerCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
+        showBusinessCanDeliver: document.getElementById('cfg_showBusinessCanDeliver').checked,
+        businessCanDeliverLabel: document.getElementById('cfg_businessCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
         fbUrl: document.getElementById('cfg_fbUrl').value.trim(),
         igUrl: document.getElementById('cfg_igUrl').value.trim(),
         ytUrl: document.getElementById('cfg_ytUrl').value.trim(),
@@ -8249,7 +8249,7 @@ Together, we grow stronger — one order at a time.`;
         ejsServiceId: document.getElementById('cfg_ejsServiceId').value.trim(),
         ejsTemplateId: document.getElementById('cfg_ejsTemplateId').value.trim(),
         ejsOtpTemplateId: document.getElementById('cfg_ejsOtpTemplateId').value.trim(),
-        ejsSellerTemplateId: document.getElementById('cfg_ejsSellerTemplateId').value.trim(),
+        ejsBusinessTemplateId: document.getElementById('cfg_ejsBusinessTemplateId').value.trim(),
         vnCustomerId: document.getElementById('cfg_vnCustomerId').value.trim(),
         vnEmail: document.getElementById('cfg_vnEmail').value.trim(),
         vnPassword: document.getElementById('cfg_vnPassword').value.trim(),
@@ -8434,8 +8434,8 @@ Together, we grow stronger — one order at a time.`;
       // Load approved reviews so tiles show ratings
       fsLoadApprovedReviews().then(() => renderAll()).catch(() => { });
 
-      // Set up seller auth listener
-      setupSellerAuth();
+      // Set up business auth listener
+      setupBusinessAuth();
 
       // Initial render from localStorage / SEED
       buildTabs(); renderAll(); renderGlobalCategoryBoxes(); renderGlobalProductBoxes();

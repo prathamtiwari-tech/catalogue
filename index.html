@@ -7421,7 +7421,7 @@
       const custNotifs = approved.filter(n => n.targetAudience === 'all_customers' || n.targetAudience === 'everyone' || (n.targetAudience === 'specific_group' && (!socName || !n.groupFilter || n.groupFilter.trim().toLowerCase() === socName.trim().toLowerCase())));
       const unreadCust = custNotifs.filter(n => !(n.readBy || []).includes(uid)).length;
 
-      const businessNotifs = approved.filter(n => n.targetAudience === 'all_businesses' || n.targetAudience === 'all_sellers' || n.targetAudience === 'ALL_BUSINESSES' || n.targetAudience === 'ALL_SELLERS' || n.targetAudience === 'everyone');
+      const businessNotifs = approved.filter(n => n.targetAudience === 'all_businesses' || n.targetAudience === 'everyone');
       const unreadBusiness = businessNotifs.filter(n => !(n.readBy || []).includes(uid)).length;
 
       const totalUnread = unreadCust + ((typeof currentBusiness !== 'undefined' && currentBusiness) ? unreadBusiness : 0);
@@ -7509,7 +7509,7 @@
       if (_activeNotifFeedTab === 'cust') {
         filtered = approved.filter(n => n.targetAudience === 'all_customers' || n.targetAudience === 'everyone' || (n.targetAudience === 'specific_group' && (!socName || !n.groupFilter || n.groupFilter.trim().toLowerCase() === socName.trim().toLowerCase())));
       } else {
-        filtered = approved.filter(n => n.targetAudience === 'all_businesses' || n.targetAudience === 'all_sellers' || n.targetAudience === 'ALL_BUSINESSES' || n.targetAudience === 'ALL_SELLERS' || n.targetAudience === 'everyone');
+        filtered = approved.filter(n => n.targetAudience === 'all_businesses' || n.targetAudience === 'everyone');
       }
 
       if (!filtered.length) {
@@ -7980,22 +7980,6 @@
       _switchAdminNotifSubTab('pending');
     }
 
-    function formatSenderRole(role) {
-      if (!role) return '—';
-      const r = String(role).trim().toLowerCase();
-      if (r === 'seller') return 'business';
-      return role;
-    }
-
-    function formatTargetAudience(aud) {
-      if (!aud) return '—';
-      const a = String(aud).trim();
-      if (a === 'ALL_SELLERS') return 'ALL_BUSINESSES';
-      if (a === 'all_sellers') return 'all_businesses';
-      if (a.toLowerCase() === 'seller') return 'business';
-      return aud;
-    }
-
     function _renderAdminNotifPending(c) {
       const pending = _notifList.filter(n => n.status === 'pending');
       if (!pending.length) {
@@ -8009,7 +7993,7 @@
           <tr>
             <td><strong>${esc(n.senderName)}</strong><br><span style="font-size:.72rem;color:var(--text-muted)">${esc(n.senderId)}</span></td>
             <td><strong style="font-size:.85rem">${esc(n.title)}</strong><br><span style="font-size:.76rem;color:var(--text-muted)">${esc(n.body.replace(/<[^>]*>?/gm, '')).slice(0,80)}…</span></td>
-            <td><span class="notif-purpose-tag purpose-${n.purpose || 'promo'}">${esc(formatTargetAudience(n.targetAudience))}</span></td>
+            <td><span class="notif-purpose-tag purpose-${n.purpose || 'promo'}">${esc(n.targetAudience)}</span></td>
             <td style="font-size:.74rem">${n.createdAt?.seconds ? new Date(n.createdAt.seconds * 1000).toLocaleString() : '—'}</td>
             <td style="white-space:nowrap">
               <button class="btn btn-sm btn-primary" onclick="approveNotification('${n.id}')"><i class="fa fa-check"></i> Approve</button>
@@ -8027,9 +8011,9 @@
         <thead><tr><th>Sender</th><th>Title</th><th>Audience</th><th>Status</th><th>Date</th></tr></thead>
         <tbody>` + _notifList.map(n => `
           <tr>
-            <td><strong>${esc(n.senderName)}</strong> (${esc(formatSenderRole(n.senderRole))})</td>
+            <td><strong>${esc(n.senderName)}</strong> (${esc(n.senderRole)})</td>
             <td>${esc(n.title)}</td>
-            <td><span class="notif-purpose-tag purpose-${n.purpose || 'promo'}">${esc(formatTargetAudience(n.targetAudience))}</span></td>
+            <td><span class="notif-purpose-tag purpose-${n.purpose || 'promo'}">${esc(n.targetAudience)}</span></td>
             <td>${n.status === 'approved' ? '<span style="color:var(--green);font-weight:700">✓ Approved</span>' : n.status === 'rejected' ? '<span style="color:var(--danger);font-weight:700">✕ Rejected</span>' : '<span style="color:#b8860b;font-weight:700">⏳ Pending</span>'}</td>
             <td style="font-size:.74rem">${n.createdAt?.seconds ? new Date(n.createdAt.seconds * 1000).toLocaleString() : '—'}</td>
           </tr>`).join('') + `</tbody></table></div>`;
@@ -8083,9 +8067,9 @@
         <thead><tr><th>Sender Role</th><th>Purpose</th><th>Target</th><th>OTP Status</th><th>Timestamp</th></tr></thead>
         <tbody>` + _auditLogs.map(a => `
           <tr>
-            <td><strong>${esc(formatSenderRole(a.senderRole))}</strong> (${esc(a.senderId)})</td>
+            <td><strong>${esc(a.senderRole)}</strong> (${esc(a.senderId)})</td>
             <td><span class="notif-purpose-tag purpose-${a.purpose || 'promo'}">${esc(a.purpose)}</span></td>
-            <td>${esc(formatTargetAudience(a.targetAudience))}</td>
+            <td>${esc(a.targetAudience)}</td>
             <td><span style="color:var(--green);font-weight:700">✓ Verified OTP (${esc(a.otpMobile || '')})</span></td>
             <td style="font-size:.74rem">${a.timestamp?.seconds ? new Date(a.timestamp.seconds * 1000).toLocaleString() : '—'}</td>
           </tr>`).join('') + `</tbody></table></div>`;

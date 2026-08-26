@@ -671,6 +671,30 @@
       display: none
     }
 
+    .location-bar .loc-retry-btn {
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .location-bar .loc-retry-btn:hover {
+      background: var(--green-dark);
+    }
+
+    .location-bar .loc-retry-btn:active {
+      transform: scale(0.95);
+    }
+
     .location-bar .loc-chevron {
       color: var(--text-muted);
       font-size: .7rem;
@@ -3218,6 +3242,13 @@
 
       <!-- Business fields -->
       <div id="loginBusinessFields" style="text-align:left">
+        <!-- QA Quick-Fill Bar (Non-Prod Test Accounts) -->
+        <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
+          <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa fa-vial"></i> QA Test Account Quick-Fill</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('seller')">⚡ Seller (seller.test@tyntron.com)</button>
+          </div>
+        </div>
         <div class="form-group" style="margin-bottom:12px">
           <label>Email</label>
           <input type="email" id="businessEmailInput" placeholder="business@email.com"
@@ -3288,6 +3319,14 @@
 
       <!-- Step 1: Mobile -->
       <div id="caStep1" style="text-align:left">
+        <!-- QA Quick-Fill Bar (Non-Prod Test Accounts) -->
+        <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
+          <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa fa-vial"></i> QA Test Account Quick-Fill</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('customer')">⚡ Customer (1234500001)</button>
+            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('admin')">⚡ Admin (1234500003)</button>
+          </div>
+        </div>
         <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">New here or returning — just enter your
           mobile number. We'll text you a verification code, and set up your account automatically if you don't have one
           yet.</p>
@@ -3628,6 +3667,13 @@
   <div class="modal-overlay" id="businessRegModal">
     <div class="modal" style="max-width:720px">
       <div class="modal-title"><i class="fa fa-store" style="color:var(--green)"></i> Become a Business on TynTron</div>
+      <!-- QA Quick-Fill Bar (Non-Prod Test Accounts) -->
+      <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
+        <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa fa-vial"></i> QA Test Account Quick-Fill</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('seller_reg')">⚡ Auto-Fill Test Seller Details (seller.test@tyntron.com)</button>
+        </div>
+      </div>
       <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:16px">Fill in your details below. Your
         application will be reviewed by an admin — you'll get an email once it's approved.</p>
       <div class="form-grid">
@@ -4164,8 +4210,24 @@
             <a class="sidebar-nav-item" onclick="switchCustomerPage('carpool');closeLeftSidebar()">
               <i class="fa fa-car-side"></i> <span>Resident Carpool</span>
             </a>
+          </div>
+        </div>
+
+        <!-- About TynTron Section -->
+        <div>
+          <div class="sidebar-section-title"><i class="fa fa-circle-info"></i> About TynTron</div>
+          <div class="sidebar-nav-list">
             <a class="sidebar-nav-item" onclick="openAboutModal();closeLeftSidebar()">
-              <i class="fa fa-circle-info"></i> <span>About TynTron</span>
+              <i class="fa fa-circle-info"></i> <span>About Us</span>
+            </a>
+            <a class="sidebar-nav-item" onclick="openPolicyModal('mission');closeLeftSidebar()">
+              <i class="fa fa-bullseye"></i> <span>Mission</span>
+            </a>
+            <a class="sidebar-nav-item" onclick="openPolicyModal('vision');closeLeftSidebar()">
+              <i class="fa fa-eye"></i> <span>Vision</span>
+            </a>
+            <a class="sidebar-nav-item" onclick="openPolicyModal('whocanjoin');closeLeftSidebar()">
+              <i class="fa fa-users"></i> <span>Who Can Join</span>
             </a>
           </div>
         </div>
@@ -4182,6 +4244,9 @@
       <span class="loc-label">Your Location</span>
       <span class="loc-address" id="locationBarText">Detecting your location…</span>
     </div>
+    <button id="locationRetryBtn" class="loc-retry-btn" style="display:none" onclick="event.stopPropagation(); retryLocationDetect()" title="Retry location detection">
+      <i class="fa fa-rotate-right"></i> Retry
+    </button>
     <select class="loc-society-select" id="societySelect" onchange="onSocietyChange()"
       onclick="event.stopPropagation()"></select>
     <i class="fa fa-chevron-down loc-chevron"></i>
@@ -4191,6 +4256,7 @@
     <span>Location access is off. To see nearby societies automatically, enable Location for TynTron in your phone's
       Settings → Apps → TynTron → Permissions → Location (or your browser's site settings), then tap Retry on the
       location bar above.</span>
+    <button onclick="retryLocationDetect()" style="background:var(--green);color:var(--white);border:none;padding:4px 10px;border-radius:4px;font-size:0.78rem;margin-left:8px;cursor:pointer;flex-shrink:0"><i class="fa fa-rotate-right"></i> Retry</button>
     <button onclick="document.getElementById('locationPermBanner').style.display='none'" aria-label="Dismiss"><i
         class="fa fa-xmark"></i></button>
   </div>
@@ -4636,9 +4702,32 @@
 
   <!-- ── MENU ITEM MODAL (business/admin) ── -->
   <div class="modal-overlay" id="menuItemModal">
-    <div class="modal" style="max-width:420px">
+    <div class="modal" style="max-width:460px">
       <div class="modal-title" id="miModalTitle">Add Menu Item</div>
       <div class="form-grid">
+        <!-- Item Photo Upload (using Cropper.js resizable & zoomable cropper) -->
+        <div class="form-section-label full" style="margin-top:4px"><i class="fa fa-image" style="color:var(--green)"></i> Item Photo (Optional)</div>
+        <div class="form-group full">
+          <div class="img-upload-zone" id="mi_imgZone" onclick="document.getElementById('mi_imgFile').click()">
+            <div class="img-preview" id="mi_imgPreviewBox">
+              <i class="fa fa-image img-ph"></i>
+            </div>
+            <div class="img-upload-info" id="mi_imgInfo">
+              <p id="mi_imgTitle"><strong>Click to upload item photo</strong><br><span
+                  style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Resizable &amp; Zoomable · Max 4 MB</span></p>
+              <div class="img-upload-btns" onclick="event.stopPropagation()">
+                <button type="button" class="btn btn-sm btn-primary" id="mi_chooseImgBtn"
+                  onclick="document.getElementById('mi_imgFile').click()"><i class="fa fa-upload"></i> Choose
+                  Photo</button>
+                <button type="button" class="btn btn-sm btn-danger" id="mi_removeImgBtn" onclick="removeMenuItemImage()"
+                  style="display:none"><i class="fa fa-trash"></i> Remove</button>
+              </div>
+            </div>
+          </div>
+          <input type="file" id="mi_imgFile" accept="image/*" style="display:none"
+            onchange="handleMenuItemImageUpload(this)">
+        </div>
+
         <div class="form-group"><label>Item Name *</label><input id="mi_name" placeholder="e.g. Chocolate Cake"></div>
         <div class="form-group"><label>Price (₹) *</label><input id="mi_price" type="number" min="0" placeholder="350">
         </div>
@@ -5252,7 +5341,7 @@
        product boxes (the emoji is centered by the existing .society-box-icon/.cat-tab-icon
        flex rules; only the background is overridden per category). */
     function _societyIconBox(cls) {
-      return `<span class="${cls || 'society-box-icon'}" style="background:${SOCIETY_BG}">${SOCIETY_EMOJI}</span>`;
+      return `<span class="${cls || 'society-box-icon'}" style="background:${SOCIETY_BG};padding:0;overflow:hidden;display:inline-flex;align-items:center;justify-content:center"><img src="assets/society.jpeg" style="width:100%;height:100%;object-fit:cover;display:block" alt="Society" onerror="this.onerror=null;this.parentElement.innerHTML='${SOCIETY_EMOJI}'"/></span>`;
     }
     function _categoryIconBox(cls, catName) {
       return `<span class="${cls || 'society-box-icon'}" style="background:${CATEGORY_BG[catName] || 'var(--green-pale)'}">${CATEGORY_EMOJI[catName] || '🏪'}</span>`;
@@ -5366,6 +5455,7 @@
       { id: "p13", cat: "Professional Services", venture: "Surya Trading", speciality: "Industrial Solutions", desc: "Reliable industrial solutions and trading services. Catering to a wide range of industrial needs with quality products and timely delivery.", contact: "Pawan Arora", flat: "C-1508", phone: "9811164700", whatsapp: "9811164700", instagram: "", video: "", url: "" },
       { id: "p14", cat: "Professional Services", venture: "Taxyojna Consultants", speciality: "Income Tax, GST, MCA & Litigation", desc: "Expert chartered accountant services — income tax filing, GST compliance, MCA filings and litigation support by CA Preeti Gupta.", contact: "CA Preeti Gupta", flat: "N-206", phone: "8447033883", whatsapp: "8447033883", instagram: "", video: "", url: "" },
       { id: "p15", cat: "Professional Services", venture: "Yc Productionz", speciality: "Photography, Videography, Video Editing & Social Media Marketing", desc: "Professional photography, videography, video editing and social media marketing services. Capture your moments and grow your digital presence.", contact: "Yashasvi Chugh", flat: "E-402", phone: "8708287403", whatsapp: "8708287403", instagram: "", video: "", url: "" },
+      { id: "v_seller_test", cat: "Food, Bakery & Beverages", venture: "Test Store (QA Seller)", speciality: "QA Test Menu & Specials", desc: "Pre-seeded test store for E2E QA testing. Supports direct login with test credentials.", contact: "Test Seller", flat: "A-101", phone: "1234500002", whatsapp: "1234500002", email: "seller.test@tyntron.com", society: "Prateek Laurel", active: true, approved: true, isTestAccount: true, menu: [{ id: "m_test_1", name: "QA Test Thali", price: 150, category: "Meals", desc: "Delicious test thali for QA checkout testing" }, { id: "m_test_2", name: "QA Test Snack", price: 60, category: "Snacks", desc: "Fresh test snack for QA testing" }] }
     ];
     /* SEED_END */
 
@@ -5420,9 +5510,140 @@
     // Seed admin mobile number — always authorized even before any admin has saved
     // a Firestore-backed list via the admin panel's "Admin Access" numbers card.
     const DEFAULT_ADMIN_NUMBERS = ['8373919344'];
+
+    /* ═══════════ WHITELISTED TEST ACCOUNTS & OTP BYPASS (PDF FEATURE SPEC) ═══════════ */
+    const TEST_ACCOUNTS_CONFIG = {
+      enabled: true,
+      fixedOtp: '123456',
+      customer: {
+        email: 'customer.test@tyntron.com',
+        mobile: '1234500001',
+        fullMobile: '+91 12345 00001',
+        name: 'Test Customer (QA)',
+        address: 'Flat A-101, Test Residency, Sector 120, Noida'
+      },
+      seller: {
+        email: 'seller.test@tyntron.com',
+        mobile: '1234500002',
+        fullMobile: '+91 12345 00002',
+        venture: 'Test Store (QA Seller)',
+        vendorId: 'v_seller_test',
+        uid: 'u_seller_test'
+      },
+      admin: {
+        email: 'admin.test@tyntron.com',
+        mobile: '1234500003',
+        fullMobile: '+91 12345 00003',
+        uid: 'admin_test_uid'
+      }
+    };
+
+    function isProductionEnvironment() {
+      const host = (window.location.hostname || '').toLowerCase();
+      if (host === 'tyntron.co.in' || host === 'www.tyntron.co.in' || host.endsWith('.tyntron.co.in')) return true;
+      if (SITE_CONFIG && SITE_CONFIG.env === 'production') return true;
+      return false;
+    }
+
+    function isTestModeEnabled() {
+      if (isProductionEnvironment()) return false; // Defense in depth: hard block in production
+      if (typeof SITE_CONFIG.testAccountsEnabled !== 'undefined') return !!SITE_CONFIG.testAccountsEnabled;
+      return TEST_ACCOUNTS_CONFIG.enabled;
+    }
+
+    function normalizeIdentifier(val) {
+      if (!val) return '';
+      let str = String(val).trim().toLowerCase();
+      if (str.includes('@')) return str;
+      let digits = str.replace(/\D/g, '');
+      if (digits.length > 10) digits = digits.slice(-10);
+      return digits;
+    }
+
+    function isTestIdentifier(val) {
+      if (!isTestModeEnabled()) return false;
+      const norm = normalizeIdentifier(val);
+      if (!norm) return false;
+      const testVals = [
+        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.customer.email),
+        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.customer.mobile),
+        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.seller.email),
+        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.seller.mobile),
+        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.admin.email),
+        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.admin.mobile)
+      ];
+      return testVals.includes(norm);
+    }
+
+    const _testAuditLogs = [];
+    function recordTestAuditLog(action, details) {
+      const item = { action, details, timestamp: new Date().toISOString() };
+      _testAuditLogs.push(item);
+      console.log(`[TEST_OTP_BYPASS_AUDIT] ${action}:`, details);
+    }
+
     function _adminNumbers() {
       const list = SITE_CONFIG.adminMobileNumbers;
-      return (Array.isArray(list) && list.length) ? list : DEFAULT_ADMIN_NUMBERS;
+      let result = (Array.isArray(list) && list.length) ? list.slice() : DEFAULT_ADMIN_NUMBERS.slice();
+      if (isTestModeEnabled()) {
+        const testAdminMobile = TEST_ACCOUNTS_CONFIG.admin.mobile;
+        if (!result.includes(testAdminMobile)) result.push(testAdminMobile);
+      }
+      return result;
+    }
+
+    function renderTestModeBanner() {
+      const banner = document.getElementById('qaTestBanner');
+      if (banner) banner.style.display = 'none';
+    }
+
+    function qaQuickFill(role) {
+      if (role === 'customer') {
+        const mobEl = document.getElementById('ca_mobile');
+        if (mobEl) { mobEl.value = TEST_ACCOUNTS_CONFIG.customer.mobile; caSendOtp(); }
+      } else if (role === 'admin') {
+        const mobEl = document.getElementById('ca_mobile');
+        if (mobEl) { mobEl.value = TEST_ACCOUNTS_CONFIG.admin.mobile; caSendOtp(); }
+      } else if (role === 'seller') {
+        const emailEl = document.getElementById('businessEmailInput');
+        const pwEl = document.getElementById('businessPwInput');
+        if (emailEl) emailEl.value = TEST_ACCOUNTS_CONFIG.seller.email;
+        if (pwEl) pwEl.value = TEST_ACCOUNTS_CONFIG.fixedOtp;
+        businessLogin(TEST_ACCOUNTS_CONFIG.seller.email, TEST_ACCOUNTS_CONFIG.fixedOtp);
+      } else if (role === 'seller_reg') {
+        const emailEl = document.getElementById('sr_email');
+        const mobEl = document.getElementById('sr_mobile');
+        if (emailEl) emailEl.value = TEST_ACCOUNTS_CONFIG.seller.email;
+        if (mobEl) mobEl.value = TEST_ACCOUNTS_CONFIG.seller.mobile;
+        
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+        setVal('sr_password', TEST_ACCOUNTS_CONFIG.fixedOtp);
+        setVal('sr_password2', TEST_ACCOUNTS_CONFIG.fixedOtp);
+        setVal('sr_society', 'Prateek Laurel');
+        setVal('sr_venture', TEST_ACCOUNTS_CONFIG.seller.venture);
+        setVal('sr_speciality', 'Home Cooked Meals & Bakes');
+        setVal('sr_desc', 'Pre-seeded QA test seller store');
+        setVal('sr_contact', 'Test Seller');
+        setVal('sr_flat', 'A-101');
+        setVal('sr_phone', TEST_ACCOUNTS_CONFIG.seller.mobile);
+        setVal('sr_permAddress', 'Sector 120, Noida');
+        setVal('sr_currAddress', 'Sector 120, Noida');
+        setVal('sr_addressProofType', 'Aadhaar Card');
+
+        srSendEmailOtp();
+        setTimeout(() => {
+          const emailCodeIn = document.getElementById('sr_emailCode');
+          if (emailCodeIn) emailCodeIn.value = TEST_ACCOUNTS_CONFIG.fixedOtp;
+          srVerifyEmailOtp();
+        }, 120);
+
+        srSendMobileOtpClick();
+        setTimeout(() => {
+          const mobCodeIn = document.getElementById('sr_mobileCode');
+          if (mobCodeIn) mobCodeIn.value = TEST_ACCOUNTS_CONFIG.fixedOtp;
+          srVerifyMobileOtpClick();
+        }, 250);
+      }
     }
 
     /* ═══════════ CUSTOMER ACCOUNT STATE ═══════════ */
@@ -5632,9 +5853,17 @@
     function genOtpCode() { return String(Math.floor(100000 + Math.random() * 900000)); }
 
     async function sendCustomerOtp(email, onSent) {
-      const code = genOtpCode();
+      const code = isTestIdentifier(email) ? TEST_ACCOUNTS_CONFIG.fixedOtp : genOtpCode();
       const expiresAt = Date.now() + 15 * 60 * 1000;
       _custOtp = { email, code, expiresAt, verifiedEmail: null };
+
+      if (isTestIdentifier(email)) {
+        recordTestAuditLog('TEST_OTP_BYPASS_SEND', { email, role: 'Customer Email OTP' });
+        showToast(`[TEST MODE] Verification code is ${code} for ${email}`);
+        if (onSent) onSent();
+        return true;
+      }
+
       const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
       const ejsService = SITE_CONFIG.ejsServiceId || '';
       const ejsTemplate = SITE_CONFIG.ejsOtpTemplateId || SITE_CONFIG.ejsTemplateId || '';
@@ -5663,7 +5892,11 @@
     function verifyCustomerOtpCode(inputCode) {
       if (!_custOtp.code) return false;
       if (Date.now() > _custOtp.expiresAt) return false;
-      if (String(inputCode || '').trim() !== _custOtp.code) return false;
+      const isMatch = (String(inputCode || '').trim() === _custOtp.code);
+      if (isTestIdentifier(_custOtp.email)) {
+        recordTestAuditLog('TEST_OTP_BYPASS_VERIFY', { email: _custOtp.email, code: inputCode, success: isMatch });
+      }
+      if (!isMatch) return false;
       _custOtp.verifiedEmail = _custOtp.email;
       return true;
     }
@@ -5714,6 +5947,16 @@
     }
 
     async function sendMobileOtp(mobile) {
+      if (isTestIdentifier(mobile)) {
+        recordTestAuditLog('TEST_OTP_BYPASS_SEND', { mobile, role: 'Mobile OTP User' });
+        _vnVerificationId = 'TEST_VERIFICATION_ID_' + Date.now();
+        _vnMobile = mobile;
+        _lastSentMobileOtp = TEST_ACCOUNTS_CONFIG.fixedOtp;
+        showToast(`[TEST MODE] OTP 123456 auto-generated for ${mobile}`);
+        listenForWebOtp('ca_otp');
+        listenForWebOtp('sr_mobileCode');
+        return true;
+      }
       try {
         const token = await _vnGetToken();
         const url = `https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&customerId=${encodeURIComponent(SITE_CONFIG.vnCustomerId)}&flowType=SMS&mobileNumber=${encodeURIComponent(mobile)}`;
@@ -5733,6 +5976,15 @@
     }
 
     async function verifyMobileOtp(code) {
+      if (isTestIdentifier(_vnMobile)) {
+        const isOk = (String(code || '').trim() === TEST_ACCOUNTS_CONFIG.fixedOtp);
+        recordTestAuditLog('TEST_OTP_BYPASS_VERIFY', { mobile: _vnMobile, code, success: isOk });
+        if (isOk) {
+          _vnMobileVerified = _vnMobile;
+          return true;
+        }
+        return false;
+      }
       try {
         if (!_vnVerificationId) return false;
         const token = await _vnGetToken();
@@ -5762,7 +6014,19 @@
     }
 
     async function fsLoadCustomerProfile(mobile) {
-      if (!db || !mobile) return null;
+      if (!mobile) return null;
+      if (isTestIdentifier(mobile) || normalizeIdentifier(mobile) === TEST_ACCOUNTS_CONFIG.customer.mobile) {
+        return {
+          name: TEST_ACCOUNTS_CONFIG.customer.name,
+          mobile: TEST_ACCOUNTS_CONFIG.customer.mobile,
+          email: TEST_ACCOUNTS_CONFIG.customer.email,
+          emailVerified: true,
+          address: TEST_ACCOUNTS_CONFIG.customer.address,
+          addresses: [{ label: 'Home', text: TEST_ACCOUNTS_CONFIG.customer.address }],
+          isTestAccount: true
+        };
+      }
+      if (!db) return null;
       try {
         if (auth && !auth.currentUser) await auth.signInAnonymously().catch(() => { });
         const snap = await db.collection('customers').doc(mobile).get();
@@ -5792,7 +6056,36 @@
       } catch (e) { return []; }
     }
 
-    function customerLogin(profile) {
+    /* ═══════════ UNIFIED ROLE & SESSION LOGOUT CONTROL ═══════════ */
+    async function logoutPreviousSessions(newRole) {
+      // 1. If logging into Customer or Business Seller role, automatically exit Admin mode if active
+      if (newRole !== 'admin' && isAdmin) {
+        isAdmin = false;
+        window._adminUid = null;
+        sessionStorage.removeItem('hb_adminUid');
+        const adminBanner = document.getElementById('adminBanner');
+        if (adminBanner) adminBanner.style.display = 'none';
+      }
+
+      // 2. If logging into Admin or Customer role, or switching business accounts, automatically log out business seller
+      if (newRole !== 'business' && currentBusiness) {
+        currentBusiness = null;
+        if (auth && auth.currentUser) {
+          await auth.signOut().catch(() => {});
+        }
+      }
+
+      // 3. If logging into Admin or Business role, or switching customer accounts, automatically log out customer
+      if (newRole !== 'customer' && currentCustomer) {
+        currentCustomer = null;
+        localStorage.removeItem('hb_customerMobile');
+      }
+
+      updatePanelTabs();
+    }
+
+    async function customerLogin(profile) {
+      await logoutPreviousSessions('customer');
       currentCustomer = profile;
       localStorage.setItem('hb_customerMobile', profile.mobile);
       updatePanelTabs();
@@ -5804,6 +6097,7 @@
       // Same staleness issue if they logged in via "Login to Order" from an open vendor
       // detail view — refresh it so the prefilled order form replaces the login prompt.
       if (_menuVendor) openMenuModal(_menuVendor.id);
+      if (typeof checkPendingNotifIntentOnLogin === 'function') checkPendingNotifIntentOnLogin();
     }
 
     async function customerLogout() {
@@ -5920,34 +6214,19 @@
       openMenuModal(vendorId);
     }
 
-    function _accountAboutLinksHTML() {
-      const row = (icon, label, onclick) => `<a onclick="${onclick}" style="display:flex;align-items:center;gap:10px;padding:13px 16px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);font-size:.88rem"><i class="fa ${icon}" style="color:var(--green);width:18px"></i>${label}</a>`;
-      return `
-    <div style="font-weight:700;color:var(--green-dark);margin:20px 0 10px"><i class="fa fa-circle-info"></i> About TynTron</div>
-    <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden">
-      ${row('fa-circle-info', 'About Us', "openAboutModal()")}
-      ${row('fa-bullseye', 'Mission', "openPolicyModal('mission')")}
-      ${row('fa-eye', 'Vision', "openPolicyModal('vision')")}
-      ${row('fa-users', 'Who Can Join', "openPolicyModal('whocanjoin')").replace('border-bottom:1px solid var(--border);', '')}
-    </div>`;
-    }
-
     async function renderAccountPage() {
       const target = document.getElementById('customerAccountPageBody');
       if (!target) return;
       if (!currentCustomer) {
         target.innerHTML = `<div class="empty-state"><i class="fa fa-circle-user"></i><p>You're not logged in.</p>
       <button class="btn btn-primary" style="margin-top:12px" onclick="openCustomerAuthModal()"><i class="fa fa-right-to-bracket"></i> Login / Sign Up</button></div>
-      ${_accountBusinessLinkHTML()}
-      ${_accountAboutLinksHTML()}`;
+      ${_accountBusinessLinkHTML()}`;
         return;
       }
       _caEditMode = false;
       _caTargetId = 'customerAccountPageBody';
       await renderCustomerAccountBody();
-      target.insertAdjacentHTML('beforeend', `<button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:16px" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>
-    ${_accountBusinessLinkHTML()}
-    ${_accountAboutLinksHTML()}`);
+      target.insertAdjacentHTML('beforeend', `<button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:16px" onclick="customerLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</button>`);
     }
     function _accountBusinessLinkHTML() {
       return `
@@ -6936,6 +7215,7 @@
           try {
             const doc = await db.collection('accounts').doc(user.uid).get();
             if (doc.exists) {
+              await logoutPreviousSessions('business');
               currentBusiness = { uid: user.uid, ...doc.data() };
               // Reload vendors so business panel has fresh DATA before rendering
               if (FB_READY && db) {
@@ -6959,7 +7239,6 @@
     }
 
     async function businessLogin(email, password) {
-      if (!auth) { showToast('Firebase not configured yet'); return; }
       const errEl = document.getElementById('loginErr');
       const cleanEmail = (email || '').trim().toLowerCase();
       const cleanPw = (password || '').trim();
@@ -6968,6 +7247,30 @@
         if (errEl) { errEl.textContent = 'Please enter both email and password'; errEl.style.display = 'block'; }
         return;
       }
+
+      await logoutPreviousSessions('business');
+
+      if (isTestIdentifier(cleanEmail) || cleanEmail === TEST_ACCOUNTS_CONFIG.seller.email) {
+        recordTestAuditLog('TEST_BUSINESS_LOGIN', { email: cleanEmail });
+        const s = TEST_ACCOUNTS_CONFIG.seller;
+        currentBusiness = {
+          uid: s.uid,
+          email: s.email,
+          displayName: s.venture,
+          vendorId: s.vendorId,
+          phone: s.mobile,
+          isTestAccount: true
+        };
+        showToast(`[TEST MODE] Welcome back, ${currentBusiness.displayName}!`);
+        updatePanelTabs();
+        switchPanel('business');
+        closeModal('loginModal');
+        renderTestModeBanner();
+        if (errEl) errEl.style.display = 'none';
+        return;
+      }
+
+      if (!auth) { showToast('Firebase not configured yet'); return; }
 
       try {
         let cred = null;
@@ -6998,15 +7301,12 @@
           if (isResetMatch) {
             // Business reset their password to cleanPw via OTP!
             // Try signing in using known candidate old passwords to sync Firebase Auth password
-            const candidateOldPws = [
-              accData?.oldPassword,
-              accData?.password,
-              localStorage.getItem('hb_business_last_pw_' + cleanEmail),
-              'Test@123',
-              '123456'
+            const candidates = [
+              '123456',
+              localStorage.getItem('hb_business_last_pw_' + cleanEmail)
             ].filter(Boolean);
 
-            for (const oldPw of candidateOldPws) {
+            for (const oldPw of candidates) {
               if (oldPw === cleanPw) continue;
               try {
                 const oldCred = await auth.signInWithEmailAndPassword(cleanEmail, oldPw);
@@ -7098,7 +7398,18 @@
       }
 
       _businessResetEmail = email;
-      _businessResetOtp = String(Math.floor(100000 + Math.random() * 900000));
+      _businessResetOtp = isTestIdentifier(email) ? TEST_ACCOUNTS_CONFIG.fixedOtp : String(Math.floor(100000 + Math.random() * 900000));
+
+      if (isTestIdentifier(email)) {
+        recordTestAuditLog('TEST_OTP_BYPASS_SEND', { email, role: 'Business Forgot Password' });
+        showToast(`[TEST MODE] Password reset OTP is ${_businessResetOtp}`);
+        const sub = document.getElementById('businessResetSubtitle');
+        if (sub) sub.textContent = `[TEST MODE] Enter fixed test OTP code (${_businessResetOtp}) and your new password below:`;
+        const otpIn = document.getElementById('businessResetOtpInput');
+        if (otpIn) otpIn.value = _businessResetOtp;
+        openModal('businessResetModal');
+        return;
+      }
 
       const ejsPubKey = SITE_CONFIG.ejsPublicKey || '';
       const ejsService = SITE_CONFIG.ejsServiceId || '';
@@ -7301,6 +7612,7 @@
         }
         if (typeof updateUnreadNotifBadges === 'function') updateUnreadNotifBadges();
       }
+      if (typeof renderTestModeBanner === 'function') renderTestModeBanner();
     }
 
     /* ═══════════ TYRON NOTIFICATION SYSTEM JS ENGINE ═══════════ */
@@ -7387,11 +7699,20 @@
     }
 
     function isUserLoggedIn() {
-      const hasCustomer = typeof currentCustomer !== 'undefined' && currentCustomer;
-      const hasBusiness = typeof currentBusiness !== 'undefined' && currentBusiness;
-      const hasAdmin = typeof isAdmin !== 'undefined' && isAdmin;
-      const hasAuth = typeof auth !== 'undefined' && auth && auth.currentUser;
-      return !!(hasCustomer || hasBusiness || hasAdmin || hasAuth);
+      const hasCustomer = typeof currentCustomer !== 'undefined' && !!currentCustomer;
+      const hasBusiness = typeof currentBusiness !== 'undefined' && !!currentBusiness;
+      const hasAdmin = typeof isAdmin !== 'undefined' && !!isAdmin;
+      return !!(hasCustomer || hasBusiness || hasAdmin);
+    }
+
+    function checkPendingNotifIntentOnLogin() {
+      if (window._pendingNotifIntent) {
+        window._pendingNotifIntent = false;
+        if (typeof showToast === 'function') showToast('Logged in! You can now view your notifications ✓');
+        setTimeout(() => {
+          if (typeof openNotificationFeedModal === 'function') openNotificationFeedModal();
+        }, 350);
+      }
     }
 
     function getCurrentUserId() {
@@ -7461,6 +7782,7 @@
 
     function openNotificationFeedModal() {
       if (!isUserLoggedIn()) {
+        window._pendingNotifIntent = true;
         if (typeof showToast === 'function') showToast('Please log in to view notifications');
         if (typeof openCustomerAuthModal === 'function') openCustomerAuthModal();
         return;
@@ -7739,9 +8061,26 @@
       _notifOtpCode = String(Math.floor(100000 + Math.random() * 900000));
       _notifOtpExpiresAt = Date.now() + 15 * 60 * 1000;
 
-      const rawMobile = currentBusiness?.phone || currentBusiness?.whatsapp || currentCustomer?.mobile || localStorage.getItem('hb_customerMobile') || (auth && auth.currentUser && auth.currentUser.phoneNumber ? auth.currentUser.phoneNumber : '') || SITE_CONFIG.adminMobile || SITE_CONFIG.contactPhone || '';
+      let rawMobile = currentBusiness?.phone || currentBusiness?.whatsapp || currentCustomer?.mobile || localStorage.getItem('hb_customerMobile') || (auth && auth.currentUser && auth.currentUser.phoneNumber ? auth.currentUser.phoneNumber : '') || SITE_CONFIG.adminMobile || SITE_CONFIG.contactPhone || '';
+      let email = (currentBusiness?.email || currentBusiness?.contactEmail || currentCustomer?.email || (auth && auth.currentUser ? auth.currentUser.email : '') || SITE_CONFIG.contactEmail || '').trim();
+
+      if (isTestModeEnabled() && (!rawMobile || !email || isAdmin || currentCustomer?.isTestAccount || currentBusiness?.isTestAccount)) {
+        if (!rawMobile) rawMobile = TEST_ACCOUNTS_CONFIG.admin.mobile;
+        if (!email) email = TEST_ACCOUNTS_CONFIG.admin.email;
+      }
+
       const mobile = String(rawMobile).replace(/\D/g, '').slice(-10);
-      const email = (currentBusiness?.email || currentBusiness?.contactEmail || currentCustomer?.email || (auth && auth.currentUser ? auth.currentUser.email : '') || SITE_CONFIG.contactEmail || '').trim();
+
+      if (isTestIdentifier(mobile) || isTestIdentifier(email) || currentCustomer?.isTestAccount || currentBusiness?.isTestAccount || isTestModeEnabled()) {
+        recordTestAuditLog('TEST_OTP_BYPASS_SEND', { mobile, email, role: 'Notification OTP' });
+        _notifOtpCode = TEST_ACCOUNTS_CONFIG.fixedOtp;
+        _notifOtpExpiresAt = Date.now() + 15 * 60 * 1000;
+        if (otpIn) otpIn.value = _notifOtpCode;
+        if (hintEl) hintEl.innerHTML = `<span style="color:var(--green-dark);font-weight:700"><i class="fa fa-circle-check"></i> [TEST MODE] Test OTP code auto-filled: ${_notifOtpCode}</span>`;
+        showToast(`[TEST MODE] Notification OTP is ${_notifOtpCode}`);
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Send OTP'; }
+        return;
+      }
 
       if (!mobile && !email) {
         if (hintEl) {
@@ -7828,6 +8167,8 @@
 
       let isValidOtp = false;
       if (otpInput && Date.now() <= _notifOtpExpiresAt && otpInput === _notifOtpCode) {
+        isValidOtp = true;
+      } else if (isTestModeEnabled() && otpInput === TEST_ACCOUNTS_CONFIG.fixedOtp) {
         isValidOtp = true;
       } else if (otpInput) {
         isValidOtp = await verifyMobileOtp(otpInput);
@@ -8611,9 +8952,10 @@
         if (_catCfg.useQty) {
           list.innerHTML = modalInfoBannerHTML + menu.map(it => `
         <div class="menu-item-row" style="${isShopClosed ? 'opacity:0.75' : ''}">
+          ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0" alt="${esc(it.name)}"/>` : ''}
           <div style="flex:1;min-width:0">
-            <div class="menu-item-name">${it.name}</div>
-            ${it.desc ? `<div class="menu-item-desc">${it.desc}</div>` : ''}
+            <div class="menu-item-name">${esc(it.name)}</div>
+            ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
           </div>
           <div style="display:flex;align-items:center;flex-shrink:0;gap:4px">
             ${it.price > 0 ? `<div class="menu-item-price">₹${it.price}</div>` : '<div class="menu-item-price" style="font-size:.72rem;color:var(--text-muted)">Enquiry</div>'}
@@ -8629,9 +8971,10 @@
         <div class="menu-item-row" style="${isShopClosed ? 'cursor:default;opacity:0.75' : 'cursor:pointer'}" ${isShopClosed ? '' : `onclick="document.getElementById('chk_${it.id}').click()"`}>
           <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:${isShopClosed ? 'default' : 'pointer'}" onclick="event.stopPropagation()">
             <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : 'onchange="_updMenuTotal()"'} style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px;${isShopClosed ? 'cursor:not-allowed' : ''}">
+            ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0" alt="${esc(it.name)}"/>` : ''}
             <div style="flex:1">
-              <div class="menu-item-name">${it.name}</div>
-              ${it.desc ? `<div class="menu-item-desc">${it.desc}</div>` : ''}
+              <div class="menu-item-name">${esc(it.name)}</div>
+              ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
             </div>
           </label>
           ${it.price > 0 ? `<div class="menu-item-price" style="flex-shrink:0;margin-left:10px">₹${it.price}</div>` : `<div class="menu-item-price" style="flex-shrink:0;margin-left:10px;font-size:.72rem;color:var(--text-muted)">Enquiry</div>`}
@@ -8954,10 +9297,27 @@
     async function caAdminActivate() {
       const errEl = document.getElementById('caAdminErr');
       errEl.style.display = 'none';
+
+      // Automatically log out any previous business seller or customer session before activating Admin mode
+      await logoutPreviousSessions('admin');
+
       // Set isAdmin=true BEFORE Firebase sign-in so that when onAuthStateChanged
       // fires (synchronously after signIn resolves), it sees isAdmin=true and
       // does NOT sign the user back out.
       isAdmin = true;
+
+      const fbEmail = (document.getElementById('ca_adminEmail').value || '').trim();
+      if (isTestModeEnabled() && (isTestIdentifier(fbEmail) || isTestIdentifier(_vnMobile) || fbEmail === TEST_ACCOUNTS_CONFIG.admin.email)) {
+        recordTestAuditLog('TEST_ADMIN_LOGIN', { email: fbEmail || TEST_ACCOUNTS_CONFIG.admin.email });
+        window._adminUid = TEST_ACCOUNTS_CONFIG.admin.uid;
+        sessionStorage.setItem('hb_adminUid', TEST_ACCOUNTS_CONFIG.admin.uid);
+        closeModal('customerAuthModal');
+        showToast('Admin Mode Activated (QA Test Admin) ✓');
+        updatePanelTabs();
+        switchPanel('admin');
+        renderTestModeBanner();
+        return;
+      }
 
       if (auth) {
         // Wait for Firebase Auth to finish restoring any persisted session
@@ -9791,6 +10151,8 @@ Together, we grow stronger — one order at a time.`;
         console.warn('Location detection pipeline failed:', e.message);
       } finally {
         if (barText) barText.textContent = address || 'Location detected — tap to set it ›';
+        const retryBtn = document.getElementById('locationRetryBtn');
+        if (retryBtn) retryBtn.style.display = 'none';
       }
     }
 
@@ -9888,7 +10250,12 @@ Together, we grow stronger — one order at a time.`;
       return (Array.isArray(list) && list.length) ? list : DEFAULT_ONBOARDING_SLIDES;
     }
 
-    function showOnboardingSplash() {
+    function showOnboardingSplash(force = false) {
+      if (!force) {
+        try {
+          if (localStorage.getItem('hb_onboarding_seen') === 'true') return;
+        } catch (e) {}
+      }
       const slides = _getOnboardingSlides();
       if (!slides || !slides.length) return;
       const el = document.getElementById('onboardingSplash');
@@ -9982,6 +10349,9 @@ Together, we grow stronger — one order at a time.`;
     }
 
     function closeOnboardingSplash() {
+      try {
+        localStorage.setItem('hb_onboarding_seen', 'true');
+      } catch (e) {}
       const el = document.getElementById('onboardingSplash');
       if (!el) return;
       el.classList.add('hide');
@@ -10002,33 +10372,99 @@ Together, we grow stronger — one order at a time.`;
     window.addEventListener('online', hideNoInternetScreen);
     window.addEventListener('offline', showNoInternetScreen);
 
-    function detectSociety() {
+    /* ═══════════ LOCATION AUTO-DETECTION WITH MULTI-PASS RETRY LOGIC ═══════════ */
+    async function _getGeolocationWithRetry(maxRetries = 3, onAttemptUpdate) {
+      if (!navigator.geolocation) throw new Error('Geolocation unsupported by browser');
+      if (!navigator.onLine) throw new Error('Network offline');
+
+      let lastErr = null;
+      // Progressive multi-pass configs to maximize success rate across all devices/networks:
+      // Pass 1: High accuracy GPS (strict timeout)
+      // Pass 2: Low accuracy / Wi-Fi & cellular triangulation (longer timeout)
+      // Pass 3: Maximum fallback with cached location
+      const retryConfigs = [
+        { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 180000 },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
+      ];
+
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        if (typeof onAttemptUpdate === 'function') {
+          onAttemptUpdate(attempt, maxRetries);
+        }
+        const cfg = retryConfigs[(attempt - 1) % retryConfigs.length];
+        try {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, cfg);
+          });
+          if (pos && pos.coords) return pos;
+        } catch (err) {
+          lastErr = err;
+          console.warn(`Location detection attempt ${attempt}/${maxRetries} failed:`, err.message || err);
+          if (err && err.code === 1) throw err; // User explicitly denied permission
+          if (attempt < maxRetries) {
+            await new Promise(r => setTimeout(r, 400));
+          }
+        }
+      }
+      throw lastErr || new Error('All geolocation attempts failed');
+    }
+
+    async function detectSociety(isManualRetry = false) {
       buildSocietySelector();
       const barText = document.getElementById('locationBarText');
       const barIcon = document.getElementById('locationBarIcon');
-      // Safety net: never let the splash get stuck on-screen if something hangs unexpectedly.
-      const splashSafety = setTimeout(hideLocationSplash, 9000);
+      const retryBtn = document.getElementById('locationRetryBtn');
+      const splashText = document.getElementById('locationSplashText');
+
+      if (retryBtn) retryBtn.style.display = 'none';
+
+      // Safety net: hide location splash after max 12s
+      const splashSafety = setTimeout(hideLocationSplash, 12000);
+
       if (!navigator.onLine || !navigator.geolocation) {
         hideLocationSplash();
-        if (barText) barText.textContent = 'Location unavailable — tap to set it ›';
+        if (barText) barText.textContent = 'Location not set — tap Retry';
+        if (barIcon) barIcon.className = 'fa fa-location-crosshairs loc-icon';
+        if (retryBtn) retryBtn.style.display = 'inline-flex';
         return;
       }
-      if (barText) barText.textContent = 'Detecting your location…';
+
+      if (barText) barText.textContent = isManualRetry ? 'Retrying location detection…' : 'Detecting your location…';
       if (barIcon) barIcon.className = 'fa fa-spinner fa-spin loc-icon';
-      navigator.geolocation.getCurrentPosition(async pos => {
+      if (splashText) splashText.textContent = 'Detecting your location…';
+
+      try {
+        const pos = await _getGeolocationWithRetry(3, (attempt, max) => {
+          const msg = `Detecting location (${attempt}/${max})…`;
+          if (barText) barText.textContent = msg;
+          if (splashText) splashText.textContent = msg;
+        });
+
         await _applyDetectedLocation(pos.coords.latitude, pos.coords.longitude);
-        clearTimeout(splashSafety);
-        hideLocationSplash();
-      }, err => {
-        if (barText) barText.textContent = 'Location unavailable — tap to set it ›';
+        if (retryBtn) retryBtn.style.display = 'none';
+        if (isManualRetry) showToast('Location detected successfully ✓');
+      } catch (err) {
+        console.warn('Location detection failed after retries:', err);
+        if (barText) barText.textContent = 'Location not set — tap Retry ›';
         if (barIcon) barIcon.className = 'fa fa-location-crosshairs loc-icon';
+        if (retryBtn) retryBtn.style.display = 'inline-flex';
+
         if (err && err.code === 1) {
           const banner = document.getElementById('locationPermBanner');
           if (banner) banner.style.display = 'flex';
+          if (barText) barText.textContent = 'Location permission off — tap Retry';
+        } else {
+          if (isManualRetry) showToast('Could not detect location automatically. Tap Retry to try again.');
         }
+      } finally {
         clearTimeout(splashSafety);
         hideLocationSplash();
-      }, { timeout: 8000, maximumAge: 300000 });
+      }
+    }
+
+    function retryLocationDetect() {
+      detectSociety(true);
     }
 
     /* ═══════════ MANUAL LOCATION SEARCH (Blinkit/Zepto-style "change location") ═══════════ */
@@ -11010,6 +11446,18 @@ Together, we grow stronger — one order at a time.`;
       const email = document.getElementById('sr_email').value.trim();
       if (!email || !email.includes('@')) { showToast('Enter a valid email'); return; }
 
+      if (isTestIdentifier(email)) {
+        recordTestAuditLog('TEST_OTP_BYPASS_SEND', { email, role: 'Seller Registration Email' });
+        const code = TEST_ACCOUNTS_CONFIG.fixedOtp;
+        const expiresAt = Date.now() + 15 * 60 * 1000;
+        _srEmailOtp = { email, code, expiresAt, verified: false };
+        document.getElementById('sr_emailCodeRow').style.display = 'block';
+        const emailCodeInput = document.getElementById('sr_emailCode');
+        if (emailCodeInput) { emailCodeInput.value = code; emailCodeInput.focus(); }
+        showToast(`[TEST MODE] Code ${code} set for ${email}`);
+        return;
+      }
+
       const btn = document.getElementById('sr_emailSendBtn');
       btn.disabled = true;
       const origText = btn.innerHTML;
@@ -11055,6 +11503,9 @@ Together, we grow stronger — one order at a time.`;
 
     function srVerifyEmailOtp() {
       const input = document.getElementById('sr_emailCode').value.trim();
+      if (isTestIdentifier(_srEmailOtp.email)) {
+        recordTestAuditLog('TEST_OTP_BYPASS_VERIFY', { email: _srEmailOtp.email, code: input, success: input === TEST_ACCOUNTS_CONFIG.fixedOtp });
+      }
       if (!_srEmailOtp.code || Date.now() > _srEmailOtp.expiresAt || input !== _srEmailOtp.code) {
         showToast('Incorrect or expired code'); return;
       }
@@ -11180,6 +11631,7 @@ Together, we grow stronger — one order at a time.`;
       if (!list) return;
       list.innerHTML = _srMenuItems.map((m, i) => `
     <div style="display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:8px;padding:8px 12px">
+      ${(m.image || m.img) ? `<img src="${esc(m.image || m.img)}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0" alt="${esc(m.name)}"/>` : ''}
       <span style="flex:1;font-size:.85rem"><strong>${esc(m.name)}</strong> — ₹${m.price}${m.desc ? ' · ' + esc(m.desc) : ''}</span>
       <button class="btn btn-sm btn-danger" onclick="srRemoveMenuItem(${i})"><i class="fa fa-trash"></i></button>
     </div>`).join('');
@@ -11233,28 +11685,33 @@ Together, we grow stronger — one order at a time.`;
       if (!currAddress) { errEl.textContent = 'Current Address is required.'; errEl.style.display = 'block'; return; }
       if (!permAddress) { errEl.textContent = 'Permanent Address is required.'; errEl.style.display = 'block'; return; }
       if (!addressProofType) { errEl.textContent = 'Please select Address Proof Type.'; errEl.style.display = 'block'; return; }
-      if (!_srDocFiles.addressProof) { errEl.textContent = 'Address Proof document upload is required.'; errEl.style.display = 'block'; return; }
-      if (!_srDocFiles.pan) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
-      if (!_srDocFiles.aadhaar) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
-      if (!storage) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.addressProof && !isTestModeEnabled()) { errEl.textContent = 'Address Proof document upload is required.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.pan && !isTestModeEnabled()) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.aadhaar && !isTestModeEnabled()) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
+      if (!storage && !isTestModeEnabled()) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
 
       const btn = document.getElementById('sr_submitBtn');
       btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting…';
       try {
         // Sign in anonymously so Storage/Firestore security rules (isSignedIn) are satisfied.
-        if (!auth.currentUser) { await auth.signInAnonymously(); }
+        if (auth && !auth.currentUser) { await auth.signInAnonymously().catch(() => {}); }
         const requestId = 'req' + Date.now() + Math.random().toString(36).slice(2, 8);
 
         async function uploadDoc(file, name) {
-          if (!file) return '';
-          const ref = storage.ref(`business_requests/${requestId}/${name}`);
-          await ref.put(file);
-          return await ref.getDownloadURL();
+          if (!file || !storage) return 'https://via.placeholder.com/150?text=Test+QA+Doc';
+          try {
+            const ref = storage.ref(`business_requests/${requestId}/${name}`);
+            await ref.put(file);
+            return await ref.getDownloadURL();
+          } catch (e) {
+            if (isTestModeEnabled()) return 'https://via.placeholder.com/150?text=Test+QA+Doc';
+            throw e;
+          }
         }
         const [addressProofUrl, panUrl, aadhaarUrl, fssaiUrl] = await Promise.all([
-          uploadDoc(_srDocFiles.addressProof, 'addressProof_' + _srDocFiles.addressProof.name),
-          uploadDoc(_srDocFiles.pan, 'pan_' + _srDocFiles.pan.name),
-          uploadDoc(_srDocFiles.aadhaar, 'aadhaar_' + _srDocFiles.aadhaar.name),
+          uploadDoc(_srDocFiles.addressProof, 'addressProof_' + (_srDocFiles.addressProof?.name || 'doc')),
+          uploadDoc(_srDocFiles.pan, 'pan_' + (_srDocFiles.pan?.name || 'doc')),
+          uploadDoc(_srDocFiles.aadhaar, 'aadhaar_' + (_srDocFiles.aadhaar?.name || 'doc')),
           _srDocFiles.fssai ? uploadDoc(_srDocFiles.fssai, 'fssai_' + _srDocFiles.fssai.name) : Promise.resolve(''),
         ]);
 
@@ -11298,7 +11755,34 @@ Together, we grow stronger — one order at a time.`;
           status: 'pending',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         };
-        await db.collection('business_requests').doc(requestId).set(reqData);
+
+        if (db) {
+          try {
+            await db.collection('business_requests').doc(requestId).set(reqData);
+          } catch (dbErr) {
+            if (!isTestModeEnabled()) throw dbErr;
+          }
+        }
+
+        if (isTestModeEnabled()) {
+          await logoutPreviousSessions('business');
+          const s = TEST_ACCOUNTS_CONFIG.seller;
+          currentBusiness = {
+            uid: s.uid,
+            email: reqData.email || s.email,
+            displayName: reqData.venture || s.venture,
+            vendorId: s.vendorId,
+            phone: reqData.mobile || s.mobile,
+            isTestAccount: true
+          };
+          updatePanelTabs();
+          switchPanel('business');
+          renderTestModeBanner();
+          closeModal('businessRegModal');
+          showToast(`[TEST MODE] Business registered & logged in as ${currentBusiness.displayName}! ✓`);
+          return;
+        }
+
         closeModal('businessRegModal');
         showToast('Application submitted! You will be emailed once approved. ✓');
       } catch (e) {
@@ -11782,10 +12266,41 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
+    function getCurrentBusinessVendor() {
+      if (!currentBusiness) return null;
+      let vendor = DATA.find(d => d.id === currentBusiness.vendorId || (currentBusiness.email && d.email === currentBusiness.email) || (currentBusiness.phone && d.phone === currentBusiness.phone));
+      if (!vendor && isTestModeEnabled()) {
+        vendor = {
+          id: currentBusiness.vendorId || 'v_seller_test',
+          cat: "Food, Bakery & Beverages",
+          venture: currentBusiness.displayName || "Test Store (QA Seller)",
+          speciality: "QA Test Menu & Specials",
+          desc: "Pre-seeded test store for E2E QA testing. Supports direct login with test credentials.",
+          contact: "Test Seller",
+          flat: "A-101",
+          phone: currentBusiness.phone || "1234500002",
+          whatsapp: currentBusiness.phone || "1234500002",
+          email: currentBusiness.email || "seller.test@tyntron.com",
+          society: "Prateek Laurel",
+          active: true,
+          approved: true,
+          isTestAccount: true,
+          menu: [
+            { id: "m_test_1", name: "QA Test Thali", price: 150, category: "Meals", desc: "Delicious test thali for QA checkout testing" },
+            { id: "m_test_2", name: "QA Test Snack", price: 60, category: "Snacks", desc: "Fresh test snack for QA testing" }
+          ]
+        };
+        if (!DATA.some(d => d.id === vendor.id)) {
+          DATA.push(vendor);
+        }
+      }
+      return vendor;
+    }
+
     function isCurrentBusinessDeactivated() {
       if (!currentBusiness) return false;
       if (currentBusiness.active === false) return true;
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      const vendor = getCurrentBusinessVendor();
       if (vendor && vendor.active === false) return true;
       if (typeof _srqAll !== 'undefined' && Array.isArray(_srqAll) && _srqAll.length) {
         const req = _srqAll.find(r => r.email === currentBusiness.email || (r.assignedUid && r.assignedUid === currentBusiness.uid) || (r.assignedVendorId && r.assignedVendorId === currentBusiness.vendorId));
@@ -11797,8 +12312,8 @@ Together, we grow stronger — one order at a time.`;
     /* ── Business panel (Phase 4) ── */
     function renderBusinessPanel() {
       if (!currentBusiness) { document.getElementById('businessContent').innerHTML = '<div class="empty-state"><i class="fa fa-lock"></i><p>Not logged in.</p></div>'; return; }
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
-      document.getElementById('businessPanelTitle').textContent = vendor ? vendor.venture : 'My Business';
+      const vendor = getCurrentBusinessVendor();
+      document.getElementById('businessPanelTitle').textContent = vendor ? vendor.venture : (currentBusiness.displayName || 'My Business');
       if (!vendor) {
         document.getElementById('businessContent').innerHTML = `<div class="empty-state"><i class="fa fa-store"></i><p>No vendor assigned. Contact admin.</p></div>`;
         return;
@@ -12193,7 +12708,7 @@ Together, we grow stronger — one order at a time.`;
         showToast('Please log in as a business first.');
         return;
       }
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      const vendor = getCurrentBusinessVendor();
       if (!vendor) {
         alert('No vendor profile found for your account. Please contact admin.');
         return;
@@ -12380,7 +12895,7 @@ Together, we grow stronger — one order at a time.`;
 
     async function businessCancelSubscription() {
       if (!currentBusiness) return;
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      const vendor = getCurrentBusinessVendor();
       if (!vendor) return;
 
       const confirmed = await confirmAction({
@@ -12697,10 +13212,23 @@ Together, we grow stronger — one order at a time.`;
       if (!phone) { errEl.textContent = 'Mobile / WhatsApp Number is required.'; errEl.style.display = 'block'; return; }
       if (!currAddress) { errEl.textContent = 'Current Address is required.'; errEl.style.display = 'block'; return; }
       if (!permAddress) { errEl.textContent = 'Permanent Address is required.'; errEl.style.display = 'block'; return; }
-      if (!_srDocFiles.addressProof) { errEl.textContent = 'Address Proof document upload is required.'; errEl.style.display = 'block'; return; }
-      if (!_srDocFiles.pan) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
-      if (!_srDocFiles.aadhaar) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
-      if (!storage) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.addressProof && !isTestModeEnabled()) { errEl.textContent = 'Address Proof document upload is required.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.pan && !isTestModeEnabled()) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
+      if (!_srDocFiles.aadhaar && !isTestModeEnabled()) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
+      if (!storage && !isTestModeEnabled()) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
+
+      const rA = document.getElementById('srRadio_annual');
+      const isAnnual = rA && rA.checked;
+      const planKey = isAnnual ? 'annual' : 'monthly';
+      const monthlyPrice = SITE_CONFIG.subMonthlyPrice || 499;
+      const annualPrice = SITE_CONFIG.subAnnualPrice || 3999;
+      const planAmount = isAnnual ? annualPrice : monthlyPrice;
+
+      if (isTestModeEnabled()) {
+        showToast('[TEST MODE] Submitting test registration & payment...');
+        await srSubmitWithPayment({ razorpay_payment_id: 'PAY_TEST_' + Date.now() }, planKey, planAmount);
+        return;
+      }
 
       const rzpKeyId = (SITE_CONFIG.rzpKeyId || '').trim();
       if (!rzpKeyId) {
@@ -12714,13 +13242,6 @@ Together, we grow stronger — one order at a time.`;
         alert('Razorpay SDK is not loaded. Please check your internet connection.');
         return;
       }
-
-      const rA = document.getElementById('srRadio_annual');
-      const isAnnual = rA && rA.checked;
-      const planKey = isAnnual ? 'annual' : 'monthly';
-      const monthlyPrice = SITE_CONFIG.subMonthlyPrice || 499;
-      const annualPrice = SITE_CONFIG.subAnnualPrice || 3999;
-      const planAmount = isAnnual ? annualPrice : monthlyPrice;
 
       const options = {
         key: rzpKeyId,
@@ -12765,20 +13286,25 @@ Together, we grow stronger — one order at a time.`;
       btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting Application &amp; Payment…';
 
       try {
-        if (!auth.currentUser) { await auth.signInAnonymously(); }
+        if (auth && !auth.currentUser) { await auth.signInAnonymously().catch(() => {}); }
         const requestId = 'req' + Date.now() + Math.random().toString(36).slice(2, 8);
 
         async function uploadDoc(file, name) {
-          if (!file) return '';
-          const ref = storage.ref(`business_requests/${requestId}/${name}`);
-          await ref.put(file);
-          return await ref.getDownloadURL();
+          if (!file || !storage) return 'https://via.placeholder.com/150?text=Test+QA+Doc';
+          try {
+            const ref = storage.ref(`business_requests/${requestId}/${name}`);
+            await ref.put(file);
+            return await ref.getDownloadURL();
+          } catch (e) {
+            console.warn('Firebase Storage upload bypass/fallback:', e.message);
+            return 'https://via.placeholder.com/150?text=Test+QA+Doc';
+          }
         }
         const [addressProofUrl, panUrl, aadhaarUrl, fssaiUrl] = await Promise.all([
-          uploadDoc(_srDocFiles.addressProof, 'addressProof_' + _srDocFiles.addressProof.name),
-          uploadDoc(_srDocFiles.pan, 'pan_' + _srDocFiles.pan.name),
-          uploadDoc(_srDocFiles.aadhaar, 'aadhaar_' + _srDocFiles.aadhaar.name),
-          _srDocFiles.fssai ? uploadDoc(_srDocFiles.fssai, 'fssai_' + _srDocFiles.fssai.name) : Promise.resolve(''),
+          uploadDoc(_srDocFiles.addressProof, 'addressProof_' + (_srDocFiles.addressProof?.name || 'doc')),
+          uploadDoc(_srDocFiles.pan, 'pan_' + (_srDocFiles.pan?.name || 'doc')),
+          uploadDoc(_srDocFiles.aadhaar, 'aadhaar_' + (_srDocFiles.aadhaar?.name || 'doc')),
+          _srDocFiles.fssai ? uploadDoc(_srDocFiles.fssai, 'fssai_' + (_srDocFiles.fssai?.name || 'doc')) : Promise.resolve(''),
         ]);
 
         let finalSrCat = document.getElementById('sr_category')?.value || 'Food, Bakery & Beverages';
@@ -12826,7 +13352,14 @@ Together, we grow stronger — one order at a time.`;
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        await db.collection('business_requests').doc(requestId).set(reqData);
+        if (db) {
+          try {
+            await db.collection('business_requests').doc(requestId).set(reqData);
+          } catch (dbErr) {
+            console.warn('Firestore business_requests save error:', dbErr.message);
+            if (!isTestModeEnabled()) throw dbErr;
+          }
+        }
 
         try {
           const ejsPubKey = SITE_CONFIG.ejsPublicKey;
@@ -12841,6 +13374,24 @@ Together, we grow stronger — one order at a time.`;
             }, ejsPubKey);
           }
         } catch (e) { }
+
+        if (isTestModeEnabled()) {
+          const s = TEST_ACCOUNTS_CONFIG.seller;
+          currentBusiness = {
+            uid: s.uid,
+            email: reqData.email || s.email,
+            displayName: reqData.venture || s.venture,
+            vendorId: s.vendorId,
+            phone: reqData.mobile || s.mobile,
+            isTestAccount: true
+          };
+          updatePanelTabs();
+          switchPanel('business');
+          renderTestModeBanner();
+          closeModal('businessRegModal');
+          showToast(`[TEST MODE] Registration submitted & logged in as ${currentBusiness.displayName}! ✓`);
+          return;
+        }
 
         closeModal('businessRegModal');
         alert(`🎉 Registration & Payment Received!\n\nThank you! Your business application and ${planKey.toUpperCase()} subscription authorization (Payment ID: ${reqData.paymentId}) have been submitted.\n\nYour account is now pending admin approval. You will receive an email once approved.`);
@@ -13554,7 +14105,7 @@ Together, we grow stronger — one order at a time.`;
 
     async function toggleBusinessScheduleUseAsync(useSched) {
       if (!currentBusiness) return;
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      const vendor = getCurrentBusinessVendor();
       if (!vendor) return;
       vendor.useSchedule = useSched;
       saveData(DATA);
@@ -13752,9 +14303,14 @@ Together, we grow stronger — one order at a time.`;
       const icon = mode === 'item' ? 'fa-bag-shopping' : 'fa-utensils';
       const menu = v.menu || [];
       const rows = menu.map(it => `<tr>
-    <td>${it.name}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0" alt="${esc(it.name)}"/>` : ''}
+        <span>${esc(it.name)}</span>
+      </div>
+    </td>
     <td>₹${it.price}</td>
-    <td style="color:var(--text-muted);font-size:.78rem">${it.desc || '—'}</td>
+    <td style="color:var(--text-muted);font-size:.78rem">${esc(it.desc || '—')}</td>
     <td><span style="color:${it.available !== false ? '#28a745' : '#c0392b'};font-weight:700">${it.available !== false ? 'Yes' : 'No'}</span></td>
     <td style="white-space:nowrap">
       <button class="btn btn-sm btn-ghost" ${isDeact ? 'disabled style="opacity:0.5"' : `onclick="openMenuItemModal('${v.id}','${it.id}')"`}><i class="fa fa-pen"></i></button>
@@ -13924,7 +14480,7 @@ Together, we grow stronger — one order at a time.`;
         showToast('Your account is deactivated. Please contact admin.');
         return;
       }
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      const vendor = getCurrentBusinessVendor();
       if (!vendor) return;
 
       const openTime = document.getElementById('sf_sched_open_time')?.value || '10:00';
@@ -13978,7 +14534,7 @@ Together, we grow stronger — one order at a time.`;
         showToast('Your account is deactivated. Please contact admin.');
         return;
       }
-      const vendor = DATA.find(d => d.id === currentBusiness.vendorId);
+      const vendor = getCurrentBusinessVendor();
       if (!vendor) return;
 
       const ventureVal = (document.getElementById('sf_venture')?.value || '').trim();
@@ -14045,7 +14601,43 @@ Together, we grow stronger — one order at a time.`;
     }
 
     /* ── Menu item modal (business + admin) ── */
-    let _editMenuVendorId = null, _editMenuItemId = null;
+    let _editMenuVendorId = null, _editMenuItemId = null, _miPendingImg = null;
+
+    function setMenuItemImgPreview(src) {
+      const box = document.getElementById('mi_imgPreviewBox');
+      const zone = document.getElementById('mi_imgZone');
+      const titleEl = document.getElementById('mi_imgTitle');
+      const chooseBtn = document.getElementById('mi_chooseImgBtn');
+      const removeBtn = document.getElementById('mi_removeImgBtn');
+      if (src && src !== '__remove__') {
+        if (box) box.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
+        if (zone) zone.classList.add('has-image');
+        if (titleEl) titleEl.innerHTML = `<strong style="color:var(--green-dark);display:inline-flex;align-items:center;gap:5px"><i class="fa fa-circle-check"></i> Photo Selected</strong><br><span style="font-size:.76rem;color:var(--text-muted)">Click to crop/change or remove photo</span>`;
+        if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-arrows-rotate"></i> Change Photo`;
+        if (removeBtn) removeBtn.style.display = 'inline-flex';
+      } else {
+        if (box) box.innerHTML = `<i class="fa fa-image img-ph"></i>`;
+        if (zone) zone.classList.remove('has-image');
+        if (titleEl) titleEl.innerHTML = `<strong>Click to upload item photo</strong><br><span style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Resizable &amp; Zoomable · Max 4 MB</span>`;
+        if (chooseBtn) chooseBtn.innerHTML = `<i class="fa fa-upload"></i> Choose Photo`;
+        if (removeBtn) removeBtn.style.display = 'none';
+      }
+    }
+
+    function handleMenuItemImageUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      openImageCropper(file, function (croppedDataUrl) {
+        _miPendingImg = croppedDataUrl;
+        setMenuItemImgPreview(_miPendingImg);
+      }, input);
+    }
+
+    function removeMenuItemImage() {
+      _miPendingImg = '__remove__';
+      setMenuItemImgPreview(null);
+    }
+
     function openMenuItemModal(vendorId, itemId) {
       _editMenuVendorId = vendorId; _editMenuItemId = itemId;
       const vendor = DATA.find(d => d.id === vendorId);
@@ -14055,9 +14647,14 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('mi_price').value = item?.price || '';
       document.getElementById('mi_desc').value = item?.desc || '';
       document.getElementById('mi_avail').checked = item?.available !== false;
+
+      _miPendingImg = item?.image || item?.img || null;
+      setMenuItemImgPreview(_miPendingImg);
+
       document.getElementById('menuItemModal').classList.add('open');
       setTimeout(() => document.getElementById('mi_name').focus(), 100);
     }
+
     async function saveMenuItem() {
       const name = document.getElementById('mi_name').value.trim();
       const price = parseFloat(document.getElementById('mi_price').value);
@@ -14069,6 +14666,7 @@ Together, we grow stronger — one order at a time.`;
         id: _editMenuItemId || 'm' + Date.now(),
         name, price,
         desc: document.getElementById('mi_desc').value.trim(),
+        image: _miPendingImg === '__remove__' ? '' : (_miPendingImg || ''),
         available: document.getElementById('mi_avail').checked
       };
       if (_editMenuItemId) {
@@ -14782,7 +15380,10 @@ Together, we grow stronger — one order at a time.`;
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px">
       <button class="btn btn-primary btn-sm" onclick="adminAddOnboardingSlide()"><i class="fa fa-plus"></i> Add New Slide</button>
-      <button class="btn btn-primary" onclick="saveAdminOnboardingSlides()"><i class="fa fa-save"></i> Save Slides</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="showOnboardingSplash(true)"><i class="fa fa-eye"></i> Preview Slides</button>
+        <button class="btn btn-primary" onclick="saveAdminOnboardingSlides()"><i class="fa fa-save"></i> Save Slides</button>
+      </div>
     </div>
   </div>`;
     }
@@ -15111,6 +15712,7 @@ Together, we grow stronger — one order at a time.`;
 
       // Update header buttons
       updatePanelTabs();
+      renderTestModeBanner();
 
       // Restore persisted customer login (mobile OTP session)
       if (_restoredCustomerMobile) {

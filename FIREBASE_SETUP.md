@@ -131,11 +131,11 @@ Customers verify their email with a one-time code before their first order (and 
 3. In Admin panel → **Overview** tab → click **Migrate SEED → Firestore**
 4. All 94 vendors are now in Firestore
 
-## Step 8 — Create your first seller account
+## Step 8 — Create your first business account
 
 1. In Admin panel → **Accounts** tab
 2. Fill in Name, Email, Password, and assign a Vendor
 3. Click **Create Account**
-4. Share the email/password with the seller
+4. Share the email/password with the business
 
-That's it! The seller can now log in via **Seller Login** and manage their own business.
+That's it! The business can now log in via **Business Login** and manage their own business.

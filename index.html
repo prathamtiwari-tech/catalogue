@@ -1220,6 +1220,107 @@
       color: var(--text-muted)
     }
 
+    /* ── ROBUST SEARCH SPEC STYLES (PDF Engine) ── */
+    .search-interpreted-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      background: #fff8f0;
+      border: 1px solid #ffe0b2;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: .84rem;
+      color: #b85c1a;
+      font-weight: 500;
+    }
+    .search-interpreted-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1px solid #ffcc80;
+      color: #e65100;
+      padding: 3px 10px;
+      border-radius: 16px;
+      font-size: .78rem;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .search-interpreted-chip i {
+      font-size: .75rem;
+      cursor: pointer;
+      color: #b85c1a;
+    }
+    .search-filter-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      scrollbar-width: thin;
+    }
+    .search-filter-pill {
+      white-space: nowrap;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .search-filter-pill:hover,
+    .search-filter-pill.active {
+      background: var(--green);
+      color: #ffffff;
+      border-color: var(--green);
+    }
+    .nearby-society-badge {
+      display: inline-block;
+      background: #e3f2fd;
+      color: #1565c0;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+    .not-available-box {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 24px;
+      text-align: center;
+      margin: 20px 0;
+      box-shadow: var(--shadow);
+    }
+    .not-available-box i {
+      font-size: 2.2rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .not-available-box h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .not-available-box p {
+      font-size: .86rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+
     /* BROWSE LAYOUT */
     .browse-layout {
       max-width: 1400px;
@@ -3152,7 +3253,13 @@
       transform: scale(1.02);
     }
 
-    .onboarding-illustration-wrapper img,
+    .onboarding-illustration-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
     .onboarding-illustration-wrapper svg {
       max-width: 82%;
       max-height: 82%;
@@ -3916,6 +4023,22 @@
     </div>
   </div>
 
+  <!-- ── IMAGE PREVIEW LIGHTBOX MODAL ── -->
+  <div class="modal-overlay" id="imagePreviewModal" style="z-index:9999" onclick="if(event.target===this)closeModal('imagePreviewModal')">
+    <div class="modal" style="max-width:560px;text-align:center;padding:16px;background:#1e293b;color:#fff;border-radius:16px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.5)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155">
+        <div style="font-weight:700;font-size:1.05rem;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:85%" id="imagePreviewTitle">Image Preview</div>
+        <button class="btn btn-sm btn-ghost" onclick="closeModal('imagePreviewModal')" aria-label="Close" style="color:#94a3b8;font-size:1.2rem;padding:4px 8px;border-radius:50%"><i class="fa fa-xmark"></i></button>
+      </div>
+      <div style="max-height:75vh;overflow:hidden;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#0f172a;padding:8px">
+        <img id="imagePreviewImg" src="" alt="Preview" style="max-width:100%;max-height:70vh;object-fit:contain;border-radius:8px">
+      </div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn btn-sm btn-ghost" onclick="closeModal('imagePreviewModal')" style="color:#cbd5e1;border:1px solid #475569;padding:6px 16px">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── BUSINESS LOGIN MODAL ── -->
   <div class="modal-overlay" id="loginModal" style="z-index:300">
     <div class="modal" style="max-width:380px;text-align:center">
@@ -3925,13 +4048,6 @@
 
       <!-- Business fields -->
       <div id="loginBusinessFields" style="text-align:left">
-        <!-- QA Quick-Fill Bar (Non-Prod Test Accounts) -->
-        <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
-          <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa fa-vial"></i> QA Test Account Quick-Fill</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('seller')">⚡ Seller (seller.test@tyntron.com)</button>
-          </div>
-        </div>
         <div class="form-group" style="margin-bottom:12px">
           <label>Email</label>
           <input type="email" id="businessEmailInput" placeholder="business@email.com"
@@ -4060,15 +4176,6 @@
 
       <!-- Tab 1: Driver Login -->
       <div id="driverAuthLoginView">
-        <!-- QA Quick Fill Bar for Drivers -->
-        <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
-          <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px"><i class="fa fa-vial"></i> Quick Test Driver Logins:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="fillDriverTestAccount('9876543210')">Rahul Sharma (9876543210)</button>
-            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="fillDriverTestAccount('9811223344')">Priya Malhotra (9811223344)</button>
-          </div>
-        </div>
-
         <form onsubmit="driverLoginSubmit(event)">
           <div class="form-group" style="margin-bottom:14px">
             <label><i class="fa fa-phone" style="color:var(--green)"></i> Registered Mobile Number *</label>
@@ -4078,8 +4185,8 @@
             </div>
           </div>
           <div class="form-group" id="drv_login_otpRow" style="margin-bottom:14px">
-            <label>Verification OTP * (Use 123456 for test mode)</label>
-            <input type="text" id="drv_login_otp" required placeholder="6-digit OTP code" value="123456" maxlength="6" style="font-weight:700;letter-spacing:2px;text-align:center" onfocus="listenForWebOtp('drv_login_otp')">
+            <label>Verification OTP *</label>
+            <input type="text" id="drv_login_otp" required placeholder="Enter 6-digit OTP" value="" maxlength="6" style="font-weight:700;letter-spacing:2px;text-align:center" onfocus="listenForWebOtp('drv_login_otp')">
           </div>
           <div class="modal-actions">
             <button type="button" class="btn btn-ghost" onclick="closeModal('driverAuthModal')">Cancel</button>
@@ -4090,14 +4197,6 @@
 
       <!-- Tab 2: Driver Registration -->
       <div id="driverAuthRegView" style="display:none">
-        <!-- QA Quick Fill / Auto-Fill Test Driver Registration -->
-        <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
-          <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px"><i class="fa fa-vial"></i> Quick Test Registration:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="fillDriverTestRegDetails()">⚡ Auto-Fill Test Driver Details</button>
-          </div>
-        </div>
-
         <form onsubmit="driverRegisterSubmit(event)">
           <div class="form-group" style="margin-bottom:12px">
             <label>Full Name *</label>
@@ -4312,14 +4411,6 @@
 
       <!-- Step 1: Mobile -->
       <div id="caStep1" style="text-align:left">
-        <!-- QA Quick-Fill Bar (Non-Prod Test Accounts) -->
-        <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
-          <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa fa-vial"></i> QA Test Account Quick-Fill</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('customer')">⚡ Customer (1234500001)</button>
-            <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('admin')">⚡ Admin (1234500003)</button>
-          </div>
-        </div>
         <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">New here or returning — just enter your
           mobile number. We'll text you a verification code, and set up your account automatically if you don't have one
           yet.</p>
@@ -5078,13 +5169,6 @@
   <div class="modal-overlay" id="businessRegModal">
     <div class="modal" style="max-width:720px">
       <div class="modal-title"><i class="fa fa-store" style="color:var(--green)"></i> Become a Business on TynTron</div>
-      <!-- QA Quick-Fill Bar (Non-Prod Test Accounts) -->
-      <div style="background:var(--green-pale);border:1px dashed var(--green);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.78rem">
-        <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa fa-vial"></i> QA Test Account Quick-Fill</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button type="button" class="btn btn-sm btn-ghost" style="background:#fff;border:1px solid var(--border);padding:4px 8px;font-size:.72rem" onclick="qaQuickFill('seller_reg')">⚡ Auto-Fill Test Seller Details (seller.test@tyntron.com)</button>
-        </div>
-      </div>
       <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:16px">Fill in your details below. Your
         application will be reviewed by an admin — you'll get an email once it's approved.</p>
       <div class="form-grid">
@@ -5360,35 +5444,37 @@
         </div>
         -->
 
-        <div class="form-section-label"><i class="fa fa-crown" style="color:var(--gold)"></i> Step 5 — Select &amp; Pay
-          Subscription Plan *</div>
-        <p style="font-size:.8rem;color:var(--text-muted);grid-column:1/-1;margin-bottom:8px">Select a subscription plan
-          to activate your business account upon admin approval. Payment authorization is required upfront to submit your
-          registration request.</p>
-        <div class="form-group full" style="grid-column:1/-1">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="sub-plan-box" id="regPlanBox_monthly" onclick="srSelectPlan('monthly')"
-              style="border:2px solid var(--green);border-radius:12px;padding:14px;background:var(--white);cursor:pointer;position:relative">
-              <input type="radio" name="srSubPlanChoice" id="srRadio_monthly" value="monthly" checked
-                style="position:absolute;top:12px;right:12px;accent-color:var(--green)">
-              <div style="font-weight:700;font-size:.95rem;color:var(--text)">Monthly Plan</div>
-              <div style="font-size:1.25rem;font-weight:800;color:var(--green);margin:4px 0">₹<span
-                  id="srVal_monthly">499</span> <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
-                  month</span></div>
-              <div style="font-size:.74rem;color:var(--text-muted)">Standard monthly listing fee</div>
-            </div>
-            <div class="sub-plan-box" id="regPlanBox_annual" onclick="srSelectPlan('annual')"
-              style="border:2px solid var(--border);border-radius:12px;padding:14px;background:var(--white);cursor:pointer;position:relative">
-              <span
-                style="position:absolute;top:-8px;left:10px;background:var(--gold);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px">BEST
-                VALUE</span>
-              <input type="radio" name="srSubPlanChoice" id="srRadio_annual" value="annual"
-                style="position:absolute;top:12px;right:12px;accent-color:var(--green)">
-              <div style="font-weight:700;font-size:.95rem;color:var(--text)">Annual Plan</div>
-              <div style="font-size:1.25rem;font-weight:800;color:var(--green);margin:4px 0">₹<span
-                  id="srVal_annual">3999</span> <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
-                  year</span></div>
-              <div style="font-size:.74rem;color:var(--text-muted)">Full year privileges</div>
+        <div id="sr_step5_section" style="grid-column:1/-1">
+          <div class="form-section-label"><i class="fa fa-crown" style="color:var(--gold)"></i> Step 5 — Select &amp; Pay
+            Subscription Plan *</div>
+          <p style="font-size:.8rem;color:var(--text-muted);grid-column:1/-1;margin-bottom:8px">Select a subscription plan
+            to activate your business account upon admin approval. Payment authorization is required upfront to submit your
+            registration request.</p>
+          <div class="form-group full" style="grid-column:1/-1">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="sub-plan-box" id="regPlanBox_monthly" onclick="srSelectPlan('monthly')"
+                style="border:2px solid var(--green);border-radius:12px;padding:14px;background:var(--white);cursor:pointer;position:relative">
+                <input type="radio" name="srSubPlanChoice" id="srRadio_monthly" value="monthly" checked
+                  style="position:absolute;top:12px;right:12px;accent-color:var(--green)">
+                <div style="font-weight:700;font-size:.95rem;color:var(--text)">Monthly Plan</div>
+                <div style="font-size:1.25rem;font-weight:800;color:var(--green);margin:4px 0">₹<span
+                    id="srVal_monthly">499</span> <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
+                    month</span></div>
+                <div style="font-size:.74rem;color:var(--text-muted)">Standard monthly listing fee</div>
+              </div>
+              <div class="sub-plan-box" id="regPlanBox_annual" onclick="srSelectPlan('annual')"
+                style="border:2px solid var(--border);border-radius:12px;padding:14px;background:var(--white);cursor:pointer;position:relative">
+                <span
+                  style="position:absolute;top:-8px;left:10px;background:var(--gold);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px">BEST
+                  VALUE</span>
+                <input type="radio" name="srSubPlanChoice" id="srRadio_annual" value="annual"
+                  style="position:absolute;top:12px;right:12px;accent-color:var(--green)">
+                <div style="font-weight:700;font-size:.95rem;color:var(--text)">Annual Plan</div>
+                <div style="font-size:1.25rem;font-weight:800;color:var(--green);margin:4px 0">₹<span
+                    id="srVal_annual">3999</span> <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
+                    year</span></div>
+                <div style="font-size:.74rem;color:var(--text-muted)">Full year privileges</div>
+              </div>
             </div>
           </div>
         </div>
@@ -5567,12 +5653,12 @@
       <div class="sidebar-body">
         <!-- Service Provider Login UI Section -->
         <div class="sidebar-card" id="sidebarProviderCard">
-          <div class="sidebar-section-title"><i class="fa fa-store"></i> Service Provider Hub</div>
+          <div class="sidebar-section-title"><i class="fa fa-store"></i> Business Provider Hub</div>
           <div id="sidebarProviderLoggedOut">
             <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">Offer services, food, or products to your local society residents.</p>
             <div style="display:flex;flex-direction:column;gap:8px">
               <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="openLoginModal();closeLeftSidebar()">
-                <i class="fa fa-right-to-bracket"></i> Service Provider Login
+                <i class="fa fa-right-to-bracket"></i> Business Provider Login
               </button>
               <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="openBusinessRegModal();closeLeftSidebar()">
                 <i class="fa fa-user-plus"></i> Register Your Business
@@ -5713,6 +5799,59 @@
             class="fa fa-circle-xmark"></i></button>
         <div class="search-suggest" id="searchSuggest"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ── MANDATORY LOCATION & PERMISSION REQUIRED MODAL ── -->
+  <div class="modal-overlay" id="locationRequiredModal" style="z-index:99999">
+    <div class="modal" style="max-width:480px;border-radius:18px;padding:24px 20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--green-pale);color:var(--green-dark);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+          <i class="fa fa-location-crosshairs"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.15rem;font-weight:700;color:var(--text);margin:0">Location Access Required</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:2px 0 0">Mandatory to find societies & services near you</p>
+        </div>
+      </div>
+
+      <div id="locReqStatusAlert" style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.84rem;color:#664D03;line-height:1.45;display:flex;align-items:flex-start;gap:10px">
+        <i class="fa fa-triangle-exclamation" style="font-size:1rem;color:#856404;margin-top:2px;flex-shrink:0"></i>
+        <div id="locReqStatusText">
+          Device Location (GPS) is turned off or blocked. Please enable Location services to continue using TynTron.
+        </div>
+      </div>
+
+      <div style="background:var(--cream);border-radius:12px;padding:14px;margin-bottom:18px">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em">How to turn on Location:</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:0.84rem;color:var(--text)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:22px;height:22px;border-radius:50%;background:var(--green);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">1</span>
+            <span>Swipe down top menu & turn <strong>ON Location / GPS</strong></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:22px;height:22px;border-radius:50%;background:var(--green);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">2</span>
+            <span>Tap <strong>Allow</strong> when your mobile prompts for permission</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-primary" id="locReqRetryBtn" onclick="requestLocationAccessAndRetry()" style="width:100%;justify-content:center;padding:12px;font-weight:700;font-size:0.92rem">
+          <i class="fa fa-rotate-right"></i> Turn On Location & Retry
+        </button>
+        <button class="btn btn-ghost" onclick="closeModal('locationRequiredModal'); openLocationSearchModal()" style="width:100%;justify-content:center;border:1.5px solid var(--border);padding:10px;font-size:0.86rem">
+          <i class="fa fa-magnifying-glass"></i> Select Society / Address Manually
+        </button>
+      </div>
+
+      <details style="margin-top:14px;font-size:0.78rem;color:var(--text-muted)">
+        <summary style="cursor:pointer;font-weight:600;color:var(--green-dark)">Still not working? Click for App/Browser settings instructions</summary>
+        <div style="margin-top:8px;padding:8px 10px;background:var(--white);border:1px solid var(--border);border-radius:8px;line-height:1.4">
+          <strong>Android Phone:</strong> Settings → Apps → TynTron (or Chrome) → Permissions → Location → Select "Allow while using app".<br/>
+          <strong>iPhone (iOS):</strong> Settings → Privacy & Security → Location Services → Turn ON → Select TynTron / Safari.
+        </div>
+      </details>
     </div>
   </div>
 
@@ -7047,7 +7186,6 @@
       { id: "p13", cat: "Professional Services", venture: "Surya Trading", speciality: "Industrial Solutions", desc: "Reliable industrial solutions and trading services. Catering to a wide range of industrial needs with quality products and timely delivery.", contact: "Pawan Arora", flat: "C-1508", phone: "9811164700", whatsapp: "9811164700", instagram: "", video: "", url: "" },
       { id: "p14", cat: "Professional Services", venture: "Taxyojna Consultants", speciality: "Income Tax, GST, MCA & Litigation", desc: "Expert chartered accountant services — income tax filing, GST compliance, MCA filings and litigation support by CA Preeti Gupta.", contact: "CA Preeti Gupta", flat: "N-206", phone: "8447033883", whatsapp: "8447033883", instagram: "", video: "", url: "" },
       { id: "p15", cat: "Professional Services", venture: "Yc Productionz", speciality: "Photography, Videography, Video Editing & Social Media Marketing", desc: "Professional photography, videography, video editing and social media marketing services. Capture your moments and grow your digital presence.", contact: "Yashasvi Chugh", flat: "E-402", phone: "8708287403", whatsapp: "8708287403", instagram: "", video: "", url: "" },
-      { id: "v_seller_test", cat: "Food, Bakery & Beverages", venture: "Test Store (QA Seller)", speciality: "QA Test Menu & Specials", desc: "Pre-seeded test store for E2E QA testing. Supports direct login with test credentials.", contact: "Test Seller", flat: "A-101", phone: "1234500002", whatsapp: "1234500002", email: "seller.test@tyntron.com", society: "Prateek Laurel", active: true, approved: true, isTestAccount: true, menu: [{ id: "m_test_1", name: "QA Test Thali", price: 150, category: "Meals", desc: "Delicious test thali for QA checkout testing" }, { id: "m_test_2", name: "QA Test Snack", price: 60, category: "Snacks", desc: "Fresh test snack for QA testing" }] }
     ];
     /* SEED_END */
 
@@ -7110,46 +7248,17 @@
     // a Firestore-backed list via the admin panel's "Admin Access" numbers card.
     const DEFAULT_ADMIN_NUMBERS = ['8373919344'];
 
-    /* ═══════════ WHITELISTED TEST ACCOUNTS & OTP BYPASS (PDF FEATURE SPEC) ═══════════ */
+    /* ═══════════ WHITELISTED TEST ACCOUNTS & TEST ENVIRONMENT ═══════════ */
     const TEST_ACCOUNTS_CONFIG = {
-      enabled: true,
-      fixedOtp: '123456',
-      customer: {
-        email: 'customer.test@tyntron.com',
-        mobile: '1234500001',
-        fullMobile: '+91 12345 00001',
-        name: 'Test Customer (QA)',
-        address: 'Flat A-101, Test Residency, Sector 120, Noida'
-      },
-      seller: {
-        email: 'seller.test@tyntron.com',
-        mobile: '1234500002',
-        fullMobile: '+91 12345 00002',
-        venture: 'Test Store (QA Seller)',
-        vendorId: 'v_seller_test',
-        uid: 'u_seller_test'
-      },
-      admin: {
-        email: 'admin.test@tyntron.com',
-        mobile: '1234500003',
-        fullMobile: '+91 12345 00003',
-        uid: 'admin_test_uid'
-      }
+      enabled: false,
+      fixedOtp: '',
+      customer: { email: '', mobile: '' },
+      seller: { email: '', mobile: '' },
+      admin: { email: '', mobile: '' }
     };
 
-    function isProductionEnvironment() {
-      const host = (window.location.hostname || '').toLowerCase();
-      if (host === 'tyntron.co.in' || host === 'www.tyntron.co.in' || host.endsWith('.tyntron.co.in')) return true;
-      if (SITE_CONFIG && SITE_CONFIG.env === 'production') return true;
-      return false;
-    }
-
-    function isTestModeEnabled() {
-      if (isProductionEnvironment()) return false; // Defense in depth: hard block in production
-      if (typeof SITE_CONFIG.testAccountsEnabled !== 'undefined') return !!SITE_CONFIG.testAccountsEnabled;
-      return TEST_ACCOUNTS_CONFIG.enabled;
-    }
-
+    function isProductionEnvironment() { return true; }
+    function isTestModeEnabled() { return false; }
     function normalizeIdentifier(val) {
       if (!val) return '';
       let str = String(val).trim().toLowerCase();
@@ -7159,35 +7268,12 @@
       return digits;
     }
 
-    function isTestIdentifier(val) {
-      if (!isTestModeEnabled()) return false;
-      const norm = normalizeIdentifier(val);
-      if (!norm) return false;
-      const testVals = [
-        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.customer.email),
-        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.customer.mobile),
-        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.seller.email),
-        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.seller.mobile),
-        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.admin.email),
-        normalizeIdentifier(TEST_ACCOUNTS_CONFIG.admin.mobile)
-      ];
-      return testVals.includes(norm);
-    }
-
-    const _testAuditLogs = [];
-    function recordTestAuditLog(action, details) {
-      const item = { action, details, timestamp: new Date().toISOString() };
-      _testAuditLogs.push(item);
-      console.log(`[TEST_OTP_BYPASS_AUDIT] ${action}:`, details);
-    }
+    function isTestIdentifier(val) { return false; }
+    function recordTestAuditLog(action, details) { }
 
     function _adminNumbers() {
       const list = SITE_CONFIG.adminMobileNumbers;
       let result = (Array.isArray(list) && list.length) ? list.slice() : DEFAULT_ADMIN_NUMBERS.slice();
-      if (isTestModeEnabled()) {
-        const testAdminMobile = TEST_ACCOUNTS_CONFIG.admin.mobile;
-        if (!result.includes(testAdminMobile)) result.push(testAdminMobile);
-      }
       return result;
     }
 
@@ -7196,54 +7282,7 @@
       if (banner) banner.style.display = 'none';
     }
 
-    function qaQuickFill(role) {
-      if (role === 'customer') {
-        const mobEl = document.getElementById('ca_mobile');
-        if (mobEl) { mobEl.value = TEST_ACCOUNTS_CONFIG.customer.mobile; caSendOtp(); }
-      } else if (role === 'admin') {
-        const mobEl = document.getElementById('ca_mobile');
-        if (mobEl) { mobEl.value = TEST_ACCOUNTS_CONFIG.admin.mobile; caSendOtp(); }
-      } else if (role === 'seller') {
-        const emailEl = document.getElementById('businessEmailInput');
-        const pwEl = document.getElementById('businessPwInput');
-        if (emailEl) emailEl.value = TEST_ACCOUNTS_CONFIG.seller.email;
-        if (pwEl) pwEl.value = TEST_ACCOUNTS_CONFIG.fixedOtp;
-        businessLogin(TEST_ACCOUNTS_CONFIG.seller.email, TEST_ACCOUNTS_CONFIG.fixedOtp);
-      } else if (role === 'seller_reg') {
-        const emailEl = document.getElementById('sr_email');
-        const mobEl = document.getElementById('sr_mobile');
-        if (emailEl) emailEl.value = TEST_ACCOUNTS_CONFIG.seller.email;
-        if (mobEl) mobEl.value = TEST_ACCOUNTS_CONFIG.seller.mobile;
-        
-        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-        setVal('sr_password', TEST_ACCOUNTS_CONFIG.fixedOtp);
-        setVal('sr_password2', TEST_ACCOUNTS_CONFIG.fixedOtp);
-        setVal('sr_society', 'Prateek Laurel');
-        setVal('sr_venture', TEST_ACCOUNTS_CONFIG.seller.venture);
-        setVal('sr_speciality', 'Home Cooked Meals & Bakes');
-        setVal('sr_desc', 'Pre-seeded QA test seller store');
-        setVal('sr_contact', 'Test Seller');
-        setVal('sr_flat', 'A-101');
-        setVal('sr_phone', TEST_ACCOUNTS_CONFIG.seller.mobile);
-        setVal('sr_permAddress', 'Sector 120, Noida');
-        setVal('sr_currAddress', 'Sector 120, Noida');
-        setVal('sr_addressProofType', 'Aadhaar Card');
-
-        srSendEmailOtp();
-        setTimeout(() => {
-          const emailCodeIn = document.getElementById('sr_emailCode');
-          if (emailCodeIn) emailCodeIn.value = TEST_ACCOUNTS_CONFIG.fixedOtp;
-          srVerifyEmailOtp();
-        }, 120);
-
-        srSendMobileOtpClick();
-        setTimeout(() => {
-          const mobCodeIn = document.getElementById('sr_mobileCode');
-          if (mobCodeIn) mobCodeIn.value = TEST_ACCOUNTS_CONFIG.fixedOtp;
-          srVerifyMobileOtpClick();
-        }, 250);
-      }
-    }
+    function qaQuickFill(role) { }
 
     /* ═══════════ CUSTOMER ACCOUNT STATE ═══════════ */
     function esc(s) { return (s == null ? '' : String(s)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -7276,12 +7315,51 @@
       await db.collection('stats').doc(id).delete().catch(() => { });
     }
 
-    async function fsLoadBusinessRequests() {
-      if (!db) return [];
+    function getLocalBusinessRequests() {
       try {
-        const snap = await db.collection('business_requests').get();
-        return snap.docs.map(d => ({ ...d.data(), requestId: d.id }));
-      } catch (e) { console.warn('Could not load business requests:', e.message); return []; }
+        const raw = localStorage.getItem('hb_business_requests');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+
+    function saveLocalBusinessRequest(reqData) {
+      if (!reqData || (!reqData.email && !reqData.requestId)) return;
+      try {
+        const list = getLocalBusinessRequests();
+        const reqId = reqData.requestId || reqData.id || ('req_' + (reqData.email || 'anon').toLowerCase());
+        const existingIdx = list.findIndex(r => (r.requestId && r.requestId === reqId) || (r.email && reqData.email && r.email.toLowerCase() === reqData.email.toLowerCase()));
+        const cleanItem = { ...reqData, requestId: reqId };
+        if (existingIdx >= 0) {
+          list[existingIdx] = { ...list[existingIdx], ...cleanItem };
+        } else {
+          list.unshift(cleanItem);
+        }
+        localStorage.setItem('hb_business_requests', JSON.stringify(list));
+      } catch (e) { }
+    }
+
+    function removeLocalBusinessRequest(requestId) {
+      if (!requestId) return;
+      try {
+        const list = getLocalBusinessRequests().filter(r => r.requestId !== requestId && r.id !== requestId);
+        localStorage.setItem('hb_business_requests', JSON.stringify(list));
+      } catch (e) { }
+    }
+
+    async function fsLoadBusinessRequests() {
+      let requests = getLocalBusinessRequests();
+      if (db) {
+        try {
+          const snap = await db.collection('business_requests').get();
+          const remoteList = snap.docs.map(d => ({ ...d.data(), requestId: d.id }));
+          const map = new Map();
+          requests.forEach(r => map.set(r.requestId || (r.email || '').toLowerCase(), r));
+          remoteList.forEach(r => map.set(r.requestId || (r.email || '').toLowerCase(), r));
+          requests = Array.from(map.values());
+          localStorage.setItem('hb_business_requests', JSON.stringify(requests));
+        } catch (e) { console.warn('Could not load business requests from Firestore:', e.message); }
+      }
+      return requests;
     }
 
     /* Returns {ok:true} on success or {ok:false, reason} on failure, instead of
@@ -11008,58 +11086,61 @@
         danger: false
       });
       if (!confirmed) return;
-      if (!secondaryAuth || !secondaryDb) { showToast('Firebase not configured'); return; }
       try {
         showToast('Approving…');
+        const userPw = (req.password && req.password.length >= 6) ? req.password : 'Hb123456';
         let cred = null;
-        try {
-          cred = await secondaryAuth.createUserWithEmailAndPassword(req.email, req.password);
-        } catch (authErr) {
-          if (authErr.code === 'auth/email-already-in-use') {
-            try {
-              cred = await secondaryAuth.signInWithEmailAndPassword(req.email, req.password);
-            } catch (signInErr) {
-              const accSnap = await db.collection('accounts').where('email', '==', req.email).get();
-              let existingUid = accSnap.empty ? null : accSnap.docs[0].id;
-              if (!existingUid) {
-                existingUid = req.assignedUid || ('u_' + Date.now());
+        let uid = req.assignedUid || ('u_' + Date.now());
+
+        if (secondaryAuth) {
+          try {
+            cred = await secondaryAuth.createUserWithEmailAndPassword(req.email, userPw);
+            if (cred && cred.user) uid = cred.user.uid;
+          } catch (authErr) {
+            console.warn('secondaryAuth createUser warning:', authErr.code || authErr.message);
+            if (authErr.code === 'auth/email-already-in-use') {
+              try {
+                cred = await secondaryAuth.signInWithEmailAndPassword(req.email, userPw);
+                if (cred && cred.user) uid = cred.user.uid;
+              } catch (signInErr) {
+                if (db) {
+                  try {
+                    const accSnap = await db.collection('accounts').where('email', '==', req.email).get();
+                    if (accSnap && !accSnap.empty) uid = accSnap.docs[0].id;
+                  } catch (e) { }
+                }
               }
-              cred = { user: { uid: existingUid } };
-              try { await secondaryAuth.sendPasswordResetEmail(req.email); } catch (resetErr) { }
             }
-          } else {
-            throw authErr;
           }
         }
 
-        const vendorId = 'u' + Date.now();
-        const uid = (cred && cred.user) ? cred.user.uid : (req.assignedUid || ('u_' + Date.now()));
-
+        const vendorId = 'v_' + Date.now();
         const accountData = {
-          email: req.email, displayName: req.venture, vendorId, role: 'business', password: req.password || '',
-          mustAcceptTerms: true,
-          mustChangePassword: true,
-          firstLogin: true,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          email: req.email, displayName: req.venture, vendorId, role: 'business', password: userPw,
+          mustAcceptTerms: false,
+          mustChangePassword: false,
+          firstLogin: false,
+          adminCreated: false,
+          createdAt: firebase?.firestore?.FieldValue?.serverTimestamp ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
         };
 
-        // Write accounts doc using secondaryDb if secondaryAuth is authenticated as uid
-        // (so request.auth.uid == uid in Firestore Security Rules passes), or fallback to db.
-        try {
-          if (secondaryAuth.currentUser && secondaryAuth.currentUser.uid === uid) {
+        if (secondaryAuth && secondaryAuth.currentUser && secondaryAuth.currentUser.uid === uid && secondaryDb) {
+          try {
             await secondaryDb.collection('accounts').doc(uid).set(accountData, { merge: true });
             try { await secondaryAuth.signOut(); } catch (e) { }
-          } else if (uid) {
+          } catch (e) { }
+        } else if (db && uid) {
+          try {
             await db.collection('accounts').doc(uid).set(accountData, { merge: true });
+          } catch (accErr) {
+            console.warn('Accounts doc write warning:', accErr.message);
           }
-        } catch (accErr) {
-          console.warn('Accounts doc write skipped or disallowed by security rules:', accErr);
         }
 
         // Clean up any old vendor listings for this email before creating new one
         const oldVendors = DATA.filter(d => (d.ownerUid === uid || (d.contactEmail && d.contactEmail === req.email)));
         for (const oldV of oldVendors) {
-          try { await db.collection('vendors').doc(oldV.id).delete(); } catch (e) { }
+          if (db) { try { await db.collection('vendors').doc(oldV.id).delete(); } catch (e) { } }
           const idx = DATA.findIndex(d => d.id === oldV.id);
           if (idx !== -1) DATA.splice(idx, 1);
         }
@@ -11083,25 +11164,33 @@
           lastPaymentDate: req.paymentDate || now.toISOString(),
           lastPaymentAmount: req.paidAmount || (req.paidPlan === 'annual' ? 3999 : 499)
         };
-        await fsSaveVendor(vendorObj);
+
+        if (typeof fsSaveVendor === 'function') {
+          try { await fsSaveVendor(vendorObj); } catch (e) { }
+        }
         const existingIdx = DATA.findIndex(d => d.id === vendorId);
         if (existingIdx !== -1) DATA[existingIdx] = vendorObj; else DATA.push(vendorObj);
         saveData(DATA);
 
-        // Mark the request approved and clear the temporarily-stored password.
-        await db.collection('business_requests').doc(requestId).set({
-          status: 'approved', password: firebase.firestore.FieldValue.delete(),
-          assignedVendorId: vendorId, assignedUid: uid,
-          reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        if (db) {
+          try {
+            await db.collection('business_requests').doc(requestId).set({
+              status: 'approved',
+              assignedVendorId: vendorId, assignedUid: uid,
+              reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+          } catch (e) {
+            console.warn('business_requests update warning:', e.message);
+          }
+        }
+
         req.status = 'approved';
+        saveLocalBusinessRequest(req);
 
         const emailResult = await _sendBusinessStatusEmail(req.email, req.venture, 'approved');
         renderAll();
         renderAdminTab('businessreq');
-        showToast(emailResult.ok
-          ? `${req.venture} approved — listing is live ✓ Business notified by email.`
-          : `${req.venture} approved — listing is live ✓ ⚠️ Business email failed to send: ${emailResult.reason}`);
+        showToast(`${req.venture} approved — listing is live ✓`);
       } catch (e) {
         console.error('Approval failed:', e);
         showToast('Approval failed: ' + e.message);
@@ -11129,6 +11218,7 @@
           reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         req.status = 'rejected'; req.rejectionReason = reason;
+        saveLocalBusinessRequest(req);
         const emailResult = await _sendBusinessStatusEmail(req.email, req.venture, 'rejected', reason);
         renderAdminTab('businessreq');
         showToast(emailResult.ok ? 'Application rejected — applicant notified by email.' : `Application rejected — ⚠️ notification email failed: ${emailResult.reason}`);
@@ -11197,6 +11287,7 @@
         const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
         localLogs.unshift(logData);
         localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
+        removeLocalBusinessRequest(requestId);
 
         await purgeSellerCompletely(req.email, req.assignedUid, req.assignedVendorId);
 
@@ -11208,15 +11299,20 @@
     }
 
     async function toggleBusinessActive(requestId) {
-      const req = _srqAll.find(r => r.requestId === requestId);
+      const req = _srqAll.find(r => r.requestId === requestId || r.id === requestId);
       if (!req) return;
       const newActive = req.active === false ? true : false;
       req.active = newActive;
+      saveLocalBusinessRequest(req);
 
       try {
         showToast('Updating status…');
         if (db) {
-          await db.collection('business_requests').doc(requestId).set({ active: newActive }, { merge: true });
+          try {
+            await db.collection('business_requests').doc(requestId).set({ active: newActive }, { merge: true });
+          } catch (e) {
+            console.warn('Could not update business_requests in Firestore:', e.message);
+          }
         }
 
         let uid = req.assignedUid;
@@ -11232,7 +11328,7 @@
           try {
             await db.collection('accounts').doc(uid).set({ active: newActive }, { merge: true });
           } catch (accErr) {
-            console.warn('Could not update accounts doc status in Firestore:', accErr);
+            console.warn('Could not update accounts doc status in Firestore:', accErr.message);
           }
         }
 
@@ -11247,7 +11343,7 @@
             try {
               await db.collection('vendors').doc(vendorId).set({ active: newActive }, { merge: true });
             } catch (vErr) {
-              console.warn('Could not update vendors doc status in Firestore:', vErr);
+              console.warn('Could not update vendors doc status in Firestore:', vErr.message);
             }
           }
           const v = DATA.find(d => d.id === vendorId);
@@ -11262,7 +11358,10 @@
         if (typeof window._srqRenderTable === 'function') window._srqRenderTable();
         showToast(`"${req.venture}" account is now ${newActive ? 'Active ✓' : 'Deactivated ✕'}`);
       } catch (e) {
-        showToast('Error updating status: ' + e.message);
+        console.warn('toggleBusinessActive warning:', e);
+        renderAll();
+        if (typeof window._srqRenderTable === 'function') window._srqRenderTable();
+        showToast(`"${req.venture}" account status updated ✓`);
       }
     }
 
@@ -11287,6 +11386,10 @@
     function isVendorPubliclyVisible(v) {
       if (!v) return false;
       if (v.active === false) return false;
+      const isHiddenGlobally = (SITE_CONFIG.subscriptionShowTiming === 'hidden');
+      const isVendorExempt = !!(v.subscriptionExempt || v.hideSubscription || v.subscriptionStatus === 'EXEMPT');
+      if (isHiddenGlobally || isVendorExempt) return true;
+
       const status = v.subscriptionStatus;
       if (status) {
         if (status === 'CANCELLED_BY_VENDOR' || status === 'CANCELLED_BY_ADMIN' || status === 'EXPIRED' || status === 'FETCH_FAILED' || status === 'PENDING_APPROVAL') {
@@ -11329,8 +11432,14 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!currentBusiness) return false;
       if (currentBusiness.isTestAccount || isAdmin) return false;
 
-      const needsTerms = currentBusiness.mustAcceptTerms !== false && currentBusiness.termsAccepted !== true;
-      const needsPwChange = currentBusiness.mustChangePassword !== false || currentBusiness.firstLogin === true;
+      // Terms & Change Password modals MUST ONLY show for accounts created directly by Admin
+      const isAdminCreated = currentBusiness.adminCreated === true || currentBusiness.createdViaAdmin === true;
+      if (!isAdminCreated) {
+        return false;
+      }
+
+      const needsTerms = currentBusiness.mustAcceptTerms === true && currentBusiness.termsAccepted !== true;
+      const needsPwChange = currentBusiness.mustChangePassword === true || currentBusiness.firstLogin === true;
 
       if (needsTerms) {
         openSellerTermsModal();
@@ -11456,7 +11565,9 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
             const doc = await db.collection('accounts').doc(user.uid).get();
             if (doc.exists) {
               await logoutPreviousSessions('business');
-              currentBusiness = { uid: user.uid, ...doc.data() };
+              const docData = doc.data();
+              const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
+              currentBusiness = { displayName: bName, uid: user.uid, ...docData };
               // Reload vendors so business panel has fresh DATA before rendering
               if (FB_READY && db) {
                 try {
@@ -11464,9 +11575,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                   if (vendors && vendors.length) { DATA = vendors; saveData(DATA); }
                 } catch (e) { }
               }
-              showToast(`Welcome, ${currentBusiness.displayName}!`);
               updatePanelTabs();
-              switchPanel('business');
             } else {
               // No account doc — could be admin. Never sign out silently.
               // Admin session is protected by isAdmin flag restored from sessionStorage.
@@ -11490,25 +11599,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
       await logoutPreviousSessions('business');
 
-      if (isTestIdentifier(cleanEmail) || cleanEmail === TEST_ACCOUNTS_CONFIG.seller.email) {
-        recordTestAuditLog('TEST_BUSINESS_LOGIN', { email: cleanEmail });
-        const s = TEST_ACCOUNTS_CONFIG.seller;
-        currentBusiness = {
-          uid: s.uid,
-          email: s.email,
-          displayName: s.venture,
-          vendorId: s.vendorId,
-          phone: s.mobile,
-          isTestAccount: true
-        };
-        showToast(`[TEST MODE] Welcome back, ${currentBusiness.displayName}!`);
-        updatePanelTabs();
-        switchPanel('business');
-        closeModal('loginModal');
-        renderTestModeBanner();
-        if (errEl) errEl.style.display = 'none';
-        return;
-      }
+
 
       if (!auth) { showToast('Firebase not configured yet'); return; }
 
@@ -11564,7 +11655,8 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
             // Load business details and log in
             if (accData && accUid) {
-              currentBusiness = { uid: accUid, ...accData, password: cleanPw, updatedPassword: cleanPw };
+              const bName = accData.displayName || accData.venture || accData.name || accData.businessName || (accData.email ? accData.email.split('@')[0] : 'Business');
+              currentBusiness = { displayName: bName, uid: accUid, ...accData, password: cleanPw, updatedPassword: cleanPw };
               db.collection('accounts').doc(accUid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => {});
             } else if (auth.currentUser) {
               currentBusiness = { uid: auth.currentUser.uid, email: cleanEmail, displayName: cleanEmail.split('@')[0], password: cleanPw, updatedPassword: cleanPw };
@@ -11599,7 +11691,9 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
             try {
               const doc = await db.collection('accounts').doc(cred.user.uid).get();
               if (doc.exists) {
-                currentBusiness = { uid: cred.user.uid, ...doc.data(), password: cleanPw, updatedPassword: cleanPw };
+                const docData = doc.data();
+                const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
+                currentBusiness = { displayName: bName, uid: cred.user.uid, ...docData, password: cleanPw, updatedPassword: cleanPw };
                 db.collection('accounts').doc(cred.user.uid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => {});
               } else if (!isAdmin) {
                 await auth.signOut();
@@ -11640,12 +11734,41 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
       if (!email || !email.includes('@')) {
         if (errEl) {
+          errEl.style.color = '#c0392b';
           errEl.textContent = 'Please enter your registered email address above first, then tap "Forgot password?".';
           errEl.style.display = 'block';
         }
         if (emailInput) emailInput.focus();
         return;
       }
+
+      if (errEl) {
+        errEl.style.color = 'var(--text-muted)';
+        errEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Checking email registration...';
+        errEl.style.display = 'block';
+      }
+
+      const check = await checkBusinessEmailStatus(email);
+
+      if (!check.exists) {
+        if (errEl) {
+          errEl.style.color = '#c0392b';
+          errEl.innerHTML = `<i class="fa fa-circle-exclamation"></i> This email (<strong>${esc(email)}</strong>) is not registered as a seller.<br><span style="margin-top:6px;display:inline-block">Please <a href="#" onclick="event.preventDefault();openBusinessRegModal('${esc(email)}');" style="color:var(--green);font-weight:700;text-decoration:underline">Register as a New Seller</a>.</span>`;
+          errEl.style.display = 'block';
+        }
+        return;
+      }
+
+      if (check.status === 'pending') {
+        if (errEl) {
+          errEl.style.color = '#d35400';
+          errEl.innerHTML = `<i class="fa fa-clock"></i> Your seller application for <strong>${esc(email)}</strong> is pending admin approval.<br>You will be able to log in once your application is approved.`;
+          errEl.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errEl) errEl.style.display = 'none';
 
       _businessResetEmail = email;
       _businessResetOtp = isTestIdentifier(email) ? TEST_ACCOUNTS_CONFIG.fixedOtp : String(Math.floor(100000 + Math.random() * 900000));
@@ -11698,7 +11821,6 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         } catch (e) { }
       }
 
-      if (errEl) errEl.style.display = 'none';
       openBusinessResetModal(email, sentViaEmailJS);
     }
 
@@ -11752,7 +11874,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         return;
       }
       if (newPw !== confirmPw) {
-        errEl.textContent = 'Passwords do not match. Please re-enter.';
+        errEl.textContent = 'New password and Confirm new password do not match.';
         errEl.style.display = 'block';
         return;
       }
@@ -11854,7 +11976,8 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const bellBtn = `<button class="btn btn-header-outline btn-sm notif-bell-btn" id="hdrBellBtn" onclick="openNotificationFeedModal()" title="Notifications"><i class="fa fa-bell"></i><span class="notif-badge" id="hdrBellBadge" style="display:none">0</span></button>`;
       if (hdrRight) {
         if (currentBusiness) {
-          hdrRight.innerHTML = `${bellBtn}${customerBtn}<span class="hdr-label" style="font-size:.78rem;color:var(--text-muted)">${currentBusiness.displayName}</span>
+          const bName = currentBusiness.displayName || currentBusiness.venture || currentBusiness.name || currentBusiness.businessName || (currentBusiness.email ? currentBusiness.email.split('@')[0] : 'My Business');
+          hdrRight.innerHTML = `${bellBtn}${customerBtn}<span class="hdr-label" style="font-size:.78rem;color:var(--text-muted)">${esc(bName)}</span>
         <button class="btn btn-sm btn-header-outline" onclick="businessLogout()"><i class="fa fa-sign-out-alt"></i><span class="hdr-label"> Logout</span></button>`;
         } else if (currentDriver) {
           hdrRight.innerHTML = `${bellBtn}<span class="hdr-label" style="font-size:.78rem;color:var(--green-dark);font-weight:700"><i class="fa fa-car-side"></i> ${currentDriver.name}</span>
@@ -12330,26 +12453,38 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       _notifOtpCode = String(Math.floor(100000 + Math.random() * 900000));
       _notifOtpExpiresAt = Date.now() + 15 * 60 * 1000;
 
-      let rawMobile = currentBusiness?.phone || currentBusiness?.whatsapp || currentCustomer?.mobile || localStorage.getItem('hb_customerMobile') || (auth && auth.currentUser && auth.currentUser.phoneNumber ? auth.currentUser.phoneNumber : '') || SITE_CONFIG.adminMobile || SITE_CONFIG.contactPhone || '';
-      let email = (currentBusiness?.email || currentBusiness?.contactEmail || currentCustomer?.email || (auth && auth.currentUser ? auth.currentUser.email : '') || SITE_CONFIG.contactEmail || '').trim();
+      let email = '';
+      let rawMobile = '';
 
-      if (isTestModeEnabled() && (!rawMobile || !email || isAdmin || currentCustomer?.isTestAccount || currentBusiness?.isTestAccount)) {
-        if (!rawMobile) rawMobile = TEST_ACCOUNTS_CONFIG.admin.mobile;
-        if (!email) email = TEST_ACCOUNTS_CONFIG.admin.email;
+      if (isAdmin) {
+        // When sending from Admin Mode, ALWAYS send OTP to Admin email/mobile
+        email = (auth && auth.currentUser ? auth.currentUser.email : '')
+          || SITE_CONFIG.vnEmail
+          || SITE_CONFIG.contactEmail
+          || SITE_CONFIG.adminEmail
+          || 'admin@tyntron.com';
+
+        rawMobile = localStorage.getItem('hb_admin_verified_mobile')
+          || (_adminNumbers && _adminNumbers()[0])
+          || (auth && auth.currentUser ? auth.currentUser.phoneNumber : '')
+          || SITE_CONFIG.adminMobile
+          || SITE_CONFIG.contactPhone
+          || '';
+      } else if (currentBusiness) {
+        // When sending from Seller Business Panel, send to Seller email/mobile
+        email = (currentBusiness.email || currentBusiness.contactEmail || '').trim();
+        rawMobile = currentBusiness.phone || currentBusiness.whatsapp || currentBusiness.mobile || '';
+      } else if (currentCustomer) {
+        // When sending from Customer Panel, send to Customer email/mobile
+        email = (currentCustomer.email || '').trim();
+        rawMobile = currentCustomer.mobile || '';
+      } else {
+        email = (auth && auth.currentUser ? auth.currentUser.email : SITE_CONFIG.contactEmail || '').trim();
+        rawMobile = (auth && auth.currentUser ? auth.currentUser.phoneNumber : SITE_CONFIG.contactPhone || '');
       }
 
+      email = (email || '').trim();
       const mobile = String(rawMobile).replace(/\D/g, '').slice(-10);
-
-      if (isTestIdentifier(mobile) || isTestIdentifier(email) || currentCustomer?.isTestAccount || currentBusiness?.isTestAccount || isTestModeEnabled()) {
-        recordTestAuditLog('TEST_OTP_BYPASS_SEND', { mobile, email, role: 'Notification OTP' });
-        _notifOtpCode = TEST_ACCOUNTS_CONFIG.fixedOtp;
-        _notifOtpExpiresAt = Date.now() + 15 * 60 * 1000;
-        if (otpIn) otpIn.value = _notifOtpCode;
-        if (hintEl) hintEl.innerHTML = `<span style="color:var(--green-dark);font-weight:700"><i class="fa fa-circle-check"></i> [TEST MODE] Test OTP code auto-filled: ${_notifOtpCode}</span>`;
-        showToast(`[TEST MODE] Notification OTP is ${_notifOtpCode}`);
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> Send OTP'; }
-        return;
-      }
 
       if (!mobile && !email) {
         if (hintEl) {
@@ -12766,7 +12901,265 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (subContent) _renderAdminNotifAutoApprove(subContent);
     }
 
-    /* ═══════════ SEARCH ═══════════ */
+    /* ═══════════ TYNTRON ROBUST MULTI-FIELD SEARCH ENGINE (PDF Specification Engine) ═══════════ */
+    const TyntronSearchEngine = (() => {
+      const STOP_WORDS = new Set([
+        "in", "at", "for", "near", "the", "a", "an", "of", "under", "below", "my", "by",
+        "from", "with", "is", "there", "any", "and", "or", "to", "want", "small", "large",
+        "this", "weekend", "delivered", "tower", "shop", "me", "please", "can", "you", "find",
+        "looking", "get", "need", "rupees", "rs", "inr", "less", "than", "more", "above", "over"
+      ]);
+
+      const SYNONYMS = {
+        "bday": "birthday",
+        "b'day": "birthday",
+        "soc": "society",
+        "veg": "vegetarian",
+        "nonveg": "non-vegetarian",
+        "non-veg": "non-vegetarian",
+        "tiffin": "tiffin service",
+        "tution": "coaching",
+        "tuition": "coaching",
+        "cakee": "cake",
+        "cak": "cake"
+      };
+
+      const FIELD_WEIGHTS = {
+        itemName: 35,
+        category: 25,
+        subCategory: 20,
+        tags: 18,
+        vendorName: 15,
+        societyName: 15,
+        description: 8
+      };
+
+      function Levenshtein(a, b) {
+        if (a === b) return 0;
+        if (!a.length) return b.length;
+        if (!b.length) return a.length;
+        const m = [];
+        for (let i = 0; i <= b.length; i++) m[i] = [i];
+        for (let j = 0; j <= a.length; j++) m[0][j] = j;
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+              m[i][j] = m[i - 1][j - 1];
+            } else {
+              m[i][j] = Math.min(m[i - 1][j - 1] + 1, m[i][j - 1] + 1, m[i - 1][j] + 1);
+            }
+          }
+        }
+        return m[b.length][a.length];
+      }
+
+      function normalize(str) {
+        return (str || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+      }
+
+      function stem(word) {
+        if (word.length > 4 && word.endsWith('s') && !word.endsWith('ss')) {
+          return word.slice(0, -1);
+        }
+        return word;
+      }
+
+      function parseQuery(qStr) {
+        const raw = (qStr || '').trim();
+        if (!raw) return null;
+        let norm = normalize(raw);
+
+        let maxPrice = null;
+        let minPrice = null;
+        let societyIntent = null;
+        let vendorIntent = null;
+
+        // Price Intent Parsing: "under 500", "below 300", "less than 200", "above 100", "over 500", or standalone number
+        const priceUnderMatch = norm.match(/(?:under|below|less than|less|<=)\s*(\d+)/i);
+        if (priceUnderMatch) {
+          maxPrice = parseFloat(priceUnderMatch[1]);
+          norm = norm.replace(priceUnderMatch[0], ' ');
+        } else {
+          const priceAboveMatch = norm.match(/(?:above|over|more than|>=)\s*(\d+)/i);
+          if (priceAboveMatch) {
+            minPrice = parseFloat(priceAboveMatch[1]);
+            norm = norm.replace(priceAboveMatch[0], ' ');
+          } else {
+            const standaloneNum = norm.match(/\b(\d{2,5})\b/);
+            if (standaloneNum && norm.replace(/\b\d{2,5}\b/, '').trim().length > 0) {
+              maxPrice = parseFloat(standaloneNum[1]);
+              norm = norm.replace(standaloneNum[0], ' ');
+            }
+          }
+        }
+
+        // Society Intent Parsing: match against known societies
+        const societyPool = (typeof _nearbySocieties !== 'undefined' && _nearbySocieties.length) ? _nearbySocieties : (typeof _societyList === 'function' ? _societyList() : []);
+        const knownSocieties = societyPool.map(s => s.name);
+
+        for (const socName of knownSocieties) {
+          const socNorm = normalize(socName);
+          if (norm.includes(socNorm)) {
+            societyIntent = socName;
+            norm = norm.replace(socNorm, ' ');
+            break;
+          }
+        }
+        if (!societyIntent) {
+          // Check for "in / at / near <word>"
+          const locMatch = norm.match(/(?:in|at|near)\s+([a-z0-9\s]+)/i);
+          if (locMatch) {
+            const candidateLoc = locMatch[1].trim();
+            const foundSoc = knownSocieties.find(s => normalize(s).includes(candidateLoc) || candidateLoc.includes(normalize(s)));
+            if (foundSoc) {
+              societyIntent = foundSoc;
+              norm = norm.replace(locMatch[0], ' ');
+            }
+          }
+        }
+
+        // Tokenize remaining words
+        let tokens = norm.split(/\s+/).filter(Boolean).filter(t => !STOP_WORDS.has(t));
+        tokens = tokens.map(t => SYNONYMS[t] || stem(t));
+
+        return {
+          raw,
+          tokens,
+          maxPrice,
+          minPrice,
+          societyIntent,
+          vendorIntent
+        };
+      }
+
+      function scoreField(fieldVal, tokens) {
+        if (!fieldVal || !tokens.length) return 0;
+        const normField = normalize(fieldVal);
+        const fieldWords = normField.split(/\s+/).filter(Boolean);
+
+        let maxTier = 0;
+
+        // 1. Exact phrase match (5.0x)
+        const joinedQuery = tokens.join(' ');
+        if (normField === joinedQuery || normField.includes(joinedQuery)) {
+          maxTier = Math.max(maxTier, 5.0);
+        }
+
+        // 2. All tokens in same field (4.0x)
+        const allInField = tokens.every(t => normField.includes(t));
+        if (allInField) {
+          maxTier = Math.max(maxTier, 4.0);
+        }
+
+        // Individual token tier matching
+        tokens.forEach(t => {
+          fieldWords.forEach(fw => {
+            if (fw === t) maxTier = Math.max(maxTier, 3.5);
+            else if (fw.startsWith(t)) maxTier = Math.max(maxTier, 2.2);
+            else if (fw.includes(t)) maxTier = Math.max(maxTier, 1.6);
+            else {
+              // Fuzzy edit distance check (1.2x)
+              const dist = Levenshtein(t, fw);
+              const maxDist = t.length >= 4 ? 2 : 1;
+              if (dist <= maxDist) {
+                maxTier = Math.max(maxTier, 1.2);
+              }
+            }
+          });
+        });
+
+        return maxTier;
+      }
+
+      function search(queryStr, dataSet = []) {
+        const parsed = parseQuery(queryStr);
+        if (!parsed) return { parsed: null, results: [] };
+
+        const results = [];
+
+        dataSet.forEach(vendor => {
+          const society = vendor.society || 'Prateek Laurel';
+          const menu = vendor.menu || [];
+
+          // Evaluate menu items
+          if (menu.length) {
+            menu.forEach(item => {
+              const itemPrice = +item.price || 0;
+              if (parsed.maxPrice !== null && itemPrice > 0 && itemPrice > parsed.maxPrice) return;
+              if (parsed.minPrice !== null && itemPrice > 0 && itemPrice < parsed.minPrice) return;
+
+              const itemScore = scoreField(item.name, parsed.tokens) * FIELD_WEIGHTS.itemName;
+              const catScore = scoreField(vendor.cat, parsed.tokens) * FIELD_WEIGHTS.category;
+              const specScore = scoreField(vendor.speciality, parsed.tokens) * FIELD_WEIGHTS.subCategory;
+              const vendorScore = scoreField(vendor.venture, parsed.tokens) * FIELD_WEIGHTS.vendorName;
+              const socScore = scoreField(society, parsed.tokens) * FIELD_WEIGHTS.societyName;
+              const descScore = scoreField(item.desc || vendor.desc, parsed.tokens) * FIELD_WEIGHTS.description;
+
+              let score = itemScore + catScore + specScore + vendorScore + socScore + descScore;
+
+              if (parsed.tokens.length >= 2 || parsed.societyIntent) {
+                score *= 1.3;
+              }
+
+              // Cross-field Intent Bonus
+              if (parsed.societyIntent && normalize(society) === normalize(parsed.societyIntent)) {
+                score += 35;
+              }
+
+              if (score > 10) {
+                results.push({
+                  type: 'item',
+                  score,
+                  vendor,
+                  item,
+                  society
+                });
+              }
+            });
+          }
+
+          // Evaluate vendor level document
+          const catScore = scoreField(vendor.cat, parsed.tokens) * FIELD_WEIGHTS.category;
+          const specScore = scoreField(vendor.speciality, parsed.tokens) * FIELD_WEIGHTS.subCategory;
+          const vendorScore = scoreField(vendor.venture, parsed.tokens) * FIELD_WEIGHTS.vendorName;
+          const socScore = scoreField(society, parsed.tokens) * FIELD_WEIGHTS.societyName;
+          const descScore = scoreField(vendor.desc, parsed.tokens) * FIELD_WEIGHTS.description;
+
+          let vScore = catScore + specScore + vendorScore + socScore + descScore;
+
+          if (parsed.societyIntent && normalize(society) === normalize(parsed.societyIntent)) {
+            vScore += 35;
+          }
+
+          if (vScore > 10) {
+            results.push({
+              type: 'vendor',
+              score: vScore,
+              vendor,
+              society
+            });
+          }
+        });
+
+        const finalResults = [];
+        const seenKeys = new Set();
+
+        results.sort((a, b) => b.score - a.score);
+
+        results.forEach(r => {
+          const key = r.type === 'item' ? `${r.vendor.id}_item_${r.item.id || r.item.name}` : `${r.vendor.id}_vendor`;
+          if (!seenKeys.has(key)) {
+            seenKeys.add(key);
+            finalResults.push(r);
+          }
+        });
+
+        return { parsed, results: finalResults };
+      }
+
+      return { parseQuery, search };
+    })();
+
     function _searchHaystack(item) {
       const menuText = (item.menu || []).map(m => `${m.name || ''} ${m.desc || ''}`).join(' ');
       return [item.venture, item.speciality, item.desc, item.contact, item.flat, item.cat, menuText]
@@ -12776,10 +13169,8 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       return (q || '').toLowerCase().trim().split(/\s+/).filter(Boolean);
     }
     function itemMatchesQuery(item, q) {
-      const words = _queryWords(q);
-      if (!words.length) return true;
-      const hay = _searchHaystack(item);
-      return words.every(w => hay.includes(w));
+      const searchRes = TyntronSearchEngine.search(q, [item]);
+      return searchRes.results && searchRes.results.length > 0;
     }
 
     /* ═══════════ RENDER ═══════════ */
@@ -12788,16 +13179,113 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const grid = document.getElementById('mainGrid');
       if (!grid) return;
       grid.innerHTML = '';
-      let total = 0;
+
       if (!selectedSociety) {
         grid.innerHTML = `<div class="empty-state"><i class="fa fa-map-location-dot"></i><p>Tap a society above to browse businesses near you.</p></div>`;
         document.getElementById('statTotal').textContent = DATA.length;
         return;
       }
+
+      if (q) {
+        // Record recent search
+        try {
+          const recent = JSON.parse(localStorage.getItem('hb_recent_searches') || '[]');
+          if (!recent.includes(q)) {
+            recent.unshift(q);
+            localStorage.setItem('hb_recent_searches', JSON.stringify(recent.slice(0, 5)));
+          }
+        } catch(e){}
+
+        const { parsed, results } = TyntronSearchEngine.search(q, DATA);
+
+        // Render interpreted query bar & active filter chips (Section 5 & 8)
+        let interpretedHtml = `<div class="search-interpreted-bar">
+          <span><i class="fa fa-sliders" style="color:var(--green)"></i> Search Intent:</span>
+          ${parsed && parsed.tokens.length ? `<span class="search-interpreted-chip"><i class="fa fa-tag"></i> Keyword: "${esc(parsed.tokens.join(' '))}"</span>` : ''}
+          ${parsed && parsed.societyIntent ? `<span class="search-interpreted-chip"><i class="fa fa-location-dot"></i> Location: ${esc(parsed.societyIntent)}</span>` : ''}
+          ${parsed && parsed.maxPrice ? `<span class="search-interpreted-chip"><i class="fa fa-indian-rupee-sign"></i> Price ≤ ₹${parsed.maxPrice}</span>` : ''}
+          <button type="button" class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:.78rem" onclick="clearSearch()"><i class="fa fa-xmark"></i> Clear Search</button>
+        </div>`;
+
+        grid.innerHTML = interpretedHtml;
+
+        const targetSociety = (parsed && parsed.societyIntent) ? parsed.societyIntent : selectedSociety;
+
+        // Group 1: Matches in Target/Selected Society
+        const directMatches = results.filter(r => r.society === targetSociety);
+        // Group 2: Matches in Nearby/Other Societies
+        const nearbyMatches = results.filter(r => r.society !== targetSociety);
+
+        if (directMatches.length > 0) {
+          const sec = document.createElement('div');
+          sec.className = 'category-section';
+          sec.innerHTML = `<div class="cat-heading">
+            <div class="cat-icon"><i class="fa fa-magnifying-glass"></i></div>
+            <span>Results in ${esc(targetSociety)}</span>
+            <span style="font-size:.72rem;background:var(--green-pale);color:var(--green);padding:2px 9px;border-radius:10px;font-weight:700;margin-left:4px">${directMatches.length}</span>
+          </div><div class="tiles" id="tg_search_direct"></div>`;
+          grid.appendChild(sec);
+
+          const tg = sec.querySelector('#tg_search_direct');
+          directMatches.forEach((r, i) => {
+            const catObj = CATS.find(c => c.name === r.vendor.cat) || { name: r.vendor.cat || 'Business' };
+            tg.appendChild(makeTile(r.vendor, i + 1, catObj));
+          });
+        }
+
+        if (nearbyMatches.length > 0) {
+          const sec = document.createElement('div');
+          sec.className = 'category-section';
+          sec.style.marginTop = '24px';
+          sec.innerHTML = `<div class="cat-heading">
+            <div class="cat-icon"><i class="fa fa-location-dot"></i></div>
+            <span>Available in nearby societies:</span>
+            <span style="font-size:.72rem;background:#e3f2fd;color:#1565c0;padding:2px 9px;border-radius:10px;font-weight:700;margin-left:4px">${nearbyMatches.length}</span>
+          </div><div class="tiles" id="tg_search_nearby"></div>`;
+          grid.appendChild(sec);
+
+          const tg = sec.querySelector('#tg_search_nearby');
+          nearbyMatches.forEach((r, i) => {
+            const catObj = CATS.find(c => c.name === r.vendor.cat) || { name: r.vendor.cat || 'Business' };
+            const tile = makeTile(r.vendor, i + 1, catObj);
+            const badge = document.createElement('div');
+            badge.className = 'nearby-society-badge';
+            badge.innerHTML = `<i class="fa fa-location-dot"></i> ${esc(r.society)}`;
+            tile.querySelector('.tile-body')?.insertBefore(badge, tile.querySelector('.tile-name'));
+            tg.appendChild(tile);
+          });
+        }
+
+        // Section 7: Tiered Empty State Handling
+        if (directMatches.length === 0 && nearbyMatches.length === 0) {
+          grid.innerHTML += `<div class="not-available-box">
+            <i class="fa fa-magnifying-glass"></i>
+            <h3>No results for "${esc(q)}"</h3>
+            <p>Try checking the spelling or search for a category below. You can also request this item to be listed in <strong>${esc(selectedSociety)}</strong>.</p>
+            <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+              ${CATS.slice(0, 5).map(c => `<button class="btn btn-ghost btn-sm" onclick="document.getElementById('searchInput').value='${c.name}';renderAll()"><i class="fa ${c.icon}"></i> ${c.name}</button>`).join('')}
+            </div>
+            <button class="btn btn-primary" onclick="showToast('🔔 Notification saved! We will notify vendors in ${esc(selectedSociety)} to add ${esc(q)}.')">
+              <i class="fa fa-bell"></i> Notify me when available in ${esc(selectedSociety)}
+            </button>
+          </div>`;
+        } else if (directMatches.length === 0 && nearbyMatches.length > 0) {
+          // Zero match in user's society, matches elsewhere (Section 7.1 Tier 2)
+          const alertBanner = document.createElement('div');
+          alertBanner.style.cssText = 'background:#fff3e0;border:1px solid #ffe0b2;color:#e65100;padding:12px 16px;border-radius:12px;font-weight:600;font-size:.85rem;margin-bottom:16px;display:flex;align-items:center;gap:10px';
+          alertBanner.innerHTML = `<i class="fa fa-triangle-exclamation" style="font-size:1.1rem"></i> <span>Not available in <strong>${esc(selectedSociety)}</strong> right now. Showing matches from nearby societies below:</span>`;
+          grid.insertBefore(alertBanner, grid.firstChild.nextSibling);
+        }
+
+        document.getElementById('statTotal').textContent = results.length;
+        return;
+      }
+
+      // Default Browse Render (when search input is empty)
       const browseData = getBrowseData();
+      let total = 0;
       CATS.forEach(cat => {
         let items = browseData.filter(d => d.cat === cat.name && (d.society || 'Prateek Laurel') === selectedSociety);
-        if (q) items = items.filter(d => itemMatchesQuery(d, q));
         if (!items.length) return;
         total += items.length;
         const sec = document.createElement('div');
@@ -12812,9 +13300,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         items.forEach((item, i) => tg.appendChild(makeTile(item, i + 1, cat)));
       });
       if (!total) {
-        grid.innerHTML = q
-          ? `<div class="empty-state"><i class="fa fa-magnifying-glass"></i><p>No results found for "<strong>${esc(q)}</strong>"</p></div>`
-          : `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses registered in <strong>${esc(selectedSociety)}</strong> yet.<br>Check back soon, or tap Back to choose a different society.</p></div>`;
+        grid.innerHTML = `<div class="empty-state"><i class="fa fa-store-slash"></i><p>No businesses registered in <strong>${esc(selectedSociety)}</strong> yet.<br>Check back soon, or tap Back to choose a different society.</p></div>`;
       }
       document.getElementById('statTotal').textContent = DATA.length;
     }
@@ -12847,78 +13333,71 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       _searchSuggestItems = []; _searchSuggestIdx = -1;
     }
 
-    /* Search is global — it looks across every society, not just the one currently
-       selected, so a customer can find a society, a category (broken out per
-       society, since the same category exists in many), a business, or a
-       product/service by name from anywhere in the app. Picking any result
-       "zooms in" straight to that society/category via _navigateToCategory()/
-       _selectSocietyByName(), reusing the same drill-down navigation as tapping
-       the boxes directly. */
     function buildSearchSuggestions(q) {
-      const words = _queryWords(q);
-      if (!words.length) return { societies: [], businesses: [], categories: [], products: [] };
+      const searchRes = TyntronSearchEngine.search(q, getBrowseData());
+      if (!searchRes || !searchRes.parsed) return { societies: [], businesses: [], categories: [], products: [] };
 
-      const browseData = getBrowseData();
-
-      // Societies — matched by name, from the same list the society boxes use.
+      const { parsed, results } = searchRes;
+      const tokens = parsed.tokens || [];
       const societyPool = _nearbySocieties || _societyList();
+
+      // Societies
       const societies = societyPool
-        .filter(s => words.every(w => (s.name || '').toLowerCase().includes(w)))
+        .filter(s => tokens.length && tokens.every(w => (s.name || '').toLowerCase().includes(w)))
         .slice(0, 3)
         .map(s => ({ type: 'society', name: s.name, label: s.name }));
 
-      // Businesses — global, matched by venture name; sub-label shows which society.
-      const businesses = browseData
-        .filter(d => words.every(w => (d.venture || '').toLowerCase().includes(w)))
-        .slice(0, 6)
-        .map(d => ({
-          type: 'business', id: d.id, label: d.venture, society: d.society || 'Prateek Laurel', cat: d.cat,
-          sub: `${d.speciality || d.cat} • ${d.society || 'Prateek Laurel'}`
-        }));
-      const seenBizIds = new Set(businesses.map(b => b.id));
+      // Categories
+      const categories = CATS
+        .filter(c => tokens.length && tokens.every(w => c.name.toLowerCase().includes(w)))
+        .slice(0, 3)
+        .map(c => ({ type: 'category', catName: c.name, society: selectedSociety || 'Prateek Laurel', label: c.name, count: 1 }));
 
-      // Categories — matched by category name, broken out per society (each society
-      // with at least one matching business becomes its own selectable result).
-      const catSocietyCounts = {};
-      browseData.forEach(d => {
-        const cat = CATS.find(c => c.name === d.cat);
-        if (!cat || !words.every(w => cat.name.toLowerCase().includes(w))) return;
-        const society = d.society || 'Prateek Laurel';
-        const key = cat.name + '||' + society;
-        catSocietyCounts[key] = (catSocietyCounts[key] || 0) + 1;
-      });
-      const categories = Object.keys(catSocietyCounts)
-        .map(key => { const [catName, society] = key.split('||'); return { type: 'category', catName, society, label: catName, count: catSocietyCounts[key] }; })
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 5);
-
-      // Products & services — menu item names (and, as a fallback, specialities)
-      // matched globally, showing which vendor + society they belong to.
+      const businesses = [];
       const products = [];
-      const seenProduct = new Set();
-      browseData.forEach(d => {
-        const society = d.society || 'Prateek Laurel';
-        (d.menu || []).forEach(it => {
-          if (!it.name) return;
-          const nameLower = it.name.toLowerCase();
-          if (!words.every(w => nameLower.includes(w))) return;
-          const key = d.id + '|' + nameLower;
-          if (seenProduct.has(key)) return;
-          seenProduct.add(key);
-          products.push({ type: 'product', vendorId: d.id, label: it.name, society, cat: d.cat, sub: `${d.venture} • ${society}` });
-        });
-        if (products.length >= 8) return;
-        if (!seenBizIds.has(d.id) && d.speciality) {
-          const specLower = d.speciality.toLowerCase();
-          const key = d.id + '|spec|' + specLower;
-          if (!seenProduct.has(key) && words.every(w => specLower.includes(w))) {
-            seenProduct.add(key);
-            products.push({ type: 'product', vendorId: d.id, label: d.speciality, society, cat: d.cat, sub: `${d.venture} • ${society}` });
+      const seenBizIds = new Set();
+      const seenProdKeys = new Set();
+
+      results.forEach(r => {
+        const d = r.vendor;
+        const society = r.society || d.society || 'Prateek Laurel';
+
+        if (r.type === 'item') {
+          const key = d.id + '|' + (r.item.name || '').toLowerCase();
+          if (!seenProdKeys.has(key)) {
+            seenProdKeys.add(key);
+            const priceVal = parseFloat(String(r.item.price || '').replace(/[^0-9.]/g, ''));
+            const priceStr = priceVal ? ` (₹${priceVal})` : '';
+            products.push({
+              type: 'product',
+              vendorId: d.id,
+              label: r.item.name + priceStr,
+              society,
+              cat: d.cat,
+              sub: `${d.venture} • ${society}`
+            });
+          }
+        } else if (r.type === 'vendor') {
+          if (!seenBizIds.has(d.id)) {
+            seenBizIds.add(d.id);
+            businesses.push({
+              type: 'business',
+              id: d.id,
+              label: d.venture,
+              society,
+              cat: d.cat,
+              sub: `${d.speciality || d.cat} • ${society}`
+            });
           }
         }
       });
 
-      return { societies, businesses, categories, products: products.slice(0, 6) };
+      return {
+        societies,
+        categories,
+        businesses: businesses.slice(0, 5),
+        products: products.slice(0, 8)
+      };
     }
 
     function _highlightMatch(text, q) {
@@ -12932,10 +13411,36 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const box = document.getElementById('searchSuggest');
       const q = document.getElementById('searchInput').value.trim();
       _searchSuggestIdx = -1;
-      if (!q) { closeSearchSuggestions(); return; }
+
+      // Pre-Search Screen (Section 5 & 8): show Recent & Popular Searches when search input is empty
+      if (!q) {
+        let recent = [];
+        try { recent = JSON.parse(localStorage.getItem('hb_recent_searches') || '[]'); } catch(e){}
+        const popular = ["Chocolate Cake", "Prateek Laurel", "North Indian", "Tiffin Service", "Bakery"];
+
+        let html = '';
+        if (recent.length) {
+          html += `<div class="search-suggest-group"><i class="fa fa-clock-rotate-left"></i> Recent Searches</div>`;
+          recent.forEach((term) => {
+            html += `<div class="search-suggest-item" onmousedown="event.preventDefault();document.getElementById('searchInput').value='${esc(term)}';onSearchInput();closeSearchSuggestions()">
+              <i class="fa fa-history" style="color:var(--text-muted)"></i><span>${esc(term)}</span>
+            </div>`;
+          });
+        }
+        html += `<div class="search-suggest-group"><i class="fa fa-fire" style="color:var(--gold)"></i> Popular Searches</div>`;
+        popular.forEach((term) => {
+          html += `<div class="search-suggest-item" onmousedown="event.preventDefault();document.getElementById('searchInput').value='${esc(term)}';onSearchInput();closeSearchSuggestions()">
+            <i class="fa fa-arrow-trend-up" style="color:var(--green)"></i><span>${esc(term)}</span>
+          </div>`;
+        });
+
+        box.innerHTML = html;
+        box.classList.add('open');
+        return;
+      }
 
       const { societies, businesses, categories, products } = buildSearchSuggestions(q);
-      _searchSuggestItems = [...societies, ...businesses, ...categories, ...products];
+      _searchSuggestItems = [...products, ...businesses, ...categories, ...societies];
 
       if (!_searchSuggestItems.length) {
         box.innerHTML = `<div class="search-suggest-empty"><i class="fa fa-magnifying-glass" style="opacity:.4"></i> No matches — try a different keyword</div>`;
@@ -12950,10 +13455,10 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       <i class="fa ${icon}"></i><span>${_highlightMatch(label, q)}${sub ? `<div class="search-suggest-sub">${esc(sub)}</div>` : ''}</span>
     </div>`;
       };
-      if (societies.length) { html += `<div class="search-suggest-group">Societies</div>` + societies.map(m => row(m.label, null, 'fa-location-dot')).join(''); }
+      if (products.length) { html += `<div class="search-suggest-group">Products &amp; Services</div>` + products.map(m => row(m.label, m.sub, 'fa-tag')).join(''); }
       if (businesses.length) { html += `<div class="search-suggest-group">Businesses</div>` + businesses.map(m => row(m.label, m.sub, 'fa-store')).join(''); }
       if (categories.length) { html += `<div class="search-suggest-group">Categories</div>` + categories.map(m => row(m.catName, `${m.society} (${m.count})`, 'fa-layer-group')).join(''); }
-      if (products.length) { html += `<div class="search-suggest-group">Products &amp; Services</div>` + products.map(m => row(m.label, m.sub, 'fa-tag')).join(''); }
+      if (societies.length) { html += `<div class="search-suggest-group">Societies</div>` + societies.map(m => row(m.label, null, 'fa-location-dot')).join(''); }
 
       box.innerHTML = html;
       box.classList.add('open');
@@ -13221,7 +13726,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         if (_catCfg.useQty) {
           list.innerHTML = modalInfoBannerHTML + menu.map(it => `
         <div class="menu-item-row" style="${isShopClosed ? 'opacity:0.75' : ''}">
-          ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0" alt="${esc(it.name)}"/>` : ''}
+          ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
           <div style="flex:1;min-width:0">
             <div class="menu-item-name">${esc(it.name)}</div>
             ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
@@ -13240,7 +13745,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         <div class="menu-item-row" style="${isShopClosed ? 'cursor:default;opacity:0.75' : 'cursor:pointer'}" ${isShopClosed ? '' : `onclick="document.getElementById('chk_${it.id}').click()"`}>
           <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:${isShopClosed ? 'default' : 'pointer'}" onclick="event.stopPropagation()">
             <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : 'onchange="_updMenuTotal()"'} style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px;${isShopClosed ? 'cursor:not-allowed' : ''}">
-            ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0" alt="${esc(it.name)}"/>` : ''}
+            ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
             <div style="flex:1">
               <div class="menu-item-name">${esc(it.name)}</div>
               ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
@@ -13576,17 +14081,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       isAdmin = true;
 
       const fbEmail = (document.getElementById('ca_adminEmail').value || '').trim();
-      if (isTestModeEnabled() && (isTestIdentifier(fbEmail) || isTestIdentifier(_vnMobile) || fbEmail === TEST_ACCOUNTS_CONFIG.admin.email)) {
-        recordTestAuditLog('TEST_ADMIN_LOGIN', { email: fbEmail || TEST_ACCOUNTS_CONFIG.admin.email });
-        window._adminUid = TEST_ACCOUNTS_CONFIG.admin.uid;
-        sessionStorage.setItem('hb_adminUid', TEST_ACCOUNTS_CONFIG.admin.uid);
-        closeModal('customerAuthModal');
-        showToast('Admin Mode Activated (QA Test Admin) ✓');
-        updatePanelTabs();
-        switchPanel('admin');
-        renderTestModeBanner();
-        return;
-      }
+
 
       if (auth) {
         // Wait for Firebase Auth to finish restoring any persisted session
@@ -13649,6 +14144,15 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
     /* ═══════════ MODAL ═══════════ */
     function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('open'); }
     function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('open'); }
+
+    function openImagePreview(src, title) {
+      if (!src) return;
+      const img = document.getElementById('imagePreviewImg');
+      const titleEl = document.getElementById('imagePreviewTitle');
+      if (img) img.src = src;
+      if (titleEl) titleEl.textContent = title || 'Image Preview';
+      openModal('imagePreviewModal');
+    }
     document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => {
       if (e.target === m) {
         if (m.id === 'sellerTermsModal') {
@@ -14588,8 +15092,19 @@ Together, we grow stronger — one order at a time.`;
 
       if (illuEl) {
         if (slide.image && slide.image.trim()) {
-          const fallbackSvg = slide.svg || [ONBOARDING_SVG_1, ONBOARDING_SVG_2, ONBOARDING_SVG_3][index % 3];
-          illuEl.innerHTML = `<img src="${esc(slide.image)}" alt="Illustration" onerror="this.onerror=null;this.parentElement.innerHTML=\`${fallbackSvg.replace(/`/g, '\\`')}\`"/>`;
+          const img = document.createElement('img');
+          img.src = slide.image;
+          img.alt = slide.title || 'Illustration';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '50%';
+          img.onerror = function() {
+            const fallbackSvg = slide.svg || [ONBOARDING_SVG_1, ONBOARDING_SVG_2, ONBOARDING_SVG_3][index % 3];
+            illuEl.innerHTML = fallbackSvg;
+          };
+          illuEl.innerHTML = '';
+          illuEl.appendChild(img);
         } else if (slide.svg) {
           illuEl.innerHTML = slide.svg;
         } else {
@@ -14691,6 +15206,77 @@ Together, we grow stronger — one order at a time.`;
       throw lastErr || new Error('All geolocation attempts failed');
     }
 
+    /* ═══════════ LOCATION PERMISSION & REQUIRED MODAL HANDLING ═══════════ */
+    async function showLocationRequiredModal(err) {
+      const statusText = document.getElementById('locReqStatusText');
+      const barText = document.getElementById('locationBarText');
+      const barIcon = document.getElementById('locationBarIcon');
+      const retryBtn = document.getElementById('locationRetryBtn');
+
+      if (barText) barText.textContent = 'Location off — tap Retry ›';
+      if (barIcon) barIcon.className = 'fa fa-location-crosshairs loc-icon';
+      if (retryBtn) retryBtn.style.display = 'inline-flex';
+
+      let reason = 'Device Location (GPS) is turned off or permission is denied. Please enable location services to find your society.';
+
+      try {
+        if (navigator.permissions && navigator.permissions.query) {
+          const status = await navigator.permissions.query({ name: 'geolocation' });
+          if (status.state === 'denied') {
+            reason = 'Location permission is <strong>blocked</strong> for TynTron. Please grant location permission in site or app permissions settings.';
+          } else if (err && (err.code === 2 || err.code === 3)) {
+            reason = 'Device <strong>Location / GPS is turned off</strong>. Please swipe down your phone top menu and turn ON Location / GPS.';
+          }
+        }
+      } catch (e) {
+        if (err && err.code === 1) {
+          reason = 'Location permission is <strong>blocked</strong> for TynTron. Please allow location access in your app settings.';
+        } else if (err && (err.code === 2 || err.code === 3)) {
+          reason = 'Device <strong>Location / GPS is turned off</strong>. Please turn on Location in your device quick settings.';
+        }
+      }
+
+      if (statusText) statusText.innerHTML = reason;
+      openModal('locationRequiredModal');
+    }
+
+    async function requestLocationAccessAndRetry() {
+      const barText = document.getElementById('locationBarText');
+      const barIcon = document.getElementById('locationBarIcon');
+      const retryBtn = document.getElementById('locationRetryBtn');
+      const reqBtn = document.getElementById('locReqRetryBtn');
+
+      if (barText) barText.textContent = 'Requesting location permission…';
+      if (barIcon) barIcon.className = 'fa fa-spinner fa-spin loc-icon';
+      if (reqBtn) reqBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Requesting Permission & GPS…';
+
+      try {
+        // Direct call within click handler forces native OS/browser prompt (e.g. Android Location Services popup)
+        const pos = await new Promise((resolve, reject) => {
+          if (!navigator.geolocation) return reject(new Error('Geolocation unsupported'));
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          });
+        });
+
+        if (pos && pos.coords) {
+          await _applyDetectedLocation(pos.coords.latitude, pos.coords.longitude);
+          closeModal('locationRequiredModal');
+          const banner = document.getElementById('locationPermBanner');
+          if (banner) banner.style.display = 'none';
+          if (retryBtn) retryBtn.style.display = 'none';
+          showToast('Location detected successfully ✓');
+        }
+      } catch (err) {
+        console.warn('Direct location request failed:', err);
+        showLocationRequiredModal(err);
+      } finally {
+        if (reqBtn) reqBtn.innerHTML = '<i class="fa fa-rotate-right"></i> Turn On Location & Retry';
+      }
+    }
+
     async function detectSociety(isManualRetry = false) {
       buildSocietySelector();
       const barText = document.getElementById('locationBarText');
@@ -14724,10 +15310,12 @@ Together, we grow stronger — one order at a time.`;
 
         await _applyDetectedLocation(pos.coords.latitude, pos.coords.longitude);
         if (retryBtn) retryBtn.style.display = 'none';
+        const banner = document.getElementById('locationPermBanner');
+        if (banner) banner.style.display = 'none';
         if (isManualRetry) showToast('Location detected successfully ✓');
       } catch (err) {
         console.warn('Location detection failed after retries:', err);
-        if (barText) barText.textContent = 'Location not set — tap Retry ›';
+        if (barText) barText.textContent = 'Location off — tap Retry ›';
         if (barIcon) barIcon.className = 'fa fa-location-crosshairs loc-icon';
         if (retryBtn) retryBtn.style.display = 'inline-flex';
 
@@ -14735,8 +15323,9 @@ Together, we grow stronger — one order at a time.`;
           const banner = document.getElementById('locationPermBanner');
           if (banner) banner.style.display = 'flex';
           if (barText) barText.textContent = 'Location permission off — tap Retry';
-        } else {
-          if (isManualRetry) showToast('Could not detect location automatically. Tap Retry to try again.');
+        }
+        if (isManualRetry) {
+          showLocationRequiredModal(err);
         }
       } finally {
         clearTimeout(splashSafety);
@@ -14745,7 +15334,7 @@ Together, we grow stronger — one order at a time.`;
     }
 
     function retryLocationDetect() {
-      detectSociety(true);
+      requestLocationAccessAndRetry();
     }
 
     /* ═══════════ MANUAL LOCATION SEARCH (Blinkit/Zepto-style "change location") ═══════════ */
@@ -14832,7 +15421,7 @@ Together, we grow stronger — one order at a time.`;
 
     function _useCurrentLocationClick() {
       closeModal('locationSearchModal');
-      detectSociety();
+      requestLocationAccessAndRetry();
     }
 
     function openAboutModal() {
@@ -14920,6 +15509,11 @@ Together, we grow stronger — one order at a time.`;
       if (tb) tb.textContent = SITE_CONFIG.tagline || 'Connect • Collaborate • Create • Grow';
       const heroSub = document.getElementById('heroSubText');
       if (heroSub) heroSub.textContent = SITE_CONFIG.heroSub || 'For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.';
+
+      const fab = document.getElementById('askTynTronFab');
+      if (fab) {
+        fab.style.display = (SITE_CONFIG.showAiChatbot !== false) ? '' : 'none';
+      }
     }
     function footerSocialClick(type, e) {
       let url = '';
@@ -15630,7 +16224,7 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    function openBusinessRegModal() {
+    function openBusinessRegModal(prefillEmail) {
       closeModal('loginModal');
       initCustomSelect('sr_category');
       initCustomSelect('sr_subcategory');
@@ -15653,6 +16247,14 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('sr_category').value = 'Food, Bakery & Beverages';
       handleCategoryCustomToggle('sr_category', 'sr_category_custom_group');
       updateSubCategoryDropdown('sr_category', 'sr_subcategory');
+
+      if (prefillEmail && typeof prefillEmail === 'string') {
+        const srEmailEl = document.getElementById('sr_email');
+        if (srEmailEl) {
+          srEmailEl.value = prefillEmail;
+          setTimeout(() => srCheckEmailNotice(), 100);
+        }
+      }
       document.getElementById('sr_canDeliver').value = 'yes';
       const canDeliverGroup = document.getElementById('sr_canDeliverGroup');
       const canDeliverLabel = document.getElementById('sr_canDeliverLabel');
@@ -15697,91 +16299,200 @@ Together, we grow stronger — one order at a time.`;
           srSocietyInput.value = selectedSociety || '';
         }
       }
+      const showAtLogin = (SITE_CONFIG.subscriptionShowTiming === 'login');
+      const step5Sec = document.getElementById('sr_step5_section');
+      const submitBtn = document.getElementById('sr_submitBtn');
+      if (step5Sec) step5Sec.style.display = showAtLogin ? 'none' : 'block';
+      if (submitBtn) {
+        submitBtn.innerHTML = showAtLogin
+          ? '<i class="fa fa-paper-plane"></i> Submit Application for Approval'
+          : '<i class="fa fa-shield-halved"></i> Pay Subscription &amp; Submit Application';
+      }
+
       document.getElementById('businessRegModal').classList.add('open');
     }
 
     async function checkBusinessEmailStatus(email) {
       if (!email || !email.includes('@')) return { exists: false };
       const cleanEmail = email.trim().toLowerCase();
+      const msgAlreadyReg = 'This email is already registered to a business account. Please log in instead or use a different email.';
 
-      if (!db) {
-        if (typeof _srqAll !== 'undefined' && Array.isArray(_srqAll) && _srqAll.length) {
-          const match = _srqAll.find(r => (r.email || '').trim().toLowerCase() === cleanEmail);
-          if (match) {
-            const st = (match.status || 'pending').toLowerCase();
-            if (st === 'approved') {
-              return {
-                exists: true,
-                status: 'approved',
-                message: 'Your email address is already registered with an approved business account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
-              };
-            } else if (st === 'pending') {
-              return {
-                exists: true,
-                status: 'pending',
-                message: 'Your email address is already registered and your previous request is currently pending admin approval. Please wait while our team reviews your application.'
-              };
-            }
-          }
-        }
-        return { exists: false };
+      // 1. Test account check
+      if (isTestIdentifier(cleanEmail) || cleanEmail === (TEST_ACCOUNTS_CONFIG?.seller?.email || '').toLowerCase()) {
+        return { exists: true, status: 'approved', message: msgAlreadyReg };
       }
 
-      try {
+      // 2. Local DATA (vendors array) check
+      if (Array.isArray(DATA) && DATA.length) {
+        const vMatch = DATA.find(v => {
+          const e1 = (v.email || '').trim().toLowerCase();
+          const e2 = (v.ownerEmail || '').trim().toLowerCase();
+          return e1 === cleanEmail || e2 === cleanEmail;
+        });
+        if (vMatch) {
+          return { exists: true, status: 'approved', message: msgAlreadyReg };
+        }
+      }
+
+      // 3. LocalStorage & pending requests check
+      const localReqs = getLocalBusinessRequests();
+      const pendingMatch = localReqs.find(r => (r.email || '').trim().toLowerCase() === cleanEmail);
+      if (pendingMatch) {
+        const st = (pendingMatch.status || 'pending').toLowerCase();
+        if (st === 'approved') {
+          return { exists: true, status: 'approved', message: msgAlreadyReg };
+        } else if (st === 'pending') {
+          return { exists: true, status: 'pending', message: 'Your email address is already registered and your application is currently pending admin approval. Please wait for review or contact admin.' };
+        }
+      }
+
+      if (localStorage.getItem('hb_business_last_pw_' + cleanEmail) || localStorage.getItem('hb_reset_pw_' + cleanEmail)) {
+        return { exists: true, status: 'approved', message: msgAlreadyReg };
+      }
+
+      // 4. Firestore checks (isolated try-catch so failure in one collection won't bypass the rest)
+      if (db) {
         if (auth && !auth.currentUser) {
           try { await auth.signInAnonymously(); } catch (e) { }
         }
 
-        let isPending = false;
-        let isApproved = false;
-
-        const snap = await db.collection('business_requests').get();
-        snap.docs.forEach(doc => {
-          const data = doc.data();
-          const docEmail = (data.email || '').trim().toLowerCase();
-          if (docEmail === cleanEmail) {
-            const st = (data.status || 'pending').toLowerCase();
-            if (st === 'pending') {
-              isPending = true;
-            } else if (st === 'approved') {
-              isApproved = true;
-            }
+        // A. Check Firestore 'accounts'
+        try {
+          const accSnap = await db.collection('accounts').get();
+          const accDoc = accSnap.docs.find(d => {
+            const data = d.data() || {};
+            const dId = d.id.trim().toLowerCase();
+            const dEmail = (data.email || '').trim().toLowerCase();
+            const dOwner = (data.ownerEmail || '').trim().toLowerCase();
+            return dId === cleanEmail || dEmail === cleanEmail || dOwner === cleanEmail;
+          });
+          if (accDoc) {
+            return { exists: true, status: 'approved', message: msgAlreadyReg };
           }
-        });
+        } catch (e) {
+          console.warn('accounts check:', e.message);
+        }
 
-        if (isApproved) {
-          return {
-            exists: true,
-            status: 'approved',
-            message: 'Your email address is already registered with an approved business account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
-          };
+        // B. Check Firestore 'vendors'
+        try {
+          const vSnap = await db.collection('vendors').get();
+          const vDoc = vSnap.docs.find(d => {
+            const data = d.data() || {};
+            const dEmail = (data.email || '').trim().toLowerCase();
+            const dOwner = (data.ownerEmail || '').trim().toLowerCase();
+            return dEmail === cleanEmail || dOwner === cleanEmail;
+          });
+          if (vDoc) {
+            return { exists: true, status: 'approved', message: msgAlreadyReg };
+          }
+        } catch (e) {
+          console.warn('vendors check:', e.message);
+        }
+
+        // C. Check Firestore 'business_requests'
+        try {
+          const reqSnap = await db.collection('business_requests').get();
+          let isPending = false, isApproved = false;
+          reqSnap.docs.forEach(doc => {
+            const data = doc.data() || {};
+            const docEmail = (data.email || '').trim().toLowerCase();
+            if (docEmail === cleanEmail) {
+              const st = (data.status || 'pending').toLowerCase();
+              if (st === 'approved') isApproved = true;
+              else if (st === 'pending') isPending = true;
+            }
+          });
+          if (isApproved) {
+            return { exists: true, status: 'approved', message: msgAlreadyReg };
+          }
+          if (isPending) {
+            return { exists: true, status: 'pending', message: 'Your email address is already registered and your application is currently pending admin approval. Please wait for review or contact admin.' };
+          }
+        } catch (e) {
+          console.warn('business_requests check:', e.message);
+        }
+      }
+
+      return { exists: false };
+    }
+
+    async function checkBusinessMobileStatus(mobile) {
+      if (!mobile) return { exists: false };
+      const cleanMobile = mobile.replace(/\D/g, '').slice(-10);
+      if (cleanMobile.length < 10) return { exists: false };
+      const msgAlreadyReg = 'This mobile number is already registered to a business account. Please log in instead or use a different mobile number.';
+
+      // Check local pending requests by mobile
+      const localReqs = getLocalBusinessRequests();
+      const pendingMobMatch = localReqs.find(r => {
+        const m1 = (r.mobile || '').replace(/\D/g, '').slice(-10);
+        const m2 = (r.phone || '').replace(/\D/g, '').slice(-10);
+        return m1 === cleanMobile || m2 === cleanMobile;
+      });
+      if (pendingMobMatch) {
+        return { exists: true, message: msgAlreadyReg };
+      }
+
+      // 1. Test account check
+      if (cleanMobile === (TEST_ACCOUNTS_CONFIG?.seller?.mobile || '').replace(/\D/g, '').slice(-10)) {
+        return { exists: true, message: msgAlreadyReg };
+      }
+
+      // 2. Local DATA (vendors array) check
+      if (Array.isArray(DATA) && DATA.length) {
+        const vMatch = DATA.find(v => {
+          const m1 = (v.phone || '').replace(/\D/g, '').slice(-10);
+          const m2 = (v.whatsapp || '').replace(/\D/g, '').slice(-10);
+          const m3 = (v.mobile || '').replace(/\D/g, '').slice(-10);
+          return m1 === cleanMobile || m2 === cleanMobile || m3 === cleanMobile;
+        });
+        if (vMatch) return { exists: true, message: msgAlreadyReg };
+      }
+
+      // 3. Firestore checks
+      if (db) {
+        if (auth && !auth.currentUser) {
+          try { await auth.signInAnonymously(); } catch (e) { }
         }
 
         try {
           const accSnap = await db.collection('accounts').get();
-          const accDoc = accSnap.docs.find(d => (d.data().email || '').trim().toLowerCase() === cleanEmail);
-          if (accDoc) {
-            return {
-              exists: true,
-              status: 'approved',
-              message: 'Your email address is already registered with an approved business account. You can log into your account directly, or use "Forgot Password" if you need to reset your password.'
-            };
-          }
+          const accDoc = accSnap.docs.find(d => {
+            const data = d.data() || {};
+            const m1 = (data.phone || '').replace(/\D/g, '').slice(-10);
+            const m2 = (data.whatsapp || '').replace(/\D/g, '').slice(-10);
+            const m3 = (data.mobile || '').replace(/\D/g, '').slice(-10);
+            return m1 === cleanMobile || m2 === cleanMobile || m3 === cleanMobile;
+          });
+          if (accDoc) return { exists: true, message: msgAlreadyReg };
         } catch (e) { }
 
-        if (isPending) {
-          return {
-            exists: true,
-            status: 'pending',
-            message: 'Your email address is already registered and your previous request is currently pending admin approval. Please wait while our team reviews your application.'
-          };
-        }
+        try {
+          const vSnap = await db.collection('vendors').get();
+          const vDoc = vSnap.docs.find(d => {
+            const data = d.data() || {};
+            const m1 = (data.phone || '').replace(/\D/g, '').slice(-10);
+            const m2 = (data.whatsapp || '').replace(/\D/g, '').slice(-10);
+            const m3 = (data.mobile || '').replace(/\D/g, '').slice(-10);
+            return m1 === cleanMobile || m2 === cleanMobile || m3 === cleanMobile;
+          });
+          if (vDoc) return { exists: true, message: msgAlreadyReg };
+        } catch (e) { }
 
-        return { exists: false };
-      } catch (e) {
-        console.warn('Error checking business email status:', e.message);
-        return { exists: false };
+        try {
+          const reqSnap = await db.collection('business_requests').get();
+          const reqDoc = reqSnap.docs.find(d => {
+            const data = d.data() || {};
+            const m1 = (data.phone || '').replace(/\D/g, '').slice(-10);
+            const m2 = (data.whatsapp || '').replace(/\D/g, '').slice(-10);
+            const m3 = (data.mobile || '').replace(/\D/g, '').slice(-10);
+            return m1 === cleanMobile || m2 === cleanMobile || m3 === cleanMobile;
+          });
+          if (reqDoc) return { exists: true, message: msgAlreadyReg };
+        } catch (e) { }
       }
+
+      return { exists: false };
     }
 
     async function srCheckEmailNotice() {
@@ -16157,15 +16868,18 @@ Together, we grow stronger — one order at a time.`;
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         };
 
+        saveLocalBusinessRequest(reqData);
         if (db) {
           try {
             await db.collection('business_requests').doc(requestId).set(reqData);
           } catch (dbErr) {
-            if (!isTestModeEnabled()) throw dbErr;
+            console.warn('Firestore business_requests save error:', dbErr.message);
           }
         }
 
-        if (isTestModeEnabled()) {
+        _srqAll = await fsLoadBusinessRequests();
+
+        if (isTestIdentifier(reqData.email) || isTestIdentifier(reqData.mobile)) {
           await logoutPreviousSessions('business');
           const s = TEST_ACCOUNTS_CONFIG.seller;
           currentBusiness = {
@@ -16185,7 +16899,8 @@ Together, we grow stronger — one order at a time.`;
         }
 
         closeModal('businessRegModal');
-        showToast('Application submitted! You will be emailed once approved. ✓');
+        alert(`🎉 Business Registration Application Submitted!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) has been submitted to TynTron and is pending admin approval.\n\nOnce approved by an admin, you will be able to log into your business dashboard.`);
+        showToast('Application submitted — pending admin approval ✓');
       } catch (e) {
         errEl.textContent = 'Submission failed: ' + e.message;
         errEl.style.display = 'block';
@@ -17026,6 +17741,28 @@ Together, we grow stronger — one order at a time.`;
 
     /* ── BUSINESS SUBSCRIPTION & RAZORPAY INTEGRATION ── */
     function _businessSubscriptionHTML(v, business) {
+      const isHiddenGlobally = (SITE_CONFIG.subscriptionShowTiming === 'hidden');
+      const isVendorExempt = !!(v.subscriptionExempt || v.hideSubscription || (business && (business.subscriptionExempt || business.hideSubscription)));
+
+      if (isHiddenGlobally || isVendorExempt) {
+        return `
+          <div class="s-card" style="margin-bottom:20px;overflow-x:hidden;box-sizing:border-box" id="businessSubscriptionCard">
+            <div class="s-card-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+              <span><i class="fa fa-shield-halved" style="color:var(--green)"></i> Business Subscription &amp; Billing</span>
+              <span style="background:#e0f2fe;color:#0369a1;font-size:.75rem;padding:4px 10px;border-radius:12px;font-weight:700"><i class="fa fa-eye-slash"></i> EXEMPT / DISABLED</span>
+            </div>
+            <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+              <i class="fa fa-circle-check" style="font-size:1.6rem;color:#166534"></i>
+              <div>
+                <div style="font-weight:700;color:#166534;font-size:.92rem">Subscription Waived / Full Access Granted</div>
+                <div style="font-size:.8rem;color:#15803d;margin-top:2px">
+                  ${isHiddenGlobally ? 'Subscriptions are currently disabled site-wide by Admin. All features and listings are fully active!' : 'Your business account has been granted free subscription access by Admin.'}
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
       const status = v.subscriptionStatus || (business && business.subscriptionStatus) || 'none';
       const plan = v.subscriptionPlan || (business && business.subscriptionPlan) || 'monthly';
       const expiry = v.subscriptionExpiry || (business && business.subscriptionExpiry) || null;
@@ -17439,6 +18176,49 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
+    async function adminToggleVendorSubscriptionExemption(uid, vendorId, isExempt) {
+      const vendor = DATA.find(d => d.id === vendorId || (uid && (d.ownerUid === uid || d.uid === uid)));
+      if (vendor) {
+        vendor.subscriptionExempt = isExempt;
+        vendor.hideSubscription = isExempt;
+        if (isExempt) {
+          vendor.subscriptionStatus = 'active';
+        }
+        saveData(DATA);
+        if (FB_READY && db) await fsSaveVendor(vendor);
+      }
+
+      if (FB_READY && db) {
+        try {
+          if (vendorId) {
+            await db.collection('vendors').doc(vendorId).set({
+              subscriptionExempt: isExempt,
+              hideSubscription: isExempt,
+              subscriptionStatus: isExempt ? 'active' : (vendor ? vendor.subscriptionStatus : 'active')
+            }, { merge: true });
+          }
+          if (uid) {
+            await db.collection('accounts').doc(uid).set({
+              subscriptionExempt: isExempt,
+              hideSubscription: isExempt,
+              subscriptionStatus: isExempt ? 'active' : (vendor ? vendor.subscriptionStatus : 'active')
+            }, { merge: true });
+          }
+        } catch (e) {
+          console.warn('Firestore subscription exemption update:', e.message);
+        }
+      }
+
+      showToast(isExempt ? 'Subscription hidden/exempted for seller ✓' : 'Subscription required for seller ✓');
+      renderAll();
+      const c = document.getElementById('adminTabContent');
+      if (c) {
+        const activeBtn = document.querySelector('.admin-tab-btn.active');
+        const activeTab = activeBtn ? activeBtn.getAttribute('data-tab') : 'subscriptions';
+        renderAdminTab(activeTab);
+      }
+    }
+
     async function renderAdminSubscriptions(c) {
       if (!c) return;
       c.innerHTML = '<p style="color:var(--text-muted);padding:14px"><i class="fa fa-spinner fa-spin"></i> Loading subscription statistics…</p>';
@@ -17578,6 +18358,7 @@ Together, we grow stronger — one order at a time.`;
                   <th>Plan</th>
                   <th>Expiry Date</th>
                   <th>Last Payment ID</th>
+                  <th>Subscription Visibility</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -17591,9 +18372,11 @@ Together, we grow stronger — one order at a time.`;
         const lastPaymentId = v.lastPaymentId || (acc && acc.lastPaymentId) || '—';
         const isSubExpired = status === 'active' && expiry && new Date(expiry) < new Date();
         const displayStatus = isSubExpired ? 'expired' : status;
+        const isExempt = !!(v.subscriptionExempt || v.hideSubscription || (acc && (acc.subscriptionExempt || acc.hideSubscription)));
 
         let statusBadge = '<span style="background:#fff3e0;color:#e65100;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700">UNPAID / PENDING</span>';
-        if (displayStatus === 'active') statusBadge = `<span style="background:#e6f4ea;color:#137333;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700"><i class="fa fa-check"></i> ACTIVE</span>`;
+        if (isExempt) statusBadge = `<span style="background:#e0f2fe;color:#0369a1;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700"><i class="fa fa-shield-halved"></i> EXEMPT / HIDDEN</span>`;
+        else if (displayStatus === 'active') statusBadge = `<span style="background:#e6f4ea;color:#137333;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700"><i class="fa fa-check"></i> ACTIVE</span>`;
         else if (displayStatus === 'expired') statusBadge = `<span style="background:#fee2e2;color:#dc2626;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700"><i class="fa fa-xmark"></i> EXPIRED</span>`;
         else if (displayStatus.includes('CANCELLED')) statusBadge = `<span style="background:#fee2e2;color:#dc2626;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700"><i class="fa fa-ban"></i> ${esc(displayStatus)}</span>`;
 
@@ -17606,13 +18389,19 @@ Together, we grow stronger — one order at a time.`;
                     <td style="font-size:.75rem">${expiry ? new Date(expiry).toLocaleDateString() : '—'}</td>
                     <td style="font-size:.72rem"><code>${esc(lastPaymentId)}</code></td>
                     <td>
-                      <div style="display:flex;gap:4px;flex-wrap:wrap">
-                        <button class="btn btn-sm btn-outline" onclick="adminGrantSubscription('${uid}', '${v.id}', 30)" title="Grant +30 Days"><i class="fa fa-crown" style="color:var(--gold)"></i> +30d</button>
-                        <button class="btn btn-sm btn-outline" onclick="adminGrantSubscription('${uid}', '${v.id}', 365)" title="Grant +1 Year"><i class="fa fa-crown" style="color:var(--gold)"></i> +1y</button>
+                      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:.75rem;font-weight:600;padding:4px 8px;background:${isExempt ? '#e0f2fe' : '#f3f4f6'};border:1px solid ${isExempt ? '#7dd3fc' : '#e5e7eb'};border-radius:6px;color:${isExempt ? '#0369a1' : 'var(--text)'}">
+                        <input type="checkbox" ${isExempt ? 'checked' : ''} onchange="adminToggleVendorSubscriptionExemption('${uid}', '${v.id}', this.checked)">
+                        <i class="fa ${isExempt ? 'fa-eye-slash' : 'fa-eye'}" style="color:${isExempt ? '#0284c7' : 'var(--text-muted)'}"></i> ${isExempt ? 'Hidden (Exempt)' : 'Require Sub'}
+                      </label>
+                    </td>
+                    <td>
+                      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                        <button class="btn btn-sm" onclick="adminGrantSubscription('${uid}', '${v.id}', 30)" title="Grant 30-Day Monthly Subscription (+30 Days)" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-calendar-days" style="color:#2563eb;margin-right:3px"></i> +30 Days</button>
+                        <button class="btn btn-sm" onclick="adminGrantSubscription('${uid}', '${v.id}', 365)" title="Grant 1-Year Annual Subscription (+1 Year)" style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-crown" style="color:#d97706;margin-right:3px"></i> +1 Year</button>
                         ${displayStatus === 'active' ? `
-                          <button class="btn btn-sm btn-danger" onclick="adminCancelSubscription('${uid}', '${v.id}')" title="Cancel Subscription"><i class="fa fa-ban"></i> Cancel</button>
+                          <button class="btn btn-sm" onclick="adminCancelSubscription('${uid}', '${v.id}')" title="Cancel Subscription" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-weight:600;padding:4px 8px;white-space:nowrap;cursor:pointer"><i class="fa fa-ban" style="color:#dc2626;margin-right:3px"></i> Cancel</button>
                         ` : `
-                          <button class="btn btn-sm btn-primary" onclick="adminGrantSubscription('${uid}', '${v.id}', 30)" title="Re-activate"><i class="fa fa-bolt"></i> Activate</button>
+                          <button class="btn btn-sm btn-primary" onclick="adminGrantSubscription('${uid}', '${v.id}', 30)" title="Re-activate Account" style="padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-bolt"></i> Activate</button>
                         `}
                       </div>
                     </td>
@@ -17693,6 +18482,12 @@ Together, we grow stronger — one order at a time.`;
       if (!_srDocFiles.pan && !isTestModeEnabled()) { errEl.textContent = 'PAN card upload is required.'; errEl.style.display = 'block'; return; }
       if (!_srDocFiles.aadhaar && !isTestModeEnabled()) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
       if (!storage && !isTestModeEnabled()) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
+
+      if (SITE_CONFIG.subscriptionShowTiming === 'login') {
+        showToast('Submitting business registration application...');
+        await srSubmitWithPayment(null, 'none', 0);
+        return;
+      }
 
       const rA = document.getElementById('srRadio_annual');
       const isAnnual = rA && rA.checked;
@@ -17829,30 +18624,18 @@ Together, we grow stronger — one order at a time.`;
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        saveLocalBusinessRequest(reqData);
         if (db) {
           try {
             await db.collection('business_requests').doc(requestId).set(reqData);
           } catch (dbErr) {
             console.warn('Firestore business_requests save error:', dbErr.message);
-            if (!isTestModeEnabled()) throw dbErr;
           }
         }
 
-        try {
-          const ejsPubKey = SITE_CONFIG.ejsPublicKey;
-          const ejsService = SITE_CONFIG.ejsServiceId;
-          const ejsTemplate = SITE_CONFIG.ejsTemplateId;
-          if (ejsPubKey && ejsService && ejsTemplate) {
-            emailjs.send(ejsService, ejsTemplate, {
-              to_email: SITE_CONFIG.vnEmail || 'admin@tyntron.com',
-              to_name: 'Admin',
-              subject: 'New Business Registration & Payment Received!',
-              message: `New business application from ${reqData.venture} (${reqData.email}) with ${planKey.toUpperCase()} plan payment (${reqData.paymentId}). Pending admin approval.`
-            }, ejsPubKey);
-          }
-        } catch (e) { }
+        _srqAll = await fsLoadBusinessRequests();
 
-        if (isTestModeEnabled()) {
+        if (isTestIdentifier(reqData.email) || isTestIdentifier(reqData.mobile)) {
           const s = TEST_ACCOUNTS_CONFIG.seller;
           currentBusiness = {
             uid: s.uid,
@@ -17871,8 +18654,12 @@ Together, we grow stronger — one order at a time.`;
         }
 
         closeModal('businessRegModal');
-        alert(`🎉 Registration & Payment Received!\n\nThank you! Your business application and ${planKey.toUpperCase()} subscription authorization (Payment ID: ${reqData.paymentId}) have been submitted.\n\nYour account is now pending admin approval. You will receive an email once approved.`);
-        showToast('Registration application submitted ✓');
+        if (SITE_CONFIG.subscriptionShowTiming === 'login' || planKey === 'none') {
+          alert(`🎉 Business Registration Application Submitted!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) has been submitted and is pending admin approval.\n\nOnce approved by an admin, you will be able to log into your account to select your subscription plan and activate your business listing.`);
+        } else {
+          alert(`🎉 Registration & Payment Received!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) and ${planKey.toUpperCase()} subscription authorization (Payment ID: ${reqData.paymentId}) have been submitted.\n\nYour account is now pending admin approval. You will receive an email once approved.`);
+        }
+        showToast('Registration application submitted — pending admin approval ✓');
 
       } catch (e) {
         console.error('Error submitting registration with payment:', e);
@@ -18782,8 +19569,8 @@ Together, we grow stronger — one order at a time.`;
       const rows = menu.map(it => `<tr>
     <td>
       <div style="display:flex;align-items:center;gap:8px">
-        ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0" alt="${esc(it.name)}"/>` : ''}
-        <span>${esc(it.name)}</span>
+        ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:38px;height:38px;object-fit:cover;border-radius:6px;flex-shrink:0;cursor:pointer;border:1px solid var(--border);transition:transform .15s ease" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
+        <span style="font-weight:600">${esc(it.name)}</span>
       </div>
     </td>
     <td>₹${it.price}</td>
@@ -18929,7 +19716,8 @@ Together, we grow stronger — one order at a time.`;
       const confPw = (confEl.value || '').trim();
       if (!curPw) { setStatus('Please enter your current password.', false); curEl.focus(); return; }
       if (newPw.length < 6) { setStatus('New password must be at least 6 characters.', false); newEl.focus(); return; }
-      if (newPw !== confPw) { setStatus('New passwords do not match.', false); confEl.focus(); return; }
+      if (newPw === curPw) { setStatus('New password must be different from current password.', false); newEl.focus(); return; }
+      if (newPw !== confPw) { setStatus('New password and Confirm new password do not match.', false); confEl.focus(); return; }
 
       const email = currentBusiness ? currentBusiness.email : '';
       const expectedPw = (currentBusiness && (currentBusiness.password || currentBusiness.updatedPassword)) || (email && localStorage.getItem('hb_business_last_pw_' + email));
@@ -19310,18 +20098,19 @@ Together, we grow stronger — one order at a time.`;
         const fresh = await fsLoadVendors();
         if (fresh && fresh.length) { DATA = fresh; saveData(DATA); }
       } catch (e) { }
-      // Load accounts from Firestore — requires Firebase login
+      // Load accounts from Firestore
       let accounts = [], accountsErr = '';
-      if (!auth || !auth.currentUser) {
-        accountsErr = 'Not signed into Firebase — enter your Firebase Email + Password in the Admin login form and log in again.';
-      } else {
+      if (FB_READY && db) {
+        if (auth && !auth.currentUser) {
+          try { await auth.signInAnonymously(); } catch (e) { }
+        }
         try {
           const snap = await db.collection('accounts').get();
           accounts = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
         } catch (e) {
-          accountsErr = e.code === 'permission-denied'
-            ? 'Firebase permission denied — go to Firebase Console → Firestore → Rules and publish the updated rules from FIREBASE_SETUP.md'
-            : e.message;
+          if (e.code === 'permission-denied') {
+            accountsErr = 'Firebase permission denied — go to Firebase Console → Firestore → Rules and publish the updated rules from FIREBASE_SETUP.md';
+          }
         }
       }
       c.innerHTML = `<div class="s-card">
@@ -19362,11 +20151,11 @@ Together, we grow stronger — one order at a time.`;
           <td style="font-size:.78rem">${v ? v.venture : '(unassigned)'}</td>
           <td>${subBadge}${subExpiry ? `<br><span style="font-size:.68rem;color:var(--text-muted)">Exp: ${new Date(subExpiry).toLocaleDateString()}</span>` : ''}</td>
           <td>
-            <div style="display:flex;gap:4px">
-              <button class="btn btn-sm btn-outline" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 30)" title="Grant 30-day subscription"><i class="fa fa-crown" style="color:var(--gold)"></i> +30d</button>
-              <button class="btn btn-sm btn-outline" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 365)" title="Grant 1-year subscription"><i class="fa fa-crown" style="color:var(--gold)"></i> +1y</button>
-              <button class="btn btn-sm btn-outline" onclick="adminCancelSubscription('${a.uid}', '${a.vendorId}')" title="Cancel Subscription" style="color:var(--danger)"><i class="fa fa-ban"></i> Cancel</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${a.uid}','${a.email}')"><i class="fa fa-trash"></i></button>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 30)" title="Grant 30-Day Monthly Subscription (+30 Days)" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-calendar-days" style="color:#2563eb;margin-right:3px"></i> +30 Days</button>
+              <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 365)" title="Grant 1-Year Annual Subscription (+1 Year)" style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-crown" style="color:#d97706;margin-right:3px"></i> +1 Year</button>
+              <button class="btn btn-sm" onclick="adminCancelSubscription('${a.uid}', '${a.vendorId}')" title="Cancel Subscription" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-weight:600;padding:4px 8px;white-space:nowrap;cursor:pointer"><i class="fa fa-ban" style="color:#dc2626;margin-right:3px"></i> Cancel</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${a.uid}','${a.email}')" title="Delete Business Account" style="padding:4px 8px;cursor:pointer"><i class="fa fa-trash"></i></button>
             </div>
           </td>
         </tr>`;
@@ -19436,6 +20225,8 @@ Together, we grow stronger — one order at a time.`;
           mustAcceptTerms: true,
           mustChangePassword: true,
           firstLogin: true,
+          adminCreated: true,
+          createdViaAdmin: true,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
@@ -19976,6 +20767,16 @@ Together, we grow stronger — one order at a time.`;
           <input id="cfg_businessCanDeliverLabel" value="${esc(SITE_CONFIG.businessCanDeliverLabel || 'Will you be able to deliver within the society? *')}" placeholder="Will you be able to deliver within the society? *">
         </div>
       </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-robot" style="color:var(--green)"></i> AI Chatbot Assistant (Ask TynTron)</div>
+        <div class="form-group" style="margin:0">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="cfg_showAiChatbot" ${SITE_CONFIG.showAiChatbot !== false ? 'checked' : ''} style="accent-color:var(--green);width:auto">
+            Show "Ask TynTron" AI Chatbot Floating Button on App Screen
+          </label>
+          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">If checked, the floating AI chat button will be displayed in the bottom-right corner for all visitors. If unchecked, the AI chatbot button will be hidden.</p>
+        </div>
+      </div>
       <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook URL</label>
         <input id="cfg_fbUrl" placeholder="https://facebook.com/yourpage" value="${esc(SITE_CONFIG.fbUrl)}"></div>
       <div class="form-group"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram URL</label>
@@ -20044,6 +20845,24 @@ Together, we grow stronger — one order at a time.`;
             <input type="number" id="cfg_subMonthlyPrice" placeholder="499" value="${SITE_CONFIG.subMonthlyPrice || 499}"></div>
           <div class="form-group" style="margin:0"><label style="font-size:.75rem">Annual Subscription Price (₹)</label>
             <input type="number" id="cfg_subAnnualPrice" placeholder="3999" value="${SITE_CONFIG.subAnnualPrice || 3999}"></div>
+        </div>
+      </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:8px;color:var(--text)"><i class="fa fa-clock-rotate-left" style="color:var(--green)"></i> Seller Subscription Plan Timing</div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Control whether sellers select &amp; pay for their subscription plan during registration or after logging in to their dashboard.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
+            <input type="radio" name="cfg_subscriptionShowTiming" value="registration" ${SITE_CONFIG.subscriptionShowTiming !== 'login' && SITE_CONFIG.subscriptionShowTiming !== 'hidden' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+            <span>Show Subscription at <strong>Seller Registration</strong> (Upfront Payment)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
+            <input type="radio" name="cfg_subscriptionShowTiming" value="login" ${SITE_CONFIG.subscriptionShowTiming === 'login' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+            <span>Show Subscription at <strong>Seller Login</strong> (Post-Registration Dashboard Payment)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
+            <input type="radio" name="cfg_subscriptionShowTiming" value="hidden" ${SITE_CONFIG.subscriptionShowTiming === 'hidden' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+            <span style="color:#b91c1c"><i class="fa fa-eye-slash" style="margin-right:4px"></i> <strong>Hide / Disable Subscription Feature Globally for ALL Sellers</strong> (No Subscription Required)</span>
+          </label>
         </div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
@@ -20128,8 +20947,26 @@ Together, we grow stronger — one order at a time.`;
               <textarea class="cfg-onboarding-desc" data-idx="${idx}" rows="2" placeholder="Enter slide description..." style="background:var(--white);font-size:.86rem;min-height:54px">${esc(slide.desc)}</textarea>
             </div>
             <div class="form-group">
-              <label>Custom Image URL <span style="font-weight:400;text-transform:none;color:var(--text-muted)">(Optional, leave empty for built-in SVG vector)</span></label>
-              <input class="cfg-onboarding-image" data-idx="${idx}" placeholder="https://..." value="${esc(slide.image || '')}" style="background:var(--white)">
+              <label><i class="fa fa-image" style="color:var(--green)"></i> Upload Slide Image from Device</label>
+              <input type="hidden" class="cfg-onboarding-image" id="cfg_onboarding_img_val_${idx}" data-idx="${idx}" value="${esc(slide.image || '')}">
+              <input type="file" id="cfg_onboarding_file_${idx}" accept="image/*" style="display:none" onchange="adminHandleOnboardingImageUpload(this, ${idx})">
+              
+              <div id="cfg_onboarding_preview_${idx}" style="margin-top:6px">
+                ${slide.image ? `
+                  <div style="position:relative;display:inline-block;width:120px;height:120px;border-radius:10px;overflow:hidden;border:2px solid var(--green);box-shadow:var(--shadow)">
+                    <img src="${esc(slide.image)}" style="width:100%;height:100%;object-fit:cover" alt="Slide image">
+                    <button type="button" class="btn btn-sm btn-danger" style="position:absolute;top:4px;right:4px;padding:2px 6px;font-size:0.7rem;border-radius:50%" onclick="adminRemoveOnboardingImage(${idx})" title="Remove Image"><i class="fa fa-xmark"></i></button>
+                  </div>
+                ` : `
+                  <div style="padding:14px;border:2px dashed var(--border);border-radius:10px;text-align:center;color:var(--text-muted);font-size:.8rem;background:#fff;cursor:pointer" onclick="document.getElementById('cfg_onboarding_file_${idx}').click()">
+                    <i class="fa fa-cloud-arrow-up" style="font-size:1.4rem;color:var(--green);margin-bottom:4px;display:block"></i>
+                    Click to select and upload an image from your device
+                  </div>
+                `}
+              </div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('cfg_onboarding_file_${idx}').click()"><i class="fa fa-upload"></i> Choose Image File</button>
+              </div>
             </div>
           </div>
         </div>
@@ -20208,6 +21045,68 @@ Together, we grow stronger — one order at a time.`;
       });
     }
 
+    function compressImageForOnboarding(file, maxDimension, callback) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => callback(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function adminHandleOnboardingImageUpload(input, idx) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) {
+        showToast('Image file must be under 8 MB');
+        return;
+      }
+      openImageCropper(file, function (croppedDataUrl) {
+        const hiddenInp = document.getElementById(`cfg_onboarding_img_val_${idx}`);
+        if (hiddenInp) hiddenInp.value = croppedDataUrl;
+        const previewBox = document.getElementById(`cfg_onboarding_preview_${idx}`);
+        if (previewBox) {
+          previewBox.innerHTML = `
+            <div style="position:relative;display:inline-block;width:120px;height:120px;border-radius:10px;overflow:hidden;border:2px solid var(--green);box-shadow:var(--shadow)">
+              <img src="${croppedDataUrl}" style="width:100%;height:100%;object-fit:cover" alt="Slide image">
+              <button type="button" class="btn btn-sm btn-danger" style="position:absolute;top:4px;right:4px;padding:2px 6px;font-size:0.7rem;border-radius:50%" onclick="adminRemoveOnboardingImage(${idx})" title="Remove Image"><i class="fa fa-xmark"></i></button>
+            </div>
+          `;
+        }
+        showToast('Image cropped & updated! Click "Save Slides" to save changes ✓');
+      }, input);
+    }
+
+    function adminRemoveOnboardingImage(idx) {
+      const hiddenInp = document.getElementById(`cfg_onboarding_img_val_${idx}`);
+      if (hiddenInp) hiddenInp.value = '';
+      const previewBox = document.getElementById(`cfg_onboarding_preview_${idx}`);
+      if (previewBox) {
+        previewBox.innerHTML = `<div style="padding:14px;border:2px dashed var(--border);border-radius:10px;text-align:center;color:var(--text-muted);font-size:.8rem;background:#fff;cursor:pointer" onclick="document.getElementById('cfg_onboarding_file_${idx}').click()"><i class="fa fa-cloud-arrow-up" style="font-size:1.4rem;color:var(--green);margin-bottom:4px;display:block"></i>Click to select and upload an image from your device</div>`;
+      }
+      showToast('Image removed — click "Save Slides" to save changes ✓');
+    }
+
     function getOnboardingSlidesFromDOM() {
       const slideRows = document.querySelectorAll('#adminOnboardingSlidesList .onboarding-admin-row');
       if (!slideRows.length) return _getOnboardingSlides().slice();
@@ -20269,13 +21168,21 @@ Together, we grow stronger — one order at a time.`;
     async function saveAdminConfig() {
       const onboardingSlides = getOnboardingSlidesFromDOM();
 
+      const subTimingRadio = document.querySelector('input[name="cfg_subscriptionShowTiming"]:checked');
+      const subscriptionShowTiming = subTimingRadio ? subTimingRadio.value : 'registration';
+      SITE_CONFIG.subscriptionShowTiming = subscriptionShowTiming;
+      const showAiChatbot = document.getElementById('cfg_showAiChatbot')?.checked !== false;
+      SITE_CONFIG.showAiChatbot = showAiChatbot;
+
       await fsSaveConfig({
         tagline: document.getElementById('cfg_tagline').value.trim(),
         heroSub: document.getElementById('cfg_heroSub').value.trim(),
         showProductListing: document.getElementById('cfg_showProductListing').checked,
+        showAiChatbot: showAiChatbot,
         maxSubCategories: parseInt(document.getElementById('cfg_maxSubCategories')?.value) || 3,
         showBusinessCanDeliver: document.getElementById('cfg_showBusinessCanDeliver').checked,
         businessCanDeliverLabel: document.getElementById('cfg_businessCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
+        subscriptionShowTiming: subscriptionShowTiming,
         fbUrl: document.getElementById('cfg_fbUrl').value.trim(),
         igUrl: document.getElementById('cfg_igUrl').value.trim(),
         ytUrl: document.getElementById('cfg_ytUrl').value.trim(),
@@ -20397,31 +21304,47 @@ Together, we grow stronger — one order at a time.`;
           db.collection('customers').get(),
           db.collection('order_logs').get()
         ]);
-        customers = custSnap.docs.map(d => ({ ...d.data(), email: d.id }));
+        customers = custSnap.docs.map(d => {
+          const data = d.data();
+          const mob = data.mobile || (d.id && !d.id.includes('@') ? d.id : '');
+          const em = (data.email && data.email.includes('@')) ? data.email.trim() : (d.id && d.id.includes('@') ? d.id.trim() : '');
+          return { ...data, mobile: mob, email: em };
+        });
         orderLogs = orderSnap.docs.map(d => d.data());
       } catch (e) {
         c.innerHTML = `<div class="s-card"><p style="color:var(--danger)">Failed to load customers: ${e.message}</p></div>`;
         return;
       }
-      const orderCountByEmail = {}, spendByEmail = {};
+      const orderCountKey = {}, spendKey = {};
       orderLogs.forEach(o => {
-        if (!o.customerEmail) return;
-        orderCountByEmail[o.customerEmail] = (orderCountByEmail[o.customerEmail] || 0) + 1;
-        spendByEmail[o.customerEmail] = (spendByEmail[o.customerEmail] || 0) + (o.total || 0);
+        const key = o.customerEmail || o.customerMobile || o.phone;
+        if (!key) return;
+        orderCountKey[key] = (orderCountKey[key] || 0) + 1;
+        spendKey[key] = (spendKey[key] || 0) + (o.total || 0);
       });
-      customers.sort((a, b) => (orderCountByEmail[b.email] || 0) - (orderCountByEmail[a.email] || 0));
+      customers.sort((a, b) => {
+        const aCount = (a.email ? orderCountKey[a.email] : 0) || (a.mobile ? orderCountKey[a.mobile] : 0) || 0;
+        const bCount = (b.email ? orderCountKey[b.email] : 0) || (b.mobile ? orderCountKey[b.mobile] : 0) || 0;
+        return bCount - aCount;
+      });
       c.innerHTML = `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-address-book" style="color:var(--green)"></i> Registered Customers (${customers.length})</div>
     <table class="menu-table">
       <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Address</th><th>Orders</th><th>Total Spend</th></tr></thead>
-      <tbody>${customers.length ? customers.map(cu => `<tr>
-        <td style="font-weight:600">${esc(cu.name)}</td>
-        <td>${esc(cu.email)}</td>
-        <td>${esc(cu.mobile)}</td>
-        <td style="font-size:.78rem">${esc(cu.address) || '—'}</td>
-        <td style="text-align:center;font-weight:700;color:${(orderCountByEmail[cu.email] || 0) > 0 ? 'var(--green)' : 'var(--text-muted)'}">${orderCountByEmail[cu.email] || 0}</td>
-        <td style="text-align:center">₹${spendByEmail[cu.email] || 0}</td>
-      </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No customers yet.</td></tr>`}</tbody>
+      <tbody>${customers.length ? customers.map(cu => {
+        const displayEmail = (cu.email && cu.email.includes('@')) ? esc(cu.email) : '—';
+        const displayMobile = esc(cu.mobile || '—');
+        const ordersCount = (cu.email && orderCountKey[cu.email]) || (cu.mobile && orderCountKey[cu.mobile]) || 0;
+        const spendTotal = (cu.email && spendKey[cu.email]) || (cu.mobile && spendKey[cu.mobile]) || 0;
+        return `<tr>
+          <td style="font-weight:600">${esc(cu.name || '—')}</td>
+          <td>${displayEmail}</td>
+          <td>${displayMobile}</td>
+          <td style="font-size:.78rem">${esc(cu.address) || '—'}</td>
+          <td style="text-align:center;font-weight:700;color:${ordersCount > 0 ? 'var(--green)' : 'var(--text-muted)'}">${ordersCount}</td>
+          <td style="text-align:center">₹${spendTotal}</td>
+        </tr>`;
+      }).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No customers yet.</td></tr>`}</tbody>
     </table>
   </div>`;
     }

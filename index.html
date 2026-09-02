@@ -8123,6 +8123,9 @@
       // 2. If logging into Admin or Customer role, or switching business accounts, automatically log out business seller
       if (newRole !== 'business' && currentBusiness) {
         currentBusiness = null;
+        localStorage.removeItem('hb_business_logged_in');
+        localStorage.removeItem('hb_business_uid');
+        localStorage.removeItem('hb_business_email');
         if (auth && auth.currentUser) {
           await auth.signOut().catch(() => { });
         }
@@ -11912,8 +11915,15 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!auth) return;
       auth.onAuthStateChanged(async user => {
         if (user) {
+          // Do not treat anonymous Firebase Auth users (used for guest customer permissions) as business
+          if (user.isAnonymous) return;
           // Admin signs into Firebase Auth too — don't treat them as a business
           if (isAdmin) return;
+
+          // Check if business login session was explicitly established on this device
+          const isBizLoggedIn = localStorage.getItem('hb_business_logged_in') === 'true';
+          if (!isBizLoggedIn) return;
+
           try {
             const doc = await db.collection('accounts').doc(user.uid).get();
             if (doc.exists) {
@@ -11921,6 +11931,10 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
               const docData = doc.data();
               const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
               currentBusiness = { displayName: bName, uid: user.uid, ...docData };
+              localStorage.setItem('hb_business_logged_in', 'true');
+              localStorage.setItem('hb_business_uid', user.uid);
+              if (docData.email) localStorage.setItem('hb_business_email', docData.email);
+
               // Reload vendors so business panel has fresh DATA before rendering
               if (FB_READY && db) {
                 try {
@@ -11930,12 +11944,22 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
               }
               updatePanelTabs();
             } else {
-              // No account doc — could be admin. Never sign out silently.
-              // Admin session is protected by isAdmin flag restored from sessionStorage.
+              // No account doc — clear business state
+              currentBusiness = null;
+              localStorage.removeItem('hb_business_logged_in');
+              localStorage.removeItem('hb_business_uid');
+              localStorage.removeItem('hb_business_email');
+              updatePanelTabs();
             }
           } catch (e) { console.warn('Auth state error:', e); }
         } else {
-          if (currentBusiness) { currentBusiness = null; updatePanelTabs(); }
+          if (currentBusiness) {
+            currentBusiness = null;
+            localStorage.removeItem('hb_business_logged_in');
+            localStorage.removeItem('hb_business_uid');
+            localStorage.removeItem('hb_business_email');
+            updatePanelTabs();
+          }
         }
       });
     }
@@ -12018,6 +12042,9 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
             }
 
             localStorage.setItem('hb_business_last_pw_' + cleanEmail, cleanPw);
+            localStorage.setItem('hb_business_logged_in', 'true');
+            if (currentBusiness && currentBusiness.uid) localStorage.setItem('hb_business_uid', currentBusiness.uid);
+            localStorage.setItem('hb_business_email', cleanEmail);
             if (FB_READY && db) {
               try {
                 const vendors = await fsLoadVendors();
@@ -12047,10 +12074,16 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                 const docData = doc.data();
                 const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
                 currentBusiness = { displayName: bName, uid: cred.user.uid, ...docData, password: cleanPw, updatedPassword: cleanPw };
+                localStorage.setItem('hb_business_logged_in', 'true');
+                localStorage.setItem('hb_business_uid', cred.user.uid);
+                localStorage.setItem('hb_business_email', cleanEmail);
                 db.collection('accounts').doc(cred.user.uid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => { });
               } else if (!isAdmin) {
                 await auth.signOut();
                 currentBusiness = null;
+                localStorage.removeItem('hb_business_logged_in');
+                localStorage.removeItem('hb_business_uid');
+                localStorage.removeItem('hb_business_email');
                 if (errEl) {
                   errEl.textContent = 'Invalid email or password';
                   errEl.style.display = 'block';
@@ -12061,6 +12094,19 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
             } catch (e) { }
           }
         }
+        if (!currentBusiness) {
+          localStorage.removeItem('hb_business_logged_in');
+          localStorage.removeItem('hb_business_uid');
+          localStorage.removeItem('hb_business_email');
+          if (errEl) {
+            errEl.textContent = 'Invalid email or password';
+            errEl.style.display = 'block';
+          }
+          return;
+        }
+        localStorage.setItem('hb_business_logged_in', 'true');
+        if (currentBusiness.uid) localStorage.setItem('hb_business_uid', currentBusiness.uid);
+        localStorage.setItem('hb_business_email', cleanEmail);
         closeModal('loginModal');
         if (errEl) errEl.style.display = 'none';
         if (checkSellerFirstLoginOnboarding()) {
@@ -12300,8 +12346,11 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
     }
 
     async function businessLogout() {
-      if (auth) await auth.signOut();
+      if (auth) await auth.signOut().catch(() => { });
       currentBusiness = null;
+      localStorage.removeItem('hb_business_logged_in');
+      localStorage.removeItem('hb_business_uid');
+      localStorage.removeItem('hb_business_email');
       closeModal('notificationFeedModal');
       closeModal('notificationDetailModal');
       updatePanelTabs();
@@ -17247,6 +17296,9 @@ Together, we grow stronger — one order at a time.`;
             phone: reqData.mobile || s.mobile,
             isTestAccount: true
           };
+          localStorage.setItem('hb_business_logged_in', 'true');
+          localStorage.setItem('hb_business_uid', s.uid);
+          localStorage.setItem('hb_business_email', reqData.email || s.email);
           updatePanelTabs();
           switchPanel('business');
           renderTestModeBanner();
@@ -19003,6 +19055,9 @@ Together, we grow stronger — one order at a time.`;
             phone: reqData.mobile || s.mobile,
             isTestAccount: true
           };
+          localStorage.setItem('hb_business_logged_in', 'true');
+          localStorage.setItem('hb_business_uid', s.uid);
+          localStorage.setItem('hb_business_email', reqData.email || s.email);
           updatePanelTabs();
           switchPanel('business');
           renderTestModeBanner();
@@ -21024,6 +21079,9 @@ Together, we grow stronger — one order at a time.`;
         const cbEmail = (currentBusiness.email || '').trim().toLowerCase();
         if ((cleanEmail && cbEmail === cleanEmail) || (uid && currentBusiness.uid === uid)) {
           currentBusiness = null;
+          localStorage.removeItem('hb_business_logged_in');
+          localStorage.removeItem('hb_business_uid');
+          localStorage.removeItem('hb_business_email');
           updatePanelTabs();
         }
       }

@@ -5969,7 +5969,7 @@
             <a class="sidebar-nav-item" onclick="openNotificationFeedModal();closeLeftSidebar()">
               <i class="fa fa-bell" style="color:var(--green)"></i> <span>Notifications Feed</span>
             </a>
-            <a class="sidebar-nav-item" onclick="switchCustomerPage('carpool');closeLeftSidebar()">
+            <a class="sidebar-nav-item" id="sidebarCarpoolLink" onclick="switchCustomerPage('carpool');closeLeftSidebar()">
               <i class="fa fa-car-side"></i> <span>Resident Carpool</span>
             </a>
           </div>
@@ -6646,7 +6646,7 @@
         class="fa fa-receipt"></i><span>Orders</span></button>
     <button class="bn-item" data-page="account" onclick="switchCustomerPage('account')"><i
         class="fa fa-circle-user"></i><span>Account</span></button>
-    <button class="bn-item" data-page="carpool" onclick="switchCustomerPage('carpool')"><i
+    <button class="bn-item" data-page="carpool" id="bnCarpoolBtn" onclick="switchCustomerPage('carpool')"><i
         class="fa fa-car-side"></i><span>Carpool</span></button>
   </nav>
 
@@ -6710,6 +6710,8 @@
             class="fa fa-address-book"></i> Customers</button>
         <button class="admin-tab-btn" data-tab="config" onclick="switchAdminTab('config')"><i class="fa fa-sliders"></i>
           Site Config</button>
+        <button class="admin-tab-btn" data-tab="features" onclick="switchAdminTab('features')"><i class="fa fa-eye-slash"
+            style="color:var(--green)"></i> Hide / Show Features</button>
         <button class="admin-tab-btn" data-tab="ads" onclick="switchAdminTab('ads')"><i class="fa fa-rectangle-ad"></i>
           Ads Carousel</button>
         <button class="admin-tab-btn" data-tab="stats" onclick="switchAdminTab('stats')"><i class="fa fa-chart-bar"></i>
@@ -8688,6 +8690,10 @@
     /* ═══════════ BOTTOM NAV (Home / Orders / Account app-shell) ═══════════ */
     let _customerPage = 'home';
     function switchCustomerPage(page) {
+      if (page === 'carpool' && SITE_CONFIG.showCarpool === false) {
+        showToast('Carpool feature is currently disabled');
+        page = 'home';
+      }
       _customerPage = page;
       switchPanel('customer');
       ['home', 'orders', 'account', 'help', 'carpool'].forEach(p => {
@@ -15228,7 +15234,7 @@ Together, we grow stronger — one order at a time.`;
     /* Google's legacy Places REST endpoints (nearbysearch/autocomplete/details) don't send
        CORS headers, so browsers silently block fetch() calls to them — unlike Geocoding,
        which does support CORS and is why reverse-geocoding worked while Places didn't.
-       The Places *JavaScript* SDK is Google's browser-safe path: load it via <script>, then
+       The Places *JavaScript* SDK is Google's browser-safe path: load it via a script tag, then
        call it as an object with callbacks (no fetch, no CORS issue). Loaded lazily, once,
        as soon as the API key is known. Needs the "Maps JavaScript API" enabled alongside
        Geocoding API and Places API in Google Cloud Console. */
@@ -15932,6 +15938,19 @@ Together, we grow stronger — one order at a time.`;
       const fab = document.getElementById('askTynTronFab');
       if (fab) {
         fab.style.display = (SITE_CONFIG.showAiChatbot !== false) ? '' : 'none';
+      }
+
+      const carpoolBnBtn = document.getElementById('bnCarpoolBtn');
+      if (carpoolBnBtn) {
+        carpoolBnBtn.style.display = (SITE_CONFIG.showCarpool !== false) ? '' : 'none';
+      }
+      const carpoolSidebarLink = document.getElementById('sidebarCarpoolLink');
+      if (carpoolSidebarLink) {
+        carpoolSidebarLink.style.display = (SITE_CONFIG.showCarpool !== false) ? '' : 'none';
+      }
+      const driverSidebarCard = document.getElementById('sidebarDriverCard');
+      if (driverSidebarCard) {
+        driverSidebarCard.style.display = (SITE_CONFIG.showDriverLogin !== false) ? '' : 'none';
       }
     }
     function footerSocialClick(type, e) {
@@ -17800,6 +17819,7 @@ Together, we grow stronger — one order at a time.`;
         case 'accounts': renderAdminAccounts(c); break;
         case 'customers': renderAdminCustomers(c); break;
         case 'config': renderAdminConfig(c); break;
+        case 'features': renderAdminFeatures(c); break;
         case 'ads': renderAdminAds(c); break;
         case 'stats': renderAdminStats(c); break;
         case 'reviews': renderAdminReviews(c); break;
@@ -21271,13 +21291,6 @@ Together, we grow stronger — one order at a time.`;
         <input id="cfg_tagline" value="${esc(SITE_CONFIG.tagline) || 'Connect • Collaborate • Create • Grow'}"></div>
       <div class="form-group full"><label>Hero Subtitle</label>
         <input id="cfg_heroSub" value="${esc(SITE_CONFIG.heroSub) || 'For the residents, by the residents. Discover and support neighbourhood businesses in Prateek Laurel Society.'}"></div>
-      <div class="form-group full">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="cfg_showProductListing" ${SITE_CONFIG.showProductListing ? 'checked' : ''} style="accent-color:var(--green);width:auto">
-          Show Product Listing on Home Page
-        </label>
-        <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Off by default. When on, the "Products &amp; Services" row (samosa, tea, cookies, etc.) appears on the customer Home tab below Categories.</p>
-      </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
         <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-layer-group" style="color:var(--green)"></i> Business Registration Form — Sub-Category Selection Limit</div>
         <div class="form-group" style="margin:0">
@@ -21287,27 +21300,10 @@ Together, we grow stronger — one order at a time.`;
         </div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
-        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-user-plus" style="color:var(--green)"></i> Business Registration Form — Society Delivery Field</div>
-        <div class="form-group" style="margin-bottom:10px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" id="cfg_showBusinessCanDeliver" ${SITE_CONFIG.showBusinessCanDeliver !== false ? 'checked' : ''} style="accent-color:var(--green);width:auto">
-            Show Society Delivery Field in Business Registration Modal
-          </label>
-          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">If checked, the delivery dropdown field will be shown to businesses during registration. If unchecked, it will be hidden.</p>
-        </div>
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-user-plus" style="color:var(--green)"></i> Business Registration Form — Society Delivery Field Label</div>
         <div class="form-group" style="margin:0">
           <label>Society Delivery Field Label Text</label>
           <input id="cfg_businessCanDeliverLabel" value="${esc(SITE_CONFIG.businessCanDeliverLabel || 'Will you be able to deliver within the society? *')}" placeholder="Will you be able to deliver within the society? *">
-        </div>
-      </div>
-      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
-        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-robot" style="color:var(--green)"></i> AI Chatbot Assistant (Ask TynTron)</div>
-        <div class="form-group" style="margin:0">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" id="cfg_showAiChatbot" ${SITE_CONFIG.showAiChatbot !== false ? 'checked' : ''} style="accent-color:var(--green);width:auto">
-            Show "Ask TynTron" AI Chatbot Floating Button on App Screen
-          </label>
-          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">If checked, the floating AI chat button will be displayed in the bottom-right corner for all visitors. If unchecked, the AI chatbot button will be hidden.</p>
         </div>
       </div>
       <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook URL</label>
@@ -21381,24 +21377,6 @@ Together, we grow stronger — one order at a time.`;
         </div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
-        <div style="font-weight:600;margin-bottom:8px;color:var(--text)"><i class="fa fa-clock-rotate-left" style="color:var(--green)"></i> Seller Subscription Plan Timing</div>
-        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Control whether sellers select &amp; pay for their subscription plan during registration or after logging in to their dashboard.</p>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
-            <input type="radio" name="cfg_subscriptionShowTiming" value="registration" ${SITE_CONFIG.subscriptionShowTiming !== 'login' && SITE_CONFIG.subscriptionShowTiming !== 'hidden' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
-            <span>Show Subscription at <strong>Seller Registration</strong> (Upfront Payment)</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
-            <input type="radio" name="cfg_subscriptionShowTiming" value="login" ${SITE_CONFIG.subscriptionShowTiming === 'login' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
-            <span>Show Subscription at <strong>Seller Login</strong> (Post-Registration Dashboard Payment)</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
-            <input type="radio" name="cfg_subscriptionShowTiming" value="hidden" ${SITE_CONFIG.subscriptionShowTiming === 'hidden' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
-            <span style="color:#b91c1c"><i class="fa fa-eye-slash" style="margin-right:4px"></i> <strong>Hide / Disable Subscription Feature Globally for ALL Sellers</strong> (No Subscription Required)</span>
-          </label>
-        </div>
-      </div>
-      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
         <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-location-dot" style="color:var(--green)"></i> Location Bar — Google Maps Geocoding API</div>
         <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Enable the "Geocoding API" in Google Cloud Console for this Firebase project, create an API key, and paste it below. Used to show visitors' precise address at the top of the app and to filter the society dropdown to societies within 5km.</p>
         <div class="form-group" style="margin:0;max-width:340px"><label style="font-size:.75rem">Google Maps API Key</label>
@@ -21407,6 +21385,121 @@ Together, we grow stronger — one order at a time.`;
     </div>
     <div class="modal-actions" style="margin-top:14px">
       <button class="btn btn-primary" onclick="saveAdminConfig()"><i class="fa fa-save"></i> Save Config</button>
+    </div>
+  </div>`;
+    }
+
+    function renderAdminFeatures(c) {
+      const esc = s => (s || '').replace(/"/g, '&quot;');
+      c.innerHTML = `<div class="s-card">
+    <div class="s-card-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span><i class="fa fa-eye-slash" style="color:var(--green)"></i> Feature Visibility &amp; Controls (Hide / Show Features)</span>
+      <span style="font-size:0.78rem;color:var(--text-muted)">Manage feature access site-wide</span>
+    </div>
+    <div style="font-size:.84rem;color:var(--text-muted);margin-bottom:20px">
+      Control which customer &amp; seller features are visible or hidden across the platform. Changes take effect immediately upon saving.
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <!-- 1. Resident Carpool Feature -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-car-side" style="color:var(--green);font-size:1.1rem"></i> Resident Carpool Feature &amp; Bottom Nav Tab
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem">
+          <input type="checkbox" id="cfg_showCarpool" ${SITE_CONFIG.showCarpool !== false ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+          Show "Carpool" Bottom Navigation Tab &amp; Community Feature
+        </label>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+          When enabled, the Carpool tab is displayed in the bottom navigation bar and sidebar drawer. When disabled, Carpool is hidden site-wide.
+        </p>
+      </div>
+
+       <!-- 2. Driver Hub & Driver Login in Sidebar -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-id-card-clip" style="color:var(--green);font-size:1.1rem"></i> Driver Hub &amp; Driver Login in Sidebar
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem">
+          <input type="checkbox" id="cfg_showDriverLogin" ${SITE_CONFIG.showDriverLogin !== false ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+          Show "Driver Hub &amp; Carpool" (Driver Login) Section in Sidebar Menu
+        </label>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+          When enabled, the Driver Hub section with Driver Login / Sign Up button is visible in the sidebar drawer menu. When unchecked, it is hidden.
+        </p>
+      </div>
+
+      <!-- 3. AI Chatbot Assistant (Ask TynTron) -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-robot" style="color:var(--green);font-size:1.1rem"></i> AI Chatbot Assistant ("Ask TynTron")
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem">
+          <input type="checkbox" id="cfg_showAiChatbot" ${SITE_CONFIG.showAiChatbot !== false ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+          Show "Ask TynTron" AI Chatbot Floating Button
+        </label>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+          When enabled, the floating AI assistant widget appears at the bottom-right corner for all visitors.
+        </p>
+      </div>
+
+      <!-- 4. Product & Service Listing Grid -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-layer-group" style="color:var(--green);font-size:1.1rem"></i> Home Page Product &amp; Service Listing Grid
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem">
+          <input type="checkbox" id="cfg_showProductListing" ${SITE_CONFIG.showProductListing ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+          Show "Products &amp; Services" Grid on Customer Home Tab
+        </label>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+          When enabled, individual items (samosas, tea, etc.) appear below category icons on the Home screen.
+        </p>
+      </div>
+
+      <!-- 5. Society Delivery Field in Business Registration -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-truck-ramp-box" style="color:var(--green);font-size:1.1rem"></i> Society Delivery Field in Business Registration
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem">
+          <input type="checkbox" id="cfg_showBusinessCanDeliver" ${SITE_CONFIG.showBusinessCanDeliver !== false ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+          Show "Society Delivery Ability" Field during Business Registration
+        </label>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+          When enabled, registering sellers are asked if they deliver within the society.
+        </p>
+      </div>
+
+     
+
+      <!-- 6. Seller Subscription Feature Visibility / Timing -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-clock-rotate-left" style="color:var(--green);font-size:1.1rem"></i> Seller Subscription Feature Visibility &amp; Timing
+        </div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">
+          Control seller subscription payment requirement or disable subscriptions site-wide.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
+            <input type="radio" name="cfg_subscriptionShowTiming" value="registration" ${SITE_CONFIG.subscriptionShowTiming !== 'login' && SITE_CONFIG.subscriptionShowTiming !== 'hidden' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+            <span>Show Subscription at <strong>Seller Registration</strong> (Upfront Payment)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
+            <input type="radio" name="cfg_subscriptionShowTiming" value="login" ${SITE_CONFIG.subscriptionShowTiming === 'login' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+            <span>Show Subscription at <strong>Seller Login</strong> (Post-Registration Dashboard Payment)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.86rem;font-weight:600;color:var(--text)">
+            <input type="radio" name="cfg_subscriptionShowTiming" value="hidden" ${SITE_CONFIG.subscriptionShowTiming === 'hidden' ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+            <span style="color:#b91c1c"><i class="fa fa-eye-slash" style="margin-right:4px"></i> <strong>Hide / Disable Subscription Feature Globally for ALL Sellers</strong> (No Subscription Required)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;text-align:right">
+      <button class="btn btn-primary" onclick="saveAdminFeatures()"><i class="fa fa-save"></i> Save Feature Visibility Settings</button>
     </div>
   </div>
 
@@ -21514,6 +21607,37 @@ Together, we grow stronger — one order at a time.`;
       </div>
     </div>
   </div>`;
+    }
+
+    async function saveAdminFeatures() {
+      const showCarpool = document.getElementById('cfg_showCarpool')?.checked !== false;
+      const showAiChatbot = document.getElementById('cfg_showAiChatbot')?.checked !== false;
+      const showProductListing = !!document.getElementById('cfg_showProductListing')?.checked;
+      const showBusinessCanDeliver = document.getElementById('cfg_showBusinessCanDeliver')?.checked !== false;
+      const showDriverLogin = document.getElementById('cfg_showDriverLogin')?.checked !== false;
+
+      const subTimingRadio = document.querySelector('input[name="cfg_subscriptionShowTiming"]:checked');
+      const subscriptionShowTiming = subTimingRadio ? subTimingRadio.value : 'registration';
+
+      SITE_CONFIG.showCarpool = showCarpool;
+      SITE_CONFIG.showAiChatbot = showAiChatbot;
+      SITE_CONFIG.showProductListing = showProductListing;
+      SITE_CONFIG.showBusinessCanDeliver = showBusinessCanDeliver;
+      SITE_CONFIG.showDriverLogin = showDriverLogin;
+      SITE_CONFIG.subscriptionShowTiming = subscriptionShowTiming;
+
+      await fsSaveConfig({
+        showCarpool,
+        showAiChatbot,
+        showProductListing,
+        showBusinessCanDeliver,
+        showDriverLogin,
+        subscriptionShowTiming
+      });
+
+      applyFooterLinks();
+      renderGlobalProductBoxes();
+      showToast('Feature visibility settings saved ✓');
     }
     function adminAddNumber() {
       const number = (document.getElementById('new_admin_number').value || '').trim();
@@ -21701,21 +21825,17 @@ Together, we grow stronger — one order at a time.`;
     async function saveAdminConfig() {
       const onboardingSlides = getOnboardingSlidesFromDOM();
 
-      const subTimingRadio = document.querySelector('input[name="cfg_subscriptionShowTiming"]:checked');
-      const subscriptionShowTiming = subTimingRadio ? subTimingRadio.value : 'registration';
-      SITE_CONFIG.subscriptionShowTiming = subscriptionShowTiming;
-      const showAiChatbot = document.getElementById('cfg_showAiChatbot')?.checked !== false;
-      SITE_CONFIG.showAiChatbot = showAiChatbot;
-
       await fsSaveConfig({
         tagline: document.getElementById('cfg_tagline').value.trim(),
         heroSub: document.getElementById('cfg_heroSub').value.trim(),
-        showProductListing: document.getElementById('cfg_showProductListing').checked,
-        showAiChatbot: showAiChatbot,
+        showProductListing: !!SITE_CONFIG.showProductListing,
+        showAiChatbot: SITE_CONFIG.showAiChatbot !== false,
+        showCarpool: SITE_CONFIG.showCarpool !== false,
+        showBusinessCanDeliver: SITE_CONFIG.showBusinessCanDeliver !== false,
+        showDriverLogin: SITE_CONFIG.showDriverLogin !== false,
+        subscriptionShowTiming: SITE_CONFIG.subscriptionShowTiming || 'registration',
         maxSubCategories: parseInt(document.getElementById('cfg_maxSubCategories')?.value) || 3,
-        showBusinessCanDeliver: document.getElementById('cfg_showBusinessCanDeliver').checked,
         businessCanDeliverLabel: document.getElementById('cfg_businessCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
-        subscriptionShowTiming: subscriptionShowTiming,
         fbUrl: document.getElementById('cfg_fbUrl').value.trim(),
         igUrl: document.getElementById('cfg_igUrl').value.trim(),
         ytUrl: document.getElementById('cfg_ytUrl').value.trim(),

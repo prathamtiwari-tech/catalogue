@@ -11473,9 +11473,10 @@
         const vendorId = 'v_' + Date.now();
         const accountData = {
           email: req.email, displayName: req.venture, vendorId, role: 'business', password: userPw,
-          mustAcceptTerms: false,
+          mustAcceptTerms: true,
+          termsAccepted: false,
           mustChangePassword: false,
-          firstLogin: false,
+          firstLogin: true,
           adminCreated: false,
           createdAt: firebase?.firestore?.FieldValue?.serverTimestamp ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
         };
@@ -11788,14 +11789,16 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!currentBusiness) return false;
       if (currentBusiness.isTestAccount || isAdmin) return false;
 
-      // Terms & Change Password modals MUST ONLY show for accounts created directly by Admin
-      const isAdminCreated = currentBusiness.adminCreated === true || currentBusiness.createdViaAdmin === true;
-      if (!isAdminCreated) {
-        return false;
-      }
+      const email = (currentBusiness.email || '').trim().toLowerCase();
+      const localTermsAccepted = email ? (localStorage.getItem('hb_seller_terms_accepted_' + email) === 'true') : false;
+      const termsAccepted = currentBusiness.termsAccepted === true || localTermsAccepted;
 
-      const needsTerms = currentBusiness.mustAcceptTerms === true && currentBusiness.termsAccepted !== true;
-      const needsPwChange = currentBusiness.mustChangePassword === true || currentBusiness.firstLogin === true;
+      // Show Terms & Conditions modal if terms have not been accepted yet (for ALL seller accounts)
+      const needsTerms = !termsAccepted && currentBusiness.mustAcceptTerms !== false;
+
+      // Password change modal is ONLY for accounts created directly by Admin
+      const isAdminCreated = currentBusiness.adminCreated === true || currentBusiness.createdViaAdmin === true;
+      const needsPwChange = isAdminCreated && (currentBusiness.mustChangePassword === true || currentBusiness.firstLogin === true);
 
       if (needsTerms) {
         openSellerTermsModal();
@@ -11829,21 +11832,31 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (currentBusiness) {
         currentBusiness.mustAcceptTerms = false;
         currentBusiness.termsAccepted = true;
+        const email = (currentBusiness.email || '').trim().toLowerCase();
+        if (email) localStorage.setItem('hb_seller_terms_accepted_' + email, 'true');
         if (db && currentBusiness.uid) {
           try {
             await db.collection('accounts').doc(currentBusiness.uid).set({
               mustAcceptTerms: false,
               termsAccepted: true,
-              termsAcceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+              termsAcceptedAt: firebase?.firestore?.FieldValue?.serverTimestamp ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString()
             }, { merge: true });
           } catch (e) { console.warn('Terms accept save error:', e); }
         }
       }
       closeModal('sellerTermsModal');
       showToast('Terms accepted ✓');
-      if (currentBusiness && (currentBusiness.mustChangePassword !== false || currentBusiness.firstLogin === true)) {
+
+      const isAdminCreated = currentBusiness && (currentBusiness.adminCreated === true || currentBusiness.createdViaAdmin === true);
+      const needsPwChange = isAdminCreated && (currentBusiness.mustChangePassword === true || currentBusiness.firstLogin === true);
+
+      if (needsPwChange) {
         setTimeout(() => openSellerFirstPwModal(), 200);
       } else {
+        if (currentBusiness) currentBusiness.firstLogin = false;
+        if (db && currentBusiness && currentBusiness.uid) {
+          db.collection('accounts').doc(currentBusiness.uid).set({ firstLogin: false }, { merge: true }).catch(() => { });
+        }
         updatePanelTabs();
         switchPanel('business');
       }
@@ -16705,12 +16718,12 @@ Together, we grow stronger — one order at a time.`;
           srSocietyInput.value = selectedSociety || '';
         }
       }
-      const showAtLogin = (SITE_CONFIG.subscriptionShowTiming === 'login');
+      const hideSubAtReg = (SITE_CONFIG.subscriptionShowTiming === 'login' || SITE_CONFIG.subscriptionShowTiming === 'hidden');
       const step5Sec = document.getElementById('sr_step5_section');
       const submitBtn = document.getElementById('sr_submitBtn');
-      if (step5Sec) step5Sec.style.display = showAtLogin ? 'none' : 'block';
+      if (step5Sec) step5Sec.style.display = hideSubAtReg ? 'none' : 'block';
       if (submitBtn) {
-        submitBtn.innerHTML = showAtLogin
+        submitBtn.innerHTML = hideSubAtReg
           ? '<i class="fa fa-paper-plane"></i> Submit Application for Approval'
           : '<i class="fa fa-shield-halved"></i> Pay Subscription &amp; Submit Application';
       }
@@ -18893,7 +18906,7 @@ Together, we grow stronger — one order at a time.`;
       if (!_srDocFiles.aadhaar && !isTestModeEnabled()) { errEl.textContent = 'Aadhaar card upload is required.'; errEl.style.display = 'block'; return; }
       if (!storage && !isTestModeEnabled()) { errEl.textContent = 'Document storage is not available right now.'; errEl.style.display = 'block'; return; }
 
-      if (SITE_CONFIG.subscriptionShowTiming === 'login') {
+      if (SITE_CONFIG.subscriptionShowTiming === 'login' || SITE_CONFIG.subscriptionShowTiming === 'hidden') {
         showToast('Submitting business registration application...');
         await srSubmitWithPayment(null, 'none', 0);
         return;
@@ -19067,7 +19080,9 @@ Together, we grow stronger — one order at a time.`;
         }
 
         closeModal('businessRegModal');
-        if (SITE_CONFIG.subscriptionShowTiming === 'login' || planKey === 'none') {
+        if (SITE_CONFIG.subscriptionShowTiming === 'hidden') {
+          alert(`🎉 Business Registration Application Submitted!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) has been submitted and is pending admin approval.\n\nOnce approved by an admin, your business listing will be active.`);
+        } else if (SITE_CONFIG.subscriptionShowTiming === 'login' || planKey === 'none') {
           alert(`🎉 Business Registration Application Submitted!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) has been submitted and is pending admin approval.\n\nOnce approved by an admin, you will be able to log into your account to select your subscription plan and activate your business listing.`);
         } else {
           alert(`🎉 Registration & Payment Received!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) and ${planKey.toUpperCase()} subscription authorization (Payment ID: ${reqData.paymentId}) have been submitted.\n\nYour account is now pending admin approval. You will receive an email once approved.`);

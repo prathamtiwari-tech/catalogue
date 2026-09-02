@@ -464,6 +464,7 @@
       .brand-text p {
         display: none;
       }
+
       .header-inner {
         padding: 8px 12px;
         gap: 8px;
@@ -574,7 +575,7 @@
       border: 1.5px solid var(--border);
       border-radius: 14px;
       padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
 
     .sidebar-nav-list {
@@ -1235,6 +1236,7 @@
       color: #b85c1a;
       font-weight: 500;
     }
+
     .search-interpreted-chip {
       display: inline-flex;
       align-items: center;
@@ -1246,13 +1248,15 @@
       border-radius: 16px;
       font-size: .78rem;
       font-weight: 700;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
+
     .search-interpreted-chip i {
       font-size: .75rem;
       cursor: pointer;
       color: #b85c1a;
     }
+
     .search-filter-chips {
       display: flex;
       align-items: center;
@@ -1262,6 +1266,7 @@
       margin-bottom: 16px;
       scrollbar-width: thin;
     }
+
     .search-filter-pill {
       white-space: nowrap;
       padding: 6px 14px;
@@ -1277,12 +1282,14 @@
       gap: 6px;
       transition: all 0.2s;
     }
+
     .search-filter-pill:hover,
     .search-filter-pill.active {
       background: var(--green);
       color: #ffffff;
       border-color: var(--green);
     }
+
     .nearby-society-badge {
       display: inline-block;
       background: #e3f2fd;
@@ -1293,6 +1300,7 @@
       border-radius: 8px;
       margin-top: 4px;
     }
+
     .not-available-box {
       background: var(--bg-card);
       border: 1.5px solid var(--border);
@@ -1302,17 +1310,20 @@
       margin: 20px 0;
       box-shadow: var(--shadow);
     }
+
     .not-available-box i {
       font-size: 2.2rem;
       color: var(--gold);
       margin-bottom: 12px;
     }
+
     .not-available-box h3 {
       font-size: 1.1rem;
       font-weight: 800;
       color: var(--text);
       margin-bottom: 8px;
     }
+
     .not-available-box p {
       font-size: .86rem;
       color: var(--text-muted);
@@ -3322,7 +3333,11 @@
       margin-bottom: 20px;
       scrollbar-width: none;
     }
-    .carpool-sub-nav::-webkit-scrollbar { display: none; }
+
+    .carpool-sub-nav::-webkit-scrollbar {
+      display: none;
+    }
+
     .carpool-tab-btn {
       flex: 1;
       min-width: max-content;
@@ -3342,11 +3357,14 @@
       white-space: nowrap;
       font-family: inherit;
     }
-    .carpool-tab-btn.active, .carpool-tab-btn:hover {
+
+    .carpool-tab-btn.active,
+    .carpool-tab-btn:hover {
       background: var(--green);
       color: #ffffff;
       box-shadow: 0 4px 12px rgba(255, 153, 51, 0.25);
     }
+
     .carpool-ai-bar {
       background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);
       border: 1.5px solid #ffe0b2;
@@ -3356,6 +3374,7 @@
       box-shadow: 0 4px 16px rgba(255, 153, 51, 0.08);
       position: relative;
     }
+
     .carpool-ai-input-wrap {
       display: flex;
       align-items: center;
@@ -3364,8 +3383,9 @@
       border: 1.5px solid var(--green);
       border-radius: 30px;
       padding: 4px 6px 4px 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
     }
+
     .carpool-ai-input-wrap input {
       flex: 1;
       border: none;
@@ -3375,6 +3395,7 @@
       color: var(--text);
       background: transparent;
     }
+
     .carpool-filter-chip {
       padding: 6px 12px;
       border-radius: 20px;
@@ -3391,12 +3412,14 @@
       user-select: none;
       white-space: nowrap;
     }
+
     .carpool-filter-chip.active {
       background: var(--green-pale);
       color: var(--green-dark);
       border-color: var(--green);
       font-weight: 700;
     }
+
     .carpool-card {
       background: var(--white);
       border: 1.5px solid var(--border);
@@ -3406,11 +3429,13 @@
       transition: all 0.22s ease;
       position: relative;
     }
+
     .carpool-card:hover {
       border-color: var(--green);
       box-shadow: 0 8px 24px rgba(255, 153, 51, 0.16);
       transform: translateY(-2px);
     }
+
     .carpool-route-timeline {
       display: flex;
       flex-direction: column;
@@ -3419,6 +3444,7 @@
       position: relative;
       padding-left: 20px;
     }
+
     .carpool-route-timeline::before {
       content: '';
       position: absolute;
@@ -3429,12 +3455,14 @@
       background: linear-gradient(180deg, var(--green) 0%, var(--gold) 100%);
       border-radius: 2px;
     }
+
     .carpool-route-point {
       font-size: 0.88rem;
       font-weight: 700;
       color: var(--text);
       position: relative;
     }
+
     .carpool-route-point::before {
       content: '';
       position: absolute;
@@ -3447,10 +3475,12 @@
       border: 2px solid var(--white);
       box-shadow: 0 0 0 2px var(--green);
     }
+
     .carpool-route-point.end::before {
       background: var(--gold);
       box-shadow: 0 0 0 2px var(--gold);
     }
+
     .carpool-pin-display {
       background: linear-gradient(135deg, #1c2733 0%, #2c3e50 100%);
       color: var(--gold-light);
@@ -3463,7 +3493,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     /* ── SUBSCRIPTION UI SYSTEM (SAFFRON ORANGE BRAND THEME) ── */
@@ -3477,6 +3507,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .subs-card-glow {
       position: absolute;
       top: -30px;
@@ -3487,9 +3518,11 @@
       background: radial-gradient(circle, rgba(255, 153, 51, 0.25) 0%, rgba(255, 153, 51, 0) 70%);
       pointer-events: none;
     }
+
     .subs-usage-meter {
       margin-top: 14px;
     }
+
     .subs-meter-label {
       display: flex;
       justify-content: space-between;
@@ -3498,18 +3531,21 @@
       color: #5b6b7a;
       margin-bottom: 6px;
     }
+
     .subs-meter-bar {
       height: 8px;
       background: #e1e8f0;
       border-radius: 10px;
       overflow: hidden;
     }
+
     .subs-meter-fill {
       height: 100%;
       background: linear-gradient(90deg, #ff9933 0%, #e65100 100%);
       border-radius: 10px;
       transition: width 0.4s ease;
     }
+
     .subs-modal-body {
       max-width: 960px;
       width: 94%;
@@ -3524,6 +3560,7 @@
       position: relative;
       box-sizing: border-box;
     }
+
     .subs-toggle-wrapper {
       display: flex;
       align-items: center;
@@ -3538,6 +3575,7 @@
       margin-right: auto;
       border: 1px solid #e1e8f0;
     }
+
     .subs-toggle-btn {
       padding: 8px 20px;
       border-radius: 24px;
@@ -3549,11 +3587,13 @@
       color: #5b6b7a;
       transition: all 0.2s ease;
     }
+
     .subs-toggle-btn.active {
       background: linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);
       color: #ffffff;
       box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
     }
+
     .subs-save-badge {
       background: #e8f5e9;
       color: #2e7d32;
@@ -3563,6 +3603,7 @@
       border-radius: 12px;
       border: 1px solid #a5d6a7;
     }
+
     .subs-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -3571,12 +3612,14 @@
       width: 100%;
       box-sizing: border-box;
     }
+
     @media (max-width: 860px) {
       .subs-grid {
         grid-template-columns: 1fr;
         gap: 20px;
       }
     }
+
     .plan-card {
       background: #ffffff;
       border: 1.5px solid #e1e8f0;
@@ -3589,16 +3632,19 @@
       box-sizing: border-box;
       width: 100%;
     }
+
     .plan-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
       border-color: #ff9933;
     }
+
     .plan-card.popular {
       border: 2px solid #ff9933;
       box-shadow: 0 10px 30px rgba(255, 153, 51, 0.18);
       background: linear-gradient(180deg, #fffbf7 0%, #ffffff 100%);
     }
+
     .plan-badge-popular {
       position: absolute;
       top: -12px;
@@ -3614,6 +3660,7 @@
       text-transform: uppercase;
       box-shadow: 0 2px 8px rgba(255, 153, 51, 0.4);
     }
+
     .plan-icon {
       width: 48px;
       height: 48px;
@@ -3626,6 +3673,7 @@
       font-size: 1.3rem;
       margin-bottom: 14px;
     }
+
     .plan-title {
       font-family: 'Playfair Display', serif;
       font-size: 1.25rem;
@@ -3633,6 +3681,7 @@
       color: #1c2733;
       margin-bottom: 4px;
     }
+
     .plan-desc {
       font-size: 0.8rem;
       color: #5b6b7a;
@@ -3640,6 +3689,7 @@
       min-height: 38px;
       line-height: 1.4;
     }
+
     .plan-price {
       font-size: 1.8rem;
       font-weight: 800;
@@ -3649,17 +3699,20 @@
       align-items: baseline;
       gap: 4px;
     }
+
     .plan-price span {
       font-size: 0.8rem;
       color: #5b6b7a;
       font-weight: 500;
     }
+
     .plan-features-list {
       list-style: none;
       padding: 0;
       margin: 0 0 24px;
       flex-grow: 1;
     }
+
     .plan-features-list li {
       font-size: 0.82rem;
       color: #2c3e50;
@@ -3668,14 +3721,17 @@
       align-items: center;
       gap: 8px;
     }
+
     .plan-features-list li i.fa-check {
       color: #2e7d32;
       font-size: 0.85rem;
     }
+
     .plan-features-list li i.fa-xmark {
       color: #b0bec5;
       font-size: 0.85rem;
     }
+
     .btn-plan-select {
       width: 100%;
       padding: 11px;
@@ -3690,24 +3746,29 @@
       justify-content: center;
       gap: 8px;
     }
+
     .btn-plan-select.btn-orange {
       background: linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);
       color: #ffffff;
       box-shadow: 0 4px 16px rgba(255, 153, 51, 0.35);
     }
+
     .btn-plan-select.btn-orange:hover {
       box-shadow: 0 6px 20px rgba(255, 153, 51, 0.45);
       transform: translateY(-1px);
     }
+
     .btn-plan-select.btn-outline-plan {
       background: #ffffff;
       border: 1.5px solid #e1e8f0;
       color: #1c2733;
     }
+
     .btn-plan-select.btn-outline-plan:hover {
       border-color: #ff9933;
       color: #ff9933;
     }
+
     .btn-plan-select.btn-current-plan {
       background: #e8f5e9;
       color: #2e7d32;
@@ -3785,7 +3846,7 @@
       align-items: center;
       justify-content: center;
       padding: 0 4px;
-      box-shadow: 0 2px 5px rgba(231,76,60,0.4);
+      box-shadow: 0 2px 5px rgba(231, 76, 60, 0.4);
       border: 1.5px solid #ffffff;
     }
 
@@ -3818,7 +3879,7 @@
     .notif-tab-btn.active {
       background: #ffffff;
       color: var(--green-dark, #1e293b);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       font-weight: 700;
     }
 
@@ -3837,7 +3898,7 @@
 
     .notif-item:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     .notif-item.unread {
@@ -3913,12 +3974,35 @@
       letter-spacing: 0.3px;
     }
 
-    .purpose-promo { background: #fef3c7; color: #b45309; }
-    .purpose-transaction { background: #dbeafe; color: #1e40af; }
-    .purpose-policy { background: #f3e8ff; color: #6b21a8; }
-    .purpose-alert { background: #fee2e2; color: #991b1b; }
-    .purpose-safety { background: #ffedd5; color: #c2410c; }
-    .purpose-other { background: #f1f5f9; color: #475569; }
+    .purpose-promo {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .purpose-transaction {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .purpose-policy {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    .purpose-alert {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .purpose-safety {
+      background: #ffedd5;
+      color: #c2410c;
+    }
+
+    .purpose-other {
+      background: #f1f5f9;
+      color: #475569;
+    }
 
     .rich-toolbar {
       display: flex;
@@ -4024,17 +4108,26 @@
   </div>
 
   <!-- ── IMAGE PREVIEW LIGHTBOX MODAL ── -->
-  <div class="modal-overlay" id="imagePreviewModal" style="z-index:9999" onclick="if(event.target===this)closeModal('imagePreviewModal')">
-    <div class="modal" style="max-width:560px;text-align:center;padding:16px;background:#1e293b;color:#fff;border-radius:16px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.5)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155">
-        <div style="font-weight:700;font-size:1.05rem;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:85%" id="imagePreviewTitle">Image Preview</div>
-        <button class="btn btn-sm btn-ghost" onclick="closeModal('imagePreviewModal')" aria-label="Close" style="color:#94a3b8;font-size:1.2rem;padding:4px 8px;border-radius:50%"><i class="fa fa-xmark"></i></button>
+  <div class="modal-overlay" id="imagePreviewModal" style="z-index:9999"
+    onclick="if(event.target===this)closeModal('imagePreviewModal')">
+    <div class="modal"
+      style="max-width:560px;text-align:center;padding:16px;background:#1e293b;color:#fff;border-radius:16px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.5)">
+      <div
+        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155">
+        <div
+          style="font-weight:700;font-size:1.05rem;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:85%"
+          id="imagePreviewTitle">Image Preview</div>
+        <button class="btn btn-sm btn-ghost" onclick="closeModal('imagePreviewModal')" aria-label="Close"
+          style="color:#94a3b8;font-size:1.2rem;padding:4px 8px;border-radius:50%"><i class="fa fa-xmark"></i></button>
       </div>
-      <div style="max-height:75vh;overflow:hidden;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#0f172a;padding:8px">
-        <img id="imagePreviewImg" src="" alt="Preview" style="max-width:100%;max-height:70vh;object-fit:contain;border-radius:8px">
+      <div
+        style="max-height:75vh;overflow:hidden;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#0f172a;padding:8px">
+        <img id="imagePreviewImg" src="" alt="Preview"
+          style="max-width:100%;max-height:70vh;object-fit:contain;border-radius:8px">
       </div>
       <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px">
-        <button class="btn btn-sm btn-ghost" onclick="closeModal('imagePreviewModal')" style="color:#cbd5e1;border:1px solid #475569;padding:6px 16px">Close</button>
+        <button class="btn btn-sm btn-ghost" onclick="closeModal('imagePreviewModal')"
+          style="color:#cbd5e1;border:1px solid #475569;padding:6px 16px">Close</button>
       </div>
     </div>
   </div>
@@ -4055,8 +4148,11 @@
         </div>
         <div class="form-group" style="margin-bottom:8px">
           <label>Password</label>
-          <input type="password" id="businessPwInput" placeholder="Password"
-            onkeydown="if(event.key==='Enter')businessLogin(document.getElementById('businessEmailInput').value,document.getElementById('businessPwInput').value)">
+          <div class="token-wrap">
+            <input type="password" id="businessPwInput" placeholder="Password"
+              onkeydown="if(event.key==='Enter')businessLogin(document.getElementById('businessEmailInput').value,document.getElementById('businessPwInput').value)">
+            <button class="token-toggle" type="button" onclick="togglePwVis('businessPwInput',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
         <p style="text-align:right;margin-bottom:16px"><a href="#"
             onclick="event.preventDefault();businessForgotPassword()"
@@ -4088,15 +4184,22 @@
       <div style="text-align:left">
         <div class="form-group" style="margin-bottom:12px">
           <label>6-Digit Email OTP *</label>
-          <input type="text" id="businessResetOtpInput" maxlength="6" placeholder="Enter 6-digit code from email" style="font-weight:700;letter-spacing:2px;text-align:center;font-size:1.1rem">
+          <input type="text" id="businessResetOtpInput" maxlength="6" placeholder="Enter 6-digit code from email"
+            style="font-weight:700;letter-spacing:2px;text-align:center;font-size:1.1rem">
         </div>
         <div class="form-group" style="margin-bottom:12px">
           <label>New Password *</label>
-          <input type="password" id="businessResetNewPwInput" placeholder="Minimum 6 characters">
+          <div class="token-wrap">
+            <input type="password" id="businessResetNewPwInput" placeholder="Minimum 6 characters">
+            <button class="token-toggle" type="button" onclick="togglePwVis('businessResetNewPwInput',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
         <div class="form-group" style="margin-bottom:16px">
           <label>Confirm New Password *</label>
-          <input type="password" id="businessResetConfirmPwInput" placeholder="Re-enter new password">
+          <div class="token-wrap">
+            <input type="password" id="businessResetConfirmPwInput" placeholder="Re-enter new password">
+            <button class="token-toggle" type="button" onclick="togglePwVis('businessResetConfirmPwInput',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
 
         <div style="display:flex;gap:8px;justify-content:center">
@@ -4114,20 +4217,27 @@
   <!-- ── SELLER FIRST LOGIN TERMS & CONDITIONS MODAL ── -->
   <div class="modal-overlay" id="sellerTermsModal" style="z-index:350">
     <div class="modal" style="max-width:600px">
-      <div class="modal-title" style="color:var(--green-dark)"><i class="fa fa-file-contract"></i> Terms &amp; Conditions Acceptance</div>
+      <div class="modal-title" style="color:var(--green-dark)"><i class="fa fa-file-contract"></i> Terms &amp;
+        Conditions Acceptance</div>
       <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px">
-        Welcome to TynTron! As a seller on our platform, please review and accept our Terms of Use and Seller Guidelines before accessing your dashboard.
+        Welcome to TynTron! As a seller on our platform, please review and accept our Terms of Use and Seller Guidelines
+        before accessing your dashboard.
       </p>
-      <div id="sellerTermsBody" style="max-height:280px;overflow-y:auto;background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:.82rem;line-height:1.5;color:var(--text);margin-bottom:16px;white-space:pre-wrap"></div>
+      <div id="sellerTermsBody"
+        style="max-height:280px;overflow-y:auto;background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:.82rem;line-height:1.5;color:var(--text);margin-bottom:16px;white-space:pre-wrap">
+      </div>
       <div style="margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--green-dark)">
+        <label
+          style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--green-dark)">
           <input type="checkbox" id="sellerTermsCheckbox" style="accent-color:var(--green);width:18px;height:18px">
           <span>I have read and accept the TynTron Terms &amp; Conditions and Seller Guidelines *</span>
         </label>
       </div>
-      <div id="sellerTermsErr" style="display:none;color:var(--danger);font-size:.8rem;margin-bottom:10px;font-weight:600"></div>
+      <div id="sellerTermsErr"
+        style="display:none;color:var(--danger);font-size:.8rem;margin-bottom:10px;font-weight:600"></div>
       <div class="modal-actions">
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="acceptSellerTerms()"><i class="fa fa-check-circle"></i> Accept &amp; Continue</button>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="acceptSellerTerms()"><i
+            class="fa fa-check-circle"></i> Accept &amp; Continue</button>
       </div>
     </div>
   </div>
@@ -4136,22 +4246,32 @@
   <div class="modal-overlay" id="sellerFirstPwModal" style="z-index:360">
     <div class="modal" style="max-width:480px">
       <div class="modal-title" style="color:var(--green-dark)"><i class="fa fa-key"></i> Set Your New Password</div>
-      <div style="background:var(--green-pale);border:1px solid var(--green);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.8rem;color:var(--green-dark)">
-        <i class="fa fa-info-circle"></i> <strong>Initial Login Required Step:</strong> You are logging in using an admin-created temporary password. Please set a new permanent password for your seller account.
+      <div
+        style="background:var(--green-pale);border:1px solid var(--green);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.8rem;color:var(--green-dark)">
+        <i class="fa fa-info-circle"></i> <strong>Initial Login Required Step:</strong> You are logging in using an
+        admin-created temporary password. Please set a new permanent password for your seller account.
       </div>
       <div class="form-grid" style="grid-template-columns:1fr">
         <div class="form-group full">
           <label>New Password *</label>
-          <input type="password" id="sfpw_new" placeholder="At least 6 characters">
+          <div class="token-wrap">
+            <input type="password" id="sfpw_new" placeholder="At least 6 characters">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sfpw_new',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
         <div class="form-group full">
           <label>Confirm New Password *</label>
-          <input type="password" id="sfpw_confirm" placeholder="Re-enter new password">
+          <div class="token-wrap">
+            <input type="password" id="sfpw_confirm" placeholder="Re-enter new password">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sfpw_confirm',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
       </div>
       <div id="sfpw_err" style="display:none;color:var(--danger);font-size:.8rem;margin-top:10px;font-weight:600"></div>
       <div class="modal-actions" style="margin-top:16px">
-        <button class="btn btn-primary" id="sfpw_submitBtn" style="width:100%;justify-content:center" onclick="submitFirstLoginPasswordChange()"><i class="fa fa-save"></i> Save New Password &amp; Continue</button>
+        <button class="btn btn-primary" id="sfpw_submitBtn" style="width:100%;justify-content:center"
+          onclick="submitFirstLoginPasswordChange()"><i class="fa fa-save"></i> Save New Password &amp;
+          Continue</button>
       </div>
     </div>
   </div>
@@ -4161,15 +4281,18 @@
     <div class="modal" style="max-width:480px">
       <div class="modal-title" style="display:flex;align-items:center;justify-content:space-between">
         <span><i class="fa fa-car-side" style="color:var(--green)"></i> Driver Portal Login &amp; Sign Up</span>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('driverAuthModal')"><i class="fa fa-xmark"></i></button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('driverAuthModal')"><i
+            class="fa fa-xmark"></i></button>
       </div>
 
       <!-- Driver Auth Tabs -->
       <div style="display:flex;gap:6px;margin-bottom:16px;background:var(--cream);padding:4px;border-radius:12px">
-        <button type="button" class="btn btn-sm" id="driverTabLogin" onclick="switchDriverAuthTab('login')" style="flex:1;justify-content:center;background:var(--green);color:#fff;font-weight:700">
+        <button type="button" class="btn btn-sm" id="driverTabLogin" onclick="switchDriverAuthTab('login')"
+          style="flex:1;justify-content:center;background:var(--green);color:#fff;font-weight:700">
           <i class="fa fa-right-to-bracket"></i> Driver Login
         </button>
-        <button type="button" class="btn btn-sm btn-ghost" id="driverTabReg" onclick="switchDriverAuthTab('reg')" style="flex:1;justify-content:center">
+        <button type="button" class="btn btn-sm btn-ghost" id="driverTabReg" onclick="switchDriverAuthTab('reg')"
+          style="flex:1;justify-content:center">
           <i class="fa fa-car-on"></i> Register as Driver
         </button>
       </div>
@@ -4181,16 +4304,19 @@
             <label><i class="fa fa-phone" style="color:var(--green)"></i> Registered Mobile Number *</label>
             <div style="display:flex;gap:8px">
               <input type="tel" id="drv_login_mobile" required placeholder="10-digit mobile number" style="flex:1">
-              <button type="button" class="btn btn-sm btn-outline-plan" id="drv_login_sendOtpBtn" onclick="drvLoginSendOtp()" style="white-space:nowrap;padding:0 12px">Send OTP</button>
+              <button type="button" class="btn btn-sm btn-outline-plan" id="drv_login_sendOtpBtn"
+                onclick="drvLoginSendOtp()" style="white-space:nowrap;padding:0 12px">Send OTP</button>
             </div>
           </div>
           <div class="form-group" id="drv_login_otpRow" style="margin-bottom:14px">
             <label>Verification OTP *</label>
-            <input type="text" id="drv_login_otp" required placeholder="Enter 6-digit OTP" value="" maxlength="6" style="font-weight:700;letter-spacing:2px;text-align:center" onfocus="listenForWebOtp('drv_login_otp')">
+            <input type="text" id="drv_login_otp" required placeholder="Enter 6-digit OTP" value="" maxlength="6"
+              style="font-weight:700;letter-spacing:2px;text-align:center" onfocus="listenForWebOtp('drv_login_otp')">
           </div>
           <div class="modal-actions">
             <button type="button" class="btn btn-ghost" onclick="closeModal('driverAuthModal')">Cancel</button>
-            <button type="submit" class="btn btn-primary"><i class="fa fa-right-to-bracket"></i> Login as Driver</button>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-right-to-bracket"></i> Login as
+              Driver</button>
           </div>
         </form>
       </div>
@@ -4205,36 +4331,48 @@
 
           <!-- Mobile Number with OTP Verification -->
           <div class="form-group" style="margin-bottom:12px">
-            <label><i class="fa fa-phone" style="color:var(--green)"></i> Mobile Number * <span id="drv_reg_mobileVerifiedBadge" style="display:none;color:#2e7d32;font-weight:bold;margin-left:6px"><i class="fa fa-circle-check"></i> Verified</span></label>
+            <label><i class="fa fa-phone" style="color:var(--green)"></i> Mobile Number * <span
+                id="drv_reg_mobileVerifiedBadge" style="display:none;color:#2e7d32;font-weight:bold;margin-left:6px"><i
+                  class="fa fa-circle-check"></i> Verified</span></label>
             <div style="display:flex;gap:8px">
               <input type="tel" id="drv_reg_mobile" required placeholder="10-digit mobile" style="flex:1">
-              <button type="button" class="btn btn-sm btn-outline-plan" id="drv_reg_mobileSendBtn" onclick="drvSendMobileOtp()" style="white-space:nowrap;padding:0 12px">Send OTP</button>
+              <button type="button" class="btn btn-sm btn-outline-plan" id="drv_reg_mobileSendBtn"
+                onclick="drvSendMobileOtp()" style="white-space:nowrap;padding:0 12px">Send OTP</button>
             </div>
           </div>
 
           <!-- Mobile OTP Code Row -->
-          <div class="form-group" id="drv_reg_mobileCodeRow" style="display:none;margin-bottom:12px;background:var(--cream);padding:10px;border-radius:8px;border:1px solid var(--border)">
+          <div class="form-group" id="drv_reg_mobileCodeRow"
+            style="display:none;margin-bottom:12px;background:var(--cream);padding:10px;border-radius:8px;border:1px solid var(--border)">
             <label style="font-size:0.8rem">Enter 6-Digit Mobile OTP *</label>
             <div style="display:flex;gap:8px">
-              <input type="text" id="drv_reg_mobileCode" placeholder="Enter OTP code" maxlength="6" style="flex:1;font-weight:700;letter-spacing:2px;text-align:center" onfocus="listenForWebOtp('drv_reg_mobileCode')">
+              <input type="text" id="drv_reg_mobileCode" placeholder="Enter OTP code" maxlength="6"
+                style="flex:1;font-weight:700;letter-spacing:2px;text-align:center"
+                onfocus="listenForWebOtp('drv_reg_mobileCode')">
               <button type="button" class="btn btn-sm btn-primary" onclick="drvVerifyMobileOtp()">Verify Mobile</button>
             </div>
           </div>
 
           <!-- Email Address with OTP Verification -->
           <div class="form-group" style="margin-bottom:12px">
-            <label><i class="fa fa-envelope" style="color:var(--green)"></i> Email Address * <span id="drv_reg_emailVerifiedBadge" style="display:none;color:#2e7d32;font-weight:bold;margin-left:6px"><i class="fa fa-circle-check"></i> Verified</span></label>
+            <label><i class="fa fa-envelope" style="color:var(--green)"></i> Email Address * <span
+                id="drv_reg_emailVerifiedBadge" style="display:none;color:#2e7d32;font-weight:bold;margin-left:6px"><i
+                  class="fa fa-circle-check"></i> Verified</span></label>
             <div style="display:flex;gap:8px">
               <input type="email" id="drv_reg_email" required placeholder="e.g. driver@example.com" style="flex:1">
-              <button type="button" class="btn btn-sm btn-outline-plan" id="drv_reg_emailSendBtn" onclick="drvSendEmailOtp()" style="white-space:nowrap;padding:0 12px">Send OTP</button>
+              <button type="button" class="btn btn-sm btn-outline-plan" id="drv_reg_emailSendBtn"
+                onclick="drvSendEmailOtp()" style="white-space:nowrap;padding:0 12px">Send OTP</button>
             </div>
           </div>
 
           <!-- Email OTP Code Row -->
-          <div class="form-group" id="drv_reg_emailCodeRow" style="display:none;margin-bottom:12px;background:var(--cream);padding:10px;border-radius:8px;border:1px solid var(--border)">
+          <div class="form-group" id="drv_reg_emailCodeRow"
+            style="display:none;margin-bottom:12px;background:var(--cream);padding:10px;border-radius:8px;border:1px solid var(--border)">
             <label style="font-size:0.8rem">Enter 6-Digit Email OTP *</label>
             <div style="display:flex;gap:8px">
-              <input type="text" id="drv_reg_emailCode" placeholder="Enter Email OTP" maxlength="6" style="flex:1;font-weight:700;letter-spacing:2px;text-align:center" onfocus="listenForWebOtp('drv_reg_emailCode')">
+              <input type="text" id="drv_reg_emailCode" placeholder="Enter Email OTP" maxlength="6"
+                style="flex:1;font-weight:700;letter-spacing:2px;text-align:center"
+                onfocus="listenForWebOtp('drv_reg_emailCode')">
               <button type="button" class="btn btn-sm btn-primary" onclick="drvVerifyEmailOtp()">Verify Email</button>
             </div>
           </div>
@@ -4244,8 +4382,8 @@
             <div class="form-group">
               <label><i class="fa fa-building" style="color:var(--green)"></i> Society / Complex *</label>
               <div style="position:relative;width:100%">
-                <input type="text" id="drv_reg_society" required placeholder="Search area, street, society…" autocomplete="off"
-                  oninput="onSocietyManualSearch('drv_reg_society', 'drv_reg_society_suggestions')"
+                <input type="text" id="drv_reg_society" required placeholder="Search area, street, society…"
+                  autocomplete="off" oninput="onSocietyManualSearch('drv_reg_society', 'drv_reg_society_suggestions')"
                   onfocus="onSocietyManualSearch('drv_reg_society', 'drv_reg_society_suggestions')">
                 <div id="drv_reg_society_suggestions" class="loc-suggest-list"
                   style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;max-height:220px;overflow-y:auto;background:var(--card-bg, #fff);border:1.5px solid var(--border);border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,0.15);padding:4px">
@@ -4259,7 +4397,9 @@
           </div>
 
           <div style="border-top:1px dashed var(--border);padding-top:10px;margin-top:10px">
-            <div style="font-size:0.75rem;font-weight:700;color:var(--green-dark);text-transform:uppercase;margin-bottom:8px">Vehicle &amp; License Info</div>
+            <div
+              style="font-size:0.75rem;font-weight:700;color:var(--green-dark);text-transform:uppercase;margin-bottom:8px">
+              Vehicle &amp; License Info</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
               <div class="form-group">
                 <label>Car Model *</label>
@@ -4289,7 +4429,8 @@
 
           <div class="modal-actions">
             <button type="button" class="btn btn-ghost" onclick="closeModal('driverAuthModal')">Cancel</button>
-            <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> Complete Driver Registration</button>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> Complete Driver
+              Registration</button>
           </div>
         </form>
       </div>
@@ -4302,7 +4443,8 @@
     <div class="modal" style="max-width:520px">
       <div class="modal-title" style="display:flex;align-items:center;justify-content:space-between">
         <span><i class="fa fa-user-pen" style="color:var(--green)"></i> Edit Driver Profile</span>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('driverProfileEditModal')"><i class="fa fa-xmark"></i></button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('driverProfileEditModal')"><i
+            class="fa fa-xmark"></i></button>
       </div>
 
       <form onsubmit="saveDriverProfileEdit(event)">
@@ -4313,7 +4455,8 @@
           </div>
           <div class="form-group">
             <label>Mobile Number (Registered)</label>
-            <input type="tel" id="drv_edit_mobile" readonly disabled style="background:var(--cream);color:var(--text-muted)">
+            <input type="tel" id="drv_edit_mobile" readonly disabled
+              style="background:var(--cream);color:var(--text-muted)">
           </div>
         </div>
 
@@ -4326,8 +4469,8 @@
           <div class="form-group">
             <label><i class="fa fa-building" style="color:var(--green)"></i> Society / Complex *</label>
             <div style="position:relative;width:100%">
-              <input type="text" id="drv_edit_society" required placeholder="Search area, street, society…" autocomplete="off"
-                oninput="onSocietyManualSearch('drv_edit_society', 'drv_edit_society_suggestions')"
+              <input type="text" id="drv_edit_society" required placeholder="Search area, street, society…"
+                autocomplete="off" oninput="onSocietyManualSearch('drv_edit_society', 'drv_edit_society_suggestions')"
                 onfocus="onSocietyManualSearch('drv_edit_society', 'drv_edit_society_suggestions')">
               <div id="drv_edit_society_suggestions" class="loc-suggest-list"
                 style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;max-height:220px;overflow-y:auto;background:var(--card-bg, #fff);border:1.5px solid var(--border);border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,0.15);padding:4px">
@@ -4341,7 +4484,9 @@
         </div>
 
         <div style="border-top:1px dashed var(--border);padding-top:10px;margin-top:10px">
-          <div style="font-size:0.75rem;font-weight:700;color:var(--green-dark);text-transform:uppercase;margin-bottom:8px">Vehicle &amp; License Info</div>
+          <div
+            style="font-size:0.75rem;font-weight:700;color:var(--green-dark);text-transform:uppercase;margin-bottom:8px">
+            Vehicle &amp; License Info</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
             <div class="form-group">
               <label>Car Model *</label>
@@ -4381,12 +4526,16 @@
   <div class="modal-overlay" id="driverIncompleteModal" style="z-index:99999">
     <div class="modal" style="max-width:540px">
       <div style="text-align:center;margin-bottom:16px">
-        <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);color:#e65100;display:inline-flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 6px 18px rgba(230,81,0,0.2);margin-bottom:12px">
+        <div
+          style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);color:#e65100;display:inline-flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 6px 18px rgba(230,81,0,0.2);margin-bottom:12px">
           <i class="fa fa-shield-halved"></i>
         </div>
-        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;color:#1c2733;margin-bottom:6px">Driver Profile Completion Required</h3>
+        <h3
+          style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;color:#1c2733;margin-bottom:6px">
+          Driver Profile Completion Required</h3>
         <p style="font-size:0.86rem;color:var(--text-muted);line-height:1.5;max-width:440px;margin:0 auto">
-          Your driver account is almost ready! To publish rides and accept passenger bookings, please complete your missing profile and verification details.
+          Your driver account is almost ready! To publish rides and accept passenger bookings, please complete your
+          missing profile and verification details.
         </p>
       </div>
 
@@ -4397,7 +4546,8 @@
 
       <div class="modal-actions" style="display:flex;justify-content:flex-end;gap:10px">
         <button type="button" class="btn btn-ghost" onclick="closeModal('driverIncompleteModal')">Dismiss</button>
-        <button type="button" class="btn btn-primary" id="driverIncompletePrimaryBtn" onclick="handleDriverIncompleteAction()">
+        <button type="button" class="btn btn-primary" id="driverIncompletePrimaryBtn"
+          onclick="handleDriverIncompleteAction()">
           <i class="fa fa-circle-arrow-right"></i> Complete Missing Details
         </button>
       </div>
@@ -4498,8 +4648,11 @@
         </div>
         <div class="form-group" style="margin-bottom:14px">
           <label>Firebase Password</label>
-          <input type="password" id="ca_adminPw" placeholder="Your Firebase account password"
-            onkeydown="if(event.key==='Enter')caAdminActivate()">
+          <div class="token-wrap">
+            <input type="password" id="ca_adminPw" placeholder="Your Firebase account password"
+              onkeydown="if(event.key==='Enter')caAdminActivate()">
+            <button class="token-toggle" type="button" onclick="togglePwVis('ca_adminPw',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
         <p id="caAdminErr" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
         <div style="display:flex;gap:8px;justify-content:flex-end">
@@ -4537,8 +4690,11 @@
         </div>
         <div class="form-group" style="margin-bottom:14px">
           <label>Firebase Password</label>
-          <input type="password" id="reAuthPw" placeholder="Password"
-            onkeydown="if(event.key==='Enter')_reAuthSubmit()">
+          <div class="token-wrap">
+            <input type="password" id="reAuthPw" placeholder="Password"
+              onkeydown="if(event.key==='Enter')_reAuthSubmit()">
+            <button class="token-toggle" type="button" onclick="togglePwVis('reAuthPw',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
         <p id="reAuthErr" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
         <div style="display:flex;gap:8px;justify-content:center">
@@ -4633,11 +4789,13 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="form-group">
             <label>Start Location (Origin) *</label>
-            <input type="text" id="cp_origin" required placeholder="e.g. Prateek Laurel, Noida Sec 120" onchange="autoSuggestCarpoolPrice()">
+            <input type="text" id="cp_origin" required placeholder="e.g. Prateek Laurel, Noida Sec 120"
+              onchange="autoSuggestCarpoolPrice()">
           </div>
           <div class="form-group">
             <label>End Location (Destination) *</label>
-            <input type="text" id="cp_destination" required placeholder="e.g. Cyber City / Noida Sec 62 / Airport" onchange="autoSuggestCarpoolPrice()">
+            <input type="text" id="cp_destination" required placeholder="e.g. Cyber City / Noida Sec 62 / Airport"
+              onchange="autoSuggestCarpoolPrice()">
           </div>
         </div>
 
@@ -4681,16 +4839,20 @@
             <label>Price Per Seat (₹) *</label>
             <div style="display:flex;align-items:center;gap:8px">
               <input type="number" id="cp_price" required min="10" placeholder="e.g. 80">
-              <button type="button" class="btn btn-sm btn-ghost" onclick="autoSuggestCarpoolPrice()" title="Auto Suggest Fair Price" style="white-space:nowrap;padding:8px 10px">
+              <button type="button" class="btn btn-sm btn-ghost" onclick="autoSuggestCarpoolPrice()"
+                title="Auto Suggest Fair Price" style="white-space:nowrap;padding:8px 10px">
                 <i class="fa fa-wand-magic-sparkles" style="color:var(--gold)"></i> Suggest
               </button>
             </div>
-            <div style="font-size:0.74rem;color:var(--text-muted);margin-top:2px" id="cp_priceSuggestionNote">Fair price: ₹60 - ₹120 per seat</div>
+            <div style="font-size:0.74rem;color:var(--text-muted);margin-top:2px" id="cp_priceSuggestionNote">Fair
+              price: ₹60 - ₹120 per seat</div>
           </div>
         </div>
 
         <div style="border-top:1.5px dashed var(--border);padding-top:14px;margin-top:14px">
-          <div style="font-size:0.8rem;font-weight:800;color:var(--green-dark);margin-bottom:10px;text-transform:uppercase">Vehicle &amp; Driver Preferences</div>
+          <div
+            style="font-size:0.8rem;font-weight:800;color:var(--green-dark);margin-bottom:10px;text-transform:uppercase">
+            Vehicle &amp; Driver Preferences</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
             <div class="form-group">
               <label>Car Model *</label>
@@ -4726,20 +4888,23 @@
 
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <label style="font-size:0.84rem;cursor:pointer;display:flex;align-items:center;gap:6px">
-              <input type="checkbox" id="cp_womenOnly"> <span style="font-weight:600;color:#e91e63"><i class="fa fa-person-dress"></i> Women-Only Ride</span>
+              <input type="checkbox" id="cp_womenOnly"> <span style="font-weight:600;color:#e91e63"><i
+                  class="fa fa-person-dress"></i> Women-Only Ride</span>
             </label>
             <label style="font-size:0.84rem;cursor:pointer;display:flex;align-items:center;gap:6px">
               <input type="checkbox" id="cp_petsAllowed"> <span><i class="fa fa-paw"></i> Pets Allowed</span>
             </label>
             <label style="font-size:0.84rem;cursor:pointer;display:flex;align-items:center;gap:6px">
-              <input type="checkbox" id="cp_nonSmoking" checked> <span><i class="fa fa-ban-smoking"></i> Non-Smoking</span>
+              <input type="checkbox" id="cp_nonSmoking" checked> <span><i class="fa fa-ban-smoking"></i>
+                Non-Smoking</span>
             </label>
           </div>
         </div>
 
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" onclick="closeModal('offerRideModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="offerRideSubmitBtn"><i class="fa fa-paper-plane"></i> Publish Ride</button>
+          <button type="submit" class="btn btn-primary" id="offerRideSubmitBtn"><i class="fa fa-paper-plane"></i>
+            Publish Ride</button>
         </div>
       </form>
     </div>
@@ -4770,7 +4935,8 @@
   <div class="modal-overlay" id="carpoolVerifyModal" style="z-index:9999">
     <div class="modal" style="max-width:560px">
       <div class="modal-title"><i class="fa fa-id-card" style="color:var(--green)"></i> Driver Verification</div>
-      <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:16px">Upload your Driving License &amp; Vehicle Registration to receive the verified driver badge on Tyntron.</p>
+      <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:16px">Upload your Driving License &amp; Vehicle
+        Registration to receive the verified driver badge on Tyntron.</p>
       <form onsubmit="saveDriverVerification(event)">
         <div class="form-group" style="margin-bottom:14px">
           <label>Driving License Number *</label>
@@ -4786,13 +4952,16 @@
         </div>
         <div class="form-group" style="margin-bottom:14px">
           <label style="display:flex;justify-content:space-between;align-items:center">
-            <span>Upload Vehicle / Car Photo <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem">(Optional)</span></span>
+            <span>Upload Vehicle / Car Photo <span
+                style="font-weight:400;color:var(--text-muted);font-size:0.78rem">(Optional)</span></span>
             <!-- <span style="font-size:0.7rem;background:var(--cream);color:var(--text-muted);padding:2px 8px;border-radius:10px;font-weight:600">NOT MANDATORY</span> -->
           </label>
           <input type="file" id="cp_carPhotoFile" accept="image/*" onchange="previewVehiclePhoto(event)">
           <div id="cp_carPhotoPreview" style="margin-top:8px;display:none">
-            <img id="cp_carPhotoImg" src="" style="width:110px;height:75px;object-fit:cover;border-radius:10px;border:1.5px solid var(--green)">
-            <span style="font-size:0.72rem;color:var(--text-muted);display:block;margin-top:2px"><i class="fa fa-check" style="color:var(--green)"></i> Vehicle photo preview</span>
+            <img id="cp_carPhotoImg" src=""
+              style="width:110px;height:75px;object-fit:cover;border-radius:10px;border:1.5px solid var(--green)">
+            <span style="font-size:0.72rem;color:var(--text-muted);display:block;margin-top:2px"><i class="fa fa-check"
+                style="color:var(--green)"></i> Vehicle photo preview</span>
           </div>
         </div>
         <div class="modal-actions">
@@ -4823,7 +4992,8 @@
         </div>
         <div class="form-group" style="margin-bottom:16px">
           <label>Written Review / Feedback</label>
-          <textarea id="cp_reviewComment" placeholder="Share your experience (punctuality, driving, cleanliness)..."></textarea>
+          <textarea id="cp_reviewComment"
+            placeholder="Share your experience (punctuality, driving, cleanliness)..."></textarea>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" onclick="closeModal('carpoolReviewModal')">Cancel</button>
@@ -4834,22 +5004,30 @@
   </div>
 
   <!-- ── BUSINESS SUBSCRIPTION & PRICING MODAL (SAFFRON ORANGE BRAND THEME) ── -->
-  <div class="modal-overlay" id="subscriptionModal" style="z-index:99999;backdrop-filter:blur(8px);background:rgba(28,39,51,0.65)">
+  <div class="modal-overlay" id="subscriptionModal"
+    style="z-index:99999;backdrop-filter:blur(8px);background:rgba(28,39,51,0.65)">
     <div class="modal subs-modal-body">
       <!-- Ambient Top Glow Accent -->
-      <div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(255,153,51,0.25) 0%, rgba(255,153,51,0) 70%);pointer-events:none"></div>
+      <div
+        style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(255,153,51,0.25) 0%, rgba(255,153,51,0) 70%);pointer-events:none">
+      </div>
 
       <!-- Close Icon Button -->
-      <button type="button" style="position:absolute;top:20px;right:20px;background:none;border:none;color:#5b6b7a;font-size:1.3rem;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.2s" onmouseover="this.style.background='#fff3e0';this.style.color='#ff9933'" onmouseout="this.style.background='none';this.style.color='#5b6b7a'" onclick="closeSubscriptionModal()">
+      <button type="button"
+        style="position:absolute;top:20px;right:20px;background:none;border:none;color:#5b6b7a;font-size:1.3rem;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.2s"
+        onmouseover="this.style.background='#fff3e0';this.style.color='#ff9933'"
+        onmouseout="this.style.background='none';this.style.color='#5b6b7a'" onclick="closeSubscriptionModal()">
         <i class="fa fa-xmark"></i>
       </button>
 
       <!-- Modal Header -->
       <div style="text-align:center;max-width:600px;margin:0 auto 20px">
-        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff3e0;border:1px solid #ffe0b2;color:#e65100;font-size:0.78rem;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:12px">
+        <div
+          style="display:inline-flex;align-items:center;gap:8px;background:#fff3e0;border:1px solid #ffe0b2;color:#e65100;font-size:0.78rem;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:12px">
           <i class="fa fa-crown" style="color:#ff9933"></i> TynTron Business Membership
         </div>
-        <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;color:#1c2733;margin-bottom:8px;line-height:1.2">
+        <h2
+          style="font-family:'Playfair Display',serif;font-size:1.7rem;color:#1c2733;margin-bottom:8px;line-height:1.2">
           Choose the Right Plan for Your Business
         </h2>
         <p style="font-size:0.88rem;color:#5b6b7a;margin:0">
@@ -4859,10 +5037,12 @@
 
       <!-- Billing Toggle Switch -->
       <div class="subs-toggle-wrapper">
-        <button type="button" class="subs-toggle-btn active" id="subsBillingMonthlyBtn" onclick="setSubscriptionBillingCycle('monthly')">
+        <button type="button" class="subs-toggle-btn active" id="subsBillingMonthlyBtn"
+          onclick="setSubscriptionBillingCycle('monthly')">
           Monthly Billing
         </button>
-        <button type="button" class="subs-toggle-btn" id="subsBillingAnnualBtn" onclick="setSubscriptionBillingCycle('annual')">
+        <button type="button" class="subs-toggle-btn" id="subsBillingAnnualBtn"
+          onclick="setSubscriptionBillingCycle('annual')">
           Annual Billing <span class="subs-save-badge">SAVE 20%</span>
         </button>
       </div>
@@ -4873,8 +5053,10 @@
       </div>
 
       <!-- Guarantee Footer Note -->
-      <div style="text-align:center;padding-top:16px;border-top:1px solid #e1e8f0;font-size:0.8rem;color:#5b6b7a;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
-        <span><i class="fa fa-shield-halved" style="color:#2e7d32;margin-right:6px"></i> 100% Zero Hidden Commission</span>
+      <div
+        style="text-align:center;padding-top:16px;border-top:1px solid #e1e8f0;font-size:0.8rem;color:#5b6b7a;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+        <span><i class="fa fa-shield-halved" style="color:#2e7d32;margin-right:6px"></i> 100% Zero Hidden
+          Commission</span>
         <span><i class="fa fa-rotate-left" style="color:#ff9933;margin-right:6px"></i> Change or Cancel Anytime</span>
         <span><i class="fa fa-headset" style="color:#1976d2;margin-right:6px"></i> Instant 24/7 Support</span>
       </div>
@@ -4882,76 +5064,95 @@
   </div>
 
   <!-- ── ADMIN EDIT/ADD SUBSCRIPTION PLAN MODAL ── -->
-  <div class="modal-overlay" id="adminPlanModal" style="z-index:999999;backdrop-filter:blur(8px);background:rgba(28,39,51,0.65)">
-    <div class="modal" style="max-width:620px;border-radius:24px;padding:28px;background:#ffffff;box-shadow:0 25px 60px -12px rgba(184,92,26,0.25);border:1px solid #e1e8f0;position:relative;max-height:90vh;overflow-y:auto">
-      
-      <button type="button" style="position:absolute;top:18px;right:18px;background:none;border:none;color:#5b6b7a;font-size:1.2rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center" onclick="closeAdminPlanModal()">
+  <div class="modal-overlay" id="adminPlanModal"
+    style="z-index:999999;backdrop-filter:blur(8px);background:rgba(28,39,51,0.65)">
+    <div class="modal"
+      style="max-width:620px;border-radius:24px;padding:28px;background:#ffffff;box-shadow:0 25px 60px -12px rgba(184,92,26,0.25);border:1px solid #e1e8f0;position:relative;max-height:90vh;overflow-y:auto">
+
+      <button type="button"
+        style="position:absolute;top:18px;right:18px;background:none;border:none;color:#5b6b7a;font-size:1.2rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center"
+        onclick="closeAdminPlanModal()">
         <i class="fa fa-xmark"></i>
       </button>
 
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#1c2733;margin-bottom:6px" id="adminPlanModalTitle">
+      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#1c2733;margin-bottom:6px"
+        id="adminPlanModalTitle">
         Add New Subscription Plan
       </div>
-      <p style="font-size:0.84rem;color:#5b6b7a;margin-bottom:20px">Configure pricing, badge labels, listings capacity, and features checklist.</p>
+      <p style="font-size:0.84rem;color:#5b6b7a;margin-bottom:20px">Configure pricing, badge labels, listings capacity,
+        and features checklist.</p>
 
       <form onsubmit="saveAdminPlan(event)">
         <input type="hidden" id="ap_isEdit" value="0">
-        
+
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Plan ID (Unique Key) *</label>
-            <input type="text" id="ap_id" required placeholder="e.g. starter, pro, vip, gold" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="text" id="ap_id" required placeholder="e.g. starter, pro, vip, gold"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Plan Title *</label>
-            <input type="text" id="ap_name" required placeholder="e.g. Pro Business" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="text" id="ap_name" required placeholder="e.g. Pro Business"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Badge Label</label>
-            <input type="text" id="ap_badge" placeholder="e.g. MOST POPULAR" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="text" id="ap_badge" placeholder="e.g. MOST POPULAR"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Icon (FA Class)</label>
-            <input type="text" id="ap_icon" placeholder="fa-rocket" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="text" id="ap_icon" placeholder="fa-rocket"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Max Items Limit *</label>
-            <input type="number" id="ap_maxItems" required min="1" placeholder="999 for unlimited" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="number" id="ap_maxItems" required min="1" placeholder="999 for unlimited"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Monthly Price (₹) *</label>
-            <input type="number" id="ap_monthlyPrice" required min="0" placeholder="0" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="number" id="ap_monthlyPrice" required min="0" placeholder="0"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
           <div class="form-group">
             <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Annual Total Price (₹) *</label>
-            <input type="number" id="ap_annualPrice" required min="0" placeholder="0" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+            <input type="number" id="ap_annualPrice" required min="0" placeholder="0"
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
           </div>
         </div>
 
         <div class="form-group" style="margin-bottom:14px">
           <label style="font-size:0.8rem;font-weight:700;color:#1c2733">Short Description</label>
-          <input type="text" id="ap_desc" placeholder="Maximum growth for active vendors seeking high sales." style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
+          <input type="text" id="ap_desc" placeholder="Maximum growth for active vendors seeking high sales."
+            style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid #e1e8f0;font-size:0.86rem">
         </div>
 
         <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
           <input type="checkbox" id="ap_popular" style="width:18px;height:18px;cursor:pointer">
-          <label for="ap_popular" style="font-size:0.86rem;font-weight:700;color:#1c2733;cursor:pointer">Highlight as Most Popular Card (Saffron Border Accent)</label>
+          <label for="ap_popular" style="font-size:0.86rem;font-weight:700;color:#1c2733;cursor:pointer">Highlight as
+            Most Popular Card (Saffron Border Accent)</label>
         </div>
 
         <!-- Features Checklist Editor -->
         <div style="border-top:1.5px solid #e1e8f0;padding-top:16px;margin-bottom:20px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
             <div>
-              <label style="font-size:0.9rem;font-weight:800;color:#1c2733;display:block">Plan Feature List Items</label>
-              <span style="font-size:0.78rem;color:#5b6b7a">Add, edit, or remove feature bullet points shown on the plan card.</span>
+              <label style="font-size:0.9rem;font-weight:800;color:#1c2733;display:block">Plan Feature List
+                Items</label>
+              <span style="font-size:0.78rem;color:#5b6b7a">Add, edit, or remove feature bullet points shown on the plan
+                card.</span>
             </div>
-            <button type="button" class="btn btn-sm" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer" onclick="addAdminPlanFeatureInput()">
+            <button type="button" class="btn btn-sm"
+              style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer"
+              onclick="addAdminPlanFeatureInput()">
               <i class="fa fa-plus" style="margin-right:4px"></i> Add Item
             </button>
           </div>
@@ -4960,14 +5161,19 @@
             <!-- Dynamic Feature Rows -->
           </div>
 
-          <button type="button" style="width:100%;padding:10px;border:2px dashed #cbd5e1;background:#f8fafc;border-radius:12px;color:#e65100;font-weight:700;font-size:0.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s" onmouseover="this.style.borderColor='#ff9933';this.style.background='#fff3e0'" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'" onclick="addAdminPlanFeatureInput()">
+          <button type="button"
+            style="width:100%;padding:10px;border:2px dashed #cbd5e1;background:#f8fafc;border-radius:12px;color:#e65100;font-weight:700;font-size:0.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s"
+            onmouseover="this.style.borderColor='#ff9933';this.style.background='#fff3e0'"
+            onmouseout="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'"
+            onclick="addAdminPlanFeatureInput()">
             <i class="fa fa-plus-circle" style="font-size:1.05rem"></i> Click to Add Another Feature Item
           </button>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:12px">
           <button type="button" class="btn btn-ghost" onclick="closeAdminPlanModal()">Cancel</button>
-          <button type="submit" class="btn" style="background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;font-weight:700;padding:10px 22px;border-radius:12px;border:none">
+          <button type="submit" class="btn"
+            style="background:linear-gradient(135deg, #ff9933 0%, #b85c1a 100%);color:#fff;font-weight:700;padding:10px 22px;border-radius:12px;border:none">
             <i class="fa fa-floppy-disk" style="margin-right:6px"></i> Save Subscription Plan
           </button>
         </div>
@@ -5221,11 +5427,17 @@
         <div class="form-section-label"><i class="fa fa-lock"></i> Step 3 — Create Your Password</div>
         <div class="form-group">
           <label>Password *</label>
-          <input type="password" id="sr_password" placeholder="At least 6 characters">
+          <div class="token-wrap">
+            <input type="password" id="sr_password" placeholder="At least 6 characters">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sr_password',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
         <div class="form-group">
           <label>Confirm Password *</label>
-          <input type="password" id="sr_password2" placeholder="Re-enter password">
+          <div class="token-wrap">
+            <input type="password" id="sr_password2" placeholder="Re-enter password">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sr_password2',this)"><i class="fa fa-eye"></i> Show</button>
+          </div>
         </div>
 
         <div class="form-section-label"><i class="fa fa-image"></i> Business Photo</div>
@@ -5445,10 +5657,13 @@
         -->
 
         <div id="sr_step5_section" style="grid-column:1/-1">
-          <div class="form-section-label"><i class="fa fa-crown" style="color:var(--gold)"></i> Step 5 — Select &amp; Pay
+          <div class="form-section-label"><i class="fa fa-crown" style="color:var(--gold)"></i> Step 5 — Select &amp;
+            Pay
             Subscription Plan *</div>
-          <p style="font-size:.8rem;color:var(--text-muted);grid-column:1/-1;margin-bottom:8px">Select a subscription plan
-            to activate your business account upon admin approval. Payment authorization is required upfront to submit your
+          <p style="font-size:.8rem;color:var(--text-muted);grid-column:1/-1;margin-bottom:8px">Select a subscription
+            plan
+            to activate your business account upon admin approval. Payment authorization is required upfront to submit
+            your
             registration request.</p>
           <div class="form-group full" style="grid-column:1/-1">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -5458,7 +5673,8 @@
                   style="position:absolute;top:12px;right:12px;accent-color:var(--green)">
                 <div style="font-weight:700;font-size:.95rem;color:var(--text)">Monthly Plan</div>
                 <div style="font-size:1.25rem;font-weight:800;color:var(--green);margin:4px 0">₹<span
-                    id="srVal_monthly">499</span> <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
+                    id="srVal_monthly">499</span> <span
+                    style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
                     month</span></div>
                 <div style="font-size:.74rem;color:var(--text-muted)">Standard monthly listing fee</div>
               </div>
@@ -5471,7 +5687,8 @@
                   style="position:absolute;top:12px;right:12px;accent-color:var(--green)">
                 <div style="font-weight:700;font-size:.95rem;color:var(--text)">Annual Plan</div>
                 <div style="font-size:1.25rem;font-weight:800;color:var(--green);margin:4px 0">₹<span
-                    id="srVal_annual">3999</span> <span style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
+                    id="srVal_annual">3999</span> <span
+                    style="font-size:.75rem;font-weight:400;color:var(--text-muted)">/
                     year</span></div>
                 <div style="font-size:.74rem;color:var(--text-muted)">Full year privileges</div>
               </div>
@@ -5602,7 +5819,8 @@
     <div class="header-inner">
       <div class="hdr-left">
         <!-- 3-line Menu Bar Button on Left -->
-        <button class="header-menu-btn" id="menuToggleBtn" onclick="toggleLeftSidebar()" aria-label="Open Menu" title="Menu">
+        <button class="header-menu-btn" id="menuToggleBtn" onclick="toggleLeftSidebar()" aria-label="Open Menu"
+          title="Menu">
           <i class="fa fa-bars"></i>
         </button>
 
@@ -5644,10 +5862,12 @@
     <div class="left-sidebar-drawer" id="leftSidebarDrawer">
       <div class="sidebar-header">
         <div class="sidebar-brand">
-          <div style="width:34px;height:34px;border-radius:8px;overflow:hidden;background:#fff;padding:2px"><img src="newlogo.png.jpeg" alt="Logo" style="width:100%;height:100%;object-fit:cover"></div>
+          <div style="width:34px;height:34px;border-radius:8px;overflow:hidden;background:#fff;padding:2px"><img
+              src="newlogo.png.jpeg" alt="Logo" style="width:100%;height:100%;object-fit:cover"></div>
           <h2>TynTron Menu</h2>
         </div>
-        <button class="sidebar-close-btn" onclick="closeLeftSidebar()" aria-label="Close menu"><i class="fa fa-xmark"></i></button>
+        <button class="sidebar-close-btn" onclick="closeLeftSidebar()" aria-label="Close menu"><i
+            class="fa fa-xmark"></i></button>
       </div>
 
       <div class="sidebar-body">
@@ -5655,27 +5875,36 @@
         <div class="sidebar-card" id="sidebarProviderCard">
           <div class="sidebar-section-title"><i class="fa fa-store"></i> Business Provider Hub</div>
           <div id="sidebarProviderLoggedOut">
-            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">Offer services, food, or products to your local society residents.</p>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">Offer services,
+              food, or products to your local society residents.</p>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="openLoginModal();closeLeftSidebar()">
+              <button class="btn btn-primary" style="width:100%;justify-content:center"
+                onclick="openLoginModal();closeLeftSidebar()">
                 <i class="fa fa-right-to-bracket"></i> Business Provider Login
               </button>
-              <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="openBusinessRegModal();closeLeftSidebar()">
+              <button class="btn btn-ghost" style="width:100%;justify-content:center"
+                onclick="openBusinessRegModal();closeLeftSidebar()">
                 <i class="fa fa-user-plus"></i> Register Your Business
               </button>
             </div>
           </div>
           <div id="sidebarProviderLoggedIn" style="display:none">
-            <div style="font-weight:700;color:var(--green-dark);font-size:0.92rem;margin-bottom:4px" id="sidebarBusinessVenture">My Venture</div>
-            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px" id="sidebarBusinessEmail">business@email.com</div>
+            <div style="font-weight:700;color:var(--green-dark);font-size:0.92rem;margin-bottom:4px"
+              id="sidebarBusinessVenture">My Venture</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px" id="sidebarBusinessEmail">
+              business@email.com</div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="switchPanel('business');closeLeftSidebar()">
+              <button class="btn btn-primary" style="width:100%;justify-content:center"
+                onclick="switchPanel('business');closeLeftSidebar()">
                 <i class="fa fa-user-tie"></i> Manage My Business
               </button>
-              <button class="btn btn-ghost" style="width:100%;justify-content:center;color:var(--green-dark);border-color:var(--green)" onclick="openNotificationComposer('business');closeLeftSidebar()">
+              <button class="btn btn-ghost"
+                style="width:100%;justify-content:center;color:var(--green-dark);border-color:var(--green)"
+                onclick="openNotificationComposer('business');closeLeftSidebar()">
                 <i class="fa fa-paper-plane" style="color:var(--green)"></i> Send Broadcast Deal
               </button>
-              <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center" onclick="businessLogout();closeLeftSidebar()">
+              <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center"
+                onclick="businessLogout();closeLeftSidebar()">
                 <i class="fa fa-sign-out-alt"></i> Business Logout
               </button>
             </div>
@@ -5684,23 +5913,30 @@
 
         <!-- Tyntron Driver Portal Section -->
         <div class="sidebar-card" id="sidebarDriverCard">
-          <div class="sidebar-section-title"><i class="fa fa-car-side" style="color:var(--green)"></i> Driver Hub &amp; Carpool</div>
+          <div class="sidebar-section-title"><i class="fa fa-car-side" style="color:var(--green)"></i> Driver Hub &amp;
+            Carpool</div>
           <div id="sidebarDriverLoggedOut">
-            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">Share your carpool routes, manage passenger bookings, and earn extra income.</p>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">Share your carpool
+              routes, manage passenger bookings, and earn extra income.</p>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="openDriverAuthModal();closeLeftSidebar()">
+              <button class="btn btn-primary" style="width:100%;justify-content:center"
+                onclick="openDriverAuthModal();closeLeftSidebar()">
                 <i class="fa fa-right-to-bracket"></i> Driver Login / Sign Up
               </button>
             </div>
           </div>
           <div id="sidebarDriverLoggedIn" style="display:none">
-            <div style="font-weight:700;color:var(--green-dark);font-size:0.92rem;margin-bottom:4px" id="sidebarDriverName">Driver Name</div>
-            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px" id="sidebarDriverCar">Vehicle Info</div>
+            <div style="font-weight:700;color:var(--green-dark);font-size:0.92rem;margin-bottom:4px"
+              id="sidebarDriverName">Driver Name</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px" id="sidebarDriverCar">Vehicle Info
+            </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="switchPanel('driver');closeLeftSidebar()">
+              <button class="btn btn-primary" style="width:100%;justify-content:center"
+                onclick="switchPanel('driver');closeLeftSidebar()">
                 <i class="fa fa-car-side"></i> Manage Driver Dashboard
               </button>
-              <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center" onclick="driverLogout();closeLeftSidebar()">
+              <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center"
+                onclick="driverLogout();closeLeftSidebar()">
                 <i class="fa fa-sign-out-alt"></i> Driver Logout
               </button>
             </div>
@@ -5758,7 +5994,8 @@
           </div>
         </div>
 
-        <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);text-align:center;font-size:0.76rem;color:var(--text-muted)">
+        <div
+          style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);text-align:center;font-size:0.76rem;color:var(--text-muted)">
           TynTron — For the Residents, By the Residents
         </div>
       </div>
@@ -5770,7 +6007,8 @@
       <span class="loc-label">Your Location</span>
       <span class="loc-address" id="locationBarText">Detecting your location…</span>
     </div>
-    <button id="locationRetryBtn" class="loc-retry-btn" style="display:none" onclick="event.stopPropagation(); retryLocationDetect()" title="Retry location detection">
+    <button id="locationRetryBtn" class="loc-retry-btn" style="display:none"
+      onclick="event.stopPropagation(); retryLocationDetect()" title="Retry location detection">
       <i class="fa fa-rotate-right"></i> Retry
     </button>
     <select class="loc-society-select" id="societySelect" onchange="onSocietyChange()"
@@ -5782,7 +6020,9 @@
     <span>Location access is off. To see nearby societies automatically, enable Location for TynTron in your phone's
       Settings → Apps → TynTron → Permissions → Location (or your browser's site settings), then tap Retry on the
       location bar above.</span>
-    <button onclick="retryLocationDetect()" style="background:var(--green);color:var(--white);border:none;padding:4px 10px;border-radius:4px;font-size:0.78rem;margin-left:8px;cursor:pointer;flex-shrink:0"><i class="fa fa-rotate-right"></i> Retry</button>
+    <button onclick="retryLocationDetect()"
+      style="background:var(--green);color:var(--white);border:none;padding:4px 10px;border-radius:4px;font-size:0.78rem;margin-left:8px;cursor:pointer;flex-shrink:0"><i
+        class="fa fa-rotate-right"></i> Retry</button>
     <button onclick="document.getElementById('locationPermBanner').style.display='none'" aria-label="Dismiss"><i
         class="fa fa-xmark"></i></button>
   </div>
@@ -5806,16 +6046,19 @@
   <div class="modal-overlay" id="locationRequiredModal" style="z-index:99999">
     <div class="modal" style="max-width:480px;border-radius:18px;padding:24px 20px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="width:44px;height:44px;border-radius:12px;background:var(--green-pale);color:var(--green-dark);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+        <div
+          style="width:44px;height:44px;border-radius:12px;background:var(--green-pale);color:var(--green-dark);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
           <i class="fa fa-location-crosshairs"></i>
         </div>
         <div>
           <h3 style="font-size:1.15rem;font-weight:700;color:var(--text);margin:0">Location Access Required</h3>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin:2px 0 0">Mandatory to find societies & services near you</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:2px 0 0">Mandatory to find societies & services near
+            you</p>
         </div>
       </div>
 
-      <div id="locReqStatusAlert" style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.84rem;color:#664D03;line-height:1.45;display:flex;align-items:flex-start;gap:10px">
+      <div id="locReqStatusAlert"
+        style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.84rem;color:#664D03;line-height:1.45;display:flex;align-items:flex-start;gap:10px">
         <i class="fa fa-triangle-exclamation" style="font-size:1rem;color:#856404;margin-top:2px;flex-shrink:0"></i>
         <div id="locReqStatusText">
           Device Location (GPS) is turned off or blocked. Please enable Location services to continue using TynTron.
@@ -5823,33 +6066,43 @@
       </div>
 
       <div style="background:var(--cream);border-radius:12px;padding:14px;margin-bottom:18px">
-        <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em">How to turn on Location:</div>
+        <div
+          style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em">
+          How to turn on Location:</div>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:0.84rem;color:var(--text)">
           <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:22px;height:22px;border-radius:50%;background:var(--green);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">1</span>
+            <span
+              style="width:22px;height:22px;border-radius:50%;background:var(--green);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">1</span>
             <span>Swipe down top menu & turn <strong>ON Location / GPS</strong></span>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:22px;height:22px;border-radius:50%;background:var(--green);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">2</span>
+            <span
+              style="width:22px;height:22px;border-radius:50%;background:var(--green);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">2</span>
             <span>Tap <strong>Allow</strong> when your mobile prompts for permission</span>
           </div>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" id="locReqRetryBtn" onclick="requestLocationAccessAndRetry()" style="width:100%;justify-content:center;padding:12px;font-weight:700;font-size:0.92rem">
+        <button class="btn btn-primary" id="locReqRetryBtn" onclick="requestLocationAccessAndRetry()"
+          style="width:100%;justify-content:center;padding:12px;font-weight:700;font-size:0.92rem">
           <i class="fa fa-rotate-right"></i> Turn On Location & Retry
         </button>
-        <button class="btn btn-ghost" onclick="closeModal('locationRequiredModal'); openLocationSearchModal()" style="width:100%;justify-content:center;border:1.5px solid var(--border);padding:10px;font-size:0.86rem">
+        <button class="btn btn-ghost" onclick="closeModal('locationRequiredModal'); openLocationSearchModal()"
+          style="width:100%;justify-content:center;border:1.5px solid var(--border);padding:10px;font-size:0.86rem">
           <i class="fa fa-magnifying-glass"></i> Select Society / Address Manually
         </button>
       </div>
 
       <details style="margin-top:14px;font-size:0.78rem;color:var(--text-muted)">
-        <summary style="cursor:pointer;font-weight:600;color:var(--green-dark)">Still not working? Click for App/Browser settings instructions</summary>
-        <div style="margin-top:8px;padding:8px 10px;background:var(--white);border:1px solid var(--border);border-radius:8px;line-height:1.4">
-          <strong>Android Phone:</strong> Settings → Apps → TynTron (or Chrome) → Permissions → Location → Select "Allow while using app".<br/>
-          <strong>iPhone (iOS):</strong> Settings → Privacy & Security → Location Services → Turn ON → Select TynTron / Safari.
+        <summary style="cursor:pointer;font-weight:600;color:var(--green-dark)">Still not working? Click for App/Browser
+          settings instructions</summary>
+        <div
+          style="margin-top:8px;padding:8px 10px;background:var(--white);border:1px solid var(--border);border-radius:8px;line-height:1.4">
+          <strong>Android Phone:</strong> Settings → Apps → TynTron (or Chrome) → Permissions → Location → Select "Allow
+          while using app".<br />
+          <strong>iPhone (iOS):</strong> Settings → Privacy & Security → Location Services → Turn ON → Select TynTron /
+          Safari.
         </div>
       </details>
     </div>
@@ -6135,14 +6388,16 @@
     </div>
 
     <!-- ── CARPOOL PAGE ── -->
-    <div id="customerCarpoolPage" style="display:none;padding:20px 16px 100px;max-width:850px;margin:0 auto;min-height:60vh">
-      
+    <div id="customerCarpoolPage"
+      style="display:none;padding:20px 16px 100px;max-width:850px;margin:0 auto;min-height:60vh">
+
       <!-- Top Title & Driver Portal Link -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <h2 style="font-family:'Playfair Display',serif;color:var(--green-dark);font-size:1.35rem;margin:0">
           <i class="fa fa-car-side" style="color:var(--green)"></i> Resident Carpool &amp; Ride Share
         </h2>
-        <button class="btn btn-outline-plan btn-sm" onclick="openDriverAuthModal()" style="border-radius:20px;font-weight:700">
+        <button class="btn btn-outline-plan btn-sm" onclick="openDriverAuthModal()"
+          style="border-radius:20px;font-weight:700">
           <i class="fa fa-car-on"></i> Drive &amp; Offer Rides
         </button>
       </div>
@@ -6150,24 +6405,36 @@
       <!-- Persistent Ask Tyntron AI Search Bar -->
       <div class="carpool-ai-bar">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-weight:700;color:var(--green-dark);font-size:0.88rem;display:flex;align-items:center;gap:6px">
+          <div
+            style="font-weight:700;color:var(--green-dark);font-size:0.88rem;display:flex;align-items:center;gap:6px">
             <i class="fa fa-robot" style="color:var(--green)"></i> Ask Tyntron AI — Conversational Ride Search
           </div>
-          <span style="font-size:0.72rem;background:var(--green-pale);color:var(--green-dark);padding:2px 8px;border-radius:10px;font-weight:700">AI Powered</span>
+          <span
+            style="font-size:0.72rem;background:var(--green-pale);color:var(--green-dark);padding:2px 8px;border-radius:10px;font-weight:700">AI
+            Powered</span>
         </div>
         <div class="carpool-ai-input-wrap">
           <i class="fa fa-comment-dots" style="color:var(--green);font-size:1rem"></i>
-          <input type="text" id="carpoolAiSearchInput" placeholder="Try: 'Anyone going from Noida to Gurgaon tomorrow at 8 AM?'" onkeydown="if(event.key==='Enter') executeCarpoolAiSearch()">
-          <button type="button" class="btn btn-primary btn-sm" style="border-radius:20px;padding:6px 16px" onclick="executeCarpoolAiSearch()">
+          <input type="text" id="carpoolAiSearchInput"
+            placeholder="Try: 'Anyone going from Noida to Gurgaon tomorrow at 8 AM?'"
+            onkeydown="if(event.key==='Enter') executeCarpoolAiSearch()">
+          <button type="button" class="btn btn-primary btn-sm" style="border-radius:20px;padding:6px 16px"
+            onclick="executeCarpoolAiSearch()">
             Ask AI <i class="fa fa-arrow-right"></i>
           </button>
         </div>
         <!-- Quick AI Suggestion Chips -->
         <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:2px">
-          <span class="carpool-filter-chip" onclick="prefillCarpoolAiSearch('Noida to Gurgaon Cyber City tomorrow morning')"><i class="fa fa-bolt" style="color:var(--gold)"></i> Noida ➔ Cyber City 8 AM</span>
-          <span class="carpool-filter-chip" onclick="prefillCarpoolAiSearch('Weekend trip to Dehradun this Saturday')"><i class="fa fa-mountain" style="color:var(--green)"></i> Weekend Outstation</span>
-          <span class="carpool-filter-chip" onclick="prefillCarpoolAiSearch('Women-only rides')"><i class="fa fa-person-dress" style="color:#e91e63"></i> Women-Only</span>
-          <span class="carpool-filter-chip" onclick="prefillCarpoolAiSearch('Instant booking rides under Rs 300')"><i class="fa fa-bolt" style="color:var(--green)"></i> Instant Book</span>
+          <span class="carpool-filter-chip"
+            onclick="prefillCarpoolAiSearch('Noida to Gurgaon Cyber City tomorrow morning')"><i class="fa fa-bolt"
+              style="color:var(--gold)"></i> Noida ➔ Cyber City 8 AM</span>
+          <span class="carpool-filter-chip"
+            onclick="prefillCarpoolAiSearch('Weekend trip to Dehradun this Saturday')"><i class="fa fa-mountain"
+              style="color:var(--green)"></i> Weekend Outstation</span>
+          <span class="carpool-filter-chip" onclick="prefillCarpoolAiSearch('Women-only rides')"><i
+              class="fa fa-person-dress" style="color:#e91e63"></i> Women-Only</span>
+          <span class="carpool-filter-chip" onclick="prefillCarpoolAiSearch('Instant booking rides under Rs 300')"><i
+              class="fa fa-bolt" style="color:var(--green)"></i> Instant Book</span>
         </div>
       </div>
 
@@ -6177,7 +6444,8 @@
           <i class="fa fa-magnifying-glass"></i> Find Rides
         </button>
         <button class="carpool-tab-btn" id="cpTabBtnMyRides" onclick="switchCarpoolTab('myrides')">
-          <i class="fa fa-ticket"></i> My Booked Rides <span id="cpMyRidesBadge" style="display:none;background:var(--danger);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:10px"></span>
+          <i class="fa fa-ticket"></i> My Booked Rides <span id="cpMyRidesBadge"
+            style="display:none;background:var(--danger);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:10px"></span>
         </button>
         <button class="carpool-tab-btn" id="cpTabBtnSafety" onclick="switchCarpoolTab('safety')">
           <i class="fa fa-shield-halved"></i> Safety Center
@@ -6193,19 +6461,29 @@
       <!-- TAB 1: FIND RIDES (Search & Feed) -->
       <div id="carpoolTabViewSearch">
         <!-- Search & Filter Controls -->
-        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.03)">
+        <div
+          style="background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.03)">
           <div style="display:grid;grid-template-columns:1fr 1fr 120px;gap:10px;margin-bottom:12px">
             <div>
-              <label style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase">From (Origin)</label>
-              <input type="text" id="cpSearchFrom" placeholder="e.g. Noida / Prateek Laurel" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:0.86rem;box-sizing:border-box" oninput="renderCarpoolFeed()">
+              <label style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase">From
+                (Origin)</label>
+              <input type="text" id="cpSearchFrom" placeholder="e.g. Noida / Prateek Laurel"
+                style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:0.86rem;box-sizing:border-box"
+                oninput="renderCarpoolFeed()">
             </div>
             <div>
-              <label style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase">To (Destination)</label>
-              <input type="text" id="cpSearchTo" placeholder="e.g. Gurgaon / Cyber City" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:0.86rem;box-sizing:border-box" oninput="renderCarpoolFeed()">
+              <label style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase">To
+                (Destination)</label>
+              <input type="text" id="cpSearchTo" placeholder="e.g. Gurgaon / Cyber City"
+                style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:0.86rem;box-sizing:border-box"
+                oninput="renderCarpoolFeed()">
             </div>
             <div>
-              <label style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase">Date</label>
-              <select id="cpSearchDate" style="width:100%;padding:8px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:0.86rem;background:#fff;box-sizing:border-box" onchange="renderCarpoolFeed()">
+              <label
+                style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase">Date</label>
+              <select id="cpSearchDate"
+                style="width:100%;padding:8px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:0.86rem;background:#fff;box-sizing:border-box"
+                onchange="renderCarpoolFeed()">
                 <option value="any">Any Time</option>
                 <option value="today">Today</option>
                 <option value="tomorrow">Tomorrow</option>
@@ -6215,17 +6493,24 @@
 
           <!-- Filter Pills -->
           <div style="display:flex;gap:6px;overflow-x:auto;padding-top:4px">
-            <span class="carpool-filter-chip" id="cpFilterInstant" onclick="toggleCarpoolFilter('instant')"><i class="fa fa-bolt"></i> Instant Book</span>
-            <span class="carpool-filter-chip" id="cpFilterVerified" onclick="toggleCarpoolFilter('verified')"><i class="fa fa-user-check"></i> Verified Drivers</span>
-            <span class="carpool-filter-chip" id="cpFilterWomen" onclick="toggleCarpoolFilter('women')"><i class="fa fa-person-dress"></i> Women-Only</span>
-            <span class="carpool-filter-chip" id="cpFilterPets" onclick="toggleCarpoolFilter('pets')"><i class="fa fa-paw"></i> Pet Friendly</span>
-            <span class="carpool-filter-chip" id="cpFilterEv" onclick="toggleCarpoolFilter('ev')"><i class="fa fa-charging-station"></i> EV Vehicles</span>
+            <span class="carpool-filter-chip" id="cpFilterInstant" onclick="toggleCarpoolFilter('instant')"><i
+                class="fa fa-bolt"></i> Instant Book</span>
+            <span class="carpool-filter-chip" id="cpFilterVerified" onclick="toggleCarpoolFilter('verified')"><i
+                class="fa fa-user-check"></i> Verified Drivers</span>
+            <span class="carpool-filter-chip" id="cpFilterWomen" onclick="toggleCarpoolFilter('women')"><i
+                class="fa fa-person-dress"></i> Women-Only</span>
+            <span class="carpool-filter-chip" id="cpFilterPets" onclick="toggleCarpoolFilter('pets')"><i
+                class="fa fa-paw"></i> Pet Friendly</span>
+            <span class="carpool-filter-chip" id="cpFilterEv" onclick="toggleCarpoolFilter('ev')"><i
+                class="fa fa-charging-station"></i> EV Vehicles</span>
           </div>
         </div>
 
-        <div style="font-weight:700;color:var(--green-dark);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+        <div
+          style="font-weight:700;color:var(--green-dark);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
           <span><i class="fa fa-route"></i> Available Rides Nearby</span>
-          <span style="font-size:0.76rem;color:var(--text-muted);font-weight:400" id="cpRidesCountLabel">Showing all rides</span>
+          <span style="font-size:0.76rem;color:var(--text-muted);font-weight:400" id="cpRidesCountLabel">Showing all
+            rides</span>
         </div>
 
         <!-- Dynamic Rides Feed -->
@@ -6235,10 +6520,12 @@
       <!-- TAB 2: MY RIDES (Driver & Passenger Management) -->
       <div id="carpoolTabViewMyRides" style="display:none">
         <div style="display:flex;gap:8px;margin-bottom:16px">
-          <button type="button" class="btn btn-sm" id="cpMyRidesToggleDriver" onclick="switchMyRidesSubTab('driver')" style="flex:1;justify-content:center;background:var(--green);color:#fff">
+          <button type="button" class="btn btn-sm" id="cpMyRidesToggleDriver" onclick="switchMyRidesSubTab('driver')"
+            style="flex:1;justify-content:center;background:var(--green);color:#fff">
             <i class="fa fa-car"></i> Rides I'm Driving (Published)
           </button>
-          <button type="button" class="btn btn-sm btn-ghost" id="cpMyRidesTogglePassenger" onclick="switchMyRidesSubTab('passenger')" style="flex:1;justify-content:center">
+          <button type="button" class="btn btn-sm btn-ghost" id="cpMyRidesTogglePassenger"
+            onclick="switchMyRidesSubTab('passenger')" style="flex:1;justify-content:center">
             <i class="fa fa-ticket"></i> Rides I've Booked (Passenger)
           </button>
         </div>
@@ -6248,11 +6535,16 @@
       <!-- TAB 3: SAFETY CENTER -->
       <div id="carpoolTabViewSafety" style="display:none">
         <!-- SOS Emergency Banner -->
-        <div style="background:linear-gradient(135deg, #ffebee 0%, #ffffff 100%);border:2px solid #ef5350;border-radius:18px;padding:20px;margin-bottom:20px;text-align:center">
+        <div
+          style="background:linear-gradient(135deg, #ffebee 0%, #ffffff 100%);border:2px solid #ef5350;border-radius:18px;padding:20px;margin-bottom:20px;text-align:center">
           <div style="font-size:2.2rem;color:#d32f2f;margin-bottom:8px"><i class="fa fa-triangle-exclamation"></i></div>
           <div style="font-weight:800;font-size:1.2rem;color:#b71c1c;margin-bottom:6px">Emergency Safety SOS</div>
-          <p style="font-size:0.84rem;color:#5b6b7a;max-width:500px;margin:0 auto 16px">In case of any emergency or unsafe situation during a trip, tap the SOS button to instantly alert local emergency authorities and share your live GPS location with your trusted contacts.</p>
-          <button type="button" class="btn btn-danger" style="padding:12px 32px;font-size:1rem;font-weight:800;border-radius:30px;box-shadow:0 6px 20px rgba(211,47,47,0.4)" onclick="triggerCarpoolSOS()">
+          <p style="font-size:0.84rem;color:#5b6b7a;max-width:500px;margin:0 auto 16px">In case of any emergency or
+            unsafe situation during a trip, tap the SOS button to instantly alert local emergency authorities and share
+            your live GPS location with your trusted contacts.</p>
+          <button type="button" class="btn btn-danger"
+            style="padding:12px 32px;font-size:1rem;font-weight:800;border-radius:30px;box-shadow:0 6px 20px rgba(211,47,47,0.4)"
+            onclick="triggerCarpoolSOS()">
             <i class="fa fa-bell-exclamation"></i> TRIGGER EMERGENCY SOS
           </button>
         </div>
@@ -6262,16 +6554,20 @@
           <!-- Driver Verification Status -->
           <div style="background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:18px">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-              <div style="width:40px;height:40px;border-radius:50%;background:#e8f5e9;color:#2e7d32;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
+              <div
+                style="width:40px;height:40px;border-radius:50%;background:#e8f5e9;color:#2e7d32;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
                 <i class="fa fa-id-card"></i>
               </div>
               <div>
                 <div style="font-weight:700;font-size:0.95rem;color:var(--text)">Driver Identity Verification</div>
-                <div style="font-size:0.76rem;color:var(--text-muted)" id="cpVerifyStatusText">License &amp; Vehicle Docs</div>
+                <div style="font-size:0.76rem;color:var(--text-muted)" id="cpVerifyStatusText">License &amp; Vehicle
+                  Docs</div>
               </div>
             </div>
-            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px">Verified drivers get a trusted green badge on all ride listings and higher passenger bookings.</p>
-            <button type="button" class="btn btn-outline-plan btn-sm" style="width:100%;justify-content:center" onclick="openCarpoolVerifyModal()">
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px">Verified drivers get a trusted green
+              badge on all ride listings and higher passenger bookings.</p>
+            <button type="button" class="btn btn-outline-plan btn-sm" style="width:100%;justify-content:center"
+              onclick="openCarpoolVerifyModal()">
               <i class="fa fa-upload"></i> Manage Identity Documents
             </button>
           </div>
@@ -6279,7 +6575,8 @@
           <!-- Trusted Contacts Manager -->
           <div style="background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:18px">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-              <div style="width:40px;height:40px;border-radius:50%;background:#fff3e0;color:#e65100;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
+              <div
+                style="width:40px;height:40px;border-radius:50%;background:#fff3e0;color:#e65100;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
                 <i class="fa fa-users-viewfinder"></i>
               </div>
               <div>
@@ -6287,15 +6584,18 @@
                 <div style="font-size:0.76rem;color:var(--text-muted)">Auto-share trip updates</div>
               </div>
             </div>
-            <div id="cpTrustedContactsList" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px">No trusted contacts added yet.</div>
-            <button type="button" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="addTrustedContactPrompt()">
+            <div id="cpTrustedContactsList" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px">No
+              trusted contacts added yet.</div>
+            <button type="button" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center"
+              onclick="addTrustedContactPrompt()">
               <i class="fa fa-user-plus"></i> Add Emergency Contact
             </button>
           </div>
         </div>
 
         <!-- 24/7 Helpline Banner -->
-        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:space-between">
+        <div
+          style="background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:12px">
             <i class="fa fa-headset" style="font-size:1.6rem;color:var(--green)"></i>
             <div>
@@ -6309,10 +6609,14 @@
 
       <!-- TAB 4: CARBON & SAVINGS -->
       <div id="carpoolTabViewEco" style="display:none">
-        <div style="background:linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);border:1.5px solid #a5d6a7;border-radius:18px;padding:24px;margin-bottom:20px;text-align:center">
+        <div
+          style="background:linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);border:1.5px solid #a5d6a7;border-radius:18px;padding:24px;margin-bottom:20px;text-align:center">
           <div style="font-size:2.5rem;color:#2e7d32;margin-bottom:8px"><i class="fa fa-seedling"></i></div>
-          <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#1b5e20;margin-bottom:4px">Eco-Commute Impact</div>
-          <p style="font-size:0.85rem;color:#388e3c;margin:0 0 16px">By sharing rides with your society neighbors, you reduce carbon emissions and traffic congestion.</p>
+          <div
+            style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#1b5e20;margin-bottom:4px">
+            Eco-Commute Impact</div>
+          <p style="font-size:0.85rem;color:#388e3c;margin:0 0 16px">By sharing rides with your society neighbors, you
+            reduce carbon emissions and traffic congestion.</p>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
             <div style="background:#fff;border-radius:12px;padding:12px">
               <div style="font-size:1.4rem;font-weight:800;color:#2e7d32">18.4 kg</div>
@@ -6361,7 +6665,8 @@
       <div class="ask-quickchips" id="askQuickChips"></div>
       <form class="ask-inputrow" onsubmit="event.preventDefault(); askSendFromInput();">
         <input type="text" id="askInput" placeholder="Ask about a business, place an order…" autocomplete="off">
-        <button type="submit" class="ask-send" id="askSendBtn" aria-label="Send"><i class="fa fa-paper-plane"></i></button>
+        <button type="submit" class="ask-send" id="askSendBtn" aria-label="Send"><i
+            class="fa fa-paper-plane"></i></button>
       </form>
     </div>
   </div>
@@ -6396,8 +6701,8 @@
             class="fa fa-chart-line"></i> Overview</button>
         <button class="admin-tab-btn" data-tab="vendors" onclick="switchAdminTab('vendors')"><i class="fa fa-store"></i>
           Vendors</button>
-        <button class="admin-tab-btn" data-tab="businessreq" onclick="switchAdminTab('businessreq')" id="businessReqTabBtn"><i
-            class="fa fa-user-plus"></i> Business Requests <span id="pendingBusinessReqBadge"
+        <button class="admin-tab-btn" data-tab="businessreq" onclick="switchAdminTab('businessreq')"
+          id="businessReqTabBtn"><i class="fa fa-user-plus"></i> Business Requests <span id="pendingBusinessReqBadge"
             style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:2px"></span></button>
         <button class="admin-tab-btn" data-tab="accounts" onclick="switchAdminTab('accounts')"><i
             class="fa fa-users"></i> Accounts</button>
@@ -6416,11 +6721,12 @@
             class="fa fa-history"></i> Deletion Logs</button>
         <button class="admin-tab-btn" data-tab="subscriptions" onclick="switchAdminTab('subscriptions')"><i
             class="fa fa-crown" style="color:var(--gold)"></i> Subscriptions</button>
-        <button class="admin-tab-btn" data-tab="notifications" onclick="switchAdminTab('notifications')" id="notifTabBtn"><i
-            class="fa fa-bell" style="color:var(--gold)"></i> Notifications <span id="pendingNotifBadge"
+        <button class="admin-tab-btn" data-tab="notifications" onclick="switchAdminTab('notifications')"
+          id="notifTabBtn"><i class="fa fa-bell" style="color:var(--gold)"></i> Notifications <span
+            id="pendingNotifBadge"
             style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:2px"></span></button>
-        <button class="admin-tab-btn" data-tab="carpool" onclick="switchAdminTab('carpool')"><i
-            class="fa fa-car-side" style="color:var(--green)"></i> Carpool Rides</button>
+        <button class="admin-tab-btn" data-tab="carpool" onclick="switchAdminTab('carpool')"><i class="fa fa-car-side"
+            style="color:var(--green)"></i> Carpool Rides</button>
       </div>
       <div id="adminTabContent"></div>
     </div>
@@ -6437,7 +6743,8 @@
       <div class="modal-title" id="miModalTitle">Add Menu Item</div>
       <div class="form-grid">
         <!-- Item Photo Upload (using Cropper.js resizable & zoomable cropper) -->
-        <div class="form-section-label full" style="margin-top:4px"><i class="fa fa-image" style="color:var(--green)"></i> Item Photo (Optional)</div>
+        <div class="form-section-label full" style="margin-top:4px"><i class="fa fa-image"
+            style="color:var(--green)"></i> Item Photo (Optional)</div>
         <div class="form-group full">
           <div class="img-upload-zone" id="mi_imgZone" onclick="document.getElementById('mi_imgFile').click()">
             <div class="img-preview" id="mi_imgPreviewBox">
@@ -6445,7 +6752,8 @@
             </div>
             <div class="img-upload-info" id="mi_imgInfo">
               <p id="mi_imgTitle"><strong>Click to upload item photo</strong><br><span
-                  style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Resizable &amp; Zoomable · Max 4 MB</span></p>
+                  style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Resizable &amp; Zoomable · Max 4
+                  MB</span></p>
               <div class="img-upload-btns" onclick="event.stopPropagation()">
                 <button type="button" class="btn btn-sm btn-primary" id="mi_chooseImgBtn"
                   onclick="document.getElementById('mi_imgFile').click()"><i class="fa fa-upload"></i> Choose
@@ -6546,13 +6854,18 @@
         <!-- Plan Features Checklist Editor -->
         <div style="border-top:1.5px solid var(--border);padding-top:14px;margin-bottom:16px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <label style="font-size:.86rem;font-weight:700;color:var(--text)"><i class="fa fa-list-check" style="color:var(--green)"></i> Plan Features Checklist</label>
-            <button type="button" class="btn btn-sm btn-outline" onclick="addAdminPlanFeatureInput()"><i class="fa fa-plus"></i> Add Item</button>
+            <label style="font-size:.86rem;font-weight:700;color:var(--text)"><i class="fa fa-list-check"
+                style="color:var(--green)"></i> Plan Features Checklist</label>
+            <button type="button" class="btn btn-sm btn-outline" onclick="addAdminPlanFeatureInput()"><i
+                class="fa fa-plus"></i> Add Item</button>
           </div>
-          <div id="ap_features_container" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;margin-bottom:10px">
+          <div id="ap_features_container"
+            style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;margin-bottom:10px">
             <!-- Dynamic Feature Rows -->
           </div>
-          <button type="button" class="btn btn-sm btn-ghost" style="width:100%;justify-content:center;border:1.5px dashed var(--border);color:var(--green-dark);padding:8px" onclick="addAdminPlanFeatureInput()">
+          <button type="button" class="btn btn-sm btn-ghost"
+            style="width:100%;justify-content:center;border:1.5px dashed var(--border);color:var(--green-dark);padding:8px"
+            onclick="addAdminPlanFeatureInput()">
             <i class="fa fa-plus-circle"></i> Add New Checklist Feature Item
           </button>
         </div>
@@ -6661,35 +6974,44 @@
   </div>
 
   <!-- ── NOTIFICATION FEED MODAL (Bell Icon Feed) ── -->
-  <div class="modal-overlay" id="notificationFeedModal" onclick="if(event.target===this)closeModal('notificationFeedModal')">
+  <div class="modal-overlay" id="notificationFeedModal"
+    onclick="if(event.target===this)closeModal('notificationFeedModal')">
     <div class="modal" style="max-width:480px;padding:20px;border-radius:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div style="font-size:1.15rem;font-weight:800;color:var(--text-dark);display:flex;align-items:center;gap:8px">
           <i class="fa fa-bell" style="color:var(--green)"></i> Notifications
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn btn-sm btn-ghost" onclick="markAllNotificationsRead()" title="Mark all as read" style="font-size:.76rem;padding:4px 8px">
+          <button class="btn btn-sm btn-ghost" onclick="markAllNotificationsRead()" title="Mark all as read"
+            style="font-size:.76rem;padding:4px 8px">
             <i class="fa fa-check-double"></i> Mark all read
           </button>
-          <button class="btn btn-sm btn-ghost" onclick="closeModal('notificationFeedModal')" aria-label="Close"><i class="fa fa-xmark"></i></button>
+          <button class="btn btn-sm btn-ghost" onclick="closeModal('notificationFeedModal')" aria-label="Close"><i
+              class="fa fa-xmark"></i></button>
         </div>
       </div>
 
       <!-- Push Permission Status Prompt / Banner -->
-      <div id="pushPermBanner" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:#1e40af">
+      <div id="pushPermBanner"
+        style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:#1e40af">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <div><i class="fa fa-circle-info"></i> Turn on push alerts to get instant updates on your orders &amp; deals!</div>
-          <button class="btn btn-sm btn-primary" onclick="requestPushPermission()" style="font-size:.72rem;padding:3px 8px;white-space:nowrap">Enable</button>
+          <div><i class="fa fa-circle-info"></i> Turn on push alerts to get instant updates on your orders &amp; deals!
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="requestPushPermission()"
+            style="font-size:.72rem;padding:3px 8px;white-space:nowrap">Enable</button>
         </div>
       </div>
 
       <!-- Tabs: Customer vs Business -->
       <div class="notif-tab-nav" id="notifTabNav">
         <button class="notif-tab-btn active" id="notifTabCust" onclick="switchNotifFeedTab('cust')">
-          <i class="fa fa-user"></i> Customer Feed <span id="notifCustBadge" style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px">0</span>
+          <i class="fa fa-user"></i> Customer Feed <span id="notifCustBadge"
+            style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px">0</span>
         </button>
-        <button class="notif-tab-btn" id="notifTabBusiness" onclick="switchNotifFeedTab('business')" style="display:none">
-          <i class="fa fa-store"></i> Business Feed <span id="notifBusinessBadge" style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px">0</span>
+        <button class="notif-tab-btn" id="notifTabBusiness" onclick="switchNotifFeedTab('business')"
+          style="display:none">
+          <i class="fa fa-store"></i> Business Feed <span id="notifBusinessBadge"
+            style="display:none;background:var(--danger);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px">0</span>
         </button>
       </div>
 
@@ -6701,23 +7023,29 @@
   </div>
 
   <!-- ── NOTIFICATION DETAIL MODAL ── -->
-  <div class="modal-overlay" id="notificationDetailModal" onclick="if(event.target===this)closeModal('notificationDetailModal')">
+  <div class="modal-overlay" id="notificationDetailModal"
+    onclick="if(event.target===this)closeModal('notificationDetailModal')">
     <div class="modal" style="max-width:520px;border-radius:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <span class="notif-purpose-tag purpose-promo" id="nd_purposeTag">PROMOTIONAL</span>
-        <button class="btn btn-sm btn-ghost" onclick="closeModal('notificationDetailModal')"><i class="fa fa-xmark"></i></button>
+        <button class="btn btn-sm btn-ghost" onclick="closeModal('notificationDetailModal')"><i
+            class="fa fa-xmark"></i></button>
       </div>
       <h3 id="nd_title" style="font-size:1.15rem;font-weight:800;color:#0f172a;margin-bottom:6px"></h3>
-      <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px" id="nd_meta"></div>
+      <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px"
+        id="nd_meta"></div>
 
-      <div id="nd_imageWrap" style="display:none;margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:220px;background:#f1f5f9">
+      <div id="nd_imageWrap"
+        style="display:none;margin-bottom:14px;border-radius:12px;overflow:hidden;max-height:220px;background:#f1f5f9">
         <img id="nd_image" src="" alt="Banner" style="width:100%;height:100%;object-fit:cover">
       </div>
 
-      <div id="nd_body" style="font-size:.88rem;line-height:1.6;color:#1e293b;margin-bottom:16px;white-space:pre-wrap"></div>
+      <div id="nd_body" style="font-size:.88rem;line-height:1.6;color:#1e293b;margin-bottom:16px;white-space:pre-wrap">
+      </div>
 
       <div id="nd_ctaWrap" style="display:none;margin-top:16px;text-align:center">
-        <button class="btn btn-primary" id="nd_ctaBtn" style="width:100%;justify-content:center"><i class="fa fa-arrow-up-right-from-square"></i> <span id="nd_ctaText">View</span></button>
+        <button class="btn btn-primary" id="nd_ctaBtn" style="width:100%;justify-content:center"><i
+            class="fa fa-arrow-up-right-from-square"></i> <span id="nd_ctaText">View</span></button>
       </div>
     </div>
   </div>
@@ -6725,7 +7053,8 @@
   <!-- ── NOTIFICATION COMPOSER MODAL (Admin & Business) ── -->
   <div class="modal-overlay" id="notificationComposerModal">
     <div class="modal" style="max-width:640px;border-radius:18px">
-      <div class="modal-title" id="nc_modalTitle"><i class="fa fa-paper-plane" style="color:var(--green)"></i> Compose Broadcast Notification</div>
+      <div class="modal-title" id="nc_modalTitle"><i class="fa fa-paper-plane" style="color:var(--green)"></i> Compose
+        Broadcast Notification</div>
 
       <form onsubmit="handleNotificationComposeSubmit(event)">
         <input type="hidden" id="nc_senderRole" value="admin">
@@ -6733,7 +7062,8 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
           <div class="form-group">
             <label style="font-size:.78rem;font-weight:700">Target Audience *</label>
-            <select id="nc_targetAudience" onchange="updateNotifComposerPreview()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+            <select id="nc_targetAudience" onchange="updateNotifComposerPreview()"
+              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
               <option value="all_customers">All Customers</option>
               <option value="all_businesses" class="nc-admin-only">All Businesses</option>
               <option value="everyone" class="nc-admin-only">Everyone (All Users)</option>
@@ -6742,14 +7072,18 @@
           </div>
           <div class="form-group" id="nc_groupWrap" style="display:none">
             <label style="font-size:.78rem;font-weight:700">Society / Group Filter</label>
-            <input type="text" id="nc_groupFilter" list="nc_societyDatalist" placeholder="e.g. Prateek Laurel" oninput="updateNotifComposerPreview()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+            <input type="text" id="nc_groupFilter" list="nc_societyDatalist" placeholder="e.g. Prateek Laurel"
+              oninput="updateNotifComposerPreview()"
+              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
             <datalist id="nc_societyDatalist"></datalist>
           </div>
         </div>
 
         <div class="form-group" style="margin-bottom:12px">
           <label style="font-size:.78rem;font-weight:700">Notification Title *</label>
-          <input type="text" id="nc_title" required placeholder="e.g. Special Weekend Discount on Fresh Bakery!" oninput="updateNotifComposerPreview()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+          <input type="text" id="nc_title" required placeholder="e.g. Special Weekend Discount on Fresh Bakery!"
+            oninput="updateNotifComposerPreview()"
+            style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
         </div>
 
         <!-- Rich Text Toolbar & Editor -->
@@ -6758,43 +7092,56 @@
           <div class="rich-toolbar">
             <button type="button" class="rich-btn" onclick="execRichCmd('bold')" title="Bold"><b>B</b></button>
             <button type="button" class="rich-btn" onclick="execRichCmd('italic')" title="Italic"><i>I</i></button>
-            <button type="button" class="rich-btn" onclick="execRichCmd('underline')" title="Underline"><u>U</u></button>
-            <button type="button" class="rich-btn" onclick="execRichCmd('strikeThrough')" title="Strikethrough"><s>S</s></button>
-            <button type="button" class="rich-btn" onclick="execRichCmd('insertUnorderedList')" title="Bullet List"><i class="fa fa-list-ul"></i></button>
-            <button type="button" class="rich-btn" onclick="promptRichLink()" title="Insert Link"><i class="fa fa-link"></i></button>
+            <button type="button" class="rich-btn" onclick="execRichCmd('underline')"
+              title="Underline"><u>U</u></button>
+            <button type="button" class="rich-btn" onclick="execRichCmd('strikeThrough')"
+              title="Strikethrough"><s>S</s></button>
+            <button type="button" class="rich-btn" onclick="execRichCmd('insertUnorderedList')" title="Bullet List"><i
+                class="fa fa-list-ul"></i></button>
+            <button type="button" class="rich-btn" onclick="promptRichLink()" title="Insert Link"><i
+                class="fa fa-link"></i></button>
             <button type="button" class="rich-btn" onclick="insertRichEmoji('🔥')" title="Emoji">🔥</button>
             <button type="button" class="rich-btn" onclick="insertRichEmoji('📢')" title="Emoji">📢</button>
             <button type="button" class="rich-btn" onclick="insertRichEmoji('🎁')" title="Emoji">🎁</button>
             <button type="button" class="rich-btn" onclick="insertRichEmoji('⚡')" title="Emoji">⚡</button>
           </div>
-          <div class="rich-editor" id="nc_body" contenteditable="true" placeholder="Type your rich message body here…" oninput="updateNotifComposerPreview()"></div>
+          <div class="rich-editor" id="nc_body" contenteditable="true" placeholder="Type your rich message body here…"
+            oninput="updateNotifComposerPreview()"></div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
           <div class="form-group">
             <label style="font-size:.78rem;font-weight:700">Banner Image URL (Optional)</label>
-            <input type="url" id="nc_imageUrl" placeholder="https://example.com/banner.jpg" oninput="updateNotifComposerPreview()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+            <input type="url" id="nc_imageUrl" placeholder="https://example.com/banner.jpg"
+              oninput="updateNotifComposerPreview()"
+              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
           </div>
           <div class="form-group">
             <label style="font-size:.78rem;font-weight:700">CTA Button Text (Optional)</label>
-            <input type="text" id="nc_ctaText" placeholder="e.g. Shop Now, View Menu" oninput="updateNotifComposerPreview()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+            <input type="text" id="nc_ctaText" placeholder="e.g. Shop Now, View Menu"
+              oninput="updateNotifComposerPreview()"
+              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
           </div>
         </div>
 
         <div class="form-group nc-admin-only" style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
-          <input type="checkbox" id="nc_sendEmail" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer">
-          <label for="nc_sendEmail" style="font-size:.84rem;font-weight:700;cursor:pointer">Also send as Email Broadcast to targeted recipients</label>
+          <input type="checkbox" id="nc_sendEmail"
+            style="width:18px;height:18px;accent-color:var(--green);cursor:pointer">
+          <label for="nc_sendEmail" style="font-size:.84rem;font-weight:700;cursor:pointer">Also send as Email Broadcast
+            to targeted recipients</label>
         </div>
 
         <!-- Live Preview Pane -->
         <div style="margin-top:14px">
-          <label style="font-size:.78rem;font-weight:700;color:var(--text-muted)">Live Preview (Bell Icon Feed &amp; Banner)</label>
+          <label style="font-size:.78rem;font-weight:700;color:var(--text-muted)">Live Preview (Bell Icon Feed &amp;
+            Banner)</label>
           <div class="notif-preview-card">
             <div style="display:flex;gap:10px;align-items:flex-start">
               <div class="notif-avatar"><i class="fa fa-bell"></i></div>
               <div style="flex:1">
                 <div style="font-weight:700;font-size:.85rem" id="prev_title">Notification Title Preview</div>
-                <div style="font-size:.78rem;color:#475569;margin-top:2px" id="prev_snippet">Your message body snippet will appear here...</div>
+                <div style="font-size:.78rem;color:#475569;margin-top:2px" id="prev_snippet">Your message body snippet
+                  will appear here...</div>
                 <div style="font-size:.7rem;color:#94a3b8;margin-top:4px">Just now • Preview</div>
               </div>
             </div>
@@ -6803,7 +7150,8 @@
 
         <div class="modal-actions" style="margin-top:16px;display:flex;justify-content:flex-end;gap:10px">
           <button type="button" class="btn btn-ghost" onclick="closeModal('notificationComposerModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa fa-shield-halved"></i> Continue to Verification (OTP)</button>
+          <button type="submit" class="btn btn-primary"><i class="fa fa-shield-halved"></i> Continue to Verification
+            (OTP)</button>
         </div>
       </form>
     </div>
@@ -6821,7 +7169,8 @@
       <form onsubmit="handleNotificationOtpSubmit(event)">
         <div class="form-group" style="text-align:left;margin-bottom:12px">
           <label style="font-size:.78rem;font-weight:700">Select Purpose *</label>
-          <select id="no_purpose" required style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;width:100%">
+          <select id="no_purpose" required
+            style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;width:100%">
             <option value="promotional">Promotional / Special Offer</option>
             <option value="transactional">Order / Transaction Update</option>
             <option value="policy">Policy / Compliance Notice</option>
@@ -6834,16 +7183,20 @@
         <div class="form-group" style="text-align:left;margin-bottom:14px">
           <label style="font-size:.78rem;font-weight:700">6-Digit Mobile Verification OTP *</label>
           <div style="display:flex;gap:8px">
-            <input type="text" id="no_otpInput" required maxlength="6" placeholder="123456" style="font-weight:800;letter-spacing:3px;text-align:center;font-size:1.1rem;flex:1">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="sendNotifOtpCode()" id="no_sendOtpBtn" style="white-space:nowrap"><i class="fa fa-paper-plane"></i> Send OTP</button>
+            <input type="text" id="no_otpInput" required maxlength="6" placeholder="123456"
+              style="font-weight:800;letter-spacing:3px;text-align:center;font-size:1.1rem;flex:1">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="sendNotifOtpCode()" id="no_sendOtpBtn"
+              style="white-space:nowrap"><i class="fa fa-paper-plane"></i> Send OTP</button>
           </div>
-          <p style="font-size:.72rem;color:var(--green-dark);margin-top:4px" id="no_otpHint">Tap "Send OTP" to receive a verification code on your registered mobile.</p>
+          <p style="font-size:.72rem;color:var(--green-dark);margin-top:4px" id="no_otpHint">Tap "Send OTP" to receive a
+            verification code on your registered mobile.</p>
         </div>
 
         <p id="no_err" style="color:var(--danger);font-size:.8rem;margin-bottom:10px;display:none"></p>
 
         <div style="display:flex;gap:8px;justify-content:center">
-          <button type="submit" class="btn btn-primary" id="no_submitBtn" style="flex:1"><i class="fa fa-paper-plane"></i> Verify &amp; Send Broadcast</button>
+          <button type="submit" class="btn btn-primary" id="no_submitBtn" style="flex:1"><i
+              class="fa fa-paper-plane"></i> Verify &amp; Send Broadcast</button>
           <button type="button" class="btn btn-ghost" onclick="closeModal('notificationOtpModal')">Cancel</button>
         </div>
       </form>
@@ -7771,7 +8124,7 @@
       if (newRole !== 'business' && currentBusiness) {
         currentBusiness = null;
         if (auth && auth.currentUser) {
-          await auth.signOut().catch(() => {});
+          await auth.signOut().catch(() => { });
         }
       }
 
@@ -7940,7 +8293,7 @@
       // Smart local carpool handler for conversational AI search & publish
       const lower = (text || '').toLowerCase();
       const isCarpoolQuery = lower.includes('carpool') || lower.includes('ride') || lower.includes('noida') || lower.includes('gurgaon') || lower.includes('cyber city') || lower.includes('dehradun') || lower.includes('going to') || lower.includes('driving to');
-      
+
       if (isCarpoolQuery) {
         _askSending = true;
         askShowTyping();
@@ -8448,21 +8801,21 @@
           const db = getDriverDatabase();
           if (db[saved]) currentDriver = db[saved];
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     function getDriverDatabase() {
       try {
         const saved = localStorage.getItem('hb_driver_db');
         if (saved) return { ...SEED_DRIVERS, ...JSON.parse(saved) };
-      } catch (e) {}
+      } catch (e) { }
       return SEED_DRIVERS;
     }
 
     function saveDriverToDatabase(driverObj) {
       const db = getDriverDatabase();
       db[driverObj.mobile] = driverObj;
-      try { localStorage.setItem('hb_driver_db', JSON.stringify(db)); } catch (e) {}
+      try { localStorage.setItem('hb_driver_db', JSON.stringify(db)); } catch (e) { }
     }
 
     let _drvMobileVerified = false;
@@ -8689,7 +9042,7 @@
     async function drvLoginSendOtp() {
       const mobile = (document.getElementById('drv_login_mobile')?.value || '').trim();
       if (!/^\d{10}$/.test(mobile)) { showToast('Enter a valid 10-digit mobile number'); return; }
-      
+
       const btn = document.getElementById('drv_login_sendOtpBtn');
       if (btn) btn.disabled = true;
 
@@ -9219,7 +9572,7 @@
                 ${r.fuelType === 'ev' ? '<span style="background:#e0f2f1;color:#00695c;font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px"><i class="fa fa-bolt"></i> EV Vehicle</span>' : ''}
               </div>
               <div style="font-weight:800;font-size:1.08rem;color:var(--green-dark);margin-top:4px">${esc(r.origin)} ➔ ${esc(r.destination)}</div>
-              ${(r.stopovers && r.stopovers.length) ? `<div style="font-size:0.76rem;color:var(--text-muted);margin-top:2px">Via: ${r.stopovers.map(s=>esc(s)).join(', ')}</div>` : ''}
+              ${(r.stopovers && r.stopovers.length) ? `<div style="font-size:0.76rem;color:var(--text-muted);margin-top:2px">Via: ${r.stopovers.map(s => esc(s)).join(', ')}</div>` : ''}
             </div>
             <div style="text-align:right;flex-shrink:0">
               <div style="font-size:1.2rem;font-weight:800;color:var(--green)">₹${r.pricePerSeat} <span style="font-size:.7rem;font-weight:400;color:var(--text-muted)">/ seat</span></div>
@@ -9874,8 +10227,8 @@
       saveCarpoolBookings(bookings);
 
       closeModal('carpoolPaymentModal');
-      showToast(ride.bookingMode === 'instant' 
-        ? `🎉 Payment Received (${paymentId})! Seat Booked (Pickup PIN: ${pin})` 
+      showToast(ride.bookingMode === 'instant'
+        ? `🎉 Payment Received (${paymentId})! Seat Booked (Pickup PIN: ${pin})`
         : `🎉 Payment Received (${paymentId})! Booking Request Sent to Driver.`);
       switchCarpoolTab('myrides');
     }
@@ -10185,7 +10538,7 @@
       const file = e.target && e.target.files && e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(evt) {
+      reader.onload = function (evt) {
         const previewContainer = document.getElementById('cp_carPhotoPreview');
         const previewImg = document.getElementById('cp_carPhotoImg');
         if (previewImg) previewImg.src = evt.target.result;
@@ -11537,7 +11890,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
               updatedPassword: newPw,
               mustChangePassword: false,
               firstLogin: false
-            }, { merge: true }).catch(() => {});
+            }, { merge: true }).catch(() => { });
           }
         }
         showToast('Password changed successfully! Welcome to your seller dashboard. ✓');
@@ -11626,7 +11979,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                   isResetMatch = true;
                 }
               }
-            } catch (e) {}
+            } catch (e) { }
           }
 
           if (isResetMatch) {
@@ -11646,18 +11999,18 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                   cred = oldCred;
                   break;
                 }
-              } catch (e) {}
+              } catch (e) { }
             }
 
             if (auth.currentUser) {
-              try { await auth.currentUser.updatePassword(cleanPw); } catch(e) {}
+              try { await auth.currentUser.updatePassword(cleanPw); } catch (e) { }
             }
 
             // Load business details and log in
             if (accData && accUid) {
               const bName = accData.displayName || accData.venture || accData.name || accData.businessName || (accData.email ? accData.email.split('@')[0] : 'Business');
               currentBusiness = { displayName: bName, uid: accUid, ...accData, password: cleanPw, updatedPassword: cleanPw };
-              db.collection('accounts').doc(accUid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => {});
+              db.collection('accounts').doc(accUid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => { });
             } else if (auth.currentUser) {
               currentBusiness = { uid: auth.currentUser.uid, email: cleanEmail, displayName: cleanEmail.split('@')[0], password: cleanPw, updatedPassword: cleanPw };
             } else {
@@ -11694,7 +12047,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                 const docData = doc.data();
                 const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
                 currentBusiness = { displayName: bName, uid: cred.user.uid, ...docData, password: cleanPw, updatedPassword: cleanPw };
-                db.collection('accounts').doc(cred.user.uid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => {});
+                db.collection('accounts').doc(cred.user.uid).set({ password: cleanPw, updatedPassword: cleanPw, lastLogin: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(() => { });
               } else if (!isAdmin) {
                 await auth.signOut();
                 currentBusiness = null;
@@ -11705,7 +12058,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                 showToast('Invalid email or password');
                 return;
               }
-            } catch(e) {}
+            } catch (e) { }
           }
         }
         closeModal('loginModal');
@@ -11889,7 +12242,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         }
 
         if (auth && auth.currentUser) {
-          try { await auth.currentUser.updatePassword(newPw); } catch (e) {}
+          try { await auth.currentUser.updatePassword(newPw); } catch (e) { }
         }
 
         if (db && cleanEmail) {
@@ -12055,9 +12408,9 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
     loadNotifState();
 
     function saveNotifState() {
-      try { localStorage.setItem('hb_notifications', JSON.stringify(_notifList)); } catch (e) {}
-      try { localStorage.setItem('hb_auto_approve_businesses', JSON.stringify(_autoApproveBusinesses)); } catch (e) {}
-      try { localStorage.setItem('hb_notif_audit_logs', JSON.stringify(_auditLogs)); } catch (e) {}
+      try { localStorage.setItem('hb_notifications', JSON.stringify(_notifList)); } catch (e) { }
+      try { localStorage.setItem('hb_auto_approve_businesses', JSON.stringify(_autoApproveBusinesses)); } catch (e) { }
+      try { localStorage.setItem('hb_notif_audit_logs', JSON.stringify(_auditLogs)); } catch (e) { }
       updateUnreadNotifBadges();
     }
 
@@ -12275,7 +12628,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         notif.readBy.push(uid);
         saveNotifState();
         if (db) {
-          db.collection('notifications').doc(notifId).set({ readBy: firebase.firestore.FieldValue.arrayUnion(uid) }, { merge: true }).catch(() => {});
+          db.collection('notifications').doc(notifId).set({ readBy: firebase.firestore.FieldValue.arrayUnion(uid) }, { merge: true }).catch(() => { });
         }
       }
 
@@ -12710,7 +13063,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         <div id="adminNotifSubContent"></div>
       </div>`;
 
-      window._switchAdminNotifSubTab = function(subTab, btn) {
+      window._switchAdminNotifSubTab = function (subTab, btn) {
         document.querySelectorAll('.notif-adm-tab').forEach(b => b.classList.replace('btn-primary', 'btn-ghost'));
         if (btn) btn.classList.replace('btn-ghost', 'btn-primary');
         const container = document.getElementById('adminNotifSubContent');
@@ -12737,7 +13090,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         <tbody>` + pending.map(n => `
           <tr>
             <td><strong>${esc(n.senderName)}</strong><br><span style="font-size:.72rem;color:var(--text-muted)">${esc(n.senderId)}</span></td>
-            <td><strong style="font-size:.85rem">${esc(n.title)}</strong><br><span style="font-size:.76rem;color:var(--text-muted)">${esc(n.body.replace(/<[^>]*>?/gm, '')).slice(0,80)}…</span></td>
+            <td><strong style="font-size:.85rem">${esc(n.title)}</strong><br><span style="font-size:.76rem;color:var(--text-muted)">${esc(n.body.replace(/<[^>]*>?/gm, '')).slice(0, 80)}…</span></td>
             <td><span class="notif-purpose-tag purpose-${n.purpose || 'promo'}">${esc(n.targetAudience)}</span></td>
             <td style="font-size:.74rem">${n.createdAt?.seconds ? new Date(n.createdAt.seconds * 1000).toLocaleString() : '—'}</td>
             <td style="white-space:nowrap">
@@ -12787,8 +13140,8 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       <div style="overflow-x:auto"><table class="menu-table" style="font-size:.82rem">
         <thead><tr><th>Business</th><th>Category</th><th>Owner Email</th><th>Auto-Approve Status</th><th>Action</th></tr></thead>
         <tbody>` + businesses.map(v => {
-          const isAuto = isVendorAutoApproved(v);
-          return `
+        const isAuto = isVendorAutoApproved(v);
+        return `
           <tr>
             <td><strong>${esc(v.venture)}</strong></td>
             <td>${esc(v.cat || '')}</td>
@@ -12800,7 +13153,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
               </button>
             </td>
           </tr>`;
-        }).join('') + `</tbody></table></div>`;
+      }).join('') + `</tbody></table></div>`;
     }
 
     function _renderAdminNotifAudit(c) {
@@ -12826,7 +13179,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       n.status = 'approved';
       saveNotifState();
       if (db) {
-        try { await db.collection('notifications').doc(notifId).set({ status: 'approved' }, { merge: true }); } catch (e) {}
+        try { await db.collection('notifications').doc(notifId).set({ status: 'approved' }, { merge: true }); } catch (e) { }
       }
       showToast('Notification approved & published ✓');
       switchAdminTab('notifications');
@@ -12857,7 +13210,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       saveNotifState();
 
       if (db) {
-        try { await db.collection('notifications').doc(notifId).set({ status: 'rejected', rejectionReason: reason }, { merge: true }); } catch (e) {}
+        try { await db.collection('notifications').doc(notifId).set({ status: 'rejected', rejectionReason: reason }, { merge: true }); } catch (e) { }
       }
 
       let businessEmail = n.senderEmail || '';
@@ -12894,7 +13247,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       }
       saveNotifState();
       if (db) {
-        try { db.collection('auto_approve_businesses').doc('global').set({ keys: _autoApproveBusinesses }, { merge: true }).catch(() => {}); } catch (e) {}
+        try { db.collection('auto_approve_businesses').doc('global').set({ keys: _autoApproveBusinesses }, { merge: true }).catch(() => { }); } catch (e) { }
       }
       showToast(idx !== -1 ? 'Auto-approve revoked' : 'Auto-approve granted ✓');
       const subContent = document.getElementById('adminNotifSubContent');
@@ -13194,7 +13547,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
             recent.unshift(q);
             localStorage.setItem('hb_recent_searches', JSON.stringify(recent.slice(0, 5)));
           }
-        } catch(e){}
+        } catch (e) { }
 
         const { parsed, results } = TyntronSearchEngine.search(q, DATA);
 
@@ -13415,7 +13768,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       // Pre-Search Screen (Section 5 & 8): show Recent & Popular Searches when search input is empty
       if (!q) {
         let recent = [];
-        try { recent = JSON.parse(localStorage.getItem('hb_recent_searches') || '[]'); } catch(e){}
+        try { recent = JSON.parse(localStorage.getItem('hb_recent_searches') || '[]'); } catch (e) { }
         const popular = ["Chocolate Cake", "Prateek Laurel", "North Indian", "Tiffin Service", "Bakery"];
 
         let html = '';
@@ -14139,7 +14492,11 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       renderAll();
       showToast('Exited admin mode');
     }
-    function goUser() { if (isAdmin) exitAdmin(); }
+    function goUser() {
+      switchPanel('customer');
+      if (typeof filterCat === 'function') filterCat('All');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     /* ═══════════ MODAL ═══════════ */
     function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('open'); }
@@ -15039,7 +15396,7 @@ Together, we grow stronger — one order at a time.`;
       if (!force) {
         try {
           if (localStorage.getItem('hb_onboarding_seen') === 'true') return;
-        } catch (e) {}
+        } catch (e) { }
       }
       const slides = _getOnboardingSlides();
       if (!slides || !slides.length) return;
@@ -15099,7 +15456,7 @@ Together, we grow stronger — one order at a time.`;
           img.style.height = '100%';
           img.style.objectFit = 'cover';
           img.style.borderRadius = '50%';
-          img.onerror = function() {
+          img.onerror = function () {
             const fallbackSvg = slide.svg || [ONBOARDING_SVG_1, ONBOARDING_SVG_2, ONBOARDING_SVG_3][index % 3];
             illuEl.innerHTML = fallbackSvg;
           };
@@ -15147,7 +15504,7 @@ Together, we grow stronger — one order at a time.`;
     function closeOnboardingSplash() {
       try {
         localStorage.setItem('hb_onboarding_seen', 'true');
-      } catch (e) {}
+      } catch (e) { }
       const el = document.getElementById('onboardingSplash');
       if (!el) return;
       el.classList.add('hide');
@@ -16806,7 +17163,7 @@ Together, we grow stronger — one order at a time.`;
       btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting…';
       try {
         // Sign in anonymously so Storage/Firestore security rules (isSignedIn) are satisfied.
-        if (auth && !auth.currentUser) { await auth.signInAnonymously().catch(() => {}); }
+        if (auth && !auth.currentUser) { await auth.signInAnonymously().catch(() => { }); }
         const requestId = 'req' + Date.now() + Math.random().toString(36).slice(2, 8);
 
         async function uploadDoc(file, name) {
@@ -18398,6 +18755,7 @@ Together, we grow stronger — one order at a time.`;
                       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
                         <button class="btn btn-sm" onclick="adminGrantSubscription('${uid}', '${v.id}', 30)" title="Grant 30-Day Monthly Subscription (+30 Days)" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-calendar-days" style="color:#2563eb;margin-right:3px"></i> +30 Days</button>
                         <button class="btn btn-sm" onclick="adminGrantSubscription('${uid}', '${v.id}', 365)" title="Grant 1-Year Annual Subscription (+1 Year)" style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-crown" style="color:#d97706;margin-right:3px"></i> +1 Year</button>
+                        <button class="btn btn-sm" onclick="adminSetVendorItemLimit('${uid}', '${v.id}')" title="Set Max Item/Menu Limit for Seller" style="background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-layer-group" style="color:#a855f7;margin-right:3px"></i> Limit (${getVendorMaxItems(v) < 9999 ? getVendorMaxItems(v) : '∞'})</button>
                         ${displayStatus === 'active' ? `
                           <button class="btn btn-sm" onclick="adminCancelSubscription('${uid}', '${v.id}')" title="Cancel Subscription" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-weight:600;padding:4px 8px;white-space:nowrap;cursor:pointer"><i class="fa fa-ban" style="color:#dc2626;margin-right:3px"></i> Cancel</button>
                         ` : `
@@ -18558,7 +18916,7 @@ Together, we grow stronger — one order at a time.`;
       btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting Application &amp; Payment…';
 
       try {
-        if (auth && !auth.currentUser) { await auth.signInAnonymously().catch(() => {}); }
+        if (auth && !auth.currentUser) { await auth.signInAnonymously().catch(() => { }); }
         const requestId = 'req' + Date.now() + Math.random().toString(36).slice(2, 8);
 
         async function uploadDoc(file, name) {
@@ -18715,7 +19073,14 @@ Together, we grow stronger — one order at a time.`;
       }
       const vendor = DATA.find(d => d.id === vendorId);
       if (!vendor) return;
-      vendor.isClosed = !isOpen;
+
+      if (isOpen) {
+        vendor.isClosed = false;
+        vendor.useSchedule = false;
+      } else {
+        vendor.isClosed = true;
+      }
+
       saveData(DATA);
 
       if (FB_READY && db) {
@@ -18726,7 +19091,7 @@ Together, we grow stronger — one order at a time.`;
         }
       }
 
-      showToast(isOpen ? 'Your shop is now OPEN ✓' : 'Your shop is now CLOSED');
+      showToast(isOpen ? 'Your shop is now OPEN ✓ (Manual Override)' : 'Your shop is now CLOSED ✕');
       if (isOpen) {
         sendReopenEmailsToSubscribers(vendorId);
       }
@@ -19390,7 +19755,7 @@ Together, we grow stronger — one order at a time.`;
         <div class="shop-status-card">
           <div class="shop-status-left">
             <div class="shop-status-title-row">
-              <span class="shop-status-label">Shop Status</span>
+              <span class="shop-status-label">Business Status</span>
               <span class="shop-status-badge ${isClosed ? 'closed' : 'open'}">
                 <i class="fa ${isClosed ? 'fa-moon' : 'fa-circle-check'}"></i>
                 ${esc(statusInfo.badgeText)}
@@ -19403,7 +19768,7 @@ Together, we grow stronger — one order at a time.`;
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
             <span style="font-size:.72rem;font-weight:700;color:var(--text-muted)">Manual Override</span>
             <label class="shop-toggle-switch">
-              <input type="checkbox" id="sf_shopStatusToggle" ${!isManualClosed ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessShopStatus('${v.id}', this.checked)">
+              <input type="checkbox" id="sf_shopStatusToggle" ${!isClosed ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessShopStatus('${v.id}', this.checked)">
               <span class="shop-toggle-slider"></span>
             </label>
           </div>
@@ -19581,11 +19946,19 @@ Together, we grow stronger — one order at a time.`;
       <button class="btn btn-sm btn-danger" ${isDeact ? 'disabled style="opacity:0.5"' : `onclick="deleteMenuItem('${v.id}','${it.id}')"`}><i class="fa fa-trash"></i></button>
     </td>
   </tr>`).join('');
+      const maxItemsLimit = getVendorMaxItems(v);
+      const limitText = maxItemsLimit < 9999 ? `(${menu.length}/${maxItemsLimit} Limit)` : `(${menu.length} Items)`;
+      const isLimitReached = maxItemsLimit < 9999 && menu.length >= maxItemsLimit;
+      const limitWarning = isLimitReached ? `<span style="font-size:.75rem;color:var(--danger);font-weight:700;margin-left:8px"><i class="fa fa-triangle-exclamation"></i> Limit Reached</span>` : '';
+
       const addBtn = isDeact
         ? `<button class="btn btn-sm btn-primary" style="margin-left:auto;opacity:0.5;cursor:not-allowed" disabled onclick="alert('Your account is deactivated. Please contact admin.');showToast('Your account is deactivated. Please contact admin.');"><i class="fa fa-ban"></i> Account Deactivated</button>`
-        : `<button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openMenuItemModal('${v.id}',null)"><i class="fa fa-plus"></i> Add Item</button>`;
+        : (isLimitReached
+          ? `<button class="btn btn-sm btn-ghost" style="margin-left:auto;color:var(--danger);border:1px solid var(--danger);font-weight:600" onclick="alert('Item Limit Reached! You have reached your max limit of ${maxItemsLimit} items. Please contact Admin to increase your item limit.');showToast('Item limit of ${maxItemsLimit} reached. Contact admin to increase.');"><i class="fa fa-lock"></i> Limit Reached (${menu.length}/${maxItemsLimit})</button>`
+          : `<button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openMenuItemModal('${v.id}',null)"><i class="fa fa-plus"></i> Add Item</button>`);
+
       return `<div class="s-card">
-    <div class="s-card-title"><i class="fa ${icon}" style="color:var(--green)"></i> ${label}
+    <div class="s-card-title"><i class="fa ${icon}" style="color:var(--green)"></i> ${label} <span style="font-size:.8rem;color:var(--text-muted);font-weight:600;margin-left:6px">${limitText}</span> ${limitWarning}
       ${addBtn}
     </div>
     ${menu.length ? `<table class="menu-table">
@@ -19668,21 +20041,21 @@ Together, we grow stronger — one order at a time.`;
         <label>Current Password</label>
         <div class="token-wrap">
           <input type="password" id="cp_current" placeholder="Your current password" autocomplete="current-password">
-          <button class="token-toggle" type="button" onclick="togglePwVis('cp_current',this)">Show</button>
+          <button class="token-toggle" type="button" onclick="togglePwVis('cp_current',this)"><i class="fa fa-eye"></i> Show</button>
         </div>
       </div>
       <div class="form-group">
         <label>New Password</label>
         <div class="token-wrap">
           <input type="password" id="cp_new" placeholder="At least 6 characters" autocomplete="new-password">
-          <button class="token-toggle" type="button" onclick="togglePwVis('cp_new',this)">Show</button>
+          <button class="token-toggle" type="button" onclick="togglePwVis('cp_new',this)"><i class="fa fa-eye"></i> Show</button>
         </div>
       </div>
       <div class="form-group">
         <label>Confirm New Password</label>
         <div class="token-wrap">
           <input type="password" id="cp_confirm" placeholder="Repeat new password" autocomplete="new-password">
-          <button class="token-toggle" type="button" onclick="togglePwVis('cp_confirm',this)">Show</button>
+          <button class="token-toggle" type="button" onclick="togglePwVis('cp_confirm',this)"><i class="fa fa-eye"></i> Show</button>
         </div>
       </div>
     </div>
@@ -19696,8 +20069,13 @@ Together, we grow stronger — one order at a time.`;
     function togglePwVis(inputId, btn) {
       const el = document.getElementById(inputId);
       if (!el) return;
-      if (el.type === 'password') { el.type = 'text'; btn.textContent = 'Hide'; }
-      else { el.type = 'password'; btn.textContent = 'Show'; }
+      if (el.type === 'password') {
+        el.type = 'text';
+        if (btn) btn.innerHTML = '<i class="fa fa-eye-slash"></i> Hide';
+      } else {
+        el.type = 'password';
+        if (btn) btn.innerHTML = '<i class="fa fa-eye"></i> Show';
+      }
     }
 
     async function changeBusinessPassword() {
@@ -19929,10 +20307,80 @@ Together, we grow stronger — one order at a time.`;
       setMenuItemImgPreview(null);
     }
 
+    function getVendorMaxItems(vendor) {
+      if (!vendor) return 9999;
+      if (typeof vendor.maxItems !== 'undefined' && vendor.maxItems !== null && vendor.maxItems !== '') {
+        const limit = parseInt(vendor.maxItems, 10);
+        if (!isNaN(limit) && limit >= 0) return limit === 0 ? 9999 : limit;
+      }
+      if (vendor.subscriptionPlan && SITE_CONFIG && SITE_CONFIG.plans && SITE_CONFIG.plans[vendor.subscriptionPlan]) {
+        const planLimit = parseInt(SITE_CONFIG.plans[vendor.subscriptionPlan].maxItems, 10);
+        if (!isNaN(planLimit) && planLimit > 0) return planLimit;
+      }
+      return 9999;
+    }
+
+    async function adminSetVendorItemLimit(uid, vendorId) {
+      const vendor = DATA.find(d => d.id === vendorId || (uid && d.ownerUid === uid));
+      if (!vendor) { showToast('Vendor profile not found'); return; }
+
+      const currentLimit = getVendorMaxItems(vendor);
+      const currentLimitDisplay = currentLimit < 9999 ? currentLimit + ' items' : 'Unlimited';
+
+      const res = await confirmAction({
+        title: `Set Item Limit for "${vendor.venture}"`,
+        message: `Current item limit: ${currentLimitDisplay} (Currently added: ${(vendor.menu || []).length} items).\n\nEnter the maximum number of items/services this seller can add:`,
+        confirmText: 'Save Limit',
+        cancelText: 'Cancel',
+        showInput: true,
+        inputValue: currentLimit < 9999 ? String(currentLimit) : '',
+        inputPlaceholder: 'e.g. 5, 10, 20, 50 (or leave empty / 0 for Unlimited)'
+      });
+
+      if (!res || typeof res !== 'object' || !res.confirmed) return;
+
+      const rawVal = (res.value || '').trim();
+      let newLimit = parseInt(rawVal, 10);
+      if (isNaN(newLimit) || newLimit <= 0) {
+        newLimit = 9999; // Unlimited
+      }
+
+      vendor.maxItems = newLimit;
+      saveData(DATA);
+
+      if (FB_READY && db) {
+        try { await fsSaveVendor(vendor); } catch (e) { }
+      }
+
+      const req = _srqAll.find(r => r.assignedVendorId === vendor.id || (uid && r.assignedUid === uid) || r.email === vendor.contactEmail);
+      if (req) {
+        req.maxItems = newLimit;
+        saveLocalBusinessRequest(req);
+        if (db) {
+          try { await db.collection('business_requests').doc(req.requestId).set({ maxItems: newLimit }, { merge: true }); } catch (e) { }
+        }
+      }
+
+      renderAll();
+      if (isAdmin) renderAdminTab(_adminTab);
+      showToast(`Item limit for "${vendor.venture}" updated to ${newLimit < 9999 ? newLimit + ' items' : 'Unlimited'} ✓`);
+    }
+
     function openMenuItemModal(vendorId, itemId) {
       _editMenuVendorId = vendorId; _editMenuItemId = itemId;
       const vendor = DATA.find(d => d.id === vendorId);
       const item = itemId ? (vendor?.menu || []).find(m => m.id === itemId) : null;
+
+      if (!itemId && vendor) {
+        const maxItems = getVendorMaxItems(vendor);
+        const currentCount = (vendor?.menu || []).length;
+        if (maxItems < 9999 && currentCount >= maxItems) {
+          alert(`Item Limit Reached!\n\nYour store is currently limited to ${maxItems} items (${currentCount}/${maxItems} added). Please contact Admin to increase your item limit.`);
+          showToast(`Item limit of ${maxItems} reached. Contact admin to increase limit.`);
+          return;
+        }
+      }
+
       document.getElementById('miModalTitle').textContent = item ? 'Edit Menu Item' : 'Add Menu Item';
       document.getElementById('mi_name').value = item?.name || '';
       document.getElementById('mi_price').value = item?.price || '';
@@ -19952,6 +20400,17 @@ Together, we grow stronger — one order at a time.`;
       if (!name || isNaN(price)) { showToast('Name and price are required'); return; }
       const vendor = DATA.find(d => d.id === _editMenuVendorId);
       if (!vendor) return;
+
+      if (!_editMenuItemId) {
+        const maxItems = getVendorMaxItems(vendor);
+        const currentCount = (vendor.menu || []).length;
+        if (maxItems < 9999 && currentCount >= maxItems) {
+          alert(`Item Limit Reached!\n\nYour store is currently limited to ${maxItems} items. Please contact Admin to increase your item limit.`);
+          showToast(`Item limit of ${maxItems} reached.`);
+          return;
+        }
+      }
+
       vendor.menu = vendor.menu || [];
       const item = {
         id: _editMenuItemId || 'm' + Date.now(),
@@ -20118,7 +20577,7 @@ Together, we grow stronger — one order at a time.`;
     <div class="form-grid">
       <div class="form-group"><label>Full Name</label><input id="na_name" placeholder="Business's name"></div>
       <div class="form-group"><label>Email</label><input type="email" id="na_email" placeholder="business@email.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" id="na_pw" placeholder="Temporary password"></div>
+      <div class="form-group"><label>Password</label><div class="token-wrap"><input type="password" id="na_pw" placeholder="Temporary password"><button class="token-toggle" type="button" onclick="togglePwVis('na_pw',this)"><i class="fa fa-eye"></i> Show</button></div></div>
       <div class="form-group"><label>Assign Vendor</label>
         <select id="na_vendor">
           <option value="">— none —</option>
@@ -20154,6 +20613,7 @@ Together, we grow stronger — one order at a time.`;
             <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
               <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 30)" title="Grant 30-Day Monthly Subscription (+30 Days)" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-calendar-days" style="color:#2563eb;margin-right:3px"></i> +30 Days</button>
               <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 365)" title="Grant 1-Year Annual Subscription (+1 Year)" style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-crown" style="color:#d97706;margin-right:3px"></i> +1 Year</button>
+              <button class="btn btn-sm" onclick="adminSetVendorItemLimit('${a.uid}', '${a.vendorId}')" title="Set Max Item/Menu Limit for Seller" style="background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-layer-group" style="color:#a855f7;margin-right:3px"></i> Limit (${v ? (getVendorMaxItems(v) < 9999 ? getVendorMaxItems(v) : '∞') : '—'})</button>
               <button class="btn btn-sm" onclick="adminCancelSubscription('${a.uid}', '${a.vendorId}')" title="Cancel Subscription" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-weight:600;padding:4px 8px;white-space:nowrap;cursor:pointer"><i class="fa fa-ban" style="color:#dc2626;margin-right:3px"></i> Cancel</button>
               <button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${a.uid}','${a.email}')" title="Delete Business Account" style="padding:4px 8px;cursor:pointer"><i class="fa fa-trash"></i></button>
             </div>
@@ -20194,7 +20654,7 @@ Together, we grow stronger — one order at a time.`;
                   if (data.password) candidatePws.add(data.password);
                   if (data.updatedPassword) candidatePws.add(data.updatedPassword);
                 });
-              } catch(e){}
+              } catch (e) { }
             }
             ['123456', '12345678', 'password', '1234567', 'qwerty', 'admin123', 'test123', '123456789', '1234567890', 'Cart Testing', 'Cart Test', 'Food Cart'].forEach(p => candidatePws.add(p));
 
@@ -20203,14 +20663,14 @@ Together, we grow stronger — one order at a time.`;
               try {
                 cred = await secondaryAuth.signInWithEmailAndPassword(rawEmail, testPw);
                 if (cred && cred.user) {
-                  await cred.user.updatePassword(pw).catch(() => {});
+                  await cred.user.updatePassword(pw).catch(() => { });
                   break;
                 }
-              } catch(e){}
+              } catch (e) { }
             }
 
             if (!cred || !cred.user) {
-              try { await secondaryAuth.sendPasswordResetEmail(rawEmail); } catch(resetErr){}
+              try { await secondaryAuth.sendPasswordResetEmail(rawEmail); } catch (resetErr) { }
               throw new Error(`Email "${rawEmail}" already exists in Firebase Auth with a different password. (Password reset email sent to ${rawEmail}). Enter its original password or delete the user in Firebase Console → Authentication → Users.`);
             }
           } else {
@@ -20232,7 +20692,7 @@ Together, we grow stronger — one order at a time.`;
 
         // Write account doc using secondaryDb — request.auth.uid matches targetUid, satisfying Firestore rules
         await secondaryDb.collection('accounts').doc(targetUid).set(accountData, { merge: true });
-        await secondaryAuth.signOut().catch(() => {});
+        await secondaryAuth.signOut().catch(() => { });
 
         localStorage.setItem('hb_business_last_pw_' + cleanEmail, pw);
 
@@ -20365,7 +20825,7 @@ Together, we grow stronger — one order at a time.`;
                 if (data.password) candidatePws.add(data.password);
                 if (data.updatedPassword) candidatePws.add(data.updatedPassword);
               }
-            } catch(e){}
+            } catch (e) { }
           }
           if (cleanEmail && db) {
             try {
@@ -20375,7 +20835,7 @@ Together, we grow stronger — one order at a time.`;
                 if (data.password) candidatePws.add(data.password);
                 if (data.updatedPassword) candidatePws.add(data.updatedPassword);
               });
-            } catch(e){}
+            } catch (e) { }
           }
 
           ['123456', '12345678', 'password', '1234567', 'qwerty', 'admin123', 'test123', '123456789', '1234567890', 'Cart Testing', 'Cart Test', 'Food Cart'].forEach(p => candidatePws.add(p));
@@ -20389,28 +20849,28 @@ Together, we grow stronger — one order at a time.`;
               const cred = await secondaryAuth.signInWithEmailAndPassword(targetAuthEmail, testPw);
               if (cred && cred.user) {
                 await cred.user.delete();
-                await secondaryAuth.signOut().catch(() => {});
+                await secondaryAuth.signOut().catch(() => { });
                 deletedFromAuth = true;
                 break;
               }
-            } catch(e){}
+            } catch (e) { }
           }
 
           if (!deletedFromAuth && secondaryAuth.currentUser) {
             const secEmail = (secondaryAuth.currentUser.email || '').trim().toLowerCase();
             if (cleanEmail && secEmail === cleanEmail) {
-              await secondaryAuth.currentUser.delete().catch(() => {});
-              await secondaryAuth.signOut().catch(() => {});
+              await secondaryAuth.currentUser.delete().catch(() => { });
+              await secondaryAuth.signOut().catch(() => { });
             }
           }
-        } catch(e){}
+        } catch (e) { }
       }
 
       // 2. Comprehensive Firestore Database Purge across ALL operational collections
       if (db) {
         // Accounts
         if (uid) {
-          try { await db.collection('accounts').doc(uid).delete(); } catch(e){}
+          try { await db.collection('accounts').doc(uid).delete(); } catch (e) { }
         }
         if (cleanEmail) {
           try {
@@ -20419,15 +20879,15 @@ Together, we grow stronger — one order at a time.`;
               const dData = doc.data();
               const e = (dData.email || '').trim().toLowerCase();
               if (e === cleanEmail || (uid && doc.id === uid)) {
-                doc.ref.delete().catch(() => {});
+                doc.ref.delete().catch(() => { });
               }
             });
-          } catch(e){}
+          } catch (e) { }
         }
 
         // Vendors
         if (vendorId) {
-          try { await db.collection('vendors').doc(vendorId).delete(); } catch(e){}
+          try { await db.collection('vendors').doc(vendorId).delete(); } catch (e) { }
         }
         try {
           const vSnap = await db.collection('vendors').get();
@@ -20435,10 +20895,10 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const vEmail = (d.contactEmail || d.email || '').trim().toLowerCase();
             if ((uid && d.ownerUid === uid) || (vendorId && doc.id === vendorId) || (cleanEmail && vEmail === cleanEmail)) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Business Requests
         try {
@@ -20447,10 +20907,10 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const rEmail = (d.email || '').trim().toLowerCase();
             if ((cleanEmail && rEmail === cleanEmail) || (uid && (d.assignedUid === uid || d.uid === uid))) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Seller Requests
         try {
@@ -20459,10 +20919,10 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const rEmail = (d.email || '').trim().toLowerCase();
             if ((cleanEmail && rEmail === cleanEmail) || (uid && (d.assignedUid === uid || d.uid === uid))) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // KYC Requests
         try {
@@ -20471,10 +20931,10 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const kEmail = (d.email || '').trim().toLowerCase();
             if ((cleanEmail && kEmail === cleanEmail) || (uid && d.uid === uid)) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Notifications
         try {
@@ -20484,10 +20944,10 @@ Together, we grow stronger — one order at a time.`;
             const sEmail = (d.senderEmail || '').trim().toLowerCase();
             const tEmail = (d.targetEmail || '').trim().toLowerCase();
             if ((cleanEmail && (sEmail === cleanEmail || tEmail === cleanEmail)) || (uid && (d.senderUid === uid || d.targetUid === uid)) || (vendorId && d.vendorId === vendorId)) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Notification Audit Logs
         try {
@@ -20497,10 +20957,10 @@ Together, we grow stronger — one order at a time.`;
             const sEmail = (d.senderEmail || '').trim().toLowerCase();
             const tEmail = (d.targetEmail || '').trim().toLowerCase();
             if (cleanEmail && (sEmail === cleanEmail || tEmail === cleanEmail)) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Auto Approve Businesses
         try {
@@ -20509,10 +20969,10 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const aEmail = (d.email || '').trim().toLowerCase();
             if (cleanEmail && aEmail === cleanEmail) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Reviews
         try {
@@ -20521,14 +20981,14 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const rEmail = (d.email || '').trim().toLowerCase();
             if ((vendorId && d.vendorId === vendorId) || (cleanEmail && rEmail === cleanEmail)) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
 
         // Stats
         if (vendorId) {
-          try { await db.collection('stats').doc(vendorId).delete(); } catch(e){}
+          try { await db.collection('stats').doc(vendorId).delete(); } catch (e) { }
         }
 
         // Order Logs
@@ -20538,10 +20998,10 @@ Together, we grow stronger — one order at a time.`;
             const d = doc.data();
             const sEmail = (d.sellerEmail || '').trim().toLowerCase();
             if ((vendorId && d.vendorId === vendorId) || (cleanEmail && sEmail === cleanEmail)) {
-              doc.ref.delete().catch(() => {});
+              doc.ref.delete().catch(() => { });
             }
           });
-        } catch(e){}
+        } catch (e) { }
       }
 
       // 3. Purge Local Storage & State
@@ -20578,7 +21038,7 @@ Together, we grow stronger — one order at a time.`;
 
       if (vendorId && IMGS[vendorId]) {
         delete IMGS[vendorId];
-        try { localStorage.setItem('pl_imgs_v3', JSON.stringify(IMGS)); } catch(e){}
+        try { localStorage.setItem('pl_imgs_v3', JSON.stringify(IMGS)); } catch (e) { }
       }
       saveData(DATA);
 

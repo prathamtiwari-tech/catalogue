@@ -8230,8 +8230,11 @@
     let _askOpenedOnce = false;
 
     /* Seller registration via chat reuses the exact same OTP/upload/submit primitives as the
-       pre-existing sellerRegModal (sendMobileOtp/verifyMobileOtp, EmailJS OTP, Storage doc
-       upload, the seller_requests write) — see askHandleSellerReg* below. _askSellerReg is
+       existing business registration form (sendMobileOtp/verifyMobileOtp, EmailJS OTP,
+       Storage doc upload, the business_requests write srSubmitWithPayment also does) — see
+       askHandleSellerReg* below. Writes to business_requests, not the older seller_requests
+       collection, because that's the collection the admin review screen
+       (fsLoadBusinessRequests/renderAdminBusinessRequests) actually reads. _askSellerReg is
        null until the assistant's first seller_reg_* action arrives; nothing here is sent to
        the backend except this small state summary (see askSend's sellerReg body field) —
        the password and file bytes never leave the client except straight to Storage/Firestore. */
@@ -8446,9 +8449,12 @@
        These render small interactive "widget" bubbles instead of plain text, but every
        widget's markup is hardcoded here (never built from model output or a file name via
        innerHTML — file names go through esc()). Actual side effects — sending an OTP,
-       verifying it, uploading a document, writing the seller_requests doc — call the exact
-       same functions/paths the pre-existing sellerRegModal form already used, so there is
-       still only one implementation of each of those, not a second chat-only copy. */
+       verifying it, uploading a document, writing the business_requests doc — call the exact
+       same functions/paths the existing business registration form (srSubmitWithPayment)
+       already uses, so there is still only one implementation of each of those, not a second
+       chat-only copy. Chat can't yet run the Razorpay payment step that form requires when a
+       plan is actually being sold — see the paymentRequired check in
+       askHandleSellerRegSubmit — so it only completes registrations that don't need one. */
 
     function askAppendWidgetBubble(html) {
       const box = document.getElementById('askMessages');
@@ -8639,7 +8645,9 @@
       try {
         if (!storage) throw new Error('Document storage is not available right now.');
         if (auth && !auth.currentUser) await auth.signInAnonymously();
-        const ref = storage.ref(`seller_requests/${reg.requestId}/${docType}_${file.name}`);
+        // Same Storage path convention as srSubmitWithPayment's uploadDoc() — business_requests/,
+        // not seller_requests/, matching the collection the final submit writes to below.
+        const ref = storage.ref(`business_requests/${reg.requestId}/${docType}_${file.name}`);
         await ref.put(file);
         const url = await ref.getDownloadURL();
         reg.uploads[docType + 'Url'] = url;
@@ -8681,38 +8689,50 @@
         return;
       }
 
+      // The modal-based flow requires an actual Razorpay payment before submitting whenever
+      // subscriptionShowTiming isn't 'hidden'/'login' — chat has no payment widget yet, so
+      // rather than silently skip a payment admin has configured, hand off to the real form.
+      const paymentRequired = SITE_CONFIG.subscriptionShowTiming !== 'hidden' && SITE_CONFIG.subscriptionShowTiming !== 'login';
+      if (paymentRequired) {
+        askAppendBubble('bot', "Everything's ready, but registration right now requires a subscription payment step I can't take here in chat yet. I've opened the regular signup form for you with your email already filled in — sorry, you'll need to re-enter the rest there.");
+        closeAskTynTron();
+        openBusinessRegModal(d.email);
+        return;
+      }
+
       try {
         if (!auth.currentUser) await auth.signInAnonymously();
         const finalCat = d.category === 'Other' ? (d.category_custom || 'Other') : d.category;
+        // Mirrors srSubmitWithPayment's no-payment path (planKey:'none', amount 0) — same
+        // collection/shape the admin review screen (fsLoadBusinessRequests) actually reads,
+        // unlike the older seller_requests collection this used to write to.
         const reqData = {
           requestId: reg.requestId,
           email: d.email,
           mobile: d.seller_mobile,
           password: reg.password, // stored only until admin approval creates the real account, then cleared
+          venture: d.venture, speciality: d.speciality, desc: d.desc,
+          contact: d.contact_name, flat: d.flat, phone: d.seller_mobile,
           permAddress: d.permanent_address, currAddress: d.current_address,
-          addressProofType: d.address_proof_type,
-          addressProofDocUrl: reg.uploads.addressProofUrl,
-          canDeliverInSociety: d.can_deliver !== false,
+          society: d.society,
           cat: finalCat,
           subCat: d.subcategory || '',
-          society: d.society,
-          venture: d.venture, speciality: d.speciality,
-          desc: d.desc,
-          contact: d.contact_name, flat: d.flat, phone: d.seller_mobile,
-          whatsapp: d.seller_mobile,
-          instagram: d.instagram || '',
-          video: d.video_url || '',
-          url: d.website_url || '',
-          image: reg.uploads.businessPhoto || '',
+          addressProofType: d.address_proof_type,
+          addressProofDocUrl: reg.uploads.addressProofUrl,
           panDocUrl: reg.uploads.panUrl, aadhaarDocUrl: reg.uploads.aadhaarUrl, fssaiDocUrl: reg.uploads.fssaiUrl || '',
           gstNumber: d.gst_number || '',
-          menu: [],
-          detailsText: '', detailsImage: '',
           status: 'pending',
+          subscriptionStatus: 'PENDING_APPROVAL',
+          mandateAuthorized: true,
+          paidPlan: 'none',
+          paidAmount: 0,
+          paymentId: 'PAY_' + Date.now(),
+          paymentDate: new Date().toISOString(),
+          active: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           source: 'ask_tyntron'
         };
-        await db.collection('seller_requests').doc(reg.requestId).set(reqData);
+        await db.collection('business_requests').doc(reg.requestId).set(reqData);
         askAppendBubble('bot', "Application submitted! 🎉 You'll get an email once an admin reviews it.");
         _askSellerReg = null;
         _askSellerEmailOtp = null;

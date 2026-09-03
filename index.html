@@ -2588,7 +2588,7 @@
 
     .order-btn {
       width: 100%;
-      background: linear-gradient(135deg, #25d366, #1da851);
+      background: linear-gradient(135deg, var(--green, #FF9933), var(--green-dark, #B85C1A));
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -2602,11 +2602,14 @@
       gap: 8px;
       margin-top: 16px;
       font-family: inherit;
-      transition: opacity .2s
+      transition: all var(--tr);
+      box-shadow: 0 4px 14px rgba(255, 153, 51, .35);
     }
 
     .order-btn:hover {
-      opacity: .88
+      opacity: .92;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(255, 153, 51, .45);
     }
 
     @media(max-width:640px) {
@@ -6739,21 +6742,28 @@
     <div id="driverPortalContainer"></div>
   </div>
 
-  <!-- ── MENU ITEM MODAL (business/admin) ── -->
+  <!-- ── MENU / OFFERING ITEM MODAL (business/admin) ── -->
   <div class="modal-overlay" id="menuItemModal">
     <div class="modal" style="max-width:460px">
-      <div class="modal-title" id="miModalTitle">Add Menu Item</div>
+      <div class="modal-title" id="miModalTitle">Add Business Offering</div>
       <div class="form-grid">
+        <!-- Offering Type (read-only display based on selection) -->
+        <div class="form-group full">
+          <label>Offering Type *</label>
+          <input type="text" id="mi_type_display" readonly style="width:100%;padding:8px 12px;border:1.5px solid var(--border,#e5e7eb);border-radius:8px;font-size:.85rem;background:var(--cream,#f8f9fa);color:var(--text);font-weight:700;cursor:not-allowed" value="Item">
+          <input type="hidden" id="mi_type" value="item">
+        </div>
+
         <!-- Item Photo Upload (using Cropper.js resizable & zoomable cropper) -->
         <div class="form-section-label full" style="margin-top:4px"><i class="fa fa-image"
-            style="color:var(--green)"></i> Item Photo (Optional)</div>
+            style="color:var(--green)"></i> Image (Optional)</div>
         <div class="form-group full">
           <div class="img-upload-zone" id="mi_imgZone" onclick="document.getElementById('mi_imgFile').click()">
             <div class="img-preview" id="mi_imgPreviewBox">
               <i class="fa fa-image img-ph"></i>
             </div>
             <div class="img-upload-info" id="mi_imgInfo">
-              <p id="mi_imgTitle"><strong>Click to upload item photo</strong><br><span
+              <p id="mi_imgTitle"><strong>Click to upload offering photo</strong><br><span
                   style="font-size:.76rem;color:var(--text-muted)">JPG, PNG, WEBP · Resizable &amp; Zoomable · Max 4
                   MB</span></p>
               <div class="img-upload-btns" onclick="event.stopPropagation()">
@@ -6769,19 +6779,17 @@
             onchange="handleMenuItemImageUpload(this)">
         </div>
 
-        <div class="form-group"><label>Item Name *</label><input id="mi_name" placeholder="e.g. Chocolate Cake"></div>
-        <div class="form-group"><label>Price (₹) *</label><input id="mi_price" type="number" min="0" placeholder="350">
-        </div>
+        <div class="form-group"><label>Title / Name *</label><input id="mi_name" placeholder="e.g. Chocolate Cake, Maths Tuition, Consultation" oninput="this.style.borderColor=''"></div>
+        <div class="form-group"><label id="mi_price_label">Cost / Price (₹) *</label><input id="mi_price" type="number" min="0" placeholder="0" oninput="this.style.borderColor=''"></div>
         <div class="form-group full"><label>Description</label><textarea id="mi_desc" style="min-height:56px"
-            placeholder="Short description (optional)"></textarea></div>
+            placeholder="Detailed description (optional)"></textarea></div>
         <div class="form-group full" style="flex-direction:row;align-items:center;gap:10px">
           <input type="checkbox" id="mi_avail" checked style="width:18px;height:18px;accent-color:var(--green)">
-          <label for="mi_avail" style="text-transform:none;font-size:.88rem;cursor:pointer">Available for
-            ordering</label>
+          <label for="mi_avail" style="text-transform:none;font-size:.88rem;cursor:pointer">Available for ordering / booking</label>
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-primary" onclick="saveMenuItem()"><i class="fa fa-save"></i> Save Item</button>
+        <button class="btn btn-primary" onclick="saveMenuItem()"><i class="fa fa-save"></i> Save Offering</button>
         <button class="btn btn-ghost" onclick="closeModal('menuItemModal')">Cancel</button>
       </div>
     </div>
@@ -14186,35 +14194,54 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         document.getElementById('menuFlatRow').style.display = 'none';
       } else {
         if (_catCfg.useQty) {
-          list.innerHTML = modalInfoBannerHTML + menu.map(it => `
+          list.innerHTML = modalInfoBannerHTML + menu.map(it => {
+            const typeInfo = getOfferingTypeInfo(it.type || 'item');
+            const badgeHtml = `<span style="background:${typeInfo.bg};color:${typeInfo.color};border:1px solid ${typeInfo.border};font-size:.64rem;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:6px;display:inline-flex;align-items:center;gap:3px"><i class="fa ${typeInfo.icon}"></i> ${typeInfo.label}</span>`;
+            const isEnquiryOffering = (!it.price || it.price <= 0);
+
+            const actionWidget = isEnquiryOffering ? `
+              <label style="display:flex;align-items:center;gap:6px;cursor:${isShopClosed ? 'default' : 'pointer'};background:#f0fdf4;border:1px solid #bbf7d0;padding:4px 10px;border-radius:14px;user-select:none" onclick="event.stopPropagation()">
+                <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : ''} onchange="toggleEnquiryItem('${it.id}', this.checked)" style="accent-color:var(--green);width:16px;height:16px;cursor:pointer">
+                <span style="font-size:.78rem;font-weight:700;color:#166534">Enquire</span>
+              </label>
+            ` : `
+              <div class="qty-ctrl">
+                <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},-1)"`}>−</button>
+                <span class="qty-num" id="qn_${it.id}">0</span>
+                <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},1)"`}>+</button>
+              </div>
+            `;
+
+            return `
         <div class="menu-item-row" style="${isShopClosed ? 'opacity:0.75' : ''}">
           ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
           <div style="flex:1;min-width:0">
-            <div class="menu-item-name">${esc(it.name)}</div>
+            <div class="menu-item-name">${esc(it.name)} ${badgeHtml}</div>
             ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
           </div>
-          <div style="display:flex;align-items:center;flex-shrink:0;gap:4px">
-            ${it.price > 0 ? `<div class="menu-item-price">₹${it.price}</div>` : '<div class="menu-item-price" style="font-size:.72rem;color:var(--text-muted)">Enquiry</div>'}
-            <div class="qty-ctrl">
-              <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},-1)"`}>−</button>
-              <span class="qty-num" id="qn_${it.id}">0</span>
-              <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},1)"`}>+</button>
-            </div>
+          <div style="display:flex;align-items:center;flex-shrink:0;gap:6px">
+            ${it.price > 0 ? `<div class="menu-item-price">₹${it.price}</div>` : ''}
+            ${actionWidget}
           </div>
-        </div>`).join('');
+        </div>`;
+          }).join('');
         } else {
-          list.innerHTML = modalInfoBannerHTML + menu.map(it => `
+          list.innerHTML = modalInfoBannerHTML + menu.map(it => {
+            const typeInfo = getOfferingTypeInfo(it.type || 'item');
+            const badgeHtml = `<span style="background:${typeInfo.bg};color:${typeInfo.color};border:1px solid ${typeInfo.border};font-size:.64rem;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:6px;display:inline-flex;align-items:center;gap:3px"><i class="fa ${typeInfo.icon}"></i> ${typeInfo.label}</span>`;
+            return `
         <div class="menu-item-row" style="${isShopClosed ? 'cursor:default;opacity:0.75' : 'cursor:pointer'}" ${isShopClosed ? '' : `onclick="document.getElementById('chk_${it.id}').click()"`}>
           <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:${isShopClosed ? 'default' : 'pointer'}" onclick="event.stopPropagation()">
             <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : 'onchange="_updMenuTotal()"'} style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px;${isShopClosed ? 'cursor:not-allowed' : ''}">
             ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
             <div style="flex:1">
-              <div class="menu-item-name">${esc(it.name)}</div>
+              <div class="menu-item-name">${esc(it.name)} ${badgeHtml}</div>
               ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
             </div>
           </label>
           ${it.price > 0 ? `<div class="menu-item-price" style="flex-shrink:0;margin-left:10px">₹${it.price}</div>` : `<div class="menu-item-price" style="flex-shrink:0;margin-left:10px;font-size:.72rem;color:var(--text-muted)">Enquiry</div>`}
-        </div>`).join('');
+        </div>`;
+          }).join('');
         }
         const orderBtn = document.getElementById('menuOrderBtn');
         const callBtn = document.getElementById('menuCallBtn');
@@ -14248,14 +14275,13 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
           orderBtn.style.opacity = '1';
           orderBtn.style.cursor = 'pointer';
           if (currentCustomer) {
-            document.getElementById('menuFlatRow').style.display = 'flex';
+            document.getElementById('menuFlatRow').style.display = 'none';
             orderBtn.onclick = placeOrder;
-            orderBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Place Order via WhatsApp';
           } else {
             document.getElementById('menuFlatRow').style.display = 'none';
             orderBtn.onclick = openCustomerAuthModal;
-            orderBtn.innerHTML = '<i class="fa fa-right-to-bracket"></i> Login to Order';
           }
+          _updMenuTotal();
 
           if (callBtn) {
             callBtn.disabled = false;
@@ -14353,7 +14379,13 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
     function chQty(id, price, delta) {
       _menuQtys[id] = Math.max(0, ((_menuQtys[id] || 0) + delta));
-      document.getElementById('qn_' + id).textContent = _menuQtys[id];
+      const qEl = document.getElementById('qn_' + id);
+      if (qEl) qEl.textContent = _menuQtys[id];
+      _updMenuTotal();
+    }
+
+    function toggleEnquiryItem(id, isChecked) {
+      _menuQtys[id] = isChecked ? 1 : 0;
       _updMenuTotal();
     }
 
@@ -14362,20 +14394,60 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const menu = (_menuVendor.menu || []).filter(it => it.available !== false);
       const btn = document.getElementById('menuOrderBtn');
       if (!btn) return;
-      const label = currentCustomer ? _catCfg.actionText : 'Login to Order';
       const icon = currentCustomer ? 'fab fa-whatsapp' : 'fa fa-right-to-bracket';
+
+      let chosen = [];
       if (_catCfg.useQty) {
-        let total = 0;
-        menu.forEach(it => { total += ((_menuQtys[it.id] || 0) * it.price); });
-        btn.innerHTML = total > 0
-          ? `<i class="${icon}"></i> ${label} — ₹${total}`
-          : `<i class="${icon}"></i> ${label}`;
+        chosen = menu.filter(it => (_menuQtys[it.id] || 0) > 0 || (document.getElementById('chk_' + it.id)?.checked));
       } else {
-        const anyChecked = menu.some(it => document.getElementById('chk_' + it.id)?.checked);
-        const total = menu.filter(it => document.getElementById('chk_' + it.id)?.checked).reduce((s, it) => s + (it.price || 0), 0);
-        btn.innerHTML = anyChecked && total > 0
-          ? `<i class="${icon}"></i> ${label} — ₹${total}`
-          : `<i class="${icon}"></i> ${label}`;
+        chosen = menu.filter(it => document.getElementById('chk_' + it.id)?.checked || (_menuQtys[it.id] || 0) > 0);
+      }
+
+      const flatRow = document.getElementById('menuFlatRow');
+      const statusInfo = getVendorStatusInfo(_menuVendor);
+      if (flatRow && !statusInfo.isClosed) {
+        if (currentCustomer && chosen.length > 0) {
+          flatRow.style.display = 'flex';
+        } else {
+          flatRow.style.display = 'none';
+        }
+      }
+
+      let total = 0;
+      let hasPricedSelected = false;
+      let hasEnquirySelected = false;
+
+      if (chosen.length) {
+        chosen.forEach(it => {
+          const q = _catCfg.useQty ? (_menuQtys[it.id] || 1) : 1;
+          if (it.price && it.price > 0) {
+            hasPricedSelected = true;
+            total += (it.price * q);
+          } else {
+            hasEnquirySelected = true;
+          }
+        });
+      } else {
+        const hasPricedInMenu = menu.some(it => it.price && it.price > 0);
+        if (!hasPricedInMenu) {
+          hasEnquirySelected = true;
+        } else {
+          hasPricedSelected = true;
+        }
+      }
+
+      if (hasEnquirySelected && !hasPricedSelected) {
+        btn.innerHTML = currentCustomer
+          ? `<i class="${icon}"></i> Send Enquiry via WhatsApp`
+          : `<i class="${icon}"></i> Login to Enquire`;
+      } else if (hasPricedSelected && !hasEnquirySelected) {
+        btn.innerHTML = currentCustomer
+          ? (total > 0 ? `<i class="${icon}"></i> Place Order via WhatsApp — ₹${total}` : `<i class="${icon}"></i> Place Order via WhatsApp`)
+          : `<i class="${icon}"></i> Login to Order`;
+      } else {
+        btn.innerHTML = currentCustomer
+          ? (total > 0 ? `<i class="${icon}"></i> Send Order & Enquiry via WhatsApp — ₹${total}` : `<i class="${icon}"></i> Send Order & Enquiry via WhatsApp`)
+          : `<i class="${icon}"></i> Login to Order / Enquire`;
       }
     }
 
@@ -14383,57 +14455,64 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!_menuVendor || !_catCfg) return;
       const statusInfo = getVendorStatusInfo(_menuVendor);
       if (statusInfo.isClosed) {
-        showToast('Business is currently closed. Orders can only be placed when business opens.');
+        showToast('Business is currently closed.');
         return;
       }
       if (!currentCustomer) { openCustomerAuthModal(); return; }
       const menu = (_menuVendor.menu || []).filter(it => it.available !== false);
       const wa = _menuVendor.whatsapp || _menuVendor.phone;
 
-      // Validate selections first
-      let chosen, lines, total = 0;
+      let chosen = [];
       if (_catCfg.useQty) {
         chosen = menu.filter(it => (_menuQtys[it.id] || 0) > 0);
-        if (!chosen.length) { showToast('Select at least one item'); return; }
-        lines = chosen.map(it => {
-          const sub = (_menuQtys[it.id] || 0) * (it.price || 0); total += sub;
-          return it.price > 0 ? `• ${it.name} x${_menuQtys[it.id]} — ₹${sub}` : `• ${it.name} x${_menuQtys[it.id]}`;
-        });
       } else {
         chosen = menu.filter(it => document.getElementById('chk_' + it.id)?.checked);
-        if (!chosen.length) { showToast('Please select at least one option'); return; }
-        lines = chosen.map(it => {
-          total += (it.price || 0);
-          return it.price > 0 ? `• ${it.name} — ₹${it.price}` : `• ${it.name}`;
-        });
       }
 
-      // Validate customer details (name/mobile/address — email no longer needed to order)
+      if (!chosen.length && menu.length === 1) {
+        chosen = [menu[0]];
+      }
+
+      if (!chosen.length) { showToast('Please select at least one offering'); return; }
+
+      let total = 0;
+      const lines = chosen.map(it => {
+        const q = _catCfg.useQty ? (_menuQtys[it.id] || 1) : 1;
+        if (it.price && it.price > 0) {
+          const sub = q * it.price;
+          total += sub;
+          return _catCfg.useQty && q > 1 ? `• ${it.name} x${q} — ₹${sub}` : `• ${it.name} — ₹${it.price}`;
+        } else {
+          const typeInfo = getOfferingTypeInfo(it.type || 'item');
+          return `• ${it.name} (${typeInfo.label} — Enquiry)`;
+        }
+      });
+
       const nameEl = document.getElementById('menuCustomerName');
       const mobileEl = document.getElementById('menuCustomerMobile');
       const addressEl = document.getElementById('menuCustomerAddress');
-      const name = (nameEl.value || '').trim();
-      const mobile = (mobileEl.value || '').trim();
-      const address = (addressEl.value || '').trim();
+      const name = (nameEl ? nameEl.value : '').trim();
+      const mobile = (mobileEl ? mobileEl.value : '').trim();
+      const address = (addressEl ? addressEl.value : '').trim();
 
       let valid = true;
       if (!name) {
-        nameEl.style.borderColor = 'var(--danger)';
+        if (nameEl) nameEl.style.borderColor = 'var(--danger)';
         showToast('Please enter your name');
         valid = false;
-      } else { nameEl.style.borderColor = 'var(--green)'; }
+      } else if (nameEl) nameEl.style.borderColor = 'var(--green)';
 
       if (!mobile || !/^\d{7,15}$/.test(mobile.replace(/[\s\-]/g, ''))) {
-        mobileEl.style.borderColor = 'var(--danger)';
+        if (mobileEl) mobileEl.style.borderColor = 'var(--danger)';
         if (valid) showToast('Please enter a valid mobile number');
         valid = false;
-      } else { mobileEl.style.borderColor = 'var(--green)'; }
+      } else if (mobileEl) mobileEl.style.borderColor = 'var(--green)';
 
       if (!address) {
-        addressEl.style.borderColor = 'var(--danger)';
-        if (valid) showToast('Please enter your complete delivery address');
+        if (addressEl) addressEl.style.borderColor = 'var(--danger)';
+        if (valid) showToast('Please enter your complete address');
         valid = false;
-      } else { addressEl.style.borderColor = 'var(--green)'; }
+      } else if (addressEl) addressEl.style.borderColor = 'var(--green)';
 
       if (!valid) return;
 
@@ -14450,20 +14529,35 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
     function _finalizePlaceOrder(ctx) {
       const { chosen, lines, total, name, mobile, address, wa } = ctx;
-      const msg = `${_catCfg.waIntro}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${_catCfg.waTotal(total, address)}\n👤 ${name}\n📱 Mobile: ${mobile}`;
+
+      const isEnquiryOnly = chosen.every(it => !it.price || it.price <= 0);
+      const isMixed = !isEnquiryOnly && chosen.some(it => !it.price || it.price <= 0);
+
+      let introHeader = '';
+      let totalFooter = '';
+      let toastMsg = 'Sent via WhatsApp! ✓';
+
+      if (isEnquiryOnly) {
+        introHeader = "Hi! I'd like to enquire about the following offerings 💬";
+        totalFooter = `\n\n🏠 Address: ${address}\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n\nPlease share details and availability. Thank you!`;
+        toastMsg = 'Enquiry sent via WhatsApp! ✓';
+      } else if (isMixed) {
+        introHeader = "Hi! I'd like to place an order & enquiry 🛒💬";
+        totalFooter = `\n\n💰 *Priced Items Total: ₹${total}*\n🏠 Address: ${address}\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n\nPlease confirm availability and details. Thank you!`;
+        toastMsg = 'Order & Enquiry sent via WhatsApp! ✓';
+      } else {
+        introHeader = _catCfg.waIntro || "Hi! I'd like to place an order 🛒";
+        totalFooter = `\n\n💰 *Total: ₹${total}*\n🏠 Address: ${address}\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n\nPlease confirm. Thank you!`;
+        toastMsg = 'Order sent via WhatsApp! ✓';
+      }
+
+      const msg = `${introHeader}\n\n*${_menuVendor.venture}*\n${lines.join('\n')}${totalFooter}`;
       window.open(`https://wa.me/91${wa}?text=${encodeURIComponent(msg)}`, '_blank');
       fsRecordStat(_menuVendor.id, 'orderClicks');
       fsRecordStat(_menuVendor.id, 'whatsappClicks');
       fsLogOrder(_menuVendor.id, _menuVendor.venture,
-        chosen.map(it => ({ name: it.name, price: it.price, qty: _menuQtys[it.id] || 1 })),
+        chosen.map(it => ({ name: it.name, price: it.price || 0, qty: _menuQtys[it.id] || 1 })),
         total, `${address} | 📱 ${mobile}`, currentCustomer?.email || null, name, mobile);
-      const toastMap = {
-        "I'm Interested — WhatsApp": 'Interest sent via WhatsApp!',
-        'Consult Now — WhatsApp': 'Consultation request sent!',
-        'Book Now — WhatsApp': 'Booking request sent!',
-        'Connect Now — WhatsApp': 'Message sent via WhatsApp!'
-      };
-      const toastMsg = toastMap[_catCfg.actionText] || 'Sent via WhatsApp!';
       closeVendorDetail();
       _menuQtys = {};
       showToast(toastMsg);
@@ -19775,16 +19869,31 @@ Together, we grow stronger — one order at a time.`;
       const container = document.getElementById('sf_sched_weekly_days_container');
       if (!container) return;
       const isDeact = isCurrentBusinessDeactivated();
+      const currentDayIdx = (new Date().getDay() + 6) % 7; // 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
 
-      container.innerHTML = DAYS_OF_WEEK.map(day => {
+      container.innerHTML = DAYS_OF_WEEK.map((day, idx) => {
+        const isPastOrToday = idx <= currentDayIdx;
         const dayConfig = _businessDaySchedules[day];
+
+        let stateText = 'Standard';
+        let iconClass = 'fa-circle-check';
+        let bg = '#e6f4ea', color = '#137333', border = '#a8dab5';
+
         if (dayConfig && dayConfig.isClosed) {
-          return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-circle-xmark" style="color:#dc2626"></i> ${day.slice(0, 3)} (Closed)</button>`;
+          stateText = 'Closed';
+          iconClass = 'fa-circle-xmark';
+          bg = '#fee2e2'; color = '#dc2626'; border = '#fca5a5';
         } else if (dayConfig && dayConfig.openTime && dayConfig.closeTime) {
-          return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#fff3e0;color:#e65100;border:1.5px solid #ffe0b2;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-clock" style="color:#e65100"></i> ${day.slice(0, 3)} (${formatTime12h(dayConfig.openTime)}-${formatTime12h(dayConfig.closeTime)})</button>`;
-        } else {
-          return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:#e6f4ea;color:#137333;border:1.5px solid #a8dab5;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" title="Click to configure ${day} schedule"><i class="fa fa-circle-check" style="color:#137333"></i> ${day.slice(0, 3)} (Standard)</button>`;
+          stateText = `${formatTime12h(dayConfig.openTime)}-${formatTime12h(dayConfig.closeTime)}`;
+          iconClass = 'fa-clock';
+          bg = '#fff3e0'; color = '#e65100'; border = '#ffe0b2';
         }
+
+        if (isPastOrToday) {
+          return `<button type="button" class="btn btn-sm" disabled style="background:#f3f4f6;color:#9ca3af;border:1.5px solid #e5e7eb;border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;cursor:not-allowed;opacity:0.75" title="${day} schedule cannot be changed for today or past days of this week"><i class="fa fa-lock" style="color:#9ca3af"></i> ${day.slice(0, 3)} (${stateText})</button>`;
+        }
+
+        return `<button type="button" class="btn btn-sm" ${isDeact ? 'disabled' : ''} onclick="openDayScheduleModal('${day}')" style="background:${bg};color:${color};border:1.5px solid ${border};border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;cursor:pointer" title="Click to configure ${day} schedule"><i class="fa ${iconClass}"></i> ${day.slice(0, 3)} (${stateText})</button>`;
       }).join('');
     }
 
@@ -19800,6 +19909,14 @@ Together, we grow stronger — one order at a time.`;
 
     function openDayScheduleModal(day) {
       if (isCurrentBusinessDeactivated()) return;
+
+      const currentDayIdx = (new Date().getDay() + 6) % 7;
+      const dayIdx = DAYS_OF_WEEK.indexOf(day);
+      if (dayIdx !== -1 && dayIdx <= currentDayIdx) {
+        showToast(`Operating hours for today (${day}) and past days of this week cannot be changed.`);
+        return;
+      }
+
       _currentModalDay = day;
       const titleDay = document.getElementById('dayModalDayName');
       if (titleDay) titleDay.textContent = day;
@@ -19963,7 +20080,7 @@ Together, we grow stronger — one order at a time.`;
                 <i class="fa fa-calendar-days" style="color:var(--green)"></i> Operating Days of the Week
               </div>
               <p style="font-size:0.78rem;color:var(--text-muted);margin:0 0 12px">
-                Click on any day (e.g. Tuesday) to set specific hours or mark that day as closed. Closed days show in red.
+                Click on any upcoming day (e.g. Friday) to set specific hours or mark that day as closed. Today and past days of the week are locked and disabled.
               </p>
               <div id="sf_sched_weekly_days_container" style="display:flex;gap:8px;flex-wrap:wrap">
                 <!-- Rendered dynamically by renderWeeklyDayPills() -->
@@ -20048,46 +20165,64 @@ Together, we grow stronger — one order at a time.`;
 
     function _businessMenuHTML(v) {
       const isDeact = isCurrentBusinessDeactivated();
-      const mode = getBusinessAddMode(v.cat);
-      if (mode === 'details') return _businessDetailsHTML(v);
-      const label = mode === 'item' ? 'Items' : 'Menu Items';
-      const icon = mode === 'item' ? 'fa-bag-shopping' : 'fa-utensils';
       const menu = v.menu || [];
-      const rows = menu.map(it => `<tr>
+      const rows = menu.map(it => {
+        const typeInfo = getOfferingTypeInfo(it.type || 'item');
+        return `<tr>
     <td>
       <div style="display:flex;align-items:center;gap:8px">
         ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:38px;height:38px;object-fit:cover;border-radius:6px;flex-shrink:0;cursor:pointer;border:1px solid var(--border);transition:transform .15s ease" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
-        <span style="font-weight:600">${esc(it.name)}</span>
+        <div>
+          <span style="font-weight:600;display:block">${esc(it.name)}</span>
+          <span style="background:${typeInfo.bg};color:${typeInfo.color};border:1px solid ${typeInfo.border};font-size:.68rem;padding:1px 6px;border-radius:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px"><i class="fa ${typeInfo.icon}"></i> ${typeInfo.label}</span>
+        </div>
       </div>
     </td>
-    <td>₹${it.price}</td>
+    <td style="font-weight:600">₹${it.price || 0}</td>
     <td style="color:var(--text-muted);font-size:.78rem">${esc(it.desc || '—')}</td>
     <td><span style="color:${it.available !== false ? '#28a745' : '#c0392b'};font-weight:700">${it.available !== false ? 'Yes' : 'No'}</span></td>
     <td style="white-space:nowrap">
-      <button class="btn btn-sm btn-ghost" ${isDeact ? 'disabled style="opacity:0.5"' : `onclick="openMenuItemModal('${v.id}','${it.id}')"`}><i class="fa fa-pen"></i></button>
-      <button class="btn btn-sm btn-danger" ${isDeact ? 'disabled style="opacity:0.5"' : `onclick="deleteMenuItem('${v.id}','${it.id}')"`}><i class="fa fa-trash"></i></button>
+      <button class="btn btn-sm btn-ghost" ${isDeact ? 'disabled style="opacity:0.5"' : `onclick="openMenuItemModal('${v.id}','${it.id}')"`} title="Edit Offering"><i class="fa fa-pen"></i></button>
+      <button class="btn btn-sm btn-danger" ${isDeact ? 'disabled style="opacity:0.5"' : `onclick="deleteMenuItem('${v.id}','${it.id}')"`} title="Delete Offering"><i class="fa fa-trash"></i></button>
     </td>
-  </tr>`).join('');
+  </tr>`;
+      }).join('');
+
       const maxItemsLimit = getVendorMaxItems(v);
-      const limitText = maxItemsLimit < 9999 ? `(${menu.length}/${maxItemsLimit} Limit)` : `(${menu.length} Items)`;
+      const limitText = maxItemsLimit < 9999 ? `(${menu.length}/${maxItemsLimit} Limit)` : `(${menu.length} Offerings)`;
       const isLimitReached = maxItemsLimit < 9999 && menu.length >= maxItemsLimit;
       const limitWarning = isLimitReached ? `<span style="font-size:.75rem;color:var(--danger);font-weight:700;margin-left:8px"><i class="fa fa-triangle-exclamation"></i> Limit Reached</span>` : '';
+
+      const dropdownOptionsHTML = OFFERING_TYPES.map(o => `
+        <a href="#" onclick="event.preventDefault();selectOfferingOption('${o.type}')" class="dropdown-item" style="display:flex;align-items:center;gap:10px;padding:8px 14px;color:var(--text);font-size:.84rem;font-weight:600;text-decoration:none;transition:background .15s ease">
+          <i class="fa ${o.icon}" style="color:var(--green);width:16px;text-align:center"></i> ${o.btnText}
+        </a>
+      `).join('');
 
       const addBtn = isDeact
         ? `<button class="btn btn-sm btn-primary" style="margin-left:auto;opacity:0.5;cursor:not-allowed" disabled onclick="alert('Your account is deactivated. Please contact admin.');showToast('Your account is deactivated. Please contact admin.');"><i class="fa fa-ban"></i> Account Deactivated</button>`
         : (isLimitReached
           ? `<button class="btn btn-sm btn-ghost" style="margin-left:auto;color:var(--danger);border:1px solid var(--danger);font-weight:600" onclick="alert('Item Limit Reached! You have reached your max limit of ${maxItemsLimit} items. Please contact Admin to increase your item limit.');showToast('Item limit of ${maxItemsLimit} reached. Contact admin to increase.');"><i class="fa fa-lock"></i> Limit Reached (${menu.length}/${maxItemsLimit})</button>`
-          : `<button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openMenuItemModal('${v.id}',null)"><i class="fa fa-plus"></i> Add Item</button>`);
+          : `<div class="dropdown" style="position:relative;display:inline-block;margin-left:auto">
+              <button type="button" class="btn btn-sm btn-primary dropdown-toggle" onclick="toggleOfferingDropdown(event)" style="display:inline-flex;align-items:center;gap:6px">
+                <i class="fa fa-plus"></i> Add Business Offering <i class="fa fa-chevron-down" style="font-size:.7rem"></i>
+              </button>
+              <div id="offeringDropdownMenu" class="dropdown-menu" style="display:none;position:absolute;right:0;top:100%;margin-top:4px;background:var(--bg-card,#fff);border:1px solid var(--border,#e5e7eb);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,0.15);z-index:1000;min-width:190px;padding:6px 0;overflow:hidden">
+                ${dropdownOptionsHTML}
+              </div>
+            </div>`);
 
-      return `<div class="s-card">
-    <div class="s-card-title"><i class="fa ${icon}" style="color:var(--green)"></i> ${label} <span style="font-size:.8rem;color:var(--text-muted);font-weight:600;margin-left:6px">${limitText}</span> ${limitWarning}
+      const offeringsCard = `<div class="s-card">
+    <div class="s-card-title"><i class="fa fa-layer-group" style="color:var(--green)"></i> Business Offerings & Items <span style="font-size:.8rem;color:var(--text-muted);font-weight:600;margin-left:6px">${limitText}</span> ${limitWarning}
       ${addBtn}
     </div>
     ${menu.length ? `<table class="menu-table">
-      <thead><tr><th>Name</th><th>Price</th><th>Description</th><th>Available</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Offering Name</th><th>Cost / Price</th><th>Description</th><th>Available</th><th>Actions</th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>`: `<div class="empty-state" style="padding:24px"><i class="fa ${icon}"></i><p>No ${label.toLowerCase()} yet. Add your first one above.</p></div>`}
+    </table>`: `<div class="empty-state" style="padding:24px"><i class="fa fa-layer-group"></i><p>No business offerings added yet. Click "Add Business Offering" above to add products, services, menu, classes, events, etc.</p></div>`}
   </div>`;
+
+      return offeringsCard + _businessDetailsHTML(v);
     }
 
     function _businessDetailsHTML(v) {
@@ -20488,7 +20623,73 @@ Together, we grow stronger — one order at a time.`;
       showToast(`Item limit for "${vendor.venture}" updated to ${newLimit < 9999 ? newLimit + ' items' : 'Unlimited'} ✓`);
     }
 
-    function openMenuItemModal(vendorId, itemId) {
+    const OFFERING_TYPES = [
+      { type: 'product', label: 'Product', icon: 'fa-box', btnText: 'Add Product' },
+      { type: 'service', label: 'Service', icon: 'fa-briefcase', btnText: 'Add Services' },
+      { type: 'menu', label: 'Menu', icon: 'fa-utensils', btnText: 'Add Menu' },
+      { type: 'item', label: 'Item', icon: 'fa-tag', btnText: 'Add Item' },
+      { type: 'class', label: 'Class', icon: 'fa-graduation-cap', btnText: 'Add Classes' },
+      { type: 'subject', label: 'Subject', icon: 'fa-book-open', btnText: 'Add Subject' },
+      { type: 'event', label: 'Event', icon: 'fa-calendar-day', btnText: 'Add Event' },
+      { type: 'rental', label: 'Rental', icon: 'fa-key', btnText: 'Add Rental' },
+      { type: 'consultation', label: 'Consultation', icon: 'fa-comments', btnText: 'Add Consultation' },
+      { type: 'package', label: 'Package', icon: 'fa-cubes', btnText: 'Add Package' },
+      { type: 'other', label: 'Other', icon: 'fa-asterisk', btnText: 'Others' }
+    ];
+
+    function getOfferingTypeInfo(type) {
+      const map = {
+        product: { label: 'Product', icon: 'fa-box', bg: '#eff6ff', color: '#1e40af', border: '#bfdbfe' },
+        service: { label: 'Service', icon: 'fa-briefcase', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
+        menu: { label: 'Menu', icon: 'fa-utensils', bg: '#fff7ed', color: '#c2410c', border: '#ffedd5' },
+        item: { label: 'Item', icon: 'fa-tag', bg: '#fef2f2', color: '#991b1b', border: '#fecaca' },
+        class: { label: 'Class', icon: 'fa-graduation-cap', bg: '#faf5ff', color: '#6b21a8', border: '#e9d5ff' },
+        subject: { label: 'Subject', icon: 'fa-book-open', bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
+        event: { label: 'Event', icon: 'fa-calendar-day', bg: '#fdf4ff', color: '#86198f', border: '#f5d0fe' },
+        rental: { label: 'Rental', icon: 'fa-key', bg: '#fffbe1', color: '#713f12', border: '#fef08a' },
+        consultation: { label: 'Consultation', icon: 'fa-comments', bg: '#ecfeff', color: '#155e75', border: '#a5f3fc' },
+        package: { label: 'Package', icon: 'fa-cubes', bg: '#f5f3ff', color: '#5b21b6', border: '#ddd6fe' },
+        other: { label: 'Other', icon: 'fa-asterisk', bg: '#f3f4f6', color: '#374151', border: '#e5e7eb' }
+      };
+      return map[type] || map['item'];
+    }
+
+    function toggleOfferingDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('offeringDropdownMenu');
+      if (!menu) return;
+      const isShown = menu.style.display === 'block';
+      menu.style.display = isShown ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', function () {
+      const menu = document.getElementById('offeringDropdownMenu');
+      if (menu) menu.style.display = 'none';
+    });
+
+    function selectOfferingOption(type) {
+      const menu = document.getElementById('offeringDropdownMenu');
+      if (menu) menu.style.display = 'none';
+      const vendor = getCurrentBusinessVendor();
+      if (vendor) {
+        openMenuItemModal(vendor.id, null, type);
+      }
+    }
+
+    function updateMenuItemModalTitle(type) {
+      const typeInfo = getOfferingTypeInfo(type);
+      const titleEl = document.getElementById('miModalTitle');
+      if (titleEl) {
+        titleEl.textContent = _editMenuItemId ? `Edit Offering (${typeInfo.label})` : `Add ${typeInfo.label}`;
+      }
+    }
+
+    function isPriceMandatory(type) {
+      const mandatoryTypes = ['product', 'menu', 'item'];
+      return mandatoryTypes.includes((type || '').toLowerCase());
+    }
+
+    function openMenuItemModal(vendorId, itemId, offeringType) {
       _editMenuVendorId = vendorId; _editMenuItemId = itemId;
       const vendor = DATA.find(d => d.id === vendorId);
       const item = itemId ? (vendor?.menu || []).find(m => m.id === itemId) : null;
@@ -20503,9 +20704,31 @@ Together, we grow stronger — one order at a time.`;
         }
       }
 
-      document.getElementById('miModalTitle').textContent = item ? 'Edit Menu Item' : 'Add Menu Item';
+      const type = item?.type || offeringType || 'item';
+      const typeInfo = getOfferingTypeInfo(type);
+      document.getElementById('miModalTitle').textContent = item ? `Edit Offering (${typeInfo.label})` : `Add ${typeInfo.label}`;
+
+      const typeHidden = document.getElementById('mi_type');
+      if (typeHidden) typeHidden.value = type;
+      const typeDisplay = document.getElementById('mi_type_display');
+      if (typeDisplay) typeDisplay.value = typeInfo.label;
+
+      const priceLabel = document.getElementById('mi_price_label');
+      const priceInput = document.getElementById('mi_price');
+      const nameInput = document.getElementById('mi_name');
+      const isMandatory = isPriceMandatory(type);
+
+      if (priceLabel) {
+        priceLabel.innerHTML = isMandatory ? 'Cost / Price (₹) *' : 'Cost / Price (₹) <span style="font-weight:400;color:var(--text-muted)">(Optional)</span>';
+      }
+      if (priceInput) {
+        priceInput.placeholder = isMandatory ? 'e.g. 350' : 'Optional (e.g. 0)';
+        priceInput.style.borderColor = '';
+      }
+      if (nameInput) nameInput.style.borderColor = '';
+
       document.getElementById('mi_name').value = item?.name || '';
-      document.getElementById('mi_price').value = item?.price || '';
+      document.getElementById('mi_price').value = (item && item.price !== undefined && item.price !== null) ? item.price : '';
       document.getElementById('mi_desc').value = item?.desc || '';
       document.getElementById('mi_avail').checked = item?.available !== false;
 
@@ -20517,9 +20740,30 @@ Together, we grow stronger — one order at a time.`;
     }
 
     async function saveMenuItem() {
-      const name = document.getElementById('mi_name').value.trim();
-      const price = parseFloat(document.getElementById('mi_price').value);
-      if (!name || isNaN(price)) { showToast('Name and price are required'); return; }
+      const nameInput = document.getElementById('mi_name');
+      const priceInput = document.getElementById('mi_price');
+      const name = (nameInput?.value || '').trim();
+      const priceVal = (priceInput?.value || '').trim();
+      const type = document.getElementById('mi_type')?.value || 'item';
+
+      if (priceInput) priceInput.style.borderColor = '';
+      if (nameInput) nameInput.style.borderColor = '';
+
+      if (!name) {
+        showToast('Title / Name is required');
+        if (nameInput) { nameInput.style.borderColor = '#dc2626'; nameInput.focus(); }
+        return;
+      }
+
+      const isMandatory = isPriceMandatory(type);
+      if (isMandatory && (priceVal === '' || isNaN(parseFloat(priceVal)))) {
+        const typeInfo = getOfferingTypeInfo(type);
+        showToast(`Cost / Price is required for ${typeInfo.label}`);
+        if (priceInput) { priceInput.style.borderColor = '#dc2626'; priceInput.focus(); }
+        return;
+      }
+
+      const price = priceVal !== '' ? parseFloat(priceVal) : 0;
       const vendor = DATA.find(d => d.id === _editMenuVendorId);
       if (!vendor) return;
 
@@ -20536,7 +20780,9 @@ Together, we grow stronger — one order at a time.`;
       vendor.menu = vendor.menu || [];
       const item = {
         id: _editMenuItemId || 'm' + Date.now(),
-        name, price,
+        type: type,
+        name: name,
+        price: isNaN(price) ? 0 : price,
         desc: document.getElementById('mi_desc').value.trim(),
         image: _miPendingImg === '__remove__' ? '' : (_miPendingImg || ''),
         available: document.getElementById('mi_avail').checked
@@ -20550,7 +20796,7 @@ Together, we grow stronger — one order at a time.`;
       await fsSaveVendor(vendor);
       saveData(DATA);
       closeModal('menuItemModal');
-      showToast(_editMenuItemId ? 'Item updated ✓' : 'Item added ✓');
+      showToast(_editMenuItemId ? 'Offering updated ✓' : 'Offering added ✓');
       if (currentBusiness && currentBusiness.vendorId === _editMenuVendorId) renderBusinessPanel();
       if (isAdmin) renderAdminTab(_adminTab);
     }

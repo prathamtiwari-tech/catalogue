@@ -20054,7 +20054,7 @@ Together, we grow stronger — one order at a time.`;
         ? `<button class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed"><i class="fa fa-ban"></i> Account Deactivated</button>`
         : `<button type="button" class="btn btn-primary" onclick="saveBusinessSchedule()"><i class="fa fa-floppy-disk"></i> Save Schedule</button>`;
 
-      const scheduleCard = `
+      const scheduleCard = (SITE_CONFIG.showBusinessOperatingSchedule !== false) ? `
         <div class="s-card" style="margin-bottom:20px">
           <div class="s-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
             <span><i class="fa fa-clock" style="color:var(--green)"></i> Business Operating Schedule &amp; Calendar</span>
@@ -20146,7 +20146,7 @@ Together, we grow stronger — one order at a time.`;
           <div class="modal-actions" style="margin-top:18px">
             ${saveSchedBtn}
           </div>
-        </div>`;
+        </div>` : '';
 
       const saveBtn = isDeact
         ? `<button class="btn btn-primary" disabled style="opacity:0.5;cursor:not-allowed" onclick="alert('Your account is deactivated. Please contact admin.');showToast('Your account is deactivated. Please contact admin.');"><i class="fa fa-ban"></i> Account Deactivated</button>`
@@ -21792,6 +21792,20 @@ Together, we grow stronger — one order at a time.`;
         </p>
       </div>
 
+      <!-- 6. Seller Business Operating Schedule & Calendar -->
+      <div style="background:var(--cream);border-radius:12px;padding:16px;border:1.5px solid var(--border)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px">
+          <i class="fa fa-clock" style="color:var(--green);font-size:1.1rem"></i> Seller Business Operating Schedule &amp; Calendar
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem">
+          <input type="checkbox" id="cfg_showBusinessOperatingSchedule" ${SITE_CONFIG.showBusinessOperatingSchedule !== false ? 'checked' : ''} style="accent-color:var(--green);width:18px;height:18px">
+          Show "Business Operating Schedule &amp; Calendar" Section in Seller Dashboard
+        </label>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+          When enabled, sellers can manage their opening/closing hours and weekly schedule. When unchecked by Admin, the entire Operating Schedule section is hidden in the seller business panel.
+        </p>
+      </div>
+
      
 
       <!-- 6. Seller Subscription Feature Visibility / Timing -->
@@ -21936,6 +21950,7 @@ Together, we grow stronger — one order at a time.`;
       const showProductListing = !!document.getElementById('cfg_showProductListing')?.checked;
       const showBusinessCanDeliver = document.getElementById('cfg_showBusinessCanDeliver')?.checked !== false;
       const showDriverLogin = document.getElementById('cfg_showDriverLogin')?.checked !== false;
+      const showBusinessOperatingSchedule = document.getElementById('cfg_showBusinessOperatingSchedule')?.checked !== false;
 
       const subTimingRadio = document.querySelector('input[name="cfg_subscriptionShowTiming"]:checked');
       const subscriptionShowTiming = subTimingRadio ? subTimingRadio.value : 'registration';
@@ -21945,6 +21960,7 @@ Together, we grow stronger — one order at a time.`;
       SITE_CONFIG.showProductListing = showProductListing;
       SITE_CONFIG.showBusinessCanDeliver = showBusinessCanDeliver;
       SITE_CONFIG.showDriverLogin = showDriverLogin;
+      SITE_CONFIG.showBusinessOperatingSchedule = showBusinessOperatingSchedule;
       SITE_CONFIG.subscriptionShowTiming = subscriptionShowTiming;
 
       await fsSaveConfig({
@@ -21953,6 +21969,7 @@ Together, we grow stronger — one order at a time.`;
         showProductListing,
         showBusinessCanDeliver,
         showDriverLogin,
+        showBusinessOperatingSchedule,
         subscriptionShowTiming
       });
 
@@ -22154,6 +22171,7 @@ Together, we grow stronger — one order at a time.`;
         showCarpool: SITE_CONFIG.showCarpool !== false,
         showBusinessCanDeliver: SITE_CONFIG.showBusinessCanDeliver !== false,
         showDriverLogin: SITE_CONFIG.showDriverLogin !== false,
+        showBusinessOperatingSchedule: SITE_CONFIG.showBusinessOperatingSchedule !== false,
         subscriptionShowTiming: SITE_CONFIG.subscriptionShowTiming || 'registration',
         maxSubCategories: parseInt(document.getElementById('cfg_maxSubCategories')?.value) || 3,
         businessCanDeliverLabel: document.getElementById('cfg_businessCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',

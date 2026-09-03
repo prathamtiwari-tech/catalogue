@@ -1899,6 +1899,8 @@
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
       z-index: 99999;
       padding: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--green) #f1f5f9;
     }
 
     .custom-select-wrapper.open .custom-select-dropdown {
@@ -1928,16 +1930,21 @@
     }
 
     .custom-select-dropdown::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
     }
 
     .custom-select-dropdown::-webkit-scrollbar-track {
-      background: transparent;
+      background: #f1f5f9;
+      border-radius: 4px;
     }
 
     .custom-select-dropdown::-webkit-scrollbar-thumb {
-      background: var(--border);
+      background: var(--green);
       border-radius: 4px;
+    }
+
+    .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+      background: var(--green-dark);
     }
 
     /* Shop Status Card & Toggle Switch */
@@ -4229,20 +4236,28 @@
     <div class="modal" style="max-width:600px">
       <div class="modal-title" style="color:var(--green-dark)"><i class="fa fa-file-contract"></i> Terms &amp;
         Conditions Acceptance</div>
-      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">
         Welcome to TynTron! As a seller on our platform, please review and accept our Terms of Use and Seller Guidelines
         before accessing your dashboard.
       </p>
-      <div id="sellerTermsBody"
-        style="max-height:280px;overflow-y:auto;background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:.82rem;line-height:1.5;color:var(--text);margin-bottom:16px;white-space:pre-wrap">
-      </div>
-      <div style="margin-bottom:16px">
+
+      <div style="margin-bottom:16px;display:flex;flex-direction:column;gap:10px">
         <label
           style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--green-dark)">
           <input type="checkbox" id="sellerTermsCheckbox" style="accent-color:var(--green);width:18px;height:18px">
-          <span>I have read and accept the TynTron Terms &amp; Conditions and Seller Guidelines *</span>
+          <span>I have read and accept the <a href="#" onclick="toggleSellerTermsBox(event)" style="color:var(--green);text-decoration:underline;font-weight:700">TynTron Terms &amp; Conditions and Seller Guidelines</a> *</span>
         </label>
+        <div>
+          <button type="button" class="btn btn-sm btn-ghost" id="sellerTermsCollapseBtn" onclick="toggleSellerTermsBox(event)" style="font-size:.8rem;color:var(--green-dark);padding:4px 10px;border:1px dashed var(--green-light);border-radius:6px">
+            <i class="fa fa-eye" id="sellerTermsEyeIcon"></i> <span id="sellerTermsToggleLabel">View Terms &amp; Conditions</span>
+          </button>
+        </div>
       </div>
+
+      <div id="sellerTermsBody"
+        style="display:none;max-height:280px;overflow-y:auto;background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:.82rem;line-height:1.5;color:var(--text);margin-bottom:16px;white-space:pre-wrap">
+      </div>
+
       <div id="sellerTermsErr"
         style="display:none;color:var(--danger);font-size:.8rem;margin-bottom:10px;font-weight:600"></div>
       <div class="modal-actions">
@@ -7713,6 +7728,7 @@
 
     function saveLocalBusinessRequest(reqData) {
       if (!reqData || (!reqData.email && !reqData.requestId)) return;
+      if (db) return; // Production mode: Database is active, bypass local storage write
       try {
         const list = getLocalBusinessRequests();
         const reqId = reqData.requestId || reqData.id || ('req_' + (reqData.email || 'anon').toLowerCase());
@@ -7736,19 +7752,14 @@
     }
 
     async function fsLoadBusinessRequests() {
-      let requests = getLocalBusinessRequests();
       if (db) {
         try {
           const snap = await db.collection('business_requests').get();
           const remoteList = snap.docs.map(d => ({ ...d.data(), requestId: d.id }));
-          const map = new Map();
-          requests.forEach(r => map.set(r.requestId || (r.email || '').toLowerCase(), r));
-          remoteList.forEach(r => map.set(r.requestId || (r.email || '').toLowerCase(), r));
-          requests = Array.from(map.values());
-          localStorage.setItem('hb_business_requests', JSON.stringify(requests));
+          return remoteList;
         } catch (e) { console.warn('Could not load business requests from Firestore:', e.message); }
       }
-      return requests;
+      return getLocalBusinessRequests();
     }
 
     /* Returns {ok:true} on success or {ok:false, reason} on failure, instead of
@@ -7833,15 +7844,15 @@
     }
 
     async function fsLoadConfig() {
-      // Load from localStorage first as fallback
+      if (db) {
+        try {
+          const d = await db.collection('config').doc('site').get();
+          if (d.exists) { SITE_CONFIG = d.data(); return; }
+        } catch (e) { }
+      }
       try {
         const cached = localStorage.getItem('pl_site_config');
         if (cached) { const p = JSON.parse(cached); if (p && typeof p === 'object') SITE_CONFIG = { ...SITE_CONFIG, ...p }; }
-      } catch (e) { }
-      if (!db) return;
-      try {
-        const d = await db.collection('config').doc('site').get();
-        if (d.exists) { SITE_CONFIG = d.data(); localStorage.setItem('pl_site_config', JSON.stringify(SITE_CONFIG)); }
       } catch (e) { }
     }
 
@@ -7885,13 +7896,14 @@
     }
 
     async function fsSaveConfig(patch) {
-      SITE_CONFIG = { ...SITE_CONFIG, ...patch };
-      try { localStorage.setItem('pl_site_config', JSON.stringify(SITE_CONFIG)); } catch (e) { }
+      if (patch) SITE_CONFIG = { ...SITE_CONFIG, ...patch };
       if (db) {
         try {
           const ok = await ensureAdminAuth();
           if (ok) await db.collection('config').doc('site').set(SITE_CONFIG, { merge: true });
         } catch (e) { }
+      } else {
+        try { localStorage.setItem('pl_site_config', JSON.stringify(SITE_CONFIG)); } catch (e) { }
       }
     }
 
@@ -11793,7 +11805,10 @@
     function loadImages() {
       try { const s = localStorage.getItem('pl_imgs_v3'); return s ? JSON.parse(s) : {}; } catch (e) { return {}; }
     }
-    function saveData(d) { try { localStorage.setItem('pl_dir_v3', JSON.stringify(d)); } catch (e) { } }
+    function saveData(d) {
+      if (db) return; // In production mode with Database active, bypass local storage cache
+      try { localStorage.setItem('pl_dir_v3', JSON.stringify(d)); } catch (e) { }
+    }
 
     let DATA = loadData();
     let IMGS = loadImages();
@@ -11870,10 +11885,36 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       return false;
     }
 
+    function toggleSellerTermsBox(e) {
+      if (e) e.preventDefault();
+      const bodyEl = document.getElementById('sellerTermsBody');
+      const labelEl = document.getElementById('sellerTermsToggleLabel');
+      const iconEl = document.getElementById('sellerTermsEyeIcon');
+      if (!bodyEl) return;
+      const isHidden = bodyEl.style.display === 'none' || !bodyEl.style.display;
+      if (isHidden) {
+        bodyEl.style.display = 'block';
+        if (labelEl) labelEl.textContent = 'Hide Terms & Conditions';
+        if (iconEl) iconEl.className = 'fa fa-eye-slash';
+      } else {
+        bodyEl.style.display = 'none';
+        if (labelEl) labelEl.textContent = 'View Terms & Conditions';
+        if (iconEl) iconEl.className = 'fa fa-eye';
+      }
+    }
+
     function openSellerTermsModal() {
       const termsText = SITE_CONFIG.terms || DEFAULT_SELLER_TERMS;
       const bodyEl = document.getElementById('sellerTermsBody');
-      if (bodyEl) bodyEl.textContent = termsText;
+      if (bodyEl) {
+        bodyEl.textContent = termsText;
+        bodyEl.style.display = 'none';
+      }
+      const labelEl = document.getElementById('sellerTermsToggleLabel');
+      if (labelEl) labelEl.textContent = 'View Terms & Conditions';
+      const iconEl = document.getElementById('sellerTermsEyeIcon');
+      if (iconEl) iconEl.className = 'fa fa-eye';
+
       const chk = document.getElementById('sellerTermsCheckbox');
       if (chk) chk.checked = false;
       const errEl = document.getElementById('sellerTermsErr');
@@ -12566,9 +12607,11 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
     loadNotifState();
 
     function saveNotifState() {
-      try { localStorage.setItem('hb_notifications', JSON.stringify(_notifList)); } catch (e) { }
-      try { localStorage.setItem('hb_auto_approve_businesses', JSON.stringify(_autoApproveBusinesses)); } catch (e) { }
-      try { localStorage.setItem('hb_notif_audit_logs', JSON.stringify(_auditLogs)); } catch (e) { }
+      if (!db) {
+        try { localStorage.setItem('hb_notifications', JSON.stringify(_notifList)); } catch (e) { }
+        try { localStorage.setItem('hb_auto_approve_businesses', JSON.stringify(_autoApproveBusinesses)); } catch (e) { }
+        try { localStorage.setItem('hb_notif_audit_logs', JSON.stringify(_auditLogs)); } catch (e) { }
+      }
       updateUnreadNotifBadges();
     }
 
@@ -17018,35 +17061,7 @@ Together, we grow stronger — one order at a time.`;
         return { exists: true, status: 'approved', message: msgAlreadyReg };
       }
 
-      // 2. Local DATA (vendors array) check
-      if (Array.isArray(DATA) && DATA.length) {
-        const vMatch = DATA.find(v => {
-          const e1 = (v.email || '').trim().toLowerCase();
-          const e2 = (v.ownerEmail || '').trim().toLowerCase();
-          return e1 === cleanEmail || e2 === cleanEmail;
-        });
-        if (vMatch) {
-          return { exists: true, status: 'approved', message: msgAlreadyReg };
-        }
-      }
-
-      // 3. LocalStorage & pending requests check
-      const localReqs = getLocalBusinessRequests();
-      const pendingMatch = localReqs.find(r => (r.email || '').trim().toLowerCase() === cleanEmail);
-      if (pendingMatch) {
-        const st = (pendingMatch.status || 'pending').toLowerCase();
-        if (st === 'approved') {
-          return { exists: true, status: 'approved', message: msgAlreadyReg };
-        } else if (st === 'pending') {
-          return { exists: true, status: 'pending', message: 'Your email address is already registered and your application is currently pending admin approval. Please wait for review or contact admin.' };
-        }
-      }
-
-      if (localStorage.getItem('hb_business_last_pw_' + cleanEmail) || localStorage.getItem('hb_reset_pw_' + cleanEmail)) {
-        return { exists: true, status: 'approved', message: msgAlreadyReg };
-      }
-
-      // 4. Firestore checks (isolated try-catch so failure in one collection won't bypass the rest)
+      // 2. Production Firestore Database Checks (Primary Source of Truth)
       if (db) {
         if (auth && !auth.currentUser) {
           try { await auth.signInAnonymously(); } catch (e) { }
@@ -17107,6 +17122,35 @@ Together, we grow stronger — one order at a time.`;
         } catch (e) {
           console.warn('business_requests check:', e.message);
         }
+
+        return { exists: false };
+      }
+
+      // 3. Offline / Fallback checks ONLY when db is unavailable
+      if (Array.isArray(DATA) && DATA.length) {
+        const vMatch = DATA.find(v => {
+          const e1 = (v.email || '').trim().toLowerCase();
+          const e2 = (v.ownerEmail || '').trim().toLowerCase();
+          return e1 === cleanEmail || e2 === cleanEmail;
+        });
+        if (vMatch) {
+          return { exists: true, status: 'approved', message: msgAlreadyReg };
+        }
+      }
+
+      const localReqs = getLocalBusinessRequests();
+      const pendingMatch = localReqs.find(r => (r.email || '').trim().toLowerCase() === cleanEmail);
+      if (pendingMatch) {
+        const st = (pendingMatch.status || 'pending').toLowerCase();
+        if (st === 'approved') {
+          return { exists: true, status: 'approved', message: msgAlreadyReg };
+        } else if (st === 'pending') {
+          return { exists: true, status: 'pending', message: 'Your email address is already registered and your application is currently pending admin approval. Please wait for review or contact admin.' };
+        }
+      }
+
+      if (localStorage.getItem('hb_business_last_pw_' + cleanEmail) || localStorage.getItem('hb_reset_pw_' + cleanEmail)) {
+        return { exists: true, status: 'approved', message: msgAlreadyReg };
       }
 
       return { exists: false };
@@ -17118,34 +17162,12 @@ Together, we grow stronger — one order at a time.`;
       if (cleanMobile.length < 10) return { exists: false };
       const msgAlreadyReg = 'This mobile number is already registered to a business account. Please log in instead or use a different mobile number.';
 
-      // Check local pending requests by mobile
-      const localReqs = getLocalBusinessRequests();
-      const pendingMobMatch = localReqs.find(r => {
-        const m1 = (r.mobile || '').replace(/\D/g, '').slice(-10);
-        const m2 = (r.phone || '').replace(/\D/g, '').slice(-10);
-        return m1 === cleanMobile || m2 === cleanMobile;
-      });
-      if (pendingMobMatch) {
-        return { exists: true, message: msgAlreadyReg };
-      }
-
       // 1. Test account check
       if (cleanMobile === (TEST_ACCOUNTS_CONFIG?.seller?.mobile || '').replace(/\D/g, '').slice(-10)) {
         return { exists: true, message: msgAlreadyReg };
       }
 
-      // 2. Local DATA (vendors array) check
-      if (Array.isArray(DATA) && DATA.length) {
-        const vMatch = DATA.find(v => {
-          const m1 = (v.phone || '').replace(/\D/g, '').slice(-10);
-          const m2 = (v.whatsapp || '').replace(/\D/g, '').slice(-10);
-          const m3 = (v.mobile || '').replace(/\D/g, '').slice(-10);
-          return m1 === cleanMobile || m2 === cleanMobile || m3 === cleanMobile;
-        });
-        if (vMatch) return { exists: true, message: msgAlreadyReg };
-      }
-
-      // 3. Firestore checks
+      // 2. Production Firestore Database Checks (Primary Source of Truth)
       if (db) {
         if (auth && !auth.currentUser) {
           try { await auth.signInAnonymously(); } catch (e) { }
@@ -17186,6 +17208,29 @@ Together, we grow stronger — one order at a time.`;
           });
           if (reqDoc) return { exists: true, message: msgAlreadyReg };
         } catch (e) { }
+
+        return { exists: false };
+      }
+
+      // 3. Offline / Fallback checks ONLY when db is unavailable
+      if (Array.isArray(DATA) && DATA.length) {
+        const vMatch = DATA.find(v => {
+          const m1 = (v.phone || '').replace(/\D/g, '').slice(-10);
+          const m2 = (v.whatsapp || '').replace(/\D/g, '').slice(-10);
+          const m3 = (v.mobile || '').replace(/\D/g, '').slice(-10);
+          return m1 === cleanMobile || m2 === cleanMobile || m3 === cleanMobile;
+        });
+        if (vMatch) return { exists: true, message: msgAlreadyReg };
+      }
+
+      const localReqs = getLocalBusinessRequests();
+      const pendingMobMatch = localReqs.find(r => {
+        const m1 = (r.mobile || '').replace(/\D/g, '').slice(-10);
+        const m2 = (r.phone || '').replace(/\D/g, '').slice(-10);
+        return m1 === cleanMobile || m2 === cleanMobile;
+      });
+      if (pendingMobMatch) {
+        return { exists: true, message: msgAlreadyReg };
       }
 
       return { exists: false };

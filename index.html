@@ -4156,7 +4156,8 @@
           <div class="token-wrap">
             <input type="password" id="businessPwInput" placeholder="Password"
               onkeydown="if(event.key==='Enter')businessLogin(document.getElementById('businessEmailInput').value,document.getElementById('businessPwInput').value)">
-            <button class="token-toggle" type="button" onclick="togglePwVis('businessPwInput',this)"><i class="fa fa-eye"></i> Show</button>
+            <button class="token-toggle" type="button" onclick="togglePwVis('businessPwInput',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
         </div>
         <p style="text-align:right;margin-bottom:16px"><a href="#"
@@ -4195,16 +4196,20 @@
         <div class="form-group" style="margin-bottom:12px">
           <label>New Password *</label>
           <div class="token-wrap">
-            <input type="password" id="businessResetNewPwInput" placeholder="Minimum 6 characters">
-            <button class="token-toggle" type="button" onclick="togglePwVis('businessResetNewPwInput',this)"><i class="fa fa-eye"></i> Show</button>
+            <input type="password" id="businessResetNewPwInput" placeholder="Minimum 6 characters" oninput="validateRealtimePassword('businessResetNewPwInput', 'businessResetNewPw_hint', 'businessResetConfirmPwInput', 'businessResetConfirmPw_hint')">
+            <button class="token-toggle" type="button" onclick="togglePwVis('businessResetNewPwInput',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
+          <div id="businessResetNewPw_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
         </div>
         <div class="form-group" style="margin-bottom:16px">
           <label>Confirm New Password *</label>
           <div class="token-wrap">
-            <input type="password" id="businessResetConfirmPwInput" placeholder="Re-enter new password">
-            <button class="token-toggle" type="button" onclick="togglePwVis('businessResetConfirmPwInput',this)"><i class="fa fa-eye"></i> Show</button>
+            <input type="password" id="businessResetConfirmPwInput" placeholder="Re-enter new password" oninput="validateRealtimeConfirmPassword('businessResetNewPwInput', 'businessResetConfirmPwInput', 'businessResetConfirmPw_hint')">
+            <button class="token-toggle" type="button" onclick="togglePwVis('businessResetConfirmPwInput',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
+          <div id="businessResetConfirmPw_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
         </div>
 
         <div style="display:flex;gap:8px;justify-content:center">
@@ -4260,16 +4265,20 @@
         <div class="form-group full">
           <label>New Password *</label>
           <div class="token-wrap">
-            <input type="password" id="sfpw_new" placeholder="At least 6 characters">
-            <button class="token-toggle" type="button" onclick="togglePwVis('sfpw_new',this)"><i class="fa fa-eye"></i> Show</button>
+            <input type="password" id="sfpw_new" placeholder="At least 6 characters" oninput="validateRealtimePassword('sfpw_new', 'sfpw_new_hint', 'sfpw_confirm', 'sfpw_confirm_hint')">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sfpw_new',this)"><i class="fa fa-eye"></i>
+              Show</button>
           </div>
+          <div id="sfpw_new_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
         </div>
         <div class="form-group full">
           <label>Confirm New Password *</label>
           <div class="token-wrap">
-            <input type="password" id="sfpw_confirm" placeholder="Re-enter new password">
-            <button class="token-toggle" type="button" onclick="togglePwVis('sfpw_confirm',this)"><i class="fa fa-eye"></i> Show</button>
+            <input type="password" id="sfpw_confirm" placeholder="Re-enter new password" oninput="validateRealtimeConfirmPassword('sfpw_new', 'sfpw_confirm', 'sfpw_confirm_hint')">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sfpw_confirm',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
+          <div id="sfpw_confirm_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
         </div>
       </div>
       <div id="sfpw_err" style="display:none;color:var(--danger);font-size:.8rem;margin-top:10px;font-weight:600"></div>
@@ -4656,7 +4665,8 @@
           <div class="token-wrap">
             <input type="password" id="ca_adminPw" placeholder="Your Firebase account password"
               onkeydown="if(event.key==='Enter')caAdminActivate()">
-            <button class="token-toggle" type="button" onclick="togglePwVis('ca_adminPw',this)"><i class="fa fa-eye"></i> Show</button>
+            <button class="token-toggle" type="button" onclick="togglePwVis('ca_adminPw',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
         </div>
         <p id="caAdminErr" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
@@ -4698,7 +4708,8 @@
           <div class="token-wrap">
             <input type="password" id="reAuthPw" placeholder="Password"
               onkeydown="if(event.key==='Enter')_reAuthSubmit()">
-            <button class="token-toggle" type="button" onclick="togglePwVis('reAuthPw',this)"><i class="fa fa-eye"></i> Show</button>
+            <button class="token-toggle" type="button" onclick="togglePwVis('reAuthPw',this)"><i class="fa fa-eye"></i>
+              Show</button>
           </div>
         </div>
         <p id="reAuthErr" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
@@ -5430,19 +5441,26 @@
           Mobile verified</div>
 
         <div class="form-section-label"><i class="fa fa-lock"></i> Step 3 — Create Your Password</div>
+        <!-- <div class="form-group full" style="margin-bottom:6px">
+          <div style="font-size:.76rem;color:var(--text-muted);line-height:1.4"><i class="fa fa-circle-info" style="color:var(--green)"></i> Password requires a combination of uppercase letters (A-Z), lowercase letters (a-z), numbers (0-9), and special characters (e.g. Pass@123).</div>
+        </div> -->
         <div class="form-group">
           <label>Password *</label>
           <div class="token-wrap">
-            <input type="password" id="sr_password" placeholder="At least 6 characters">
-            <button class="token-toggle" type="button" onclick="togglePwVis('sr_password',this)"><i class="fa fa-eye"></i> Show</button>
+            <input type="password" id="sr_password" placeholder="Enter Password" oninput="validateRealtimePassword('sr_password', 'sr_password_hint', 'sr_password2', 'sr_password2_hint')">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sr_password',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
+          <div id="sr_password_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
         </div>
         <div class="form-group">
           <label>Confirm Password *</label>
           <div class="token-wrap">
-            <input type="password" id="sr_password2" placeholder="Re-enter password">
-            <button class="token-toggle" type="button" onclick="togglePwVis('sr_password2',this)"><i class="fa fa-eye"></i> Show</button>
+            <input type="password" id="sr_password2" placeholder="Re-enter password" oninput="validateRealtimeConfirmPassword('sr_password', 'sr_password2', 'sr_password2_hint')">
+            <button class="token-toggle" type="button" onclick="togglePwVis('sr_password2',this)"><i
+                class="fa fa-eye"></i> Show</button>
           </div>
+          <div id="sr_password2_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
         </div>
 
         <div class="form-section-label"><i class="fa fa-image"></i> Business Photo</div>
@@ -5974,7 +5992,8 @@
             <a class="sidebar-nav-item" onclick="openNotificationFeedModal();closeLeftSidebar()">
               <i class="fa fa-bell" style="color:var(--green)"></i> <span>Notifications Feed</span>
             </a>
-            <a class="sidebar-nav-item" id="sidebarCarpoolLink" onclick="switchCustomerPage('carpool');closeLeftSidebar()">
+            <a class="sidebar-nav-item" id="sidebarCarpoolLink"
+              onclick="switchCustomerPage('carpool');closeLeftSidebar()">
               <i class="fa fa-car-side"></i> <span>Resident Carpool</span>
             </a>
           </div>
@@ -6715,8 +6734,8 @@
             class="fa fa-address-book"></i> Customers</button>
         <button class="admin-tab-btn" data-tab="config" onclick="switchAdminTab('config')"><i class="fa fa-sliders"></i>
           Site Config</button>
-        <button class="admin-tab-btn" data-tab="features" onclick="switchAdminTab('features')"><i class="fa fa-eye-slash"
-            style="color:var(--green)"></i> Hide / Show Features</button>
+        <button class="admin-tab-btn" data-tab="features" onclick="switchAdminTab('features')"><i
+            class="fa fa-eye-slash" style="color:var(--green)"></i> Hide / Show Features</button>
         <button class="admin-tab-btn" data-tab="ads" onclick="switchAdminTab('ads')"><i class="fa fa-rectangle-ad"></i>
           Ads Carousel</button>
         <button class="admin-tab-btn" data-tab="stats" onclick="switchAdminTab('stats')"><i class="fa fa-chart-bar"></i>
@@ -6752,7 +6771,9 @@
         <!-- Offering Type (read-only display based on selection) -->
         <div class="form-group full">
           <label>Offering Type *</label>
-          <input type="text" id="mi_type_display" readonly style="width:100%;padding:8px 12px;border:1.5px solid var(--border,#e5e7eb);border-radius:8px;font-size:.85rem;background:var(--cream,#f8f9fa);color:var(--text);font-weight:700;cursor:not-allowed" value="Item">
+          <input type="text" id="mi_type_display" readonly
+            style="width:100%;padding:8px 12px;border:1.5px solid var(--border,#e5e7eb);border-radius:8px;font-size:.85rem;background:var(--cream,#f8f9fa);color:var(--text);font-weight:700;cursor:not-allowed"
+            value="Item">
           <input type="hidden" id="mi_type" value="item">
         </div>
 
@@ -6781,13 +6802,16 @@
             onchange="handleMenuItemImageUpload(this)">
         </div>
 
-        <div class="form-group"><label>Title / Name *</label><input id="mi_name" placeholder="e.g. Chocolate Cake, Maths Tuition, Consultation" oninput="this.style.borderColor=''"></div>
-        <div class="form-group"><label id="mi_price_label">Cost / Price (₹) *</label><input id="mi_price" type="number" min="0" placeholder="0" oninput="this.style.borderColor=''"></div>
+        <div class="form-group"><label>Title / Name *</label><input id="mi_name"
+            placeholder="e.g. Chocolate Cake, Maths Tuition, Consultation" oninput="this.style.borderColor=''"></div>
+        <div class="form-group"><label id="mi_price_label">Cost / Price (₹) *</label><input id="mi_price" type="number"
+            min="0" placeholder="0" oninput="this.style.borderColor=''"></div>
         <div class="form-group full"><label>Description</label><textarea id="mi_desc" style="min-height:56px"
             placeholder="Detailed description (optional)"></textarea></div>
         <div class="form-group full" style="flex-direction:row;align-items:center;gap:10px">
           <input type="checkbox" id="mi_avail" checked style="width:18px;height:18px;accent-color:var(--green)">
-          <label for="mi_avail" style="text-transform:none;font-size:.88rem;cursor:pointer">Available for ordering / booking</label>
+          <label for="mi_avail" style="text-transform:none;font-size:.88rem;cursor:pointer">Available for ordering /
+            booking</label>
         </div>
       </div>
       <div class="modal-actions">
@@ -11891,8 +11915,9 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const errEl = document.getElementById('sfpw_err');
       if (errEl) errEl.style.display = 'none';
 
-      if (!newPw || newPw.length < 6) {
-        if (errEl) { errEl.textContent = 'New password must be at least 6 characters.'; errEl.style.display = 'block'; }
+      const pwCheck = validateComplexPassword(newPw);
+      if (!pwCheck.valid) {
+        if (errEl) { errEl.textContent = pwCheck.message; errEl.style.display = 'block'; }
         return;
       }
       if (newPw !== confirmPw) {
@@ -12330,8 +12355,9 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         errEl.style.display = 'block';
         return;
       }
-      if (!newPw || newPw.length < 6) {
-        errEl.textContent = 'New password must be at least 6 characters long.';
+      const pwCheck = validateComplexPassword(newPw);
+      if (!pwCheck.valid) {
+        errEl.textContent = pwCheck.message;
         errEl.style.display = 'block';
         return;
       }
@@ -14707,6 +14733,82 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function validateComplexPassword(password) {
+      if (!password) {
+        return { valid: false, message: 'Password is required.' };
+      }
+      if (password.length < 6) {
+        return { valid: false, message: 'Must be at least 6 characters long.' };
+      }
+      if (!/[A-Z]/.test(password)) {
+        return { valid: false, message: 'Must contain at least one uppercase letter (A-Z).' };
+      }
+      if (!/[a-z]/.test(password)) {
+        return { valid: false, message: 'Must contain at least one lowercase letter (a-z).' };
+      }
+      if (!/[0-9]/.test(password)) {
+        return { valid: false, message: 'Must contain at least one number (0-9).' };
+      }
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)) {
+        return { valid: false, message: 'Must contain at least one special character (e.g. @, #, $, !).' };
+      }
+      return { valid: true, message: '' };
+    }
+
+    function validateRealtimePassword(pwInputId, hintId, confInputId, confHintId) {
+      const input = document.getElementById(pwInputId);
+      const hint = document.getElementById(hintId);
+      if (!input || !hint) return;
+
+      const val = input.value;
+      if (!val) {
+        hint.innerHTML = '';
+        input.style.borderColor = '';
+        if (confInputId && confHintId) validateRealtimeConfirmPassword(pwInputId, confInputId, confHintId);
+        return;
+      }
+
+      const res = validateComplexPassword(val);
+      if (!res.valid) {
+        input.style.borderColor = '#dc2626';
+        hint.style.color = '#dc2626';
+        hint.innerHTML = `<i class="fa fa-circle-xmark"></i> ${res.message}`;
+      } else {
+        input.style.borderColor = '#166534';
+        hint.style.color = '#166534';
+        hint.innerHTML = `<i class="fa fa-circle-check"></i> Strong password format ✓`;
+      }
+
+      if (confInputId && confHintId) {
+        validateRealtimeConfirmPassword(pwInputId, confInputId, confHintId);
+      }
+    }
+
+    function validateRealtimeConfirmPassword(pwInputId, confInputId, confHintId) {
+      const pwInput = document.getElementById(pwInputId);
+      const confInput = document.getElementById(confInputId);
+      const confHint = document.getElementById(confHintId);
+      if (!confInput || !confHint) return;
+
+      const val = confInput.value;
+      if (!val) {
+        confHint.innerHTML = '';
+        confInput.style.borderColor = '';
+        return;
+      }
+
+      const mainVal = pwInput ? pwInput.value : '';
+      if (val !== mainVal) {
+        confInput.style.borderColor = '#dc2626';
+        confHint.style.color = '#dc2626';
+        confHint.innerHTML = `<i class="fa fa-circle-xmark"></i> Passwords do not match`;
+      } else {
+        confInput.style.borderColor = '#166534';
+        confHint.style.color = '#166534';
+        confHint.innerHTML = `<i class="fa fa-circle-check"></i> Passwords match ✓`;
+      }
+    }
+
     /* ═══════════ MODAL ═══════════ */
     function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('open'); }
     function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('open'); }
@@ -14937,23 +15039,18 @@ Together, we grow stronger — one order at a time.`;
     }
 
     /* ═══════════ SOCIETY BOXES (Blinkit/UC-style picker, replaces the plain dropdown) ═══════════ */
-    let _societyBoxesExpanded = false;
     let _societyBoxesList = [];
     function renderSocietyBoxes(list) {
       _societyBoxesList = list || [];
       const row = document.getElementById('societyBoxRow');
       if (!row) return;
-      const visible = _societyBoxesExpanded ? _societyBoxesList : _societyBoxesList.slice(0, 5);
+      const limit = (SITE_CONFIG.maxSocietiesDisplay !== undefined && SITE_CONFIG.maxSocietiesDisplay !== '') ? (parseInt(SITE_CONFIG.maxSocietiesDisplay, 10) || 5) : 5;
+      const visible = _societyBoxesList.slice(0, limit);
       let html = visible.map((s, i) => `
     <button type="button" class="society-box${s.name === selectedSociety ? ' active' : ''}" onclick="selectSocietyBox(${_societyBoxesList.indexOf(s)})">
       ${_societyIconBox('society-box-icon')}
       <span class="society-box-label">${esc(s.name)}</span>
     </button>`).join('');
-      if (_societyBoxesList.length > 5) {
-        html += _societyBoxesExpanded
-          ? `<button type="button" class="society-box society-box-more" onclick="_societyBoxesExpanded=false;renderSocietyBoxes(_societyBoxesList)"><span class="society-box-icon"><i class="fa fa-chevron-up"></i></span><span class="society-box-label">Show less</span></button>`
-          : `<button type="button" class="society-box society-box-more" onclick="_societyBoxesExpanded=true;renderSocietyBoxes(_societyBoxesList)"><span class="society-box-icon"><i class="fa fa-chevron-down"></i></span><span class="society-box-label">Show more (${_societyBoxesList.length - 5})</span></button>`;
-      }
       row.innerHTML = html;
     }
     function selectSocietyBox(idx) {
@@ -17363,7 +17460,8 @@ Together, we grow stronger — one order at a time.`;
         return;
       }
       if (!_srMobileVerified || !_vnMobile) { errEl.textContent = 'Please verify your mobile number first.'; errEl.style.display = 'block'; return; }
-      if (!password || password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+      const pwCheck = validateComplexPassword(password);
+      if (!pwCheck.valid) { errEl.textContent = pwCheck.message; errEl.style.display = 'block'; return; }
       if (password !== password2) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
       if (!society) { errEl.textContent = 'Please select your society.'; errEl.style.display = 'block'; return; }
       if (!venture) { errEl.textContent = 'Venture / Business Name is required.'; errEl.style.display = 'block'; return; }
@@ -19051,7 +19149,8 @@ Together, we grow stronger — one order at a time.`;
       const emailCheck = await checkBusinessEmailStatus(_srEmailOtp.email || (document.getElementById('sr_email')?.value || '').trim());
       if (emailCheck.exists) { errEl.textContent = emailCheck.message; errEl.style.display = 'block'; return; }
       if (!_srMobileVerified || !_vnMobile) { errEl.textContent = 'Please verify your mobile number first.'; errEl.style.display = 'block'; return; }
-      if (!password || password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+      const pwCheck = validateComplexPassword(password);
+      if (!pwCheck.valid) { errEl.textContent = pwCheck.message; errEl.style.display = 'block'; return; }
       if (password !== password2) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
       if (!society) { errEl.textContent = 'Please select your society.'; errEl.style.display = 'block'; return; }
       if (!venture) { errEl.textContent = 'Venture / Business Name is required.'; errEl.style.display = 'block'; return; }
@@ -20324,16 +20423,18 @@ Together, we grow stronger — one order at a time.`;
       <div class="form-group">
         <label>New Password</label>
         <div class="token-wrap">
-          <input type="password" id="cp_new" placeholder="At least 6 characters" autocomplete="new-password">
+          <input type="password" id="cp_new" placeholder="e.g. Pass@123" autocomplete="new-password" oninput="validateRealtimePassword('cp_new', 'cp_new_hint', 'cp_confirm', 'cp_confirm_hint')">
           <button class="token-toggle" type="button" onclick="togglePwVis('cp_new',this)"><i class="fa fa-eye"></i> Show</button>
         </div>
+        <div id="cp_new_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
       </div>
       <div class="form-group">
         <label>Confirm New Password</label>
         <div class="token-wrap">
-          <input type="password" id="cp_confirm" placeholder="Repeat new password" autocomplete="new-password">
+          <input type="password" id="cp_confirm" placeholder="Repeat new password" autocomplete="new-password" oninput="validateRealtimeConfirmPassword('cp_new', 'cp_confirm', 'cp_confirm_hint')">
           <button class="token-toggle" type="button" onclick="togglePwVis('cp_confirm',this)"><i class="fa fa-eye"></i> Show</button>
         </div>
+        <div id="cp_confirm_hint" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
       </div>
     </div>
     <div id="cp_status" style="display:none;margin-bottom:10px;font-size:.84rem;padding:10px 14px;border-radius:8px"></div>
@@ -20370,7 +20471,8 @@ Together, we grow stronger — one order at a time.`;
       const newPw = (newEl.value || '').trim();
       const confPw = (confEl.value || '').trim();
       if (!curPw) { setStatus('Please enter your current password.', false); curEl.focus(); return; }
-      if (newPw.length < 6) { setStatus('New password must be at least 6 characters.', false); newEl.focus(); return; }
+      const pwCheck = validateComplexPassword(newPw);
+      if (!pwCheck.valid) { setStatus(pwCheck.message, false); newEl.focus(); return; }
       if (newPw === curPw) { setStatus('New password must be different from current password.', false); newEl.focus(); return; }
       if (newPw !== confPw) { setStatus('New password and Confirm new password do not match.', false); confEl.focus(); return; }
 
@@ -21561,7 +21663,7 @@ Together, we grow stronger — one order at a time.`;
       }
       const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
       localLogs.forEach(l => {
-        if (!logs.find(existing => existing.createdAt === l.createdAt && existing.targetEmail === l.targetEmail)) {
+        if (!logs.find(existing => existing.createdAt === l.createdAt && existing.targetEmail === l.targetEmail && existing.targetName === l.targetName)) {
           logs.push(l);
         }
       });
@@ -21570,14 +21672,14 @@ Together, we grow stronger — one order at a time.`;
         <div class="s-card">
           <div class="s-card-title"><i class="fa fa-history" style="color:var(--green)"></i> Admin Deletion History & Audit Logs (${logs.length})</div>
           <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:14px">
-            Audit log records of all business removals, including admin email, admin mobile number, reason for deletion, and timestamp.
+            Audit log records of all customer &amp; seller business account removals, including admin email, admin mobile number, deletion reason, and timestamp.
           </p>
           ${logs.length ? `
             <div style="overflow-x:auto">
               <table class="menu-table" style="width:100%">
                 <thead>
                   <tr>
-                    <th>Removed Target</th>
+                    <th>Type / Removed Target</th>
                     <th>Deletion Reason</th>
                     <th>Removed By (Admin Email)</th>
                     <th>Admin Mobile Number</th>
@@ -21585,18 +21687,39 @@ Together, we grow stronger — one order at a time.`;
                   </tr>
                 </thead>
                 <tbody>
-                  ${logs.map(l => `
-                    <tr>
+                  ${logs.map(l => {
+                    const isCustomer = l.type === 'customer_deletion' || (!l.vendorId && !l.ventureName && l.targetMobile);
+                    const typeBadge = isCustomer
+                      ? `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;background:#e0f2fe;color:#0369a1;margin-bottom:4px"><i class="fa fa-user"></i> Customer</span>`
+                      : `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;background:#fef3c7;color:#92400e;margin-bottom:4px"><i class="fa fa-store"></i> Business Account</span>`;
+                    
+                    let targetNameStr = l.targetName || l.ventureName || l.name;
+                    if (!targetNameStr || targetNameStr === 'undefined') {
+                      targetNameStr = (l.targetMobile && l.targetMobile !== 'undefined' && l.targetMobile !== '—') ? l.targetMobile
+                        : ((l.targetEmail && l.targetEmail !== 'undefined' && l.targetEmail !== '—') ? l.targetEmail : (isCustomer ? 'Customer' : 'Seller Account'));
+                    }
+
+                    let contactDetails = [];
+                    if (l.targetMobile && l.targetMobile !== '—' && l.targetMobile !== 'undefined') {
+                      contactDetails.push(`<i class="fa fa-phone" style="font-size:0.7rem"></i> ${esc(l.targetMobile)}`);
+                    }
+                    if (l.targetEmail && l.targetEmail !== '—' && l.targetEmail !== 'undefined') {
+                      contactDetails.push(`<i class="fa fa-envelope" style="font-size:0.7rem"></i> ${esc(l.targetEmail)}`);
+                    }
+                    const contactStr = contactDetails.length ? contactDetails.join(' &nbsp;•&nbsp; ') : '—';
+
+                    return `<tr>
                       <td>
-                        <strong>${esc(l.targetName || l.targetEmail)}</strong><br>
-                        <span style="font-size:0.75rem;color:var(--text-muted)">${esc(l.targetEmail)}</span>
+                        ${typeBadge}<br>
+                        <strong style="font-size:0.9rem;color:var(--text)">${esc(targetNameStr)}</strong><br>
+                        <span style="font-size:0.76rem;color:var(--text-muted)">${contactStr}</span>
                       </td>
-                      <td style="font-weight:600;color:#c62828">${esc(l.reason || 'No reason specified')}</td>
+                      <td style="font-weight:600;color:#c62828">${esc(l.reason || 'Admin deleted record')}</td>
                       <td style="font-size:0.82rem;font-weight:600">${esc(l.deletedByAdminEmail || l.performedBy || 'Admin')}</td>
                       <td style="font-size:0.82rem;color:var(--green-dark);font-weight:700">${esc(l.deletedByAdminMobile || l.adminMobile || '—')}</td>
                       <td style="font-size:0.78rem;color:var(--text-muted)">${esc(l.createdAt ? new Date(l.createdAt).toLocaleString() : 'Recently')}</td>
-                    </tr>
-                  `).join('')}
+                    </tr>`;
+                  }).join('')}
                 </tbody>
               </table>
             </div>` : `<div class="empty-state" style="padding:20px"><i class="fa fa-clipboard-list"></i><p>No deletion history logged yet.</p></div>`}
@@ -21618,6 +21741,14 @@ Together, we grow stronger — one order at a time.`;
           <label>Max Sub-Categories Allowed</label>
           <input type="number" id="cfg_maxSubCategories" min="1" max="10" value="${SITE_CONFIG.maxSubCategories || 3}" placeholder="3">
           <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Maximum number of sub-categories a business can select during registration (default: 3).</p>
+        </div>
+      </div>
+      <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
+        <div style="font-weight:600;margin-bottom:10px;color:var(--text)"><i class="fa fa-building" style="color:var(--green)"></i> Customer UI — Maximum Societies Display Limit</div>
+        <div class="form-group" style="margin:0">
+          <label>Max Societies to Display on Customer Home Screen</label>
+          <input type="number" id="cfg_maxSocietiesDisplay" min="1" max="100" value="${SITE_CONFIG.maxSocietiesDisplay || 5}" placeholder="5">
+          <p style="font-size:.76rem;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Set how many societies to show initially in the grid on the customer home screen before the "Show more" button (e.g. 5, 8, 10). Default is 5.</p>
         </div>
       </div>
       <div class="form-group full" style="background:var(--cream);border-radius:10px;padding:14px;border:1.5px solid var(--border);grid-column:1/-1">
@@ -22174,6 +22305,7 @@ Together, we grow stronger — one order at a time.`;
         showBusinessOperatingSchedule: SITE_CONFIG.showBusinessOperatingSchedule !== false,
         subscriptionShowTiming: SITE_CONFIG.subscriptionShowTiming || 'registration',
         maxSubCategories: parseInt(document.getElementById('cfg_maxSubCategories')?.value) || 3,
+        maxSocietiesDisplay: parseInt(document.getElementById('cfg_maxSocietiesDisplay')?.value, 10) || 5,
         businessCanDeliverLabel: document.getElementById('cfg_businessCanDeliverLabel').value.trim() || 'Will you be able to deliver within the society? *',
         fbUrl: document.getElementById('cfg_fbUrl').value.trim(),
         igUrl: document.getElementById('cfg_igUrl').value.trim(),
@@ -22287,6 +22419,131 @@ Together, we grow stronger — one order at a time.`;
   </div>`;
     }
 
+    async function adminDeleteCustomer(docId, name, mobile, email) {
+      if (!FB_READY || !db) { showToast('Firebase not configured'); return; }
+
+      const confirmRes = await confirmAction({
+        title: 'Delete Customer Record',
+        message: `Are you sure you want to permanently delete customer "${name || 'Customer'}" (${mobile || email || docId})?`,
+        warning: 'This action cannot be undone. It will remove the customer profile, saved addresses, order logs, reviews, and all associated database records.',
+        showInput: true,
+        inputLabel: 'Reason for deletion (optional):',
+        inputPlaceholder: 'Enter reason for deleting customer profile (e.g. User requested account removal)...',
+        confirmText: 'Delete Customer',
+        cancelText: 'Cancel'
+      });
+
+      const isConfirmed = typeof confirmRes === 'object' ? confirmRes.confirmed : confirmRes;
+      if (!isConfirmed) return;
+
+      const deletionReason = (typeof confirmRes === 'object' && confirmRes.value) ? confirmRes.value : 'Admin deleted customer profile';
+
+      try {
+        const adminEmail = auth?.currentUser?.email || 'Admin';
+        const adminUid = auth?.currentUser?.uid || window._adminUid || '';
+        const adminMobile = localStorage.getItem('hb_customerMobile') || 'Admin';
+
+        // 1. Delete main document from 'customers' collection
+        if (docId) {
+          await db.collection('customers').doc(docId).delete().catch(() => {});
+        }
+
+        // 2. Delete any matching docs in 'customers' by mobile or email
+        if (mobile) {
+          const mobSnap = await db.collection('customers').where('mobile', '==', mobile).get().catch(() => null);
+          if (mobSnap && !mobSnap.empty) {
+            const batch = db.batch();
+            mobSnap.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit().catch(() => {});
+          }
+        }
+        if (email) {
+          const emSnap = await db.collection('customers').where('email', '==', email).get().catch(() => null);
+          if (emSnap && !emSnap.empty) {
+            const batch = db.batch();
+            emSnap.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit().catch(() => {});
+          }
+        }
+
+        // 3. Delete matching orders in 'orders' & 'order_logs' collections
+        const orderQueries = [];
+        if (mobile) {
+          orderQueries.push(db.collection('orders').where('customerMobile', '==', mobile).get().catch(() => null));
+          orderQueries.push(db.collection('orders').where('phone', '==', mobile).get().catch(() => null));
+          orderQueries.push(db.collection('order_logs').where('customerMobile', '==', mobile).get().catch(() => null));
+          orderQueries.push(db.collection('order_logs').where('phone', '==', mobile).get().catch(() => null));
+        }
+        if (email) {
+          orderQueries.push(db.collection('orders').where('customerEmail', '==', email).get().catch(() => null));
+          orderQueries.push(db.collection('order_logs').where('customerEmail', '==', email).get().catch(() => null));
+        }
+        const orderSnaps = await Promise.all(orderQueries);
+        for (const snap of orderSnaps) {
+          if (snap && !snap.empty) {
+            const batch = db.batch();
+            snap.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit().catch(() => {});
+          }
+        }
+
+        // 4. Delete matching reviews in 'reviews' collection
+        const reviewQueries = [];
+        if (mobile) reviewQueries.push(db.collection('reviews').where('mobile', '==', mobile).get().catch(() => null));
+        if (email) reviewQueries.push(db.collection('reviews').where('email', '==', email).get().catch(() => null));
+        const reviewSnaps = await Promise.all(reviewQueries);
+        for (const snap of reviewSnaps) {
+          if (snap && !snap.empty) {
+            const batch = db.batch();
+            snap.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit().catch(() => {});
+          }
+        }
+
+        // 5. LocalStorage cleanup if current customer matches
+        const activeCustMobile = localStorage.getItem('hb_customerMobile');
+        if (activeCustMobile && (activeCustMobile === mobile || activeCustMobile === docId)) {
+          localStorage.removeItem('hb_customerMobile');
+          if (typeof currentCustomer !== 'undefined') currentCustomer = null;
+        }
+
+        // 6. Record Deletion Audit Log
+        const logEntry = {
+          type: 'customer_deletion',
+          targetName: (name && name !== '—' && name !== 'undefined') ? name : (mobile || email || 'Customer'),
+          targetMobile: (mobile && mobile !== 'undefined') ? mobile : '—',
+          targetEmail: (email && email !== 'undefined') ? email : '—',
+          targetDocId: docId,
+          reason: deletionReason,
+          deletedByAdminEmail: adminEmail,
+          deletedByAdminUid: adminUid,
+          deletedByAdminMobile: adminMobile,
+          performedBy: adminEmail,
+          adminMobile: adminMobile,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: new Date().toISOString()
+        };
+
+        try {
+          await db.collection('deletion_history').add(logEntry);
+          await db.collection('admin_deletion_logs').add(logEntry);
+        } catch (e) {
+          console.warn('Failed to record customer deletion log:', e);
+        }
+
+        const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
+        localLogs.unshift(logEntry);
+        localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
+
+        showToast(`Customer "${name || mobile}" deleted permanently from database ✓`);
+        const c = document.getElementById('adminTabContent');
+        if (c) renderAdminCustomers(c);
+      } catch (e) {
+        showToast('Error deleting customer: ' + e.message);
+        console.error('Customer deletion error:', e);
+      }
+    }
+
     async function renderAdminCustomers(c) {
       c.innerHTML = `<div class="s-card"><p style="color:var(--text-muted)"><i class="fa fa-spinner fa-spin"></i> Loading customers…</p></div>`;
       if (!FB_READY || !db) { c.innerHTML = `<div class="s-card"><p style="color:var(--text-muted)">Firebase not configured.</p></div>`; return; }
@@ -22300,7 +22557,7 @@ Together, we grow stronger — one order at a time.`;
           const data = d.data();
           const mob = data.mobile || (d.id && !d.id.includes('@') ? d.id : '');
           const em = (data.email && data.email.includes('@')) ? data.email.trim() : (d.id && d.id.includes('@') ? d.id.trim() : '');
-          return { ...data, mobile: mob, email: em };
+          return { ...data, id: d.id, mobile: mob, email: em };
         });
         orderLogs = orderSnap.docs.map(d => d.data());
       } catch (e) {
@@ -22321,23 +22578,34 @@ Together, we grow stronger — one order at a time.`;
       });
       c.innerHTML = `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-address-book" style="color:var(--green)"></i> Registered Customers (${customers.length})</div>
-    <table class="menu-table">
-      <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Address</th><th>Orders</th><th>Total Spend</th></tr></thead>
-      <tbody>${customers.length ? customers.map(cu => {
-        const displayEmail = (cu.email && cu.email.includes('@')) ? esc(cu.email) : '—';
-        const displayMobile = esc(cu.mobile || '—');
-        const ordersCount = (cu.email && orderCountKey[cu.email]) || (cu.mobile && orderCountKey[cu.mobile]) || 0;
-        const spendTotal = (cu.email && spendKey[cu.email]) || (cu.mobile && spendKey[cu.mobile]) || 0;
-        return `<tr>
-          <td style="font-weight:600">${esc(cu.name || '—')}</td>
-          <td>${displayEmail}</td>
-          <td>${displayMobile}</td>
-          <td style="font-size:.78rem">${esc(cu.address) || '—'}</td>
-          <td style="text-align:center;font-weight:700;color:${ordersCount > 0 ? 'var(--green)' : 'var(--text-muted)'}">${ordersCount}</td>
-          <td style="text-align:center">₹${spendTotal}</td>
-        </tr>`;
-      }).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No customers yet.</td></tr>`}</tbody>
-    </table>
+    <div style="overflow-x:auto">
+      <table class="menu-table" style="width:100%">
+        <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Address</th><th>Orders</th><th>Total Spend</th><th style="text-align:center">Action</th></tr></thead>
+        <tbody>${customers.length ? customers.map(cu => {
+          const displayEmail = (cu.email && cu.email.includes('@')) ? esc(cu.email) : '—';
+          const displayMobile = esc(cu.mobile || '—');
+          const ordersCount = (cu.email && orderCountKey[cu.email]) || (cu.mobile && orderCountKey[cu.mobile]) || 0;
+          const spendTotal = (cu.email && spendKey[cu.email]) || (cu.mobile && spendKey[cu.mobile]) || 0;
+          const docIdEsc = (cu.id || cu.mobile || cu.email || '').replace(/'/g, "\\'");
+          const nameEsc = esc((cu.name || 'Customer').replace(/'/g, "\\'"));
+          const mobEsc = esc((cu.mobile || '').replace(/'/g, "\\'"));
+          const emailEsc = esc((cu.email || '').replace(/'/g, "\\'"));
+          return `<tr>
+            <td style="font-weight:600">${esc(cu.name || '—')}</td>
+            <td>${displayEmail}</td>
+            <td>${displayMobile}</td>
+            <td style="font-size:.78rem">${esc(cu.address) || '—'}</td>
+            <td style="text-align:center;font-weight:700;color:${ordersCount > 0 ? 'var(--green)' : 'var(--text-muted)'}">${ordersCount}</td>
+            <td style="text-align:center">₹${spendTotal}</td>
+            <td style="text-align:center">
+              <button class="btn btn-sm btn-danger" onclick="adminDeleteCustomer('${docIdEsc}', '${nameEsc}', '${mobEsc}', '${emailEsc}')" title="Delete Customer Profile & Database Records">
+                <i class="fa fa-trash"></i> Delete
+              </button>
+            </td>
+          </tr>`;
+        }).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">No customers yet.</td></tr>`}</tbody>
+      </table>
+    </div>
   </div>`;
     }
 

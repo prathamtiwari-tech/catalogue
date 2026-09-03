@@ -4144,6 +4144,8 @@
         <div class="form-group" style="margin-bottom:12px">
           <label>Email</label>
           <input type="email" id="businessEmailInput" placeholder="business@email.com"
+            oninput="this.style.borderColor='';const err=document.getElementById('loginErr');if(err){err.style.display='none';}"
+            onblur="if(this.value.trim() && !isValidEmail(this.value)){this.style.borderColor='#dc2626';const err=document.getElementById('loginErr');if(err){err.textContent='Please enter a valid email address (e.g. name@example.com)';err.style.color='#c0392b';err.style.display='block';}}"
             onkeydown="if(event.key==='Enter')businessLogin(document.getElementById('businessEmailInput').value,document.getElementById('businessPwInput').value)">
         </div>
         <div class="form-group" style="margin-bottom:8px">
@@ -4566,7 +4568,7 @@
           yet.</p>
         <div class="form-group" style="margin-bottom:14px">
           <label>Mobile Number *</label>
-          <input type="tel" id="ca_mobile" maxlength="15" placeholder="10-digit mobile number"
+          <input type="tel" id="ca_mobile" maxlength="10" placeholder="10-digit mobile number"
             onkeydown="if(event.key==='Enter')caSendOtp()">
         </div>
         <p id="caStep1Err" style="color:#c0392b;font-size:.78rem;margin-bottom:10px;display:none"></p>
@@ -5784,11 +5786,11 @@
             style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:0.9rem;color:#c53030">
             <input type="radio" name="dayScheduleMode" id="dayModeClosed" value="closed"
               onchange="onDayModalModeChange()" style="accent-color:#e53e3e">
-            <span><i class="fa fa-circle-xmark" style="color:#e53e3e"></i> 2. Close shop on <span
+            <span><i class="fa fa-circle-xmark" style="color:#e53e3e"></i> 2. Close business on <span
                 class="dayModalDayText">Tuesday</span> (Mark as Closed)</span>
           </label>
           <div style="margin-top:6px;font-size:0.78rem;color:#9b2c2c;padding-left:26px">
-            If shop is closed, this day will display in red as <strong>CLOSED</strong> on your schedule.
+            If business is closed, this day will display in red as <strong>CLOSED</strong> on your schedule.
           </div>
         </div>
 
@@ -6942,7 +6944,7 @@
       </div>
       <div class="form-group">
         <label>Mobile Number</label>
-        <input id="ct_mobile" type="tel" placeholder="10-digit mobile number" maxlength="15">
+        <input id="ct_mobile" type="tel" placeholder="10-digit mobile number" maxlength="10">
       </div>
       <div class="form-group">
         <label>Subject *</label>
@@ -11977,13 +11979,47 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       });
     }
 
+    function isValidEmail(email) {
+      if (!email || typeof email !== 'string') return false;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim().toLowerCase());
+    }
+
     async function businessLogin(email, password) {
       const errEl = document.getElementById('loginErr');
+      const emailInput = document.getElementById('businessEmailInput');
       const cleanEmail = (email || '').trim().toLowerCase();
       const cleanPw = (password || '').trim();
 
-      if (!cleanEmail || !cleanPw) {
-        if (errEl) { errEl.textContent = 'Please enter both email and password'; errEl.style.display = 'block'; }
+      if (emailInput) emailInput.style.borderColor = '';
+
+      if (!cleanEmail) {
+        if (errEl) {
+          errEl.style.color = '#c0392b';
+          errEl.textContent = 'Please enter your email address.';
+          errEl.style.display = 'block';
+        }
+        if (emailInput) { emailInput.style.borderColor = '#dc2626'; emailInput.focus(); }
+        return;
+      }
+
+      if (!isValidEmail(cleanEmail)) {
+        if (errEl) {
+          errEl.style.color = '#c0392b';
+          errEl.textContent = 'Please enter a valid email address (e.g. name@example.com)';
+          errEl.style.display = 'block';
+        }
+        if (emailInput) { emailInput.style.borderColor = '#dc2626'; emailInput.focus(); }
+        return;
+      }
+
+      if (!cleanPw) {
+        if (errEl) {
+          errEl.style.color = '#c0392b';
+          errEl.textContent = 'Please enter your password.';
+          errEl.style.display = 'block';
+        }
+        const pwInput = document.getElementById('businessPwInput');
+        if (pwInput) pwInput.focus();
         return;
       }
 
@@ -12141,16 +12177,16 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
     async function businessForgotPassword() {
       const emailInput = document.getElementById('businessEmailInput');
-      const email = (emailInput ? emailInput.value : '').trim();
+      const email = (emailInput ? emailInput.value : '').trim().toLowerCase();
       const errEl = document.getElementById('loginErr');
 
-      if (!email || !email.includes('@')) {
+      if (!email || !isValidEmail(email)) {
         if (errEl) {
           errEl.style.color = '#c0392b';
-          errEl.textContent = 'Please enter your registered email address above first, then tap "Forgot password?".';
+          errEl.textContent = 'Please enter a valid email address above first (e.g. name@example.com), then tap "Forgot password?".';
           errEl.style.display = 'block';
         }
-        if (emailInput) emailInput.focus();
+        if (emailInput) { emailInput.style.borderColor = '#dc2626'; emailInput.focus(); }
         return;
       }
 
@@ -13321,7 +13357,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const STOP_WORDS = new Set([
         "in", "at", "for", "near", "the", "a", "an", "of", "under", "below", "my", "by",
         "from", "with", "is", "there", "any", "and", "or", "to", "want", "small", "large",
-        "this", "weekend", "delivered", "tower", "shop", "me", "please", "can", "you", "find",
+        "this", "weekend", "delivered", "tower", "business", "me", "please", "can", "you", "find",
         "looking", "get", "need", "rupees", "rs", "inr", "less", "than", "more", "above", "over"
       ]);
 
@@ -14054,7 +14090,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:1.2rem;line-height:1">🔴</span>
             <div>
-              <strong style="color:#c62828;font-size:0.92rem;display:block">Shop Currently Closed</strong>
+              <strong style="color:#c62828;font-size:0.92rem;display:block">Business Currently Closed</strong>
               <span style="font-size:0.8rem;color:#e65100">${esc(statusInfo.customerText || statusInfo.subtext)}</span>
             </div>
           </div>
@@ -14081,20 +14117,31 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const scheduleHtml = `
         <details class="vendor-schedule-details" style="margin-bottom:14px;background:var(--cream,#f8f9fa);border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:10px 14px;font-size:0.83rem">
           <summary style="cursor:pointer;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;user-select:none">
-            <i class="fa fa-clock" style="color:var(--green)"></i> View Shop Operating Hours
+            <i class="fa fa-clock" style="color:var(--green)"></i> View Business Operating Hours
           </summary>
           <div style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;padding-top:8px;border-top:1px dashed var(--border,#e5e7eb)">
             ${DAYS_OF_WEEK.map(day => {
         const dayDateStr = weekDayDates[day];
         const isHolidayDate = closedDatesArr.includes(dayDateStr);
-        let isClosedDay = !openDaysArr.includes(day) || isHolidayDate;
 
+        const dayConfig = (scheduleObj.daySchedules && scheduleObj.daySchedules[day]) || scheduleObj[day] || null;
+
+        let isClosedDay = !openDaysArr.includes(day) || isHolidayDate;
         let dayOpenTime = openTime;
         let dayCloseTime = closeTime;
-        if (scheduleObj[day]) {
-          if (scheduleObj[day].closed) isClosedDay = true;
-          if (scheduleObj[day].open) dayOpenTime = scheduleObj[day].open;
-          if (scheduleObj[day].close) dayCloseTime = scheduleObj[day].close;
+
+        if (dayConfig) {
+          if (dayConfig.isClosed !== undefined) {
+            isClosedDay = !!dayConfig.isClosed || isHolidayDate;
+          } else if (dayConfig.closed !== undefined) {
+            isClosedDay = !!dayConfig.closed || isHolidayDate;
+          }
+
+          if (dayConfig.openTime) dayOpenTime = dayConfig.openTime;
+          else if (dayConfig.open) dayOpenTime = dayConfig.open;
+
+          if (dayConfig.closeTime) dayCloseTime = dayConfig.closeTime;
+          else if (dayConfig.close) dayCloseTime = dayConfig.close;
         }
 
         const hoursText = isClosedDay
@@ -14178,23 +14225,23 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
           orderBtn.disabled = true;
           orderBtn.style.opacity = '0.5';
           orderBtn.style.cursor = 'not-allowed';
-          orderBtn.onclick = function () { showToast('Shop is currently closed. Orders can only be placed when shop opens.'); };
-          orderBtn.innerHTML = '<i class="fa fa-moon"></i> Shop Currently Closed';
+          orderBtn.onclick = function () { showToast('Business is currently closed. Orders can only be placed when business opens.'); };
+          orderBtn.innerHTML = '<i class="fa fa-moon"></i> Business Currently Closed';
           document.getElementById('menuFlatRow').style.display = 'none';
 
           if (callBtn) {
             callBtn.disabled = true;
             callBtn.style.opacity = '0.5';
             callBtn.style.cursor = 'not-allowed';
-            callBtn.title = 'Shop is currently closed';
-            callBtn.onclick = function () { showToast('Shop is currently closed. Contacting vendor is available when shop opens.'); };
+            callBtn.title = 'Business is currently closed';
+            callBtn.onclick = function () { showToast('Business is currently closed. Contacting vendor is available when business opens.'); };
           }
           if (waBtn) {
             waBtn.disabled = true;
             waBtn.style.opacity = '0.5';
             waBtn.style.cursor = 'not-allowed';
-            waBtn.title = 'Shop is currently closed';
-            waBtn.onclick = function () { showToast('Shop is currently closed. Contacting vendor is available when shop opens.'); };
+            waBtn.title = 'Business is currently closed';
+            waBtn.onclick = function () { showToast('Business is currently closed. Contacting vendor is available when business opens.'); };
           }
         } else {
           orderBtn.disabled = false;
@@ -14336,7 +14383,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!_menuVendor || !_catCfg) return;
       const statusInfo = getVendorStatusInfo(_menuVendor);
       if (statusInfo.isClosed) {
-        showToast('Shop is currently closed. Orders can only be placed when shop opens.');
+        showToast('Business is currently closed. Orders can only be placed when business opens.');
         return;
       }
       if (!currentCustomer) { openCustomerAuthModal(); return; }
@@ -14426,7 +14473,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!_menuVendor) return;
       const statusInfo = getVendorStatusInfo(_menuVendor);
       if (statusInfo.isClosed) {
-        showToast('Shop is currently closed. Contacting vendor is available when shop opens.');
+        showToast('Business is currently closed. Contacting vendor is available when business opens.');
         return;
       }
       const mobileEl = document.getElementById('menuCustomerMobile');
@@ -19157,11 +19204,11 @@ Together, we grow stronger — one order at a time.`;
         try {
           await fsSaveVendor(vendor);
         } catch (e) {
-          console.warn('Failed to sync shop status to Firestore:', e);
+          console.warn('Failed to sync business status to Firestore:', e);
         }
       }
 
-      showToast(isOpen ? 'Your shop is now OPEN ✓ (Manual Override)' : 'Your shop is now CLOSED ✕');
+      showToast(isOpen ? 'Your business is now OPEN ✓ (Manual Override)' : 'Your business is now CLOSED ✕');
       if (isOpen) {
         sendReopenEmailsToSubscribers(vendorId);
       }
@@ -19210,7 +19257,7 @@ Together, we grow stronger — one order at a time.`;
         body.innerHTML = `
           <div style="text-align:center;padding:16px 0;color:var(--text-muted)">
             <i class="fa fa-bell-slash" style="font-size:1.5rem;opacity:0.4;margin-bottom:8px;display:block"></i>
-            <p style="font-size:0.86rem;margin:0">No customer notify requests yet. When customers click "Notify Me" while your shop is closed, they will appear here.</p>
+            <p style="font-size:0.86rem;margin:0">No customer notify requests yet. When customers click "Notify Me" while your business is closed, they will appear here.</p>
           </div>`;
         return;
       }
@@ -19223,7 +19270,7 @@ Together, we grow stronger — one order at a time.`;
           <i class="fa fa-paper-plane"></i> Send Reopening Email to All (${requests.length})
         </button>` : `
         <span style="font-size:0.78rem;color:#e65100;background:#fff3e0;border:1px solid #ffe0b2;padding:6px 12px;border-radius:10px;font-weight:600;display:inline-flex;align-items:center;gap:6px">
-          <i class="fa fa-lock"></i> Turn shop OPEN to send reopening emails
+          <i class="fa fa-lock"></i> Turn business OPEN to send reopening emails
         </span>`;
 
       body.innerHTML = `
@@ -19272,13 +19319,13 @@ Together, we grow stronger — one order at a time.`;
 
       const statusInfo = getVendorStatusInfo(vendor);
       if (statusInfo.isClosed) {
-        showToast('Your shop is currently CLOSED. Please turn your shop OPEN before sending reopening emails.');
+        showToast('Your business is currently CLOSED. Please turn your business OPEN before sending reopening emails.');
         return;
       }
 
       const requests = await fsLoadVendorNotifyRequests(vendorId);
       if (!requests.length) {
-        showToast('No customer notify requests found for your shop.');
+        showToast('No customer notify requests found for your business.');
         return;
       }
 
@@ -19368,7 +19415,7 @@ Together, we grow stronger — one order at a time.`;
         delete subs[vendor.id];
         localStorage.setItem('hb_reopen_subscriptions', JSON.stringify(subs));
 
-        const ventureName = vendor.venture || 'Shop';
+        const ventureName = vendor.venture || 'Business';
         const msgText = `🔔 ${ventureName} is now available for delivery.`;
 
         showReopenBannerPopup(vendor, msgText);
@@ -19394,8 +19441,8 @@ Together, we grow stronger — one order at a time.`;
       banner.innerHTML = `
         <div style="font-size:1.6rem;line-height:1">🔔</div>
         <div style="flex:1">
-          <div style="font-weight:700;font-size:0.98rem;margin-bottom:2px">${esc(vendor.venture || 'Shop')} is now OPEN!</div>
-          <div style="font-size:0.86rem;opacity:0.95">${esc(vendor.venture || 'Shop')} is now available for delivery.</div>
+          <div style="font-weight:700;font-size:0.98rem;margin-bottom:2px">${esc(vendor.venture || 'Business')} is now OPEN!</div>
+          <div style="font-size:0.86rem;opacity:0.95">${esc(vendor.venture || 'Business')} is now available for delivery.</div>
         </div>
         <button type="button" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer;opacity:0.8;line-height:1" onclick="this.parentElement.remove()">×</button>
       `;
@@ -19415,7 +19462,7 @@ Together, we grow stronger — one order at a time.`;
 
       const subs = JSON.parse(localStorage.getItem('hb_reopen_subscriptions') || '{}');
       const vendor = DATA.find(v => v.id === vendorId);
-      const ventureName = vendor ? vendor.venture : 'this shop';
+      const ventureName = vendor ? vendor.venture : 'this business';
       const custName = currentCustomer.name || 'Customer';
       const custEmail = currentCustomer.email || '';
       const custMobile = currentCustomer.mobile || currentCustomer.phone || '';
@@ -19548,6 +19595,7 @@ Together, we grow stronger — one order at a time.`;
         // 2. Check weekly open days
         const dayIndex = (now.getDay() + 6) % 7;
         const dayName = DAYS_OF_WEEK[dayIndex];
+        const dayConfig = (schedule.daySchedules && schedule.daySchedules[dayName]) || schedule[dayName] || null;
 
         let openDays = schedule.openDays;
         if (!openDays && typeof schedule === 'object') {
@@ -19557,13 +19605,17 @@ Together, we grow stronger — one order at a time.`;
           openDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         }
 
-        if (!openDays.includes(dayName)) {
+        const isClosedDay = dayConfig
+          ? (dayConfig.isClosed !== undefined ? !!dayConfig.isClosed : !!dayConfig.closed)
+          : !openDays.includes(dayName);
+
+        if (isClosedDay) {
           return true;
         }
 
         // 3. Check open/close time
-        const openTime = schedule.openTime || (schedule[dayName] ? schedule[dayName].open : '10:00');
-        const closeTime = schedule.closeTime || (schedule[dayName] ? schedule[dayName].close : '21:00');
+        const openTime = (dayConfig && (dayConfig.openTime || dayConfig.open)) ? (dayConfig.openTime || dayConfig.open) : (schedule.openTime || '10:00');
+        const closeTime = (dayConfig && (dayConfig.closeTime || dayConfig.close)) ? (dayConfig.closeTime || dayConfig.close) : (schedule.closeTime || '21:00');
 
         if (openTime && closeTime) {
           const curMins = now.getHours() * 60 + now.getMinutes();
@@ -19584,13 +19636,13 @@ Together, we grow stronger — one order at a time.`;
     }
 
     function getVendorStatusInfo(vendor) {
-      if (!vendor) return { isClosed: false, badgeText: 'OPEN', subtext: 'Your shop is active.', customerText: 'This business is active and open for orders.' };
+      if (!vendor) return { isClosed: false, badgeText: 'OPEN', subtext: 'Your Business is active.', customerText: 'This business is active and open for orders.' };
       if (vendor.isClosed === true) {
         return {
           isClosed: true,
           reason: 'manual',
           badgeText: 'CLOSED (MANUAL)',
-          subtext: 'Your shop is manually turned OFF. Customers see a "CLOSED" badge and cannot place orders.',
+          subtext: 'Your Business is manually turned OFF. Customers see a "CLOSED" badge and cannot place orders.',
           customerText: 'This business is currently closed and not accepting new orders at the moment. Please check back later or click "Notify Me".'
         };
       }
@@ -19607,7 +19659,7 @@ Together, we grow stronger — one order at a time.`;
             isClosed: true,
             reason: 'holiday',
             badgeText: 'CLOSED (HOLIDAY)',
-            subtext: `Your shop is closed today (${todayYMD}) for a scheduled holiday/closure.`,
+            subtext: `Your Business is closed today (${todayYMD}) for a scheduled holiday/closure.`,
             customerText: `This business is closed today for a scheduled holiday or special event. Please check back tomorrow or click "Notify Me".`
           };
         }
@@ -19628,7 +19680,7 @@ Together, we grow stronger — one order at a time.`;
             isClosed: true,
             reason: 'schedule_day',
             badgeText: 'CLOSED (SCHEDULE)',
-            subtext: `Your shop is closed today (${dayName}).`,
+            subtext: `Your Business is closed today (${dayName}).`,
             customerText: `This business is closed today (${dayName}). Please check operating days or click "Notify Me" to get notified when open.`
           };
         }
@@ -19655,7 +19707,7 @@ Together, we grow stronger — one order at a time.`;
               isClosed: true,
               reason: 'schedule_time',
               badgeText: 'CLOSED (SCHEDULE)',
-              subtext: `Your shop is currently closed. Today's operating hours: ${formatTime12h(openTime)} – ${formatTime12h(closeTime)}.`,
+              subtext: `Your business is currently closed. Today's operating hours: ${formatTime12h(openTime)} – ${formatTime12h(closeTime)}.`,
               customerText: `This business is currently closed for the day. Operating hours today: ${formatTime12h(openTime)} – ${formatTime12h(closeTime)}.`
             };
           }
@@ -19666,7 +19718,7 @@ Together, we grow stronger — one order at a time.`;
         isClosed: false,
         reason: 'open',
         badgeText: 'OPEN',
-        subtext: 'Your shop is active and accepting customer orders.',
+        subtext: 'Your business is active and accepting customer orders.',
         customerText: 'This business is active and open for customer orders.'
       };
     }
@@ -19868,17 +19920,17 @@ Together, we grow stronger — one order at a time.`;
       const scheduleCard = `
         <div class="s-card" style="margin-bottom:20px">
           <div class="s-card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-            <span><i class="fa fa-clock" style="color:var(--green)"></i> Shop Operating Schedule &amp; Calendar</span>
+            <span><i class="fa fa-clock" style="color:var(--green)"></i> Business Operating Schedule &amp; Calendar</span>
           </div>
 
           <!-- Master Checkbox 1: Custom Operating Schedule Toggle -->
           <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
             <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;font-size:0.92rem;color:var(--text)">
               <input type="checkbox" id="sf_useScheduleToggle" ${v.useSchedule !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessScheduleUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
-              <span>Do you want a custom shop schedule date and time?</span>
+              <span>Do you want a custom business schedule?</span>
             </label>
             <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;padding-left:30px">
-              Enable daily opening and closing hours and weekly schedule for your shop.
+              Enable daily opening and closing hours and weekly schedule for your business.
             </div>
           </div>
 
@@ -19924,10 +19976,10 @@ Together, we grow stronger — one order at a time.`;
           <div style="background:var(--cream,#f8f9fa);border:1.5px solid var(--border,#e5e7eb);border-radius:14px;padding:16px;margin-bottom:16px">
             <label style="display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;font-size:0.92rem;color:var(--text)">
               <input type="checkbox" id="sf_useCalendarToggle" ${v.useCalendarClosures !== false ? 'checked' : ''} ${isDeact ? 'disabled' : ''} onchange="toggleBusinessCalendarUse(this.checked)" style="accent-color:var(--green);width:18px;height:18px">
-              <span>Do you want to schedule shop closures for specific dates or calendar holidays?</span>
+              <span>Do you want to schedule business closures for specific dates or calendar holidays?</span>
             </label>
             <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;padding-left:30px">
-              Set specific upcoming dates (like festive holidays or personal days off) when your shop will automatically remain closed.
+              Set specific upcoming dates (like festive holidays or personal days off) when your business will automatically remain closed.
             </div>
           </div>
 
@@ -20261,7 +20313,7 @@ Together, we grow stronger — one order at a time.`;
         }
       }
 
-      showToast('Shop Schedule saved successfully ✓');
+      showToast('Business Schedule saved successfully ✓');
       renderBusinessPanel();
       renderAll();
     }
@@ -20617,6 +20669,50 @@ Together, we grow stronger — one order at a time.`;
   </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px">No vendors match "${q}"</td></tr>`;
     }
 
+    let _adminAccountsCache = [];
+
+    function renderAccountRow(a) {
+      const v = DATA.find(d => d.id === a.vendorId);
+      const subStatus = a.subscriptionStatus || (v && v.subscriptionStatus) || 'none';
+      const subExpiry = a.subscriptionExpiry || (v && v.subscriptionExpiry) || null;
+      const isSubExpired = subStatus === 'active' && subExpiry && new Date(subExpiry) < new Date();
+      const displayStatus = isSubExpired ? 'expired' : subStatus;
+      let subBadge = '<span style="color:var(--text-muted);font-size:.75rem">None</span>';
+      if (displayStatus === 'active') subBadge = `<span style="background:#e6f4ea;color:#137333;font-size:.72rem;padding:2px 6px;border-radius:8px;font-weight:700">ACTIVE (${a.subscriptionPlan || (v && v.subscriptionPlan) || 'sub'})</span>`;
+      else if (displayStatus === 'expired') subBadge = '<span style="background:#fee2e2;color:#dc2626;font-size:.72rem;padding:2px 6px;border-radius:8px;font-weight:700">EXPIRED</span>';
+
+      return `<tr>
+        <td><strong>${a.displayName || '—'}</strong></td>
+        <td style="font-size:.78rem">${a.email || ''}</td>
+        <td style="font-size:.78rem">${v ? v.venture : '(unassigned)'}</td>
+        <td>${subBadge}${subExpiry ? `<br><span style="font-size:.68rem;color:var(--text-muted)">Exp: ${new Date(subExpiry).toLocaleDateString()}</span>` : ''}</td>
+        <td>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 30)" title="Grant 30-Day Monthly Subscription (+30 Days)" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-calendar-days" style="color:#2563eb;margin-right:3px"></i> +30 Days</button>
+            <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 365)" title="Grant 1-Year Annual Subscription (+1 Year)" style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-crown" style="color:#d97706;margin-right:3px"></i> +1 Year</button>
+            <button class="btn btn-sm" onclick="adminSetVendorItemLimit('${a.uid}', '${a.vendorId}')" title="Set Max Item/Menu Limit for Seller" style="background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-layer-group" style="color:#a855f7;margin-right:3px"></i> Limit (${v ? (getVendorMaxItems(v) < 9999 ? getVendorMaxItems(v) : '∞') : '—'})</button>
+            <button class="btn btn-sm" onclick="adminCancelSubscription('${a.uid}', '${a.vendorId}')" title="Cancel Subscription" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-weight:600;padding:4px 8px;white-space:nowrap;cursor:pointer"><i class="fa fa-ban" style="color:#dc2626;margin-right:3px"></i> Cancel</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${a.uid}','${a.email}')" title="Delete Business Account" style="padding:4px 8px;cursor:pointer"><i class="fa fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>`;
+    }
+
+    function filterAdminAccounts(q) {
+      q = (q || '').toLowerCase().trim();
+      const list = q ? (_adminAccountsCache || []).filter(a => {
+        const nameMatch = (a.displayName || '').toLowerCase().includes(q);
+        const emailMatch = (a.email || '').toLowerCase().includes(q);
+        const v = DATA.find(d => d.id === a.vendorId);
+        const vendorMatch = v ? (v.venture || '').toLowerCase().includes(q) : false;
+        return nameMatch || emailMatch || vendorMatch;
+      }) : (_adminAccountsCache || []);
+
+      const tbody = document.querySelector('#adminAccountsTable tbody');
+      if (!tbody) return;
+      tbody.innerHTML = list.length ? list.map(renderAccountRow).join('') : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">No business accounts match "${q}"</td></tr>`;
+    }
+
     async function renderAdminAccounts(c) {
       if (!FB_READY) {
         c.innerHTML = `<div class="s-card"><p style="color:var(--text-muted)">Firebase not configured. Business accounts require Firebase Auth.</p></div>`;
@@ -20642,6 +20738,7 @@ Together, we grow stronger — one order at a time.`;
           }
         }
       }
+      _adminAccountsCache = accounts;
       c.innerHTML = `<div class="s-card">
     <div class="s-card-title"><i class="fa fa-user-plus" style="color:var(--green)"></i> Create Business Account</div>
     <div class="form-grid">
@@ -20662,34 +20759,12 @@ Together, we grow stronger — one order at a time.`;
   <div class="s-card">
     <div class="s-card-title"><i class="fa fa-users" style="color:var(--green)"></i> Business Accounts (${accounts.length})</div>
     ${accountsErr ? `<div style="color:var(--danger);font-size:.82rem;padding:8px 0"><i class="fa fa-exclamation-triangle"></i> ${accountsErr}</div>` : ''}
-    ${accounts.length ? `<table class="menu-table">
+    <div style="margin-bottom:12px;margin-top:10px">
+      <input id="adminAccountSearch" type="text" placeholder="Search sellers by name, email, or vendor…" oninput="filterAdminAccounts(this.value)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;background:var(--bg-card);color:var(--text)">
+    </div>
+    ${accounts.length ? `<table class="menu-table" id="adminAccountsTable">
       <thead><tr><th>Name</th><th>Email</th><th>Vendor</th><th>Subscription</th><th>Actions</th></tr></thead>
-      <tbody>${accounts.map(a => {
-        const v = DATA.find(d => d.id === a.vendorId);
-        const subStatus = a.subscriptionStatus || (v && v.subscriptionStatus) || 'none';
-        const subExpiry = a.subscriptionExpiry || (v && v.subscriptionExpiry) || null;
-        const isSubExpired = subStatus === 'active' && subExpiry && new Date(subExpiry) < new Date();
-        const displayStatus = isSubExpired ? 'expired' : subStatus;
-        let subBadge = '<span style="color:var(--text-muted);font-size:.75rem">None</span>';
-        if (displayStatus === 'active') subBadge = `<span style="background:#e6f4ea;color:#137333;font-size:.72rem;padding:2px 6px;border-radius:8px;font-weight:700">ACTIVE (${a.subscriptionPlan || (v && v.subscriptionPlan) || 'sub'})</span>`;
-        else if (displayStatus === 'expired') subBadge = '<span style="background:#fee2e2;color:#dc2626;font-size:.72rem;padding:2px 6px;border-radius:8px;font-weight:700">EXPIRED</span>';
-
-        return `<tr>
-          <td><strong>${a.displayName || '—'}</strong></td>
-          <td style="font-size:.78rem">${a.email}</td>
-          <td style="font-size:.78rem">${v ? v.venture : '(unassigned)'}</td>
-          <td>${subBadge}${subExpiry ? `<br><span style="font-size:.68rem;color:var(--text-muted)">Exp: ${new Date(subExpiry).toLocaleDateString()}</span>` : ''}</td>
-          <td>
-            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-              <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 30)" title="Grant 30-Day Monthly Subscription (+30 Days)" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-calendar-days" style="color:#2563eb;margin-right:3px"></i> +30 Days</button>
-              <button class="btn btn-sm" onclick="adminGrantSubscription('${a.uid}', '${a.vendorId}', 365)" title="Grant 1-Year Annual Subscription (+1 Year)" style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-crown" style="color:#d97706;margin-right:3px"></i> +1 Year</button>
-              <button class="btn btn-sm" onclick="adminSetVendorItemLimit('${a.uid}', '${a.vendorId}')" title="Set Max Item/Menu Limit for Seller" style="background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe;font-weight:600;padding:4px 9px;white-space:nowrap;cursor:pointer"><i class="fa fa-layer-group" style="color:#a855f7;margin-right:3px"></i> Limit (${v ? (getVendorMaxItems(v) < 9999 ? getVendorMaxItems(v) : '∞') : '—'})</button>
-              <button class="btn btn-sm" onclick="adminCancelSubscription('${a.uid}', '${a.vendorId}')" title="Cancel Subscription" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-weight:600;padding:4px 8px;white-space:nowrap;cursor:pointer"><i class="fa fa-ban" style="color:#dc2626;margin-right:3px"></i> Cancel</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteBusinessAccount('${a.uid}','${a.email}')" title="Delete Business Account" style="padding:4px 8px;cursor:pointer"><i class="fa fa-trash"></i></button>
-            </div>
-          </td>
-        </tr>`;
-      }).join('')}</tbody>
+      <tbody>${accounts.map(renderAccountRow).join('')}</tbody>
     </table>`: `<div class="empty-state" style="padding:20px"><i class="fa fa-users"></i><p>No business accounts yet.</p></div>`}
   </div>`;
     }
@@ -21449,7 +21524,7 @@ Together, we grow stronger — one order at a time.`;
       </tbody>
     </table>
     <div style="display:flex;gap:8px">
-      <input id="new_admin_number" placeholder="10-digit mobile number" maxlength="15" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.84rem">
+      <input id="new_admin_number" placeholder="10-digit mobile number" maxlength="10" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.84rem">
       <button class="btn btn-primary btn-sm" onclick="adminAddNumber()"><i class="fa fa-plus"></i> Add Number</button>
     </div>
   </div>

@@ -5303,6 +5303,10 @@
           <input type="text" id="f_contact" placeholder="Full name">
         </div>
         <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="f_email" placeholder="e.g. seller@example.com">
+        </div>
+        <div class="form-group">
           <label>Phone Number</label>
           <input type="tel" id="f_phone" placeholder="e.g. 9999999999">
         </div>
@@ -11565,7 +11569,15 @@
           whatsapp: req.whatsapp || '', instagram: req.instagram || '', video: req.video || '', url: req.url || '',
           image: req.image || '', society: req.society || 'Prateek Laurel', menu: req.menu || [],
           detailsText: req.detailsText || '', detailsImage: req.detailsImage || '',
-          ownerUid: uid, contactEmail: req.email, active: true,
+          ownerUid: uid, contactEmail: req.email, email: req.email, active: true,
+          currAddress: req.currAddress || req.permAddress || '',
+          permAddress: req.permAddress || '',
+          addressProofType: req.addressProofType || '',
+          addressProofDocUrl: req.addressProofDocUrl || '',
+          panDocUrl: req.panDocUrl || '',
+          aadhaarDocUrl: req.aadhaarDocUrl || '',
+          fssaiDocUrl: req.fssaiDocUrl || '',
+          gstNumber: req.gstNumber || '',
           subscriptionStatus: 'active',
           subscriptionPlan: req.paidPlan || 'monthly',
           subscriptionExpiry: expiryDate.toISOString(),
@@ -14995,29 +15007,29 @@ Together, we grow stronger — one order at a time.`;
       if (!input || !box) return;
       const q = input.value.trim();
 
+      if (!q) {
+        box.innerHTML = '';
+        box.style.display = 'none';
+        return;
+      }
+
       const allSocieties = _societyList() || [];
-      const matches = q ? allSocieties.filter(s =>
+      const matches = allSocieties.filter(s =>
         (s.name || '').toLowerCase().includes(q.toLowerCase()) ||
         (s.address || '').toLowerCase().includes(q.toLowerCase())
-      ) : allSocieties;
+      );
 
       let localHtml = '';
       if (matches.length > 0) {
         localHtml += matches.map(s => `
           <div class="loc-suggest-row" onclick="selectManualSociety('${inputId}', '${suggestionsId}', '${esc(s.name)}')">
-            <i class="fa fa-building" style="color:var(--green)"></i>
+            <i class="fa fa-location-dot" style="color:var(--gold)"></i>
             <div style="display:flex;flex-direction:column;gap:1px">
               <strong style="font-size:.84rem;color:var(--text-main,#222)">${esc(s.name)}</strong>
               ${s.address ? `<span style="font-size:.74rem;color:var(--text-muted,#777)">${esc(s.address)}</span>` : ''}
             </div>
           </div>
         `).join('');
-      }
-
-      if (!q) {
-        box.innerHTML = localHtml || '<div style="padding:10px;color:var(--text-muted);font-size:.82rem">Type to search area or society name</div>';
-        box.style.display = 'block';
-        return;
       }
 
       box.innerHTML = localHtml + `
@@ -16578,7 +16590,7 @@ Together, we grow stronger — one order at a time.`;
     }
 
     function resetForm() {
-      ['venture', 'speciality', 'desc', 'contact', 'flat', 'phone', 'whatsapp', 'instagram', 'video', 'url', 'category_custom', 'subcategory_custom', 'currAddress', 'permAddress', 'addressProofType', 'gstNumber'].forEach(f => {
+      ['venture', 'speciality', 'desc', 'contact', 'email', 'flat', 'phone', 'whatsapp', 'instagram', 'video', 'url', 'category_custom', 'subcategory_custom', 'currAddress', 'permAddress', 'addressProofType', 'gstNumber'].forEach(f => {
         const el = document.getElementById('f_' + f);
         if (el) el.value = '';
       });
@@ -16728,10 +16740,71 @@ Together, we grow stronger — one order at a time.`;
       document.getElementById('tileModal').classList.add('open');
       setTimeout(() => document.getElementById('f_venture').focus(), 120);
     }
-    function openEditModal(id) {
-      const item = DATA.find(d => d.id === id); if (!item) return;
+    async function openEditModal(id) {
+      let item = DATA.find(d => d.id === id) || { id };
       editingId = id;
       document.getElementById('modalTitle').textContent = 'Edit Listing';
+
+      if (db) {
+        try {
+          // 1. Fetch real-time vendor data directly from Firestore Database
+          const vSnap = await db.collection('vendors').doc(id).get();
+          if (vSnap.exists) {
+            item = { ...item, ...vSnap.data() };
+          }
+
+          // 2. Fetch KYC details from Firestore business_requests if available
+          const reqSnap = await db.collection('business_requests').get();
+          const matchReqDoc = reqSnap.docs.find(doc => {
+            const d = doc.data() || {};
+            return (
+              doc.id === id ||
+              d.requestId === id ||
+              d.assignedVendorId === id ||
+              (d.email && item.contactEmail && d.email.toLowerCase() === item.contactEmail.toLowerCase()) ||
+              (d.email && item.email && d.email.toLowerCase() === item.email.toLowerCase()) ||
+              (d.assignedUid && item.ownerUid && d.assignedUid === item.ownerUid)
+            );
+          });
+          if (matchReqDoc) {
+            const reqData = matchReqDoc.data() || {};
+            item = {
+              currAddress: item.currAddress || reqData.currAddress || reqData.currentAddress || '',
+              permAddress: item.permAddress || reqData.permAddress || reqData.permanentAddress || '',
+              addressProofType: item.addressProofType || reqData.addressProofType || '',
+              addressProofDocUrl: item.addressProofDocUrl || reqData.addressProofDocUrl || '',
+              panDocUrl: item.panDocUrl || reqData.panDocUrl || '',
+              aadhaarDocUrl: item.aadhaarDocUrl || reqData.aadhaarDocUrl || '',
+              fssaiDocUrl: item.fssaiDocUrl || reqData.fssaiDocUrl || '',
+              gstNumber: item.gstNumber || reqData.gstNumber || '',
+              email: item.email || item.contactEmail || reqData.email || '',
+              contactEmail: item.contactEmail || reqData.email || '',
+              ...item
+            };
+          }
+
+          // 3. Fetch account email from Firestore accounts if email is still missing
+          if (!item.email || !item.contactEmail) {
+            const accSnap = await db.collection('accounts').get();
+            const accDoc = accSnap.docs.find(doc => {
+              const d = doc.data() || {};
+              return (
+                doc.id === item.ownerUid ||
+                d.vendorId === id ||
+                (d.email && item.contactEmail && d.email.toLowerCase() === item.contactEmail.toLowerCase())
+              );
+            });
+            if (accDoc) {
+              const accData = accDoc.data() || {};
+              if (!item.email) item.email = accData.email || '';
+              if (!item.contactEmail) item.contactEmail = accData.email || '';
+            }
+          }
+        } catch (e) {
+          console.warn('Error fetching fresh vendor details from Firestore:', e.message);
+        }
+      }
+
       initCustomSelect('f_category');
       initCustomSelect('f_subcategory');
       document.getElementById('f_venture').value = item.venture || '';
@@ -16753,6 +16826,8 @@ Together, we grow stronger — one order at a time.`;
       handleCategoryCustomToggle('f_category', 'f_category_custom_group');
       updateSubCategoryDropdown('f_category', 'f_subcategory', item.subCat || '');
       document.getElementById('f_contact').value = item.contact || '';
+      const emailEl = document.getElementById('f_email');
+      if (emailEl) emailEl.value = item.email || item.contactEmail || '';
       document.getElementById('f_flat').value = item.flat || '';
       const currAddrEl = document.getElementById('f_currAddress'); if (currAddrEl) currAddrEl.value = item.currAddress || '';
       const permAddrEl = document.getElementById('f_permAddress'); if (permAddrEl) permAddrEl.value = item.permAddress || '';
@@ -16760,7 +16835,7 @@ Together, we grow stronger — one order at a time.`;
       const gstEl = document.getElementById('f_gstNumber'); if (gstEl) gstEl.value = item.gstNumber || '';
       fToggleAddressProofFile();
       const docLinkConfig = [
-        { key: 'addressProofDocUrl', linkId: 'f_addressProofFileLink', label: 'Address Proof (' + (item.addressProofType || 'Doc') + ')', icon: 'fa-file-contract' },
+        { key: 'addressProofDocUrl', linkId: 'f_addressProofFileLink', label: 'Address Proof' + (item.addressProofType ? ' (' + item.addressProofType + ')' : ''), icon: 'fa-file-contract' },
         { key: 'panDocUrl', linkId: 'f_panFileLink', label: 'PAN Card', icon: 'fa-id-card' },
         { key: 'aadhaarDocUrl', linkId: 'f_aadhaarFileLink', label: 'Aadhaar Card', icon: 'fa-id-badge' },
         { key: 'fssaiDocUrl', linkId: 'f_fssaiFileLink', label: 'FSSAI Certificate', icon: 'fa-certificate' },
@@ -16768,7 +16843,7 @@ Together, we grow stronger — one order at a time.`;
       docLinkConfig.forEach(cfg => {
         const el = document.getElementById(cfg.linkId);
         if (el) {
-          el.innerHTML = item[cfg.key] ? `<a href="${item[cfg.key]}" target="_blank" class="btn btn-sm btn-ghost" style="padding:2px 6px"><i class="fa ${cfg.icon}"></i> View Uploaded ${cfg.label}</a>` : '';
+          el.innerHTML = item[cfg.key] ? `<a href="${item[cfg.key]}" target="_blank" class="btn btn-sm btn-ghost" style="padding:4px 8px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-top:4px"><i class="fa ${cfg.icon}"></i> View Uploaded ${cfg.label}</a>` : '<span style="font-size:.72rem;color:var(--text-muted);display:block;margin-top:2px">No document uploaded yet</span>';
         }
       });
       document.getElementById('f_phone').value = item.phone || '';
@@ -16803,6 +16878,7 @@ Together, we grow stronger — one order at a time.`;
       }
 
       const targetId = editingId || 'u' + Date.now();
+      const email = (document.getElementById('f_email')?.value || '').trim();
 
       async function uploadAdminDoc(file, name) {
         if (!file) return null;
@@ -16841,6 +16917,8 @@ Together, we grow stronger — one order at a time.`;
         venture, speciality: document.getElementById('f_speciality').value.trim(),
         desc: document.getElementById('f_desc').value.trim(),
         contact: document.getElementById('f_contact').value.trim(),
+        contactEmail: email || (prevItem ? prevItem.contactEmail || prevItem.email : ''),
+        email: email || (prevItem ? prevItem.email || prevItem.contactEmail : ''),
         flat: document.getElementById('f_flat').value.trim(),
         currAddress: (document.getElementById('f_currAddress')?.value || '').trim(),
         permAddress: (document.getElementById('f_permAddress')?.value || '').trim(),
@@ -16857,6 +16935,11 @@ Together, we grow stronger — one order at a time.`;
         url: document.getElementById('f_url').value.trim(),
         image: pendingImg === '__remove__' ? '' : (pendingImg || prevImage),
         society: (document.getElementById('f_society') || {}).value || 'Prateek Laurel',
+        ownerUid: prevItem ? prevItem.ownerUid : null,
+        active: prevItem && prevItem.active !== undefined ? prevItem.active : true,
+        subscriptionStatus: prevItem ? prevItem.subscriptionStatus || 'active' : 'active',
+        subscriptionPlan: prevItem ? prevItem.subscriptionPlan || 'monthly' : 'monthly',
+        subscriptionExpiry: prevItem ? prevItem.subscriptionExpiry : null
       };
       if (editingId) { const i = DATA.findIndex(d => d.id === editingId); if (i !== -1) DATA[i] = obj; }
       else DATA.push(obj);
@@ -16870,6 +16953,38 @@ Together, we grow stronger — one order at a time.`;
         if (!uid) { showToast('⚠️ Not saved to cloud — log into admin with Firebase email+password first'); return; }
         try {
           await fsSaveVendor(obj);
+
+          // Update business_requests in Firestore if associated
+          try {
+            const reqSnap = await db.collection('business_requests').get();
+            const matchReqDoc = reqSnap.docs.find(doc => {
+              const d = doc.data() || {};
+              return (
+                doc.id === targetId ||
+                d.requestId === targetId ||
+                d.assignedVendorId === targetId ||
+                (d.email && obj.email && d.email.toLowerCase() === obj.email.toLowerCase())
+              );
+            });
+            if (matchReqDoc) {
+              await db.collection('business_requests').doc(matchReqDoc.id).set({
+                email: obj.email,
+                currAddress: obj.currAddress,
+                permAddress: obj.permAddress,
+                addressProofType: obj.addressProofType,
+                addressProofDocUrl: obj.addressProofDocUrl,
+                panDocUrl: obj.panDocUrl,
+                aadhaarDocUrl: obj.aadhaarDocUrl,
+                fssaiDocUrl: obj.fssaiDocUrl,
+                gstNumber: obj.gstNumber,
+                venture: obj.venture,
+                contact: obj.contact,
+                phone: obj.phone,
+                flat: obj.flat
+              }, { merge: true });
+            }
+          } catch (reqErr) { }
+
           // Reload from server to confirm the write actually persisted
           const fresh = await db.collection('vendors').doc(obj.id).get({ source: 'server' });
           if (fresh.exists) {

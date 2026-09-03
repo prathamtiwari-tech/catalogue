@@ -15229,12 +15229,13 @@ Together, we grow stronger — one order at a time.`;
         const hasMore = subList.length > initialLimit;
 
         let subHtml = visibleSubs.map(sub => {
+          const fallbackMarkup = `<span style="font-size:1.8rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%">${sub.emoji || '🏪'}</span>`;
           const iconMarkup = sub.image
-            ? `<img src="${sub.image}" alt="${esc(sub.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.onerror=null;this.parentNode.innerHTML='${sub.emoji || '🏪'}';">`
-            : (sub.emoji || '🏪');
+            ? `<img src="${sub.image}" alt="${esc(sub.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;display:block" onerror="this.onerror=null;this.parentNode.innerHTML='<span style=\\'font-size:1.8rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%\\'>${sub.emoji || '🏪'}</span>';">`
+            : fallbackMarkup;
           return `
           <button type="button" class="society-box" onclick="onSubCategoryTileClick('${sub.name.replace(/'/g, "\\'")}', '${c.name.replace(/'/g, "\\'")}')">
-            <span class="society-box-icon" style="background:${c.bg || '#FFE8CC'};padding:0;overflow:hidden">${iconMarkup}</span>
+            <span class="society-box-icon" style="background:${c.bg || '#FFE8CC'};padding:0;overflow:hidden;display:flex;align-items:center;justify-content:center">${iconMarkup}</span>
             <span class="society-box-label">${esc(sub.name)}</span>
           </button>`;
         }).join('');

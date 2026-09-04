@@ -7700,16 +7700,25 @@
 
     /* ═══════════ FIRESTORE HELPERS ═══════════ */
     async function fsLoadVendors() {
-      if (!db) return null;
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot load vendors.');
+        return null;
+      }
       try {
         const snap = await db.collection('vendors').get();
-        if (snap.empty) return null;
+        if (snap.empty) return [];
         return snap.docs.map(d => ({ ...d.data(), id: d.id }));
-      } catch (e) { return null; }
+      } catch (e) {
+        showToast('⚠️ Database error loading vendors: ' + e.message);
+        return null;
+      }
     }
 
     async function fsSaveVendor(data) {
-      if (!db) return;
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot save vendor details.');
+        throw new Error('Database unreachable');
+      }
       const ok = await ensureAdminAuth();
       if (!ok) throw new Error('Not authenticated');
       const uid = window._adminUid || auth?.currentUser?.uid || null;
@@ -7718,52 +7727,26 @@
     }
 
     async function fsDeleteVendor(id) {
-      if (!db) return;
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot delete vendor.');
+        return;
+      }
       await db.collection('vendors').doc(id).delete();
       await db.collection('stats').doc(id).delete().catch(() => { });
     }
 
-    function getLocalBusinessRequests() {
-      try {
-        const raw = localStorage.getItem('hb_business_requests');
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) { return []; }
-    }
-
-    function saveLocalBusinessRequest(reqData) {
-      if (!reqData || (!reqData.email && !reqData.requestId)) return;
-      if (db) return; // Production mode: Database is active, bypass local storage write
-      try {
-        const list = getLocalBusinessRequests();
-        const reqId = reqData.requestId || reqData.id || ('req_' + (reqData.email || 'anon').toLowerCase());
-        const existingIdx = list.findIndex(r => (r.requestId && r.requestId === reqId) || (r.email && reqData.email && r.email.toLowerCase() === reqData.email.toLowerCase()));
-        const cleanItem = { ...reqData, requestId: reqId };
-        if (existingIdx >= 0) {
-          list[existingIdx] = { ...list[existingIdx], ...cleanItem };
-        } else {
-          list.unshift(cleanItem);
-        }
-        localStorage.setItem('hb_business_requests', JSON.stringify(list));
-      } catch (e) { }
-    }
-
-    function removeLocalBusinessRequest(requestId) {
-      if (!requestId) return;
-      try {
-        const list = getLocalBusinessRequests().filter(r => r.requestId !== requestId && r.id !== requestId);
-        localStorage.setItem('hb_business_requests', JSON.stringify(list));
-      } catch (e) { }
-    }
-
     async function fsLoadBusinessRequests() {
-      if (db) {
-        try {
-          const snap = await db.collection('business_requests').get();
-          const remoteList = snap.docs.map(d => ({ ...d.data(), requestId: d.id }));
-          return remoteList;
-        } catch (e) { console.warn('Could not load business requests from Firestore:', e.message); }
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot load business requests.');
+        return [];
       }
-      return getLocalBusinessRequests();
+      try {
+        const snap = await db.collection('business_requests').get();
+        return snap.docs.map(d => ({ ...d.data(), requestId: d.id }));
+      } catch (e) {
+        showToast('⚠️ Database error loading business requests: ' + e.message);
+        return [];
+      }
     }
 
     /* Returns {ok:true} on success or {ok:false, reason} on failure, instead of
@@ -7848,16 +7831,16 @@
     }
 
     async function fsLoadConfig() {
-      if (db) {
-        try {
-          const d = await db.collection('config').doc('site').get();
-          if (d.exists) { SITE_CONFIG = d.data(); return; }
-        } catch (e) { }
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot load site configuration.');
+        return;
       }
       try {
-        const cached = localStorage.getItem('pl_site_config');
-        if (cached) { const p = JSON.parse(cached); if (p && typeof p === 'object') SITE_CONFIG = { ...SITE_CONFIG, ...p }; }
-      } catch (e) { }
+        const d = await db.collection('config').doc('site').get();
+        if (d.exists) { SITE_CONFIG = d.data(); }
+      } catch (e) {
+        showToast('⚠️ Database error loading site config: ' + e.message);
+      }
     }
 
     /* ── Re-auth on session expiry ── */
@@ -7901,13 +7884,15 @@
 
     async function fsSaveConfig(patch) {
       if (patch) SITE_CONFIG = { ...SITE_CONFIG, ...patch };
-      if (db) {
-        try {
-          const ok = await ensureAdminAuth();
-          if (ok) await db.collection('config').doc('site').set(SITE_CONFIG, { merge: true });
-        } catch (e) { }
-      } else {
-        try { localStorage.setItem('pl_site_config', JSON.stringify(SITE_CONFIG)); } catch (e) { }
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot save site configuration.');
+        return;
+      }
+      try {
+        const ok = await ensureAdminAuth();
+        if (ok) await db.collection('config').doc('site').set(SITE_CONFIG, { merge: true });
+      } catch (e) {
+        showToast('⚠️ Database error saving site config: ' + e.message);
       }
     }
 
@@ -8884,17 +8869,19 @@
     }
 
     function getDriverDatabase() {
-      try {
-        const saved = localStorage.getItem('hb_driver_db');
-        if (saved) return { ...SEED_DRIVERS, ...JSON.parse(saved) };
-      } catch (e) { }
       return SEED_DRIVERS;
     }
 
-    function saveDriverToDatabase(driverObj) {
-      const db = getDriverDatabase();
-      db[driverObj.mobile] = driverObj;
-      try { localStorage.setItem('hb_driver_db', JSON.stringify(db)); } catch (e) { }
+    async function saveDriverToDatabase(driverObj) {
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot save driver profile.');
+        return;
+      }
+      try {
+        await db.collection('drivers').doc(driverObj.mobile).set(driverObj, { merge: true });
+      } catch (e) {
+        showToast('⚠️ Database error saving driver: ' + e.message);
+      }
     }
 
     let _drvMobileVerified = false;
@@ -9531,32 +9518,39 @@
     ];
 
     function getCarpoolRides() {
-      try {
-        const saved = localStorage.getItem('hb_carpool_rides');
-        if (saved) return JSON.parse(saved);
-      } catch (e) { }
-      localStorage.setItem('hb_carpool_rides', JSON.stringify(DEFAULT_CARPOOL_RIDES));
       return DEFAULT_CARPOOL_RIDES;
     }
 
-    function saveCarpoolRides(list) {
+    async function saveCarpoolRides(list) {
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot save carpool ride.');
+        return;
+      }
       try {
-        localStorage.setItem('hb_carpool_rides', JSON.stringify(list));
-      } catch (e) { }
+        for (const ride of list) {
+          if (ride && ride.id) await db.collection('carpool_rides').doc(ride.id).set(ride, { merge: true });
+        }
+      } catch (e) {
+        showToast('⚠️ Database error saving carpool ride: ' + e.message);
+      }
     }
 
     function getCarpoolBookings() {
-      try {
-        const saved = localStorage.getItem('hb_carpool_bookings');
-        if (saved) return JSON.parse(saved);
-      } catch (e) { }
       return [];
     }
 
-    function saveCarpoolBookings(list) {
+    async function saveCarpoolBookings(list) {
+      if (!db) {
+        showToast('⚠️ Database is unreachable. Cannot save carpool booking.');
+        return;
+      }
       try {
-        localStorage.setItem('hb_carpool_bookings', JSON.stringify(list));
-      } catch (e) { }
+        for (const bk of list) {
+          if (bk && bk.id) await db.collection('carpool_bookings').doc(bk.id).set(bk, { merge: true });
+        }
+      } catch (e) {
+        showToast('⚠️ Database error saving carpool booking: ' + e.message);
+      }
     }
 
     function renderCarpoolPage() {
@@ -11725,9 +11719,11 @@
           }
         }
 
-        const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
-        localLogs.unshift(logData);
-        localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
+        if (!db) {
+          const localLogs = JSON.parse(localStorage.getItem('hb_admin_deletion_logs') || '[]');
+          localLogs.unshift(logData);
+          localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
+        }
         removeLocalBusinessRequest(requestId);
 
         await purgeSellerCompletely(req.email, req.assignedUid, req.assignedVendorId);
@@ -11806,20 +11802,15 @@
       }
     }
 
-    /* ═══════════ DATA (localStorage + Firestore) ═══════════ */
+    /* ═══════════ DATA (Database First) ═══════════ */
     function loadData() {
-      try {
-        const s = localStorage.getItem('pl_dir_v3');
-        if (s) { const c = JSON.parse(s); if (Array.isArray(c) && c.length) return c; }
-        return JSON.parse(JSON.stringify(SEED));
-      } catch (e) { return JSON.parse(JSON.stringify(SEED)); }
+      return JSON.parse(JSON.stringify(SEED));
     }
     function loadImages() {
-      try { const s = localStorage.getItem('pl_imgs_v3'); return s ? JSON.parse(s) : {}; } catch (e) { return {}; }
+      return {};
     }
     function saveData(d) {
-      if (db) return; // In production mode with Database active, bypass local storage cache
-      try { localStorage.setItem('pl_dir_v3', JSON.stringify(d)); } catch (e) { }
+      // In-memory update only; Database is sole source of truth for persistent storage
     }
 
     let DATA = loadData();
@@ -14300,56 +14291,37 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         document.getElementById('menuOrderBtn').style.display = 'none';
         document.getElementById('menuFlatRow').style.display = 'none';
       } else {
-        if (_catCfg.useQty) {
-          list.innerHTML = modalInfoBannerHTML + menu.map(it => {
-            const typeInfo = getOfferingTypeInfo(it.type || 'item');
-            const badgeHtml = `<span style="background:${typeInfo.bg};color:${typeInfo.color};border:1px solid ${typeInfo.border};font-size:.64rem;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:6px;display:inline-flex;align-items:center;gap:3px"><i class="fa ${typeInfo.icon}"></i> ${typeInfo.label}</span>`;
-            const isEnquiryOffering = (!it.price || it.price <= 0);
+        list.innerHTML = modalInfoBannerHTML + menu.map(it => {
+          const typeInfo = getOfferingTypeInfo(it.type || 'item');
+          const badgeHtml = `<span style="background:${typeInfo.bg};color:${typeInfo.color};border:1px solid ${typeInfo.border};font-size:.64rem;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:6px;display:inline-flex;align-items:center;gap:3px"><i class="fa ${typeInfo.icon}"></i> ${typeInfo.label}</span>`;
+          const isEnquiryOffering = (!it.price || it.price <= 0);
 
-            const actionWidget = isEnquiryOffering ? `
-              <label style="display:flex;align-items:center;gap:6px;cursor:${isShopClosed ? 'default' : 'pointer'};background:#f0fdf4;border:1px solid #bbf7d0;padding:4px 10px;border-radius:14px;user-select:none" onclick="event.stopPropagation()">
-                <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : ''} onchange="toggleEnquiryItem('${it.id}', this.checked)" style="accent-color:var(--green);width:16px;height:16px;cursor:pointer">
-                <span style="font-size:.78rem;font-weight:700;color:#166534">Enquire</span>
-              </label>
-            ` : `
-              <div class="qty-ctrl">
-                <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},-1)"`}>−</button>
-                <span class="qty-num" id="qn_${it.id}">0</span>
-                <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},1)"`}>+</button>
-              </div>
-            `;
-
-            return `
-        <div class="menu-item-row" style="${isShopClosed ? 'opacity:0.75' : ''}">
-          ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
-          <div style="flex:1;min-width:0">
-            <div class="menu-item-name">${esc(it.name)} ${badgeHtml}</div>
-            ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
-          </div>
-          <div style="display:flex;align-items:center;flex-shrink:0;gap:6px">
-            ${it.price > 0 ? `<div class="menu-item-price">₹${it.price}</div>` : ''}
-            ${actionWidget}
-          </div>
-        </div>`;
-          }).join('');
-        } else {
-          list.innerHTML = modalInfoBannerHTML + menu.map(it => {
-            const typeInfo = getOfferingTypeInfo(it.type || 'item');
-            const badgeHtml = `<span style="background:${typeInfo.bg};color:${typeInfo.color};border:1px solid ${typeInfo.border};font-size:.64rem;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:6px;display:inline-flex;align-items:center;gap:3px"><i class="fa ${typeInfo.icon}"></i> ${typeInfo.label}</span>`;
-            return `
-        <div class="menu-item-row" style="${isShopClosed ? 'cursor:default;opacity:0.75' : 'cursor:pointer'}" ${isShopClosed ? '' : `onclick="document.getElementById('chk_${it.id}').click()"`}>
-          <label style="flex:1;min-width:0;display:flex;align-items:flex-start;gap:10px;cursor:${isShopClosed ? 'default' : 'pointer'}" onclick="event.stopPropagation()">
-            <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : 'onchange="_updMenuTotal()"'} style="margin-top:3px;accent-color:var(--green);flex-shrink:0;width:16px;height:16px;${isShopClosed ? 'cursor:not-allowed' : ''}">
-            ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
-            <div style="flex:1">
-              <div class="menu-item-name">${esc(it.name)} ${badgeHtml}</div>
-              ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
+          const actionWidget = isEnquiryOffering ? `
+            <label style="display:flex;align-items:center;gap:6px;cursor:${isShopClosed ? 'default' : 'pointer'};background:#f0fdf4;border:1px solid #bbf7d0;padding:4px 10px;border-radius:14px;user-select:none" onclick="event.stopPropagation()">
+              <input type="checkbox" id="chk_${it.id}" ${isShopClosed ? 'disabled' : ''} onchange="toggleEnquiryItem('${it.id}', this.checked)" style="accent-color:var(--green);width:16px;height:16px;cursor:pointer">
+              <span style="font-size:.78rem;font-weight:700;color:#166534">Enquire</span>
+            </label>
+          ` : `
+            <div class="qty-ctrl">
+              <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},-1)"`}>−</button>
+              <span class="qty-num" id="qn_${it.id}">${_menuQtys[it.id] || 0}</span>
+              <button class="qty-btn" ${isShopClosed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : `onclick="chQty('${it.id}',${it.price},1)"`}>+</button>
             </div>
-          </label>
-          ${it.price > 0 ? `<div class="menu-item-price" style="flex-shrink:0;margin-left:10px">₹${it.price}</div>` : `<div class="menu-item-price" style="flex-shrink:0;margin-left:10px;font-size:.72rem;color:var(--text-muted)">Enquiry</div>`}
-        </div>`;
-          }).join('');
-        }
+          `;
+
+          return `
+      <div class="menu-item-row" style="${isShopClosed ? 'opacity:0.75' : ''}">
+        ${(it.image || it.img) ? `<img src="${esc(it.image || it.img)}" onclick="event.stopPropagation();openImagePreview('${esc(it.image || it.img)}', '${esc(it.name)}')" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;transition:transform .15s ease" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Click to preview image" alt="${esc(it.name)}"/>` : ''}
+        <div style="flex:1;min-width:0">
+          <div class="menu-item-name">${esc(it.name)} ${badgeHtml}</div>
+          ${it.desc ? `<div class="menu-item-desc">${esc(it.desc)}</div>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;flex-shrink:0;gap:6px">
+          ${it.price > 0 ? `<div class="menu-item-price">₹${it.price}</div>` : ''}
+          ${actionWidget}
+        </div>
+      </div>`;
+        }).join('');
         const orderBtn = document.getElementById('menuOrderBtn');
         const callBtn = document.getElementById('menuCallBtn');
         const waBtn = document.getElementById('menuWaBtn');
@@ -14503,12 +14475,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       if (!btn) return;
       const icon = currentCustomer ? 'fab fa-whatsapp' : 'fa fa-right-to-bracket';
 
-      let chosen = [];
-      if (_catCfg.useQty) {
-        chosen = menu.filter(it => (_menuQtys[it.id] || 0) > 0 || (document.getElementById('chk_' + it.id)?.checked));
-      } else {
-        chosen = menu.filter(it => document.getElementById('chk_' + it.id)?.checked || (_menuQtys[it.id] || 0) > 0);
-      }
+      let chosen = menu.filter(it => (_menuQtys[it.id] || 0) > 0 || (document.getElementById('chk_' + it.id)?.checked));
 
       const flatRow = document.getElementById('menuFlatRow');
       const statusInfo = getVendorStatusInfo(_menuVendor);
@@ -14526,7 +14493,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
       if (chosen.length) {
         chosen.forEach(it => {
-          const q = _catCfg.useQty ? (_menuQtys[it.id] || 1) : 1;
+          const q = (_menuQtys[it.id] || (document.getElementById('chk_' + it.id)?.checked ? 1 : 0));
           if (it.price && it.price > 0) {
             hasPricedSelected = true;
             total += (it.price * q);
@@ -14569,12 +14536,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
       const menu = (_menuVendor.menu || []).filter(it => it.available !== false);
       const wa = _menuVendor.whatsapp || _menuVendor.phone;
 
-      let chosen = [];
-      if (_catCfg.useQty) {
-        chosen = menu.filter(it => (_menuQtys[it.id] || 0) > 0);
-      } else {
-        chosen = menu.filter(it => document.getElementById('chk_' + it.id)?.checked);
-      }
+      let chosen = menu.filter(it => (_menuQtys[it.id] || 0) > 0 || (document.getElementById('chk_' + it.id)?.checked));
 
       if (!chosen.length && menu.length === 1) {
         chosen = [menu[0]];
@@ -14584,11 +14546,11 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
 
       let total = 0;
       const lines = chosen.map(it => {
-        const q = _catCfg.useQty ? (_menuQtys[it.id] || 1) : 1;
+        const q = (_menuQtys[it.id] || 1);
         if (it.price && it.price > 0) {
           const sub = q * it.price;
           total += sub;
-          return _catCfg.useQty && q > 1 ? `• ${it.name} x${q} — ₹${sub}` : `• ${it.name} — ₹${it.price}`;
+          return q > 1 ? `• ${it.name} x${q} — ₹${sub}` : `• ${it.name} — ₹${it.price}`;
         } else {
           const typeInfo = getOfferingTypeInfo(it.type || 'item');
           return `• ${it.name} (${typeInfo.label} — Enquiry)`;
@@ -14671,6 +14633,10 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
     }
 
     function showVendorContact(type) {
+      if (!currentCustomer) {
+        openCustomerAuthModal();
+        return;
+      }
       if (!_menuVendor) return;
       const statusInfo = getVendorStatusInfo(_menuVendor);
       if (statusInfo.isClosed) {
@@ -14904,6 +14870,10 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         }
         if (m.id === 'sellerFirstPwModal') {
           showToast('⚠️ Setting a new password is required to continue.');
+          return;
+        }
+        if (m.id === 'businessRegModal') {
+          // Do not close seller registration modal on backdrop click to protect filled details
           return;
         }
         m.classList.remove('open');
@@ -17080,10 +17050,7 @@ Together, we grow stronger — one order at a time.`;
       }
     }
 
-    function openBusinessRegModal(prefillEmail) {
-      closeModal('loginModal');
-      initCustomSelect('sr_category');
-      initCustomSelect('sr_subcategory');
+    function resetBusinessRegForm() {
       _srEmailOtp = { email: null, code: null, expiresAt: 0, verified: false };
       _srMobileVerified = false;
       _srPendingImg = null;
@@ -17104,22 +17071,6 @@ Together, we grow stronger — one order at a time.`;
       handleCategoryCustomToggle('sr_category', 'sr_category_custom_group');
       updateSubCategoryDropdown('sr_category', 'sr_subcategory');
 
-      if (prefillEmail && typeof prefillEmail === 'string') {
-        const srEmailEl = document.getElementById('sr_email');
-        if (srEmailEl) {
-          srEmailEl.value = prefillEmail;
-          setTimeout(() => srCheckEmailNotice(), 100);
-        }
-      }
-      document.getElementById('sr_canDeliver').value = 'yes';
-      const canDeliverGroup = document.getElementById('sr_canDeliverGroup');
-      const canDeliverLabel = document.getElementById('sr_canDeliverLabel');
-      if (canDeliverLabel) {
-        canDeliverLabel.textContent = (SITE_CONFIG.businessCanDeliverLabel && SITE_CONFIG.businessCanDeliverLabel.trim()) ? SITE_CONFIG.businessCanDeliverLabel : 'Will you be able to deliver within the society? *';
-      }
-      if (canDeliverGroup) {
-        canDeliverGroup.style.display = (SITE_CONFIG.showBusinessCanDeliver !== false) ? '' : 'none';
-      }
       document.getElementById('sr_emailCodeRow').style.display = 'none';
       document.getElementById('sr_emailVerifiedBadge').style.display = 'none';
       const statusMsgEl = document.getElementById('sr_emailStatusMsg');
@@ -17144,10 +17095,44 @@ Together, we grow stronger — one order at a time.`;
       if (menuList) menuList.innerHTML = '';
       const errEl = document.getElementById('sr_err');
       if (errEl) errEl.style.display = 'none';
+    }
+
+    function openBusinessRegModal(prefillEmail, forceReset = false) {
+      closeModal('loginModal');
+      initCustomSelect('sr_category');
+      initCustomSelect('sr_subcategory');
+
+      const emailVal = document.getElementById('sr_email')?.value?.trim();
+      const mobileVal = document.getElementById('sr_mobile')?.value?.trim();
+      const ventureVal = document.getElementById('sr_venture')?.value?.trim();
+      const pwdVal = document.getElementById('sr_password')?.value;
+      const hasExistingData = !!(emailVal || mobileVal || ventureVal || pwdVal || (_srMenuItems && _srMenuItems.length > 0));
+
+      if (forceReset || !hasExistingData || prefillEmail) {
+        resetBusinessRegForm();
+        if (prefillEmail && typeof prefillEmail === 'string') {
+          const srEmailEl = document.getElementById('sr_email');
+          if (srEmailEl) {
+            srEmailEl.value = prefillEmail;
+            setTimeout(() => srCheckEmailNotice(), 100);
+          }
+        }
+      }
+
+      document.getElementById('sr_canDeliver').value = 'yes';
+      const canDeliverGroup = document.getElementById('sr_canDeliverGroup');
+      const canDeliverLabel = document.getElementById('sr_canDeliverLabel');
+      if (canDeliverLabel) {
+        canDeliverLabel.textContent = (SITE_CONFIG.businessCanDeliverLabel && SITE_CONFIG.businessCanDeliverLabel.trim()) ? SITE_CONFIG.businessCanDeliverLabel : 'Will you be able to deliver within the society? *';
+      }
+      if (canDeliverGroup) {
+        canDeliverGroup.style.display = (SITE_CONFIG.showBusinessCanDeliver !== false) ? '' : 'none';
+      }
+
       srUpdateAddSection();
       buildSocietySelector();
       const srSocietyInput = document.getElementById('sr_society');
-      if (srSocietyInput) {
+      if (srSocietyInput && !srSocietyInput.value) {
         if (srSocietyInput.tagName === 'SELECT') {
           srSocietyInput.insertAdjacentHTML('afterbegin', '<option value="">— Select your society —</option>');
           srSocietyInput.value = '';
@@ -17755,11 +17740,13 @@ Together, we grow stronger — one order at a time.`;
           updatePanelTabs();
           switchPanel('business');
           renderTestModeBanner();
+          resetBusinessRegForm();
           closeModal('businessRegModal');
           showToast(`[TEST MODE] Business registered & logged in as ${currentBusiness.displayName}! ✓`);
           return;
         }
 
+        resetBusinessRegForm();
         closeModal('businessRegModal');
         alert(`🎉 Business Registration Application Submitted!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) has been submitted to TynTron and is pending admin approval.\n\nOnce approved by an admin, you will be able to log into your business dashboard.`);
         showToast('Application submitted — pending admin approval ✓');
@@ -19516,11 +19503,13 @@ Together, we grow stronger — one order at a time.`;
           updatePanelTabs();
           switchPanel('business');
           renderTestModeBanner();
+          resetBusinessRegForm();
           closeModal('businessRegModal');
           showToast(`[TEST MODE] Registration submitted & logged in as ${currentBusiness.displayName}! ✓`);
           return;
         }
 
+        resetBusinessRegForm();
         closeModal('businessRegModal');
         if (SITE_CONFIG.subscriptionShowTiming === 'hidden') {
           alert(`🎉 Business Registration Application Submitted!\n\nThank you! Your business application for "${reqData.venture || 'your business'}" (${reqData.email}) has been submitted and is pending admin approval.\n\nOnce approved by an admin, your business listing will be active.`);
@@ -22873,25 +22862,23 @@ Together, we grow stronger — one order at a time.`;
       // Start society detection (geo + dropdown)
       detectSociety();
 
-      // Try Firestore first, then JSON fallback
+      // Load vendor listings strictly from Firestore Database
       if (FB_READY && db) {
         try {
           const vendors = await fsLoadVendors();
           if (vendors && vendors.length) {
-            DATA = vendors; saveData(DATA); renderAll(); renderGlobalProductBoxes();
-            if (typeof initAd === 'function') initAd(); // rebuild carousel with fresh images
-            return; // Firestore loaded — skip JSON fetch
+            DATA = vendors; renderAll(); renderGlobalProductBoxes();
+            if (typeof initAd === 'function') initAd();
+            return;
+          } else {
+            showToast('⚠️ Database connected, but no business listings found.');
           }
-        } catch (e) { }
-      }
-      // JSON fallback (GitHub Pages)
-      try {
-        const res = await fetch('./catalogue-data.json?t=' + Date.now());
-        if (res.ok) {
-          const remote = await res.json();
-          if (Array.isArray(remote) && remote.length) { DATA = remote; saveData(DATA); renderAll(); renderGlobalProductBoxes(); }
+        } catch (e) {
+          showToast('⚠️ Database error loading business listings: ' + e.message);
         }
-      } catch (e) { }
+      } else {
+        showToast('⚠️ Database is unreachable. Please check your connection.');
+      }
     })();
   </script>
 </body>

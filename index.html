@@ -7749,6 +7749,12 @@
       }
     }
 
+    // Direct Database mode — no local storage for business requests
+    function getLocalBusinessRequests() { return []; }
+    function saveLocalBusinessRequest() { }
+    function removeLocalBusinessRequest() { }
+
+
     /* Returns {ok:true} on success or {ok:false, reason} on failure, instead of
        swallowing errors silently — callers surface the failure to the admin so a
        broken/misconfigured EmailJS setup doesn't silently leave businesses unnotified. */
@@ -11620,7 +11626,6 @@
         }
 
         req.status = 'approved';
-        saveLocalBusinessRequest(req);
 
         const emailResult = await _sendBusinessStatusEmail(req.email, req.venture, 'approved');
         renderAll();
@@ -11653,7 +11658,6 @@
           reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         req.status = 'rejected'; req.rejectionReason = reason;
-        saveLocalBusinessRequest(req);
         const emailResult = await _sendBusinessStatusEmail(req.email, req.venture, 'rejected', reason);
         renderAdminTab('businessreq');
         showToast(emailResult.ok ? 'Application rejected — applicant notified by email.' : `Application rejected — ⚠️ notification email failed: ${emailResult.reason}`);
@@ -11724,7 +11728,6 @@
           localLogs.unshift(logData);
           localStorage.setItem('hb_admin_deletion_logs', JSON.stringify(localLogs));
         }
-        removeLocalBusinessRequest(requestId);
 
         await purgeSellerCompletely(req.email, req.assignedUid, req.assignedVendorId);
 
@@ -11740,7 +11743,6 @@
       if (!req) return;
       const newActive = req.active === false ? true : false;
       req.active = newActive;
-      saveLocalBusinessRequest(req);
 
       try {
         showToast('Updating status…');
@@ -17240,16 +17242,7 @@ Together, we grow stronger — one order at a time.`;
         }
       }
 
-      const localReqs = getLocalBusinessRequests();
-      const pendingMatch = localReqs.find(r => (r.email || '').trim().toLowerCase() === cleanEmail);
-      if (pendingMatch) {
-        const st = (pendingMatch.status || 'pending').toLowerCase();
-        if (st === 'approved') {
-          return { exists: true, status: 'approved', message: msgAlreadyReg };
-        } else if (st === 'pending') {
-          return { exists: true, status: 'pending', message: 'Your email address is already registered and your application is currently pending admin approval. Please wait for review or contact admin.' };
-        }
-      }
+      // Direct database mode: Firestore business_requests check above handles this.
 
       if (localStorage.getItem('hb_business_last_pw_' + cleanEmail) || localStorage.getItem('hb_reset_pw_' + cleanEmail)) {
         return { exists: true, status: 'approved', message: msgAlreadyReg };
@@ -17325,15 +17318,7 @@ Together, we grow stronger — one order at a time.`;
         if (vMatch) return { exists: true, message: msgAlreadyReg };
       }
 
-      const localReqs = getLocalBusinessRequests();
-      const pendingMobMatch = localReqs.find(r => {
-        const m1 = (r.mobile || '').replace(/\D/g, '').slice(-10);
-        const m2 = (r.phone || '').replace(/\D/g, '').slice(-10);
-        return m1 === cleanMobile || m2 === cleanMobile;
-      });
-      if (pendingMobMatch) {
-        return { exists: true, message: msgAlreadyReg };
-      }
+      // Direct database mode: Firestore business_requests check above handles this.
 
       return { exists: false };
     }
@@ -17488,15 +17473,25 @@ Together, we grow stronger — one order at a time.`;
     }
 
     async function srVerifyMobileOtpClick() {
-      const code = document.getElementById('sr_mobileCode').value.trim();
+      const inputEl = document.getElementById('sr_mobileCode');
+      const code = (inputEl ? inputEl.value : '').trim();
+      if (!code) {
+        showToast('Please enter the OTP code');
+        return;
+      }
       const ok = await verifyMobileOtp(code);
       if (ok) {
         _srMobileVerified = true;
-        document.getElementById('sr_mobileVerifiedBadge').style.display = 'block';
-        document.getElementById('sr_mobileCodeRow').style.display = 'none';
-        document.getElementById('sr_mobile').disabled = true;
-        document.getElementById('sr_mobileSendBtn').disabled = true;
-        if (!document.getElementById('sr_phone').value) document.getElementById('sr_phone').value = _vnMobile;
+        const badge = document.getElementById('sr_mobileVerifiedBadge');
+        if (badge) badge.style.display = 'block';
+        const row = document.getElementById('sr_mobileCodeRow');
+        if (row) row.style.display = 'none';
+        const mob = document.getElementById('sr_mobile');
+        if (mob) mob.disabled = true;
+        const sendBtn = document.getElementById('sr_mobileSendBtn');
+        if (sendBtn) sendBtn.disabled = true;
+        const phoneEl = document.getElementById('sr_phone');
+        if (phoneEl && !phoneEl.value) phoneEl.value = _vnMobile;
         showToast('Mobile verified ✓');
       } else {
         showToast('Incorrect or expired OTP');
@@ -17712,12 +17707,12 @@ Together, we grow stronger — one order at a time.`;
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         };
 
-        saveLocalBusinessRequest(reqData);
         if (db) {
           try {
             await db.collection('business_requests').doc(requestId).set(reqData);
           } catch (dbErr) {
             console.warn('Firestore business_requests save error:', dbErr.message);
+            throw dbErr;
           }
         }
 
@@ -19476,12 +19471,12 @@ Together, we grow stronger — one order at a time.`;
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        saveLocalBusinessRequest(reqData);
         if (db) {
           try {
             await db.collection('business_requests').doc(requestId).set(reqData);
           } catch (dbErr) {
             console.warn('Firestore business_requests save error:', dbErr.message);
+            throw dbErr;
           }
         }
 
@@ -20905,7 +20900,6 @@ Together, we grow stronger — one order at a time.`;
       const req = _srqAll.find(r => r.assignedVendorId === vendor.id || (uid && r.assignedUid === uid) || r.email === vendor.contactEmail);
       if (req) {
         req.maxItems = newLimit;
-        saveLocalBusinessRequest(req);
         if (db) {
           try { await db.collection('business_requests').doc(req.requestId).set({ maxItems: newLimit }, { merge: true }); } catch (e) { }
         }

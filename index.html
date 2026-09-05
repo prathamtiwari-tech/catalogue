@@ -7696,6 +7696,39 @@
     function esc(s) { return (s == null ? '' : String(s)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
     let currentCustomer = null; // {name,mobile,email,emailVerified,address,addresses}
     let _custOtp = { email: null, code: null, expiresAt: 0, verifiedEmail: null }; // used for optional email-field verification
+
+    /* A logged-in seller/service provider can also order as a customer without a separate
+       OTP login — their own registered mobile number and address are used, and their orders
+       show up in their own Orders tab, exactly like a real customer login would. Derives
+       currentCustomer from currentBusiness (never overwriting a genuine, separately-logged-in
+       customer session) and keeps it in sync — called from switchPanel(), which every login/
+       logout/session-restore path already goes through to actually show a panel, so this is
+       the one place that needs to know about it rather than every currentBusiness assignment
+       site individually. isBusinessIdentity marks it as derived so a business logout correctly
+       clears it too, instead of leaving a stale identity behind. */
+    function _syncBusinessCustomerIdentity() {
+      if (currentBusiness) {
+        const mobile = (currentBusiness.phone || currentBusiness.whatsapp || '').trim();
+        if (!mobile) return;
+        const address = currentBusiness.currAddress || currentBusiness.permAddress || '';
+        const addresses = address ? [{ label: currentBusiness.venture || 'Business Address', address }] : [];
+        if (!currentCustomer) {
+          currentCustomer = {
+            name: currentBusiness.contact || currentBusiness.venture || currentBusiness.displayName || 'Business Owner',
+            mobile, email: currentBusiness.email || currentBusiness.contactEmail || '',
+            emailVerified: false, address, addresses,
+            isBusinessIdentity: true
+          };
+        } else if (currentCustomer.isBusinessIdentity) {
+          // Business profile may have changed (phone/address edited) since last sync.
+          currentCustomer.mobile = mobile;
+          currentCustomer.address = address || currentCustomer.address;
+          if (address) currentCustomer.addresses = addresses;
+        }
+      } else if (currentCustomer && currentCustomer.isBusinessIdentity) {
+        currentCustomer = null; // the business session backing this identity ended
+      }
+    }
     const _restoredCustomerMobile = localStorage.getItem('hb_customerMobile');
 
     /* ═══════════ FIRESTORE HELPERS ═══════════ */
@@ -12051,6 +12084,11 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
               const docData = doc.data();
               const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
               currentBusiness = { displayName: bName, uid: user.uid, ...docData };
+              // This restore path (unlike a fresh login) doesn't call switchPanel() itself, so
+              // sync explicitly here too -- otherwise a seller who reloads while already sitting
+              // on the customer tab wouldn't get their order-as-seller identity until they
+              // switched panels once.
+              _syncBusinessCustomerIdentity();
               localStorage.setItem('hb_business_logged_in', 'true');
               localStorage.setItem('hb_business_uid', user.uid);
               if (docData.email) localStorage.setItem('hb_business_email', docData.email);
@@ -12075,6 +12113,7 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
         } else {
           if (currentBusiness) {
             currentBusiness = null;
+            _syncBusinessCustomerIdentity(); // clears the derived customer identity too
             localStorage.removeItem('hb_business_logged_in');
             localStorage.removeItem('hb_business_uid');
             localStorage.removeItem('hb_business_email');
@@ -18063,6 +18102,7 @@ Together, we grow stronger — one order at a time.`;
 
     /* ═══════════ PANEL SWITCHING ═══════════ */
     function switchPanel(panel) {
+      _syncBusinessCustomerIdentity();
       ['customer', 'business', 'admin', 'driver'].forEach(p => {
         const el = document.getElementById('panel-' + p);
         if (el) el.style.display = p === panel ? 'block' : 'none';

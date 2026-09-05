@@ -7708,20 +7708,30 @@
        clears it too, instead of leaving a stale identity behind. */
     function _syncBusinessCustomerIdentity() {
       if (currentBusiness) {
-        const mobile = (currentBusiness.phone || currentBusiness.whatsapp || '').trim();
+        // currentBusiness is usually built straight from the accounts/{uid} login doc, which
+        // only holds login/role metadata (email, vendorId, password, ...) -- phone, address
+        // and contact person live on the separate vendor record instead. Look that up via
+        // vendorId first, falling back to fields directly on currentBusiness for the handful
+        // of paths (e.g. test-mode login) that do spread vendor-like data onto it directly.
+        const vendor = currentBusiness.vendorId && typeof DATA !== 'undefined'
+          ? DATA.find(v => v.id === currentBusiness.vendorId)
+          : null;
+        const src = vendor || currentBusiness;
+        const mobile = (src.phone || src.whatsapp || currentBusiness.phone || currentBusiness.whatsapp || '').trim();
         if (!mobile) return;
-        const address = currentBusiness.currAddress || currentBusiness.permAddress || '';
-        const addresses = address ? [{ label: currentBusiness.venture || 'Business Address', address }] : [];
+        const address = src.currAddress || src.permAddress || currentBusiness.currAddress || currentBusiness.permAddress || '';
+        const name = src.contact || src.venture || currentBusiness.contact || currentBusiness.venture || currentBusiness.displayName || 'Business Owner';
+        const addresses = address ? [{ label: src.venture || currentBusiness.venture || 'Business Address', address }] : [];
         if (!currentCustomer) {
           currentCustomer = {
-            name: currentBusiness.contact || currentBusiness.venture || currentBusiness.displayName || 'Business Owner',
-            mobile, email: currentBusiness.email || currentBusiness.contactEmail || '',
+            name, mobile, email: currentBusiness.email || src.email || src.contactEmail || '',
             emailVerified: false, address, addresses,
             isBusinessIdentity: true
           };
         } else if (currentCustomer.isBusinessIdentity) {
           // Business profile may have changed (phone/address edited) since last sync.
           currentCustomer.mobile = mobile;
+          currentCustomer.name = name;
           currentCustomer.address = address || currentCustomer.address;
           if (address) currentCustomer.addresses = addresses;
         }
@@ -12084,11 +12094,6 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
               const docData = doc.data();
               const bName = docData.displayName || docData.venture || docData.name || docData.businessName || (docData.email ? docData.email.split('@')[0] : 'Business');
               currentBusiness = { displayName: bName, uid: user.uid, ...docData };
-              // This restore path (unlike a fresh login) doesn't call switchPanel() itself, so
-              // sync explicitly here too -- otherwise a seller who reloads while already sitting
-              // on the customer tab wouldn't get their order-as-seller identity until they
-              // switched panels once.
-              _syncBusinessCustomerIdentity();
               localStorage.setItem('hb_business_logged_in', 'true');
               localStorage.setItem('hb_business_uid', user.uid);
               if (docData.email) localStorage.setItem('hb_business_email', docData.email);
@@ -12100,6 +12105,14 @@ TynTron reserves the right to modify platform guidelines or suspend non-complian
                   if (vendors && vendors.length) { DATA = vendors; saveData(DATA); }
                 } catch (e) { }
               }
+              // Sync AFTER the vendors reload above, not before -- currentBusiness (from the
+              // accounts/{uid} doc) has no phone/address of its own, so the sync needs the
+              // freshly-loaded vendor record (looked up via vendorId) to find them. This
+              // restore path (unlike a fresh login) doesn't call switchPanel() itself, so
+              // sync explicitly here too -- otherwise a seller who reloads while already
+              // sitting on the customer tab wouldn't get their order-as-seller identity
+              // until they switched panels once.
+              _syncBusinessCustomerIdentity();
               updatePanelTabs();
             } else {
               // No account doc — clear business state
